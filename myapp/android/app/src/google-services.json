@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "628949624709",
+    "project_id": "uteapp-7ab04",
+    "storage_bucket": "uteapp-7ab04.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:628949624709:android:1b9a293e324f9b1453c6ec",
+        "android_client_info": {
+          "package_name": "com.example.myapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "628949624709-jq93mljom2bj1e7qg4grt5mhedt3abri.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCuO-dLm-p-MW37g3oAVqEzBsdgygeCxdI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "628949624709-jq93mljom2bj1e7qg4grt5mhedt3abri.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "628949624709-80qi72ck17mvfd9igc80avd1fk2ncn3l.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.myapp"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
