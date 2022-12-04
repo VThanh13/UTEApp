@@ -4,6 +4,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:myapp/src/blocs/auth_bloc.dart';
 import 'package:myapp/src/resources/home_page.dart';
 import 'package:myapp/src/resources/login_page.dart';
+import 'package:myapp/src/screens/signin_screen.dart';
 void main()  async{
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();

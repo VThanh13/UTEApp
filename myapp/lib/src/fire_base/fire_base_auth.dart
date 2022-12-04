@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 class FireAuth {
@@ -8,12 +9,13 @@ class FireAuth {
       Function onSuccess, Function(String) onRegisterError){
     _fireBaseAuth
     .createUserWithEmailAndPassword(email: email, password: pass).then((user){
-      _createUser(user.user.uid, name, phone, onSuccess, onRegisterError);
+      _createUser(user.user!.uid, email, pass, name, phone, onSuccess, onRegisterError);
       print(user);
     }).catchError((err){
       //TODO
       _onSignUpErr(err.code, onRegisterError);
     });
+
   }
 
   void signIn(String email, String pass, Function onSuccess,
@@ -21,23 +23,29 @@ class FireAuth {
     _fireBaseAuth
         .signInWithEmailAndPassword(email: email, password: pass)
         .then((user) {
+      print(user);
       onSuccess();
     }).catchError((err) {
       print("err: " + err.toString());
-      onSignInError("Sign-In fail, please try again");
+      onSignInError("Đăng nhập thất bại, vui lòng thử lại");
     });
   }
 
-  _createUser(String userId, String name, String phone, Function onSuccess,
+  _createUser(String userId, String email, String pass, String name, String phone, Function onSuccess,
       Function(String) onRegisterError) {
-    var user = {"name": name, "phone": phone};
+    var user = {"email": email, "pass": pass, "name": name, "phone": phone};
 
-    var ref = FirebaseDatabase.instance.reference().child("users");
-    ref.child(userId).set(user).then((user) {
+    var ref = FirebaseFirestore.instance.collection('user');
+    ref.add({'userId': userId,
+    'email':email,
+    'pass':pass,
+    'name':name,
+    'phone': phone}).then((value) {
       onSuccess();
+      print("add user");
     }).catchError((err){
       //TODO
-      onRegisterError("Signup fall, please try again");
+      onRegisterError("Đăng ký không thành công, vui lòng thử lại");
     });
   }
   void _onSignUpErr(String code, Function(String) onRegisterError) {
@@ -45,16 +53,16 @@ class FireAuth {
     switch (code) {
       case "ERROR_INVALID_EMAIL":
       case "ERROR_INVALID_CREDENTIAL":
-        onRegisterError("Invalid email");
+        onRegisterError("Email không hợp lệ");
         break;
       case "ERROR_EMAIL_ALREADY_IN_USE":
-        onRegisterError("Email has existed");
+        onRegisterError("Email đã tồn tại");
         break;
       case "ERROR_WEAK_PASSWORD":
-        onRegisterError("The password is not strong enough");
+        onRegisterError("Mật khẩu không đủ mạnh");
         break;
       default:
-        onRegisterError("SignUp fail, please try again");
+        onRegisterError("Đăng ký không thành công, vui lòng thử lại");
         break;
     }
   }

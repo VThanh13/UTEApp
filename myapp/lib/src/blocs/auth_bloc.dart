@@ -15,6 +15,21 @@ class AuthBloc {
   Stream get passStream => _passController.stream;
   Stream get phoneStream => _phoneController.stream;
 
+  bool isValidd(String email, String pass){
+    if (email == null || email.length == 0) {
+      _emailController.sink.addError("Nhập email");
+      return false;
+    }
+    _emailController.sink.add("");
+    if (pass == null || pass.length < 6) {
+      _passController.sink.addError("Mật khẩu phải trên 5 ký tự");
+      return false;
+    }
+    _passController.sink.add("");
+
+    return true;
+  }
+
   bool isValid(String name, String email, String pass, String phone) {
     if (name == null || name.length == 0) {
       _nameController.sink.addError("Nhập tên");

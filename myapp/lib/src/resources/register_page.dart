@@ -1,10 +1,16 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:myapp/icons/app_icons_icons.dart';
 import 'package:myapp/src/resources/dialog/loading_dialog.dart';
 import 'package:myapp/src/resources/dialog/msg_dialog.dart';
 import 'package:myapp/src/resources/home_page.dart';
+import 'package:passwordfield/passwordfield.dart';
 
 import 'package:myapp/src/blocs/auth_bloc.dart';
 import 'package:myapp/src/resources/login_page.dart';
+
+import '../../utils/color_utils.dart';
+import '../reusable_widgets/reusable_widget.dart';
 class RegisterPage extends StatefulWidget{
   @override
   _RegisterPageState createState() => _RegisterPageState();
@@ -40,35 +46,42 @@ class _RegisterPageState extends State<RegisterPage>{
         padding: EdgeInsets.fromLTRB(30, 0, 30, 0),
         constraints: BoxConstraints.expand(),
         color: Colors.white,
+
+        // width: MediaQuery.of(context).size.width,
+        // height: MediaQuery.of(context).size.height,
+        // decoration: BoxDecoration(
+        //     gradient: LinearGradient(colors: [
+        //       hexStringToColor("CB2B93"),
+        //       hexStringToColor("9546C4"),
+        //       hexStringToColor("5E61F4")
+        //     ], begin: Alignment.topCenter, end: Alignment.bottomCenter)),
         child: SingleChildScrollView(
           child: Column(
             children: <Widget>[
-              SizedBox(
-                height: 80,
-              ),
-              Image.asset("logo_page.png"),
-              Padding(padding: EdgeInsets.fromLTRB(0, 40, 0, 6),
+
+              logoWidget("assets/ute_logo.png"),
+              Padding(padding: EdgeInsets.fromLTRB(0, 20, 0, 6),
               child: Text(
-                "Welcome to UTE!",
-                style: TextStyle(fontSize: 22, color: Color(0xff333333)),
+                " UTE APP",
+                style: TextStyle(fontSize: 30, color: Colors.blue),
               ),
               ),
               Text(
-                "Signup with UTE in simple steps",
-                style: TextStyle(fontSize: 16, color: Color(0xff606470)),
+                "Đăng kí người dùng mới",
+                style: TextStyle(fontSize: 20, color: Colors.black),
               ),
-              Padding(padding: EdgeInsets.fromLTRB(0, 80, 0, 20),
+              Padding(padding: EdgeInsets.fromLTRB(0, 60, 0, 20),
               child: StreamBuilder(
                 stream: authBloc.nameStream,
                 builder: (context, snapshot) => TextField(
                   controller: _nameController,
-                  style: TextStyle(fontSize: 18, color: Colors.black),
+                  style: TextStyle(fontSize: 25, color: Colors.black),
                   decoration: InputDecoration(
                     errorText:
                       snapshot.hasError ? snapshot.error.toString(): null,
-                      labelText: "Name",
+                      labelText: "Họ tên",
                       prefixIcon: Container(
-                          width: 50, child: Image.asset("ic_user.png")),
+                          width: 50, child: Icon(Icons.account_circle_rounded)),
                       border: OutlineInputBorder(
                           borderSide: BorderSide(color: Color(0xffCED0D2), width: 1),
                           borderRadius: BorderRadius.all(Radius.circular(6)))),
@@ -78,13 +91,13 @@ class _RegisterPageState extends State<RegisterPage>{
                 stream: authBloc.phoneStream,
                   builder: (context, snapshot) => TextField(
                     controller: _phoneController,
-                    style: TextStyle(fontSize: 18, color: Colors.black),
+                    style: TextStyle(fontSize: 25, color: Colors.black),
                     decoration: InputDecoration(
-                        labelText: "Phone Number",
+                        labelText: "Số điện thoại",
                         errorText:
                         snapshot.hasError ? snapshot.error.toString() : null,
                         prefixIcon: Container(
-                            width: 50, child: Image.asset("ic_phone.png")),
+                            width: 50, child: Icon(Icons.add_call)),
                         border: OutlineInputBorder(
                             borderSide: BorderSide(color: Color(0xffCED0D2), width: 1),
                             borderRadius: BorderRadius.all(Radius.circular(6)))),
@@ -94,12 +107,14 @@ class _RegisterPageState extends State<RegisterPage>{
                 stream: authBloc.emailStream,
                 builder: (context, snapshot)=> TextField(
                   controller: _emailController,
-                  style: TextStyle(fontSize: 18, color: Colors.black),
+                  style: TextStyle(fontSize: 25, color: Colors.black),
                   decoration: InputDecoration(
+
                       labelText: "Email",
+
                       errorText: snapshot.hasError ? snapshot.error.toString() :null,
                       prefixIcon: Container(
-                          width: 50, child: Image.asset("ic_email.png")),
+                          width: 50, child: Icon(Icons.add_card_rounded)),
                       border: OutlineInputBorder(
                           borderSide: BorderSide(color: Color(0xffCED0D2), width: 1),
                           borderRadius: BorderRadius.all(Radius.circular(6)))),
@@ -108,17 +123,22 @@ class _RegisterPageState extends State<RegisterPage>{
               StreamBuilder(
                 stream: authBloc.passStream,
                   builder: (context, snapshot) => TextField(
+                    obscureText: true,
+                    obscuringCharacter: "*",
                     controller: _passController,
-                    style: TextStyle(fontSize: 18, color: Colors.black),
+                    style: TextStyle(fontSize: 25, color: Colors.black),
                     decoration: InputDecoration(
-                        labelText: "Password",
+
+                        labelText: "Mật khẩu",
+
                         errorText: snapshot.hasError ? snapshot.error.toString() :null,
                         prefixIcon: Container(
-                            width: 50, child: Image.asset("ic_lock.png")),
+                            width: 50, child: Icon(Icons.lock_outline)),
                         border: OutlineInputBorder(
                             borderSide: BorderSide(color: Color(0xffCED0D2), width: 1),
                             borderRadius: BorderRadius.all(Radius.circular(6)))),
                   )),
+
               Padding(padding: EdgeInsets.fromLTRB(0, 30, 0, 40),
               child: SizedBox(
                 width: double.infinity,
@@ -126,11 +146,11 @@ class _RegisterPageState extends State<RegisterPage>{
                 child: ElevatedButton(
                   onPressed: _onSignUpClicked,
                   style: ElevatedButton.styleFrom(
-                    primary: Color(0xff3277D8),
+                    primary: Colors.lightBlueAccent,
                   ),
                   child: Text(
-                    "Signup",
-                    style: TextStyle(color: Colors.white, fontSize: 18),
+                    "Đăng kí",
+                    style: TextStyle(color: Colors.white, fontSize: 20),
                   ),
                 ),
               ),
@@ -138,12 +158,20 @@ class _RegisterPageState extends State<RegisterPage>{
               Padding(padding: EdgeInsets.fromLTRB(0, 0, 0, 40),
               child: RichText(
                 text: TextSpan(
-                  text: "Already a User",
-                  style: TextStyle(color: Color(0xff606470), fontSize: 16 ),
+                  text: "Đã có tài khoản ?",
+                  style: TextStyle(color: Color(0xff606470), fontSize: 18 ),
                 children: <TextSpan>[
                   TextSpan(
-                    text: "Login now",
-                    style: TextStyle(color: Color(0xff3277D8), fontSize: 16))
+                      recognizer: TapGestureRecognizer()
+                        ..onTap = () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      LoginPage()));
+                        },
+                    text: " Đăng nhập ngay",
+                    style: TextStyle(color: Color(0xff3277D8), fontSize: 18))
                 ]),
               ),)
 
