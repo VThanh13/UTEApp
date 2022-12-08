@@ -1,8 +1,13 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
+import '../../blocs/auth_bloc.dart';
 import '../../models/UserModel.dart';
+import '../dialog/loading_dialog.dart';
+import '../home_page.dart';
 
 class MyInfo extends StatefulWidget {
   @override
@@ -10,6 +15,60 @@ class MyInfo extends StatefulWidget {
 }
 
 class _MyInfoState extends State<MyInfo> {
+
+  AuthBloc authBloc = new AuthBloc();
+
+  TextEditingController _nameController = new TextEditingController();
+  TextEditingController _phoneController = new TextEditingController();
+  TextEditingController _emailController = new TextEditingController();
+
+  StreamController _nameControll = new StreamController();
+  StreamController _phoneControll = new StreamController();
+  StreamController _emailControll = new StreamController();
+
+
+
+  Stream get emailStream => _emailControll.stream;
+  Stream get nameStream => _nameControll.stream;
+  Stream get phoneStream => _phoneControll.stream;
+
+
+
+  bool isValid(String name, String email, String phone){
+    if (name == null || name.length == 0) {
+      _nameControll.sink.addError("Nhập tên");
+      return false;
+    }
+    _nameControll.sink.add("");
+
+    if (email == null || email.length == 0) {
+      _emailControll.sink.addError("Nhập email");
+      return false;
+    }
+    _emailControll.sink.add("");
+
+    if (phone == null || phone.length == 0) {
+      _phoneControll.sink.addError("Nhập số điện thoại");
+      return false;
+    }
+    _phoneControll.sink.add("");
+
+    return true;
+
+  }
+
+  void dispose() {
+    _nameControll.close();
+    _emailControll.close();
+
+    _phoneControll.close();
+  }
+
+
+
+
+
+
   FirebaseAuth auth = FirebaseAuth.instance;
   var userr = FirebaseAuth.instance.currentUser!;
   String name = "1234";
@@ -71,65 +130,80 @@ class _MyInfoState extends State<MyInfo> {
                     Container(
                       margin: EdgeInsets.fromLTRB(0, 20, 0, 15),
                       width: 400,
-                      child: TextField(
-                        controller: TextEditingController()
-                          ..text = userModel.name!,
-                        onChanged: (text) => {},
-                        decoration: InputDecoration(
-                            labelText: "Tên của bạn",
-                            enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10),
-                                borderSide: BorderSide(
-                                  color: Colors.blueAccent,
-                                  width: 1,
-                                )),
-                            focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10),
-                                borderSide:
-                                    BorderSide(color: Colors.blue, width: 4))),
-                      ),
+                      child: StreamBuilder(
+                        stream: nameStream ,
+                        builder: (context, snapshot) => TextField(
+                          controller: _nameController
+                            ..text = userModel.name!,
+                          onChanged: (text) => {},
+                          decoration: InputDecoration(
+                              labelText: "Tên của bạn",
+                              errorText:
+                              snapshot.hasError ? snapshot.error.toString() : null,
+                              enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                  borderSide: BorderSide(
+                                    color: Colors.blueAccent,
+                                    width: 1,
+                                  )),
+                              focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                  borderSide:
+                                  BorderSide(color: Colors.blue, width: 4))),
+                        ),
+                      )
                     ),
                     Container(
                       margin: EdgeInsets.fromLTRB(0, 20, 0, 15),
                       width: 400,
-                      child: TextField(
-                        controller: TextEditingController()
-                          ..text = userModel.phone!,
-                        onChanged: (text) => {},
-                        decoration: InputDecoration(
-                            labelText: "SĐT của bạn",
-                            enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10),
-                                borderSide: BorderSide(
-                                  color: Colors.blueAccent,
-                                  width: 1,
-                                )),
-                            focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10),
-                                borderSide:
-                                    BorderSide(color: Colors.blue, width: 4))),
-                      ),
+                      child: StreamBuilder(
+                        stream: phoneStream,
+                        builder: (context, snapshot) => TextField(
+                          controller: _phoneController
+                            ..text = userModel.phone!,
+                          onChanged: (text) => {},
+                          decoration: InputDecoration(
+                              labelText: "SĐT của bạn",
+                              errorText:
+                              snapshot.hasError ? snapshot.error.toString() : null,
+                              enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                  borderSide: BorderSide(
+                                    color: Colors.blueAccent,
+                                    width: 1,
+                                  )),
+                              focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                  borderSide:
+                                  BorderSide(color: Colors.blue, width: 4))),
+                        ),
+                      )
                     ),
                     Container(
                       margin: EdgeInsets.fromLTRB(0, 20, 0, 15),
                       width: 400,
-                      child: TextField(
-                        controller: TextEditingController()
-                          ..text = userModel.email!,
-                        onChanged: (text) => {},
-                        decoration: InputDecoration(
-                            labelText: "Email của bạn",
-                            enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10),
-                                borderSide: BorderSide(
-                                  color: Colors.blueAccent,
-                                  width: 1,
-                                )),
-                            focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10),
-                                borderSide:
-                                    BorderSide(color: Colors.blue, width: 4))),
-                      ),
+                      child: StreamBuilder(
+                        stream: emailStream,
+                        builder: (context, snapshot) => TextField(
+                          controller: _emailController
+                            ..text = userModel.email!,
+                          onChanged: (text) => {},
+                          decoration: InputDecoration(
+                              labelText: "Email của bạn",
+                              errorText:
+                              snapshot.hasError ? snapshot.error.toString() : null,
+                              enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                  borderSide: BorderSide(
+                                    color: Colors.blueAccent,
+                                    width: 1,
+                                  )),
+                              focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                  borderSide:
+                                  BorderSide(color: Colors.blue, width: 4))),
+                        ),
+                      )
                     ),
                     Container(
                       margin: EdgeInsets.fromLTRB(0, 20, 0, 15),
@@ -161,6 +235,7 @@ class _MyInfoState extends State<MyInfo> {
                             child: ElevatedButton(
                               onPressed: () {
                                 print('press save');
+                                _onSaveClicked();
                               },
                               child: Text(
                                 'Lưu',
@@ -348,5 +423,37 @@ class _MyInfoState extends State<MyInfo> {
             ),
           );
         });
+  }
+  _onSaveClicked(){
+    var isvalid = isValid(_nameController.text, _emailController.text, _phoneController.text);
+    
+    if(isvalid){
+      LoadingDialog.showLoadingDialog(context, "loading...");
+      changeInfo(_emailController.text, _nameController.text,
+          _phoneController.text , () {
+            LoadingDialog.hideLoadingDialog(context);
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => HomePage()));
+          });
+
+    }
+  }
+  
+  void changeInfo(String email,  String name, String phone, Function onSuccess){
+    var user = {"email": email,  "name": name, "phone": phone};
+
+    var ref = FirebaseFirestore.instance.collection('user');
+
+    ref.doc(userr.uid).update({
+      'email':email,
+      'name':name,
+      'phone': phone
+    }).then((value) {
+      onSuccess();
+      print("add user");
+    }).catchError((err){
+      //TODO
+      print("err");
+    });
   }
 }

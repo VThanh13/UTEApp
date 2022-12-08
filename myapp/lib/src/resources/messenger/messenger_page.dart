@@ -58,6 +58,91 @@ class _MessengerPageState extends State<MessengerPage> {
     print(userModel.name);
   }
 
+  List<UserModel> listQuestion = [];
+
+
+  void getQuestionData() async {
+
+    QuerySnapshot snapshot = await FirebaseFirestore.instance.collection('user').get();
+    snapshot.docs.map((e) {
+      userModel.id = (e.data() as Map)['userId'];
+      userModel.name = (e.data() as Map)['name'];
+      userModel.email = (e.data() as Map)['email'];
+      userModel.image = (e.data() as Map)['image'];
+      userModel.password = (e.data() as Map)['pass'];
+      userModel.phone = (e.data() as Map)['phone'];
+
+      listQuestion.add(userModel);
+
+
+
+
+    });
+    print(listQuestion);
+  }
+
+  _buildQuestions(){
+    List<Widget> questionsList = [];
+    listQuestion.forEach((UserModel listQuestion){
+      questionsList.add(
+        GestureDetector(
+          onTap: () {},
+          child: Container(
+            margin: EdgeInsets.symmetric(horizontal:  20.0, vertical: 10.0),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(15.0),
+              border: Border.all(
+                width: 1.0,
+                color: Colors.grey,
+              )
+            ),
+            child: Row(
+              children: <Widget> [
+                Expanded(child: Container(
+                  margin: EdgeInsets.all(12.0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget> [
+                      Text(listQuestion.name,
+                      style: TextStyle(
+                        fontSize: 20.0,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                      ),
+                      SizedBox(height: 4.0,),
+
+                      Text(listQuestion.email,
+                      style: TextStyle(
+                        fontSize:16.0,
+                        fontWeight: FontWeight.w600,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                      ),
+
+                    ],
+                  ),
+                ))
+              ],
+            ),
+          ),
+
+        )
+      );
+
+
+    } );
+    return Column(children: questionsList);
+
+
+
+    
+  }
+  
+
+
 
 
 
@@ -470,7 +555,23 @@ class _MessengerPageState extends State<MessengerPage> {
                   // );
 
                   }
-                  )
+                  ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Padding(padding: EdgeInsets.symmetric(horizontal: 20.0),
+                  child: Text(
+                    'Cau hoi cua ban',
+                    style: TextStyle(
+                      fontSize: 24.0,
+                      fontWeight: FontWeight.w600,
+                      letterSpacing: 1.2,
+                    ),
+                  ),
+                  ),
+                  _buildQuestions()
+                ],
+              )
 
 
 
