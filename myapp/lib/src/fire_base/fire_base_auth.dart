@@ -33,14 +33,15 @@ class FireAuth {
 
   _createUser(String userId, String email, String pass, String name, String phone, Function onSuccess,
       Function(String) onRegisterError) {
-    var user = {"email": email, "pass": pass, "name": name, "phone": phone};
+    var user = {"email": email, "pass": pass, "name": name, "phone": phone, "image": "https://firebasestorage.googleapis.com/v0/b/uteapp-7ab04.appspot.com/o/avatar%2Fdefault_avatar.jpg?alt=media&token=3c5e96ba-7e96-4299-871f-c16285df1e2a"};
 
     var ref = FirebaseFirestore.instance.collection('user');
     ref.add({'userId': userId,
     'email':email,
     'pass':pass,
     'name':name,
-    'phone': phone}).then((value) {
+    'phone': phone,
+    'image': 'https://firebasestorage.googleapis.com/v0/b/uteapp-7ab04.appspot.com/o/avatar%2Fdefault_avatar.jpg?alt=media&token=3c5e96ba-7e96-4299-871f-c16285df1e2a'}).then((value) {
       onSuccess();
       print("add user");
     }).catchError((err){

@@ -48,7 +48,6 @@ class _HomePageState extends State<HomePage> {
         .where('userId', isEqualTo: userr.uid)
         .get();
     userModel = snapshot.docs.first as UserModel;
-    print(userModel.name);
   }
 
   @override
@@ -80,7 +79,7 @@ class _HomePageState extends State<HomePage> {
             userModel.image = (e.data() as Map)['image'];
             userModel.password = (e.data() as Map)['pass'];
             userModel.phone = (e.data() as Map)['phone'];
-            print("hello: "+userModel.name);
+
             return userModel;
 
           }).toString();
@@ -123,7 +122,7 @@ class _HomePageState extends State<HomePage> {
                     accountEmail: new Text(userModel.email!),
                     currentAccountPicture: new CircleAvatar(
                       backgroundImage:
-                          new NetworkImage('http://i.pravatar.cc/300'),
+                          new NetworkImage(userModel.image!),
                     ),
                   ),
                   new ListTile(

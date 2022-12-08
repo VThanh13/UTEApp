@@ -128,87 +128,88 @@ class _MyInfoState extends State<MyInfo> {
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: <Widget>[
                     Container(
-                      margin: EdgeInsets.fromLTRB(0, 20, 0, 15),
-                      width: 400,
-                      child: StreamBuilder(
-                        stream: nameStream ,
-                        builder: (context, snapshot) => TextField(
-                          controller: _nameController
-                            ..text = userModel.name!,
-                          onChanged: (text) => {},
-                          decoration: InputDecoration(
-                              labelText: "Tên của bạn",
-                              errorText:
-                              snapshot.hasError ? snapshot.error.toString() : null,
-                              enabledBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                  borderSide: BorderSide(
-                                    color: Colors.blueAccent,
-                                    width: 1,
-                                  )),
-                              focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                  borderSide:
-                                  BorderSide(color: Colors.blue, width: 4))),
-                        ),
-                      )
+                        margin: EdgeInsets.fromLTRB(0, 20, 0, 15),
+                        width: 400,
+                        child: StreamBuilder(
+                          stream: nameStream ,
+                          builder: (context, snapshot) => TextField(
+                            controller: _nameController
+                              ..text = userModel.name!,
+                            onChanged: (text) => {},
+                            decoration: InputDecoration(
+                                labelText: "Tên của bạn",
+                                errorText:
+                                snapshot.hasError ? snapshot.error.toString() : null,
+                                enabledBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                    borderSide: BorderSide(
+                                      color: Colors.blueAccent,
+                                      width: 1,
+                                    )),
+                                focusedBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                    borderSide:
+                                    BorderSide(color: Colors.blue, width: 4))),
+                          ),
+                        )
                     ),
                     Container(
-                      margin: EdgeInsets.fromLTRB(0, 20, 0, 15),
-                      width: 400,
-                      child: StreamBuilder(
-                        stream: phoneStream,
-                        builder: (context, snapshot) => TextField(
-                          controller: _phoneController
-                            ..text = userModel.phone!,
-                          onChanged: (text) => {},
-                          decoration: InputDecoration(
-                              labelText: "SĐT của bạn",
-                              errorText:
-                              snapshot.hasError ? snapshot.error.toString() : null,
-                              enabledBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                  borderSide: BorderSide(
-                                    color: Colors.blueAccent,
-                                    width: 1,
-                                  )),
-                              focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                  borderSide:
-                                  BorderSide(color: Colors.blue, width: 4))),
-                        ),
-                      )
+                        margin: EdgeInsets.fromLTRB(0, 20, 0, 15),
+                        width: 400,
+                        child: StreamBuilder(
+                          stream: phoneStream,
+                          builder: (context, snapshot) => TextField(
+                            controller: _phoneController
+                              ..text = userModel.phone!,
+                            onChanged: (text) => {},
+                            decoration: InputDecoration(
+                                labelText: "SĐT của bạn",
+                                errorText:
+                                snapshot.hasError ? snapshot.error.toString() : null,
+                                enabledBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                    borderSide: BorderSide(
+                                      color: Colors.blueAccent,
+                                      width: 1,
+                                    )),
+                                focusedBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                    borderSide:
+                                    BorderSide(color: Colors.blue, width: 4))),
+                          ),
+                        )
                     ),
                     Container(
-                      margin: EdgeInsets.fromLTRB(0, 20, 0, 15),
-                      width: 400,
-                      child: StreamBuilder(
-                        stream: emailStream,
-                        builder: (context, snapshot) => TextField(
-                          controller: _emailController
-                            ..text = userModel.email!,
-                          onChanged: (text) => {},
-                          decoration: InputDecoration(
-                              labelText: "Email của bạn",
-                              errorText:
-                              snapshot.hasError ? snapshot.error.toString() : null,
-                              enabledBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                  borderSide: BorderSide(
-                                    color: Colors.blueAccent,
-                                    width: 1,
-                                  )),
-                              focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                  borderSide:
-                                  BorderSide(color: Colors.blue, width: 4))),
-                        ),
-                      )
+                        margin: EdgeInsets.fromLTRB(0, 20, 0, 15),
+                        width: 400,
+                        child: StreamBuilder(
+                          stream: emailStream,
+                          builder: (context, snapshot) => TextField(
+                            controller: _emailController
+                              ..text = userModel.email!,
+                            onChanged: (text) => {},
+                            decoration: InputDecoration(
+                                labelText: "Email của bạn",
+                                errorText:
+                                snapshot.hasError ? snapshot.error.toString() : null,
+                                enabledBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                    borderSide: BorderSide(
+                                      color: Colors.blueAccent,
+                                      width: 1,
+                                    )),
+                                focusedBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                    borderSide:
+                                    BorderSide(color: Colors.blue, width: 4))),
+                          ),
+                        )
                     ),
                     Container(
                       margin: EdgeInsets.fromLTRB(0, 20, 0, 15),
                       width: 400,
                       child: TextField(
+                        readOnly: true,
                         controller: TextEditingController()
                           ..text = userModel.password!,
                         onChanged: (text) => {},
@@ -223,7 +224,7 @@ class _MyInfoState extends State<MyInfo> {
                             focusedBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(10),
                                 borderSide:
-                                    BorderSide(color: Colors.blue, width: 4))),
+                                BorderSide(color: Colors.blue, width: 4))),
                       ),
                     ),
                     Container(
@@ -258,7 +259,7 @@ class _MyInfoState extends State<MyInfo> {
                                                 style: TextStyle(
                                                     fontSize: 15,
                                                     fontWeight:
-                                                        FontWeight.bold),
+                                                    FontWeight.bold),
                                               ),
                                               Container(
                                                 margin: EdgeInsets.fromLTRB(
@@ -268,32 +269,32 @@ class _MyInfoState extends State<MyInfo> {
                                                   decoration: InputDecoration(
                                                       labelText: "Mật khẩu",
                                                       hintText:
-                                                          'Nhập mật khẩu của bạn',
+                                                      'Nhập mật khẩu của bạn',
                                                       enabledBorder:
-                                                          OutlineInputBorder(
-                                                              borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                          10),
-                                                              borderSide:
-                                                                  BorderSide(
-                                                                color: Colors
-                                                                    .blueAccent,
-                                                                width: 1,
-                                                              )),
+                                                      OutlineInputBorder(
+                                                          borderRadius:
+                                                          BorderRadius
+                                                              .circular(
+                                                              10),
+                                                          borderSide:
+                                                          BorderSide(
+                                                            color: Colors
+                                                                .blueAccent,
+                                                            width: 1,
+                                                          )),
                                                       focusedBorder:
-                                                          OutlineInputBorder(
-                                                              borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                          10),
-                                                              borderSide:
-                                                                  BorderSide(
-                                                                      color:
-                                                                          Colors
-                                                                              .blue,
-                                                                      width:
-                                                                          4))),
+                                                      OutlineInputBorder(
+                                                          borderRadius:
+                                                          BorderRadius
+                                                              .circular(
+                                                              10),
+                                                          borderSide:
+                                                          BorderSide(
+                                                              color:
+                                                              Colors
+                                                                  .blue,
+                                                              width:
+                                                              4))),
                                                 ),
                                               ),
                                               Container(
@@ -304,32 +305,32 @@ class _MyInfoState extends State<MyInfo> {
                                                   decoration: InputDecoration(
                                                       labelText: "Mật khẩu mới",
                                                       hintText:
-                                                          'Nhập mật khẩu mới của bạn',
+                                                      'Nhập mật khẩu mới của bạn',
                                                       enabledBorder:
-                                                          OutlineInputBorder(
-                                                              borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                          10),
-                                                              borderSide:
-                                                                  BorderSide(
-                                                                color: Colors
-                                                                    .blueAccent,
-                                                                width: 1,
-                                                              )),
+                                                      OutlineInputBorder(
+                                                          borderRadius:
+                                                          BorderRadius
+                                                              .circular(
+                                                              10),
+                                                          borderSide:
+                                                          BorderSide(
+                                                            color: Colors
+                                                                .blueAccent,
+                                                            width: 1,
+                                                          )),
                                                       focusedBorder:
-                                                          OutlineInputBorder(
-                                                              borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                          10),
-                                                              borderSide:
-                                                                  BorderSide(
-                                                                      color:
-                                                                          Colors
-                                                                              .blue,
-                                                                      width:
-                                                                          4))),
+                                                      OutlineInputBorder(
+                                                          borderRadius:
+                                                          BorderRadius
+                                                              .circular(
+                                                              10),
+                                                          borderSide:
+                                                          BorderSide(
+                                                              color:
+                                                              Colors
+                                                                  .blue,
+                                                              width:
+                                                              4))),
                                                 ),
                                               ),
                                               Container(
@@ -339,42 +340,42 @@ class _MyInfoState extends State<MyInfo> {
                                                 child: TextField(
                                                   decoration: InputDecoration(
                                                       labelText:
-                                                          "Xác nhận mật khẩu",
+                                                      "Xác nhận mật khẩu",
                                                       hintText:
-                                                          'Nhập lại mật khẩu của bạn',
+                                                      'Nhập lại mật khẩu của bạn',
                                                       enabledBorder:
-                                                          OutlineInputBorder(
-                                                              borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                          10),
-                                                              borderSide:
-                                                                  BorderSide(
-                                                                color: Colors
-                                                                    .blueAccent,
-                                                                width: 1,
-                                                              )),
+                                                      OutlineInputBorder(
+                                                          borderRadius:
+                                                          BorderRadius
+                                                              .circular(
+                                                              10),
+                                                          borderSide:
+                                                          BorderSide(
+                                                            color: Colors
+                                                                .blueAccent,
+                                                            width: 1,
+                                                          )),
                                                       focusedBorder:
-                                                          OutlineInputBorder(
-                                                              borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                          10),
-                                                              borderSide:
-                                                                  BorderSide(
-                                                                      color:
-                                                                          Colors
-                                                                              .blue,
-                                                                      width:
-                                                                          4))),
+                                                      OutlineInputBorder(
+                                                          borderRadius:
+                                                          BorderRadius
+                                                              .circular(
+                                                              10),
+                                                          borderSide:
+                                                          BorderSide(
+                                                              color:
+                                                              Colors
+                                                                  .blue,
+                                                              width:
+                                                              4))),
                                                 ),
                                               ),
                                               Container(
                                                 padding: EdgeInsets.all(10),
                                                 child: Row(
                                                   mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceAround,
+                                                  MainAxisAlignment
+                                                      .spaceAround,
                                                   children: <Widget>[
                                                     Expanded(
                                                       child: ElevatedButton(
@@ -386,19 +387,19 @@ class _MyInfoState extends State<MyInfo> {
                                                           style: TextStyle(
                                                               fontSize: 16,
                                                               color:
-                                                                  Colors.white),
+                                                              Colors.white),
                                                         ),
                                                       ),
                                                     ),
                                                     Padding(
                                                         padding:
-                                                            EdgeInsets.all(10)),
+                                                        EdgeInsets.all(10)),
                                                     Expanded(
                                                         child: ElevatedButton(
                                                             onPressed: () => {
-                                                                  Navigator.pop(
-                                                                      context)
-                                                                },
+                                                              Navigator.pop(
+                                                                  context)
+                                                            },
                                                             child: Text(
                                                               'Thoát',
                                                               style: TextStyle(
@@ -426,7 +427,7 @@ class _MyInfoState extends State<MyInfo> {
   }
   _onSaveClicked(){
     var isvalid = isValid(_nameController.text, _emailController.text, _phoneController.text);
-    
+
     if(isvalid){
       LoadingDialog.showLoadingDialog(context, "loading...");
       changeInfo(_emailController.text, _nameController.text,
@@ -438,13 +439,19 @@ class _MyInfoState extends State<MyInfo> {
 
     }
   }
-  
-  void changeInfo(String email,  String name, String phone, Function onSuccess){
+
+  void changeInfo(String email,  String name, String phone, Function onSuccess) async{
+    QuerySnapshot snapshot = await FirebaseFirestore.instance
+        .collection('user')
+        .where('userId', isEqualTo: userr.uid)
+        .get();
+    String id = snapshot.docs.first.id;
     var user = {"email": email,  "name": name, "phone": phone};
+
 
     var ref = FirebaseFirestore.instance.collection('user');
 
-    ref.doc(userr.uid).update({
+    ref.doc(id).update({
       'email':email,
       'name':name,
       'phone': phone
