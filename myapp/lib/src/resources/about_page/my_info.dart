@@ -1,8 +1,11 @@
 import 'dart:async';
-
+import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 import '../../blocs/auth_bloc.dart';
 import '../../models/UserModel.dart';
@@ -127,6 +130,70 @@ class _MyInfoState extends State<MyInfo> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: <Widget>[
+                    Padding(padding: EdgeInsets.fromLTRB(0, 10, 0, 0)),
+
+                    Container(
+                      margin: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                      height: 150,
+
+                      child: Center(
+                        child: Stack(
+                          children: [
+                            new CircleAvatar(
+                              radius: 52,
+                              backgroundColor: Colors.tealAccent,
+                              child: CircleAvatar(
+                                backgroundImage:
+                                new NetworkImage(userModel.image!),
+                                radius: 50,
+
+                              ),
+
+
+                            ),
+                            Padding(padding: EdgeInsets.fromLTRB(0, 0, 0, 0)),
+                            Positioned(
+                                bottom: 0,
+                                right: 0,
+                                child: Container(
+                                  height: 35,
+                                  width: 35,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    border: Border.all(
+                                      width: 4,
+                                      color: Theme.of(context).scaffoldBackgroundColor,
+                                    ),
+                                    color: Colors.green,
+                                  ),
+                                  child: IconButton(
+                                    onPressed: (){
+                                      uploadImage();
+                                    },
+                                    padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                                  icon: Icon(
+                                    Icons.edit,
+                                    color: Colors.white,
+
+                                  ),
+                                ),),
+
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+
+
+
+
+                    Padding(padding: EdgeInsets.fromLTRB(0,0 , 0, 20)),
+
+                    Text(userModel.name!,
+                      style: TextStyle(fontSize: 25, fontWeight: FontWeight.w600, ),
+                    ),
+                    Padding(padding: EdgeInsets.fromLTRB(0, 0, 0, 10)),
+
                     Container(
                         margin: EdgeInsets.fromLTRB(0, 20, 0, 15),
                         width: 400,
@@ -462,5 +529,36 @@ class _MyInfoState extends State<MyInfo> {
       //TODO
       print("err");
     });
+  }
+}
+uploadImage() async {
+  final _firebaseStorage = FirebaseStorage.instance;
+  final _imagePicker = ImagePicker();
+  PickedFile image;
+  //Check Permissions
+  await Permission.photos.request();
+
+  var permissionStatus = await Permission.photos.status;
+
+  if (permissionStatus.isGranted){
+    //Select Image
+    image = (await _imagePicker.getImage(source: ImageSource.gallery))!;
+    var file = File(image.path);
+
+    if (image != null){
+      //Upload to Firebase
+      // var snapshot = await _firebaseStorage.ref()
+      //     .child('images/imageName')
+      //     .putFile(file).onComplete;
+      // var downloadUrl = await snapshot.ref.getDownloadURL();
+      // setState(() {
+      //   imageUrl = downloadUrl;
+      // });
+      print('Avatar');
+    } else {
+      print('No Image Path Received');
+    }
+  } else {
+    print('Permission not granted. Try Again with permission access');
   }
 }
