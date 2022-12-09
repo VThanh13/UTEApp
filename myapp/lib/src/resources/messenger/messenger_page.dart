@@ -1,12 +1,15 @@
 
 
 import 'dart:async';
+import 'package:intl/intl.dart';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:myapp/icons/app_icons_icons.dart';
 import 'package:myapp/src/models/QuestionModel.dart';
+import 'package:myapp/src/resources/home_page.dart';
+import 'package:myapp/src/resources/messenger/detail_question.dart';
 
 import '../../models/UserModel.dart';
 import '../dialog/loading_dialog.dart';
@@ -76,7 +79,7 @@ class _MessengerPageState extends State<MessengerPage> {
   List<QuestionModel> listQuestion = [];
   Future<List<QuestionModel>> getQuestionData() async {
     List<QuestionModel> list = [];
-    QuerySnapshot snapshot = await FirebaseFirestore.instance.collection('question').get();
+    QuerySnapshot snapshot = await FirebaseFirestore.instance.collection('questions').where('userId', isEqualTo: userr.uid).get();
       snapshot.docs.map((e) {
         QuestionModel questionModel = new QuestionModel("", "", "", "", "", "", "", "", "", "");
         questionModel.id = (e.data() as Map)['id'];
@@ -108,9 +111,11 @@ class _MessengerPageState extends State<MessengerPage> {
     listQuestion.forEach((QuestionModel question) {
       questionsList.add(
           GestureDetector(
-            onTap: () {},
+            onTap: () {
+              Navigator.push(context, new MaterialPageRoute(builder: (BuildContext context) => DetailQuestion(question: question)));
+            },
             child: Container(
-              margin: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+              margin: EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
               decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(15.0),
@@ -143,6 +148,9 @@ class _MessengerPageState extends State<MessengerPage> {
                           ),
                           overflow: TextOverflow.ellipsis,
                         ),
+                        Text(question.status,
+                        style: TextStyle(fontSize: 12, fontWeight: FontWeight.w400),
+                        overflow: TextOverflow.ellipsis,)
 
                       ],
                     ),
@@ -273,6 +281,14 @@ class _MessengerPageState extends State<MessengerPage> {
                                     child: ElevatedButton(
                                       onPressed: () {
                                         showModalBottomSheet(
+                                            isScrollControlled: true,
+                                              constraints: BoxConstraints.loose(Size(
+                                                  MediaQuery.of(context).size.width,
+                                                  MediaQuery.of(context).size.height * 0.75)),
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.circular(20.0),
+                                            ),
+
                                             context: context,
                                             builder: (BuildContext context) {
                                               return StatefulBuilder(builder: (BuildContext context, StateSetter setStateKhoa) {
@@ -302,6 +318,7 @@ class _MessengerPageState extends State<MessengerPage> {
                                                               DropdownButtonHideUnderline(
                                                             child:
                                                                 DropdownButton(
+                                                                  isExpanded: true,
                                                               value: value_khoa,
                                                               hint: new Text("Vui lòng chọn đơn vị để hỏi"),
                                                               iconSize: 36,
@@ -333,6 +350,7 @@ class _MessengerPageState extends State<MessengerPage> {
                                                               DropdownButtonHideUnderline(
                                                             child:
                                                                 DropdownButton(
+                                                                  isExpanded: true,
                                                               value: value_vande,
                                                               hint: new Text( "Vui lòng chọn vấn đề để hỏi"),
                                                               iconSize: 36,
@@ -370,10 +388,9 @@ class _MessengerPageState extends State<MessengerPage> {
                                                           child:
                                                               DropdownButtonHideUnderline(
                                                             child:
-                                                                DropdownButton<
-                                                                    String>(
-                                                              value:
-                                                                  value_doituong,
+                                                                DropdownButton<String>(
+                                                                  isExpanded: true,
+                                                              value:value_doituong,
                                                               hint: new Text(
                                                                   "Vui lòng chọn đối tượng"),
                                                               iconSize: 36,
@@ -579,26 +596,10 @@ class _MessengerPageState extends State<MessengerPage> {
                                 ),
 
                                 Padding(
-                                  padding: EdgeInsets.fromLTRB(0, 20, 0, 20),
-                                  child: SizedBox(
-                                    width: double.infinity,
-                                    height: 52,
-                                    child: ElevatedButton(
-                                      onPressed: () {},
-                                      style: ElevatedButton.styleFrom(
-                                        primary: Color(0xff3277D8),
-                                      ),
-                                      child: Text(
-                                        "Gửi câu hỏi",
-                                        style: TextStyle(
-                                            color: Colors.white, fontSize: 18),
-                                      ),
-                                    ),
-                                  ),
+                                  padding: EdgeInsets.fromLTRB(0, 0, 0, 5),
+
                                 ),
-                                SizedBox(
-                                  height: 40.0,
-                                ),
+
                                 StreamBuilder<QuerySnapshot>(
                                     stream: derpart.snapshots(),
                                     builder: (context, snapshot) {
@@ -640,11 +641,12 @@ class _MessengerPageState extends State<MessengerPage> {
                                   children: <Widget>[
                                     Padding(padding: EdgeInsets.symmetric(horizontal: 20.0),
                                       child: Text(
-                                        'Cau hoi cua ban',
+                                        'Câu hỏi của bạn',
                                         style: TextStyle(
                                           fontSize: 24.0,
                                           fontWeight: FontWeight.w600,
-                                          letterSpacing: 1.2,
+                                          letterSpacing: 1.0,
+                                          fontStyle: FontStyle.italic
                                         ),
                                       ),
                                     ),
@@ -683,14 +685,53 @@ class _MessengerPageState extends State<MessengerPage> {
 
   _onSendQuestionClicked(){
     var isvalid = isValid(_informationController.text, _questionController.text, _titleController.text);
+    var time = DateTime.now();
+    String timestring = DateFormat('dd-MM-yyyy HH:mm:ss').format(time);
+    print(timestring);
 
     if(isvalid){
       LoadingDialog.showLoadingDialog(context, "loading...");
+      sendQuestion(userModel.id, _titleController.text, timestring, "Chưa trả lời", _informationController.text, "file.pdf", value_khoa!,
+          _questionController.text , value_vande!,  value_doituong! , () {
+            LoadingDialog.hideLoadingDialog(context);
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => HomePage()));
+
+
+          }
+          );
+
 
     }
+    return 0;
   }
 
-  void sendQuestion(String userId, String ){
+  void sendQuestion(String userId, String title, String time, String status,
+      String information, String file, String department, String content, String category, String people, Function onSucces) {
+    
+    var ref = FirebaseFirestore.instance.collection('questions');
+    ref.add({
+      'userId': userId,
+      'title': title,
+      'time': time,
+      'status': status,
+      'information': information,
+      'fife':file,
+      'department':department,
+      'content': content,
+      'people': people,
+      'category': category,
+    }
+    ).then((value) {
+      onSucces();
+      print("add nice");
+    }).catchError((err) {
+      print(err);
+    });
+    
+    
+    
+    
 
   }
 }
