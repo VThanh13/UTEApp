@@ -42,25 +42,7 @@ class _MessengerPageState extends State<MessengerPage> {
 
   FirebaseAuth auth = FirebaseAuth.instance;
   var userr = FirebaseAuth.instance.currentUser!;
-  String name = "1234";
   UserModel userModel = new UserModel("", " ", "", "", "", "");
-
-  Future<String> getUserNameFromUID() async {
-    final snapshot = await FirebaseFirestore.instance
-        .collection('user')
-        .where('userId', isEqualTo: userr.uid)
-        .get();
-    return snapshot.docs.first['name'];
-  }
-
-  // Check if the user is signed in
-  getCurrentUser() async {
-    final snapshot = await FirebaseFirestore.instance
-        .collection('user')
-        .where('userId', isEqualTo: userr.uid)
-        .get();
-    userModel = snapshot.docs.first as UserModel;
-  }
 
   Future<List> getDataDropdownProblem(String? value_khoa) async {
     QuerySnapshot snapshot = await FirebaseFirestore.instance
@@ -82,7 +64,7 @@ class _MessengerPageState extends State<MessengerPage> {
     QuerySnapshot snapshot = await FirebaseFirestore.instance.collection('questions').where('userId', isEqualTo: userr.uid).get();
       snapshot.docs.map((e) {
         QuestionModel questionModel = new QuestionModel("", "", "", "", "", "", "", "", "", "");
-        questionModel.id = (e.data() as Map)['id'];
+        questionModel.id = e.reference.id;
         questionModel.title = (e.data() as Map)['title'];
         questionModel.content = (e.data() as Map)['content'];
         questionModel.time = (e.data() as Map)['time'];
@@ -710,13 +692,15 @@ class _MessengerPageState extends State<MessengerPage> {
       String information, String file, String department, String content, String category, String people, Function onSucces) {
     
     var ref = FirebaseFirestore.instance.collection('questions');
-    ref.add({
+    String id = ref.doc().id;
+    ref.doc(id).set({
+      'id': id,
       'userId': userId,
       'title': title,
       'time': time,
       'status': status,
       'information': information,
-      'fife':file,
+      'file':file,
       'department':department,
       'content': content,
       'people': people,
@@ -728,10 +712,6 @@ class _MessengerPageState extends State<MessengerPage> {
     }).catchError((err) {
       print(err);
     });
-    
-    
-    
-    
 
   }
 }

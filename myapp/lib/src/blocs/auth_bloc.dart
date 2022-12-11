@@ -15,7 +15,7 @@ class AuthBloc {
   Stream get passStream => _passController.stream;
   Stream get phoneStream => _phoneController.stream;
 
-  bool isValidd(String email, String pass){
+  bool isValid_Login(String email, String pass){
     if (email == null || email.length == 0) {
       _emailController.sink.addError("Nhập email");
       return false;

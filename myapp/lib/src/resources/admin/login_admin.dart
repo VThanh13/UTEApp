@@ -7,21 +7,22 @@ import 'package:myapp/src/resources/home_page.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:cupertino_icons/cupertino_icons.dart';
-import '../../utils/color_utils.dart';
-import '../app.dart';
-import '../blocs/auth_bloc.dart';
-import '../reusable_widgets/reusable_widget.dart';
-import 'dialog/loading_dialog.dart';
-import 'dialog/msg_dialog.dart';
-import 'employee/home_page_employee.dart';
-import 'home_page.dart';
+import '../../../utils/color_utils.dart';
+import '../../app.dart';
+import '../../blocs/auth_bloc.dart';
+import '../../reusable_widgets/reusable_widget.dart';
+import '../dialog/loading_dialog.dart';
+import '../dialog/msg_dialog.dart';
+import '../home_page.dart';
+import 'home_page_admin.dart';
 
-class LoginPage extends StatefulWidget {
+class LoginAdmin extends StatefulWidget {
   @override
-  _LoginPageState createState() => _LoginPageState();
+  _LoginAdminState createState() => _LoginAdminState();
 }
+FirebaseAuth auth = FirebaseAuth.instance;
 
-class _LoginPageState extends State<LoginPage> {
+class _LoginAdminState extends State<LoginAdmin> {
   AuthBloc authBloc = new AuthBloc();
 
   TextEditingController _emailController = new TextEditingController();
@@ -118,27 +119,7 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                       ),
                     ),
-                    Padding(
-                      padding: EdgeInsets.fromLTRB(0, 0, 0, 40),
-                      child: RichText(
-                        text: TextSpan(children: <TextSpan>[
-                          TextSpan(
-                              recognizer: TapGestureRecognizer()
-                                ..onTap = () {
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) =>
-                                              RegisterPage()));
-                                },
-                              text: "Đăng kí tài khoản mới",
-                              style:
-                                  TextStyle(color: Colors.white, fontSize: 20))
-                        ]),
-                      ),
 
-
-                    )
                   ]),
                 )))));
   }
@@ -152,23 +133,19 @@ class _LoginPageState extends State<LoginPage> {
               () async {
                 var userr = FirebaseAuth.instance.currentUser!;
                 var snapshot = await FirebaseFirestore.instance
-                    .collection('user')
-                    .where('userId', isEqualTo: userr.uid)
-                    .get();
-                if(snapshot.docs!= null && snapshot.docs.isNotEmpty){
-                  LoadingDialog.hideLoadingDialog(context);
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => HomePage()));
-                }
-                snapshot = await FirebaseFirestore.instance
-                    .collection('employee')
+                    .collection('admin')
                     .where('id', isEqualTo: userr.uid)
                     .get();
                 if(snapshot.docs!= null && snapshot.docs.isNotEmpty){
                   LoadingDialog.hideLoadingDialog(context);
                   Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => HomePageEmployee()));
+                      MaterialPageRoute(builder: (context) => HomePageAdmin()));
                 }
+                else(){
+                  print("Bạn không có quyền truy cập!");
+                  // LoadingDialog.hideLoadingDialog(context);
+                  // MsgDialog.showMsgDialog(context, "Sign-In", "Bạn không có quyền truy cập!");
+                };
           }, (msg) {
             LoadingDialog.hideLoadingDialog(context);
             MsgDialog.showMsgDialog(context, "Sign-In", msg);

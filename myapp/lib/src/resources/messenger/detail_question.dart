@@ -139,15 +139,15 @@ class _DetailQuestionState extends State<DetailQuestion> {
                                         ),
 
 
-                                        Row(
+                                    Row(
                                           mainAxisAlignment: MainAxisAlignment.start,
                                           crossAxisAlignment: CrossAxisAlignment.start,
                                           children: <Widget>[
                                             Padding(padding: EdgeInsets.all(5)),
 
                                             Text('Gửi: ', style: TextStyle(fontSize: 15),),
-                                            Text(widget.question.department, style: TextStyle(fontSize: 15, fontStyle: FontStyle.italic, overflow: TextOverflow.visible),)
-
+                                            Expanded(child:Text(widget.question.department, style: TextStyle(fontSize: 15, fontStyle: FontStyle.italic, overflow: TextOverflow.visible),)
+                                            ),
 
                                           ],
                                         ),
