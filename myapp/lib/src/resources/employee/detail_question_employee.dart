@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:intl/intl.dart';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -6,6 +7,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:myapp/src/resources/employee/home_page_employee.dart';
 
+import '../../models/AnswerModel.dart';
 import '../../models/EmployeeModel.dart';
 import '../../models/QuestionModel.dart';
 import '../../models/UserModel.dart';
@@ -34,7 +36,17 @@ class Question{
   Question(this.id, this.title, this.content, this.time, this.department,
       this.category, this.status, this.user, this.information, this.file);
 }
+class Answer{
+  String id;
+  String content;
+  String questionId;
+  String time;
+  EmployeeModel employee;
 
+  Answer(this.id, this.questionId, this.content, this.time, this.employee);
+}
+FirebaseAuth auth = FirebaseAuth.instance;
+var userr = FirebaseAuth.instance.currentUser!;
 EmployeeModel employeeModel = new EmployeeModel("", " ", "", "", "", "", "", "", "");
 UserModel uModel = new UserModel("", " ", "", "", "", "");
 Question question = new Question("", "", "", "", "", "", "", uModel, "", "");
@@ -52,6 +64,161 @@ bool isValid(String answer){
   }
 
   return true;
+}
+
+List<Answer> listAnswer = [];
+Future<List<Answer>> getAnswerData() async {
+  List<AnswerModel> list = [];
+  QuerySnapshot snapshot = await FirebaseFirestore.instance.collection('answer').where('questionId', isEqualTo: question.id).get();
+  snapshot.docs.map((e){
+    AnswerModel ans = new AnswerModel("", "", "", "", "");
+    ans.userId = (e.data() as Map)['userId'];
+    ans.id = e.reference.id;
+    ans.questionId = (e.data() as Map)['questionId'];
+    ans.content = (e.data() as Map)['content'];
+    ans.time = (e.data() as Map)['time'];
+    list.add(ans);
+  }).toList();
+  List<Answer> listAns = [];
+  // print(listUser);
+  for (var i = 0; i < list.length; i++){
+    QuerySnapshot snapshot = await FirebaseFirestore.instance.collection('employee')
+        .where('id', isEqualTo: list[i].userId)
+        .get();
+    snapshot.docs.map((e){
+      EmployeeModel employeeModel = new EmployeeModel("", "", "", "", "", "", "", "", "");
+      Answer ans = Answer(
+          list[i].id, list[i].questionId, list[i].content, list[i].time,
+          employeeModel);
+      employeeModel.id = (e.data() as Map)['id'];
+      employeeModel.name = (e.data() as Map)['name'];
+      employeeModel.email = (e.data() as Map)['email'];
+      employeeModel.image = (e.data() as Map)['image'];
+      employeeModel.password = (e.data() as Map)['password'];
+      employeeModel.phone = (e.data() as Map)['phone'];
+      employeeModel.department = (e.data() as Map)['department'];
+      employeeModel.category = (e.data() as Map)['category'];
+      employeeModel.roles = (e.data() as Map)['roles'];
+      ans.employee = employeeModel;
+      listAns.add(ans);
+    }).toList();
+
+  }
+  return listAns;
+}
+
+fillListQuestion(setState) async{
+  final listAnswers = await getAnswerData() as List<Answer>;
+  setState((){
+    listAnswer=listAnswers;
+  });
+}
+_buildAnswers(setState) {
+  fillListQuestion(setState);
+
+  List<Widget> answerList = [];
+  listAnswer.forEach((Answer answer) {
+    answerList.add(
+        GestureDetector(
+
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.start,
+                //mainAxisSize: MainAxisSize.min,
+
+                children: <Widget>[
+                  Container(
+                    //width: MediaQuery.of(context).size.width -75,
+                    width: 285,
+                    child:Card(
+                      margin: EdgeInsets.all(5),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+
+                      ),
+                      color: Colors.lightBlueAccent,
+                      elevation: 10,
+
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+
+                        children: <Widget>[
+
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+
+                            ],
+
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+
+                            children: <Widget>[
+                              Padding(padding: EdgeInsets.fromLTRB(5, 5, 5, 5)),
+                              Text(answer.employee.name,
+                                style: TextStyle(fontSize: 15, fontStyle: FontStyle.italic, ),),
+
+                              Text(' lúc ', style: TextStyle(fontSize: 15),),
+                              Expanded(child:Text(
+                                answer.time,
+                                overflow: TextOverflow.visible,
+                                maxLines: 3,
+                                style: TextStyle(fontSize: 15, fontStyle: FontStyle.italic, overflow: TextOverflow.visible),)
+                              ),
+                            ],
+                          ),
+
+                          Padding(padding: EdgeInsets.fromLTRB(5, 5, 5, 5)),
+                          Container(
+                              padding: EdgeInsets.fromLTRB(5, 0, 5, 5),
+
+                              child:  Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment: MainAxisAlignment.start,
+
+                                children: <Widget>[
+                                  Expanded(child: Text(
+                                    answer.content,
+                                    overflow: TextOverflow.visible,
+                                    maxLines: 20,
+                                    style: TextStyle(
+                                        fontSize: 20,  fontStyle: FontStyle.italic, fontWeight: FontWeight.w400 ),
+                                  ),)
+                                ],
+                              )
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              CircleAvatar(
+                radius: 22,
+                backgroundColor: Colors.tealAccent,
+                child: CircleAvatar(
+                  backgroundImage:
+                  new NetworkImage(answer.employee.image!),
+                  radius: 20,
+
+                ),
+              ),
+            ],
+          ),
+
+        )
+    );
+  });
+  return Column(children: answerList);
 }
 
 class _DetailQuestionState extends State<DetailQuestionEmployee> {
@@ -85,6 +252,36 @@ class _DetailQuestionState extends State<DetailQuestionEmployee> {
               userModel, widget.question.information, widget.question.file,);
             return question;
           }).toString();
+
+          return FutureBuilder<QuerySnapshot>(
+              future: FirebaseFirestore.instance
+                  .collection("employee")
+                  .where("id", isEqualTo: userr.uid)
+                  .get(),
+              builder: (context, snapshot) {
+                if (!snapshot.hasData) {
+                  return Center(
+                    child: Container(
+                        width: 20,
+                        height: 20,
+                        child: CircularProgressIndicator()),
+                  );
+                }
+                snapshot.data!.docs.map((e) {
+                  employeeModel.id = (e.data() as Map)['id'];
+                  employeeModel.name = (e.data() as Map)['name'];
+                  employeeModel.email = (e.data() as Map)['email'];
+                  employeeModel.image = (e.data() as Map)['image'];
+                  employeeModel.password = (e.data() as Map)['password'];
+                  employeeModel.phone = (e.data() as Map)['phone'];
+                  employeeModel.department = (e.data() as Map)['department'];
+                  employeeModel.category = (e.data() as Map)['category'];
+                  employeeModel.roles = (e.data() as Map)['roles'];
+
+                  return employeeModel;
+
+                }).toString();
+
           return Scaffold(
             appBar: new AppBar(
               title: const Text("Chi tiết câu hỏi"),
@@ -97,8 +294,6 @@ class _DetailQuestionState extends State<DetailQuestionEmployee> {
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    //Text("chi tiet cau hoi"),
-                    //Text(widget.question.title),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.start,
@@ -168,13 +363,8 @@ class _DetailQuestionState extends State<DetailQuestionEmployee> {
                                               maxLines: 3,
                                               style: TextStyle(fontSize: 15, fontStyle: FontStyle.italic, overflow: TextOverflow.visible),)
                                             ),
-
-
-
-
                                           ],
                                         ),
-
 
                                     Row(
                                           mainAxisAlignment: MainAxisAlignment.start,
@@ -204,34 +394,26 @@ class _DetailQuestionState extends State<DetailQuestionEmployee> {
                                                   style: TextStyle(
                                                     fontSize: 20,  fontStyle: FontStyle.italic, fontWeight: FontWeight.w400 ),
                                                 ),)
-
                                               ],
                                             )
                                         ),
-
-
-
                                       ],
                                     ),
                                   ),
-                                )
-
+                                ),
                               ],
-
-
                             ),
-
                           ],
-
-
-
                         ),
-
+                        Padding(padding: EdgeInsets.fromLTRB(0, 10, 0, 10)),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            _buildAnswers(setState)
+                          ],
+                        ),
                       ],
-
-
                     ),
-
                     Padding(
                       padding: EdgeInsets.fromLTRB(0, 10, 0, 20),
                       child: SizedBox(
@@ -243,7 +425,7 @@ class _DetailQuestionState extends State<DetailQuestionEmployee> {
                                 isScrollControlled: true,
                                 constraints: BoxConstraints.loose(Size(
                                     MediaQuery.of(context).size.width,
-                                    MediaQuery.of(context).size.height * 0.75)),
+                                    MediaQuery.of(context).size.height * 0.5)),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(20.0),
                                 ),
@@ -253,7 +435,7 @@ class _DetailQuestionState extends State<DetailQuestionEmployee> {
                                   return StatefulBuilder(builder: (BuildContext context, StateSetter setStateKhoa) {
                                     return SingleChildScrollView(
                                         child: Container(
-                                          height: 900,
+                                          height: 600,
                                           child: Column(
                                             mainAxisAlignment:
                                             MainAxisAlignment.start,
@@ -278,9 +460,9 @@ class _DetailQuestionState extends State<DetailQuestionEmployee> {
                                                         helperMaxLines:
                                                         5,
                                                         labelText:
-                                                        "Đặt câu hỏi",
+                                                        "Trả lời câu hỏi",
                                                         hintText:
-                                                        'Nhập câu hỏi của bạn',
+                                                        'Nhập nội dung câu trả lời',
                                                         enabledBorder:
                                                         OutlineInputBorder(
                                                             borderRadius:
@@ -383,12 +565,11 @@ class _DetailQuestionState extends State<DetailQuestionEmployee> {
                       ),
                     ),
                   ],
-
                 ),
               ),
             ),
           );
-        });
+        });});
   }
   _onSendAnswerClicked(){
     var isvalid = isValid(_answerController.text);
@@ -402,12 +583,8 @@ class _DetailQuestionState extends State<DetailQuestionEmployee> {
             LoadingDialog.hideLoadingDialog(context);
             Navigator.push(context,
                 MaterialPageRoute(builder: (context) => HomePageEmployee()));
-
-
           }
       );
-
-
     }
     return 0;
   }
