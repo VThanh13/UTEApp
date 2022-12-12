@@ -11,7 +11,7 @@ class _MyFileState extends State<MyFile>{
     // TODO: implement build
     return new Scaffold(
       appBar: new  AppBar(
-        title: new Text('Hồ sơ của bạn'),
+        title: new Text('Hồ sơ của bạn '),
       ),
     );
   }
