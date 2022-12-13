@@ -103,12 +103,13 @@ class _MyInfoState extends State<MyInfo> {
     _passControll.close();
     _passnew1Controll.close();
     _passnew2Controll.close();
+    super.dispose();
   }
 
   FirebaseAuth auth = FirebaseAuth.instance;
   var userr = FirebaseAuth.instance.currentUser!;
   String name = "1234";
-  UserModel userModel = new UserModel("", " ", "", "", "", "");
+  UserModel userModel = new UserModel("", " ", "", "", "", "", "");
 
   Future<String> getUserNameFromUID() async {
     final snapshot = await FirebaseFirestore.instance
@@ -149,6 +150,7 @@ class _MyInfoState extends State<MyInfo> {
             userModel.image = (e.data() as Map)['image'];
             userModel.password = (e.data() as Map)['pass'];
             userModel.phone = (e.data() as Map)['phone'];
+            userModel.status = (e.data() as Map)['status'];
             print("hello: " + userModel.name);
             return userModel;
           }).toString();

@@ -47,14 +47,6 @@ class _RegisterPageState extends State<RegisterPage>{
         constraints: BoxConstraints.expand(),
         color: Colors.white,
 
-        // width: MediaQuery.of(context).size.width,
-        // height: MediaQuery.of(context).size.height,
-        // decoration: BoxDecoration(
-        //     gradient: LinearGradient(colors: [
-        //       hexStringToColor("CB2B93"),
-        //       hexStringToColor("9546C4"),
-        //       hexStringToColor("5E61F4")
-        //     ], begin: Alignment.topCenter, end: Alignment.bottomCenter)),
         child: SingleChildScrollView(
           child: Column(
             children: <Widget>[
@@ -109,9 +101,7 @@ class _RegisterPageState extends State<RegisterPage>{
                   controller: _emailController,
                   style: TextStyle(fontSize: 25, color: Colors.black),
                   decoration: InputDecoration(
-
                       labelText: "Email",
-
                       errorText: snapshot.hasError ? snapshot.error.toString() :null,
                       prefixIcon: Container(
                           width: 50, child: Icon(Icons.add_card_rounded)),
@@ -174,9 +164,6 @@ class _RegisterPageState extends State<RegisterPage>{
                     style: TextStyle(color: Color(0xff3277D8), fontSize: 18))
                 ]),
               ),)
-
-
-
             ],
           ),
 

@@ -15,7 +15,8 @@ class DetailQuestion extends StatefulWidget {
 
   DetailQuestion({required this.question});
 }
-class Answer{
+
+class Answer {
   String id;
   String content;
   String questionId;
@@ -24,7 +25,8 @@ class Answer{
 
   Answer(this.id, this.questionId, this.content, this.time, this.employee);
 }
-class Question{
+
+class Question {
   String id;
   String title;
   String content;
@@ -39,17 +41,22 @@ class Question{
   Question(this.id, this.title, this.content, this.time, this.department,
       this.category, this.status, this.user, this.information, this.file);
 }
+
 FirebaseAuth auth = FirebaseAuth.instance;
 var userr = FirebaseAuth.instance.currentUser!;
-EmployeeModel employeeModel = new EmployeeModel("", " ", "", "", "", "", "", "", "");
-UserModel uModel = new UserModel("", " ", "", "", "", "");
+EmployeeModel employeeModel =
+    new EmployeeModel("", " ", "", "", "", "", "", "", "", "");
+UserModel uModel = new UserModel("", " ", "", "", "", "", "");
 Question question = new Question("", "", "", "", "", "", "", uModel, "", "");
 
 List<Answer> listAnswer = [];
 Future<List<Answer>> getAnswerData() async {
   List<AnswerModel> list = [];
-  QuerySnapshot snapshot = await FirebaseFirestore.instance.collection('answer').where('questionId', isEqualTo: question.id).get();
-  snapshot.docs.map((e){
+  QuerySnapshot snapshot = await FirebaseFirestore.instance
+      .collection('answer')
+      .where('questionId', isEqualTo: question.id)
+      .get();
+  snapshot.docs.map((e) {
     AnswerModel ans = new AnswerModel("", "", "", "", "");
     ans.userId = (e.data() as Map)['userId'];
     ans.id = e.reference.id;
@@ -60,15 +67,16 @@ Future<List<Answer>> getAnswerData() async {
   }).toList();
   List<Answer> listAns = [];
   // print(listUser);
-  for (var i = 0; i < list.length; i++){
-    QuerySnapshot snapshot = await FirebaseFirestore.instance.collection('employee')
+  for (var i = 0; i < list.length; i++) {
+    QuerySnapshot snapshot = await FirebaseFirestore.instance
+        .collection('employee')
         .where('id', isEqualTo: list[i].userId)
         .get();
-    snapshot.docs.map((e){
-      EmployeeModel employeeModel = new EmployeeModel("", "", "", "", "", "", "", "", "");
-      Answer ans = Answer(
-          list[i].id, list[i].questionId, list[i].content, list[i].time,
-          employeeModel);
+    snapshot.docs.map((e) {
+      EmployeeModel employeeModel =
+          new EmployeeModel("", "", "", "", "", "", "", "", "", "");
+      Answer ans = Answer(list[i].id, list[i].questionId, list[i].content,
+          list[i].time, employeeModel);
       employeeModel.id = (e.data() as Map)['id'];
       employeeModel.name = (e.data() as Map)['name'];
       employeeModel.email = (e.data() as Map)['email'];
@@ -78,129 +86,131 @@ Future<List<Answer>> getAnswerData() async {
       employeeModel.department = (e.data() as Map)['department'];
       employeeModel.category = (e.data() as Map)['category'];
       employeeModel.roles = (e.data() as Map)['roles'];
+      employeeModel.status = (e.data() as Map)['status'];
       ans.employee = employeeModel;
       listAns.add(ans);
     }).toList();
-
   }
   return listAns;
 }
 
-fillListQuestion(setState) async{
+fillListQuestion(setState) async {
   final listAnswers = await getAnswerData() as List<Answer>;
-  setState((){
-    listAnswer=listAnswers;
+  setState(() {
+    listAnswer = listAnswers;
   });
 }
+
 _buildAnswers(setState) {
   fillListQuestion(setState);
 
   List<Widget> answerList = [];
   listAnswer.forEach((Answer answer) {
-    answerList.add(
-        GestureDetector(
-
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.start,
+    answerList.add(GestureDetector(
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Column(
             crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.start,
+            //mainAxisSize: MainAxisSize.min,
+
             children: <Widget>[
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.start,
-                //mainAxisSize: MainAxisSize.min,
-
-                children: <Widget>[
-                  Container(
-                    //width: MediaQuery.of(context).size.width -75,
-                    width: 285,
-                    child:Card(
-                      margin: EdgeInsets.all(5),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-
-                      ),
-                      color: Colors.lightBlueAccent,
-                      elevation: 10,
-
-                      child: Column(
+              Container(
+                //width: MediaQuery.of(context).size.width -75,
+                width: 285,
+                child: Card(
+                  margin: EdgeInsets.all(5),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  color: Colors.lightBlueAccent,
+                  elevation: 10,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      Row(
                         mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisSize: MainAxisSize.min,
-
+                        children: <Widget>[],
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
-
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-
-                            ],
-
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-
-                            children: <Widget>[
-                              Padding(padding: EdgeInsets.fromLTRB(5, 5, 5, 5)),
-                              Text(answer.employee.name,
-                                style: TextStyle(fontSize: 15, fontStyle: FontStyle.italic, ),),
-
-                              Text(' lúc ', style: TextStyle(fontSize: 15),),
-                              Expanded(child:Text(
-                                answer.time,
-                                overflow: TextOverflow.visible,
-                                maxLines: 3,
-                                style: TextStyle(fontSize: 15, fontStyle: FontStyle.italic, overflow: TextOverflow.visible),)
-                              ),
-                            ],
-                          ),
-
                           Padding(padding: EdgeInsets.fromLTRB(5, 5, 5, 5)),
-                          Container(
-                              padding: EdgeInsets.fromLTRB(5, 0, 5, 5),
-
-                              child:  Row(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisAlignment: MainAxisAlignment.start,
-
-                                children: <Widget>[
-                                  Expanded(child: Text(
-                                    answer.content,
-                                    overflow: TextOverflow.visible,
-                                    maxLines: 20,
-                                    style: TextStyle(
-                                        fontSize: 20,  fontStyle: FontStyle.italic, fontWeight: FontWeight.w400 ),
-                                  ),)
-                                ],
-                              )
+                          Text(
+                            answer.employee.name,
+                            style: TextStyle(
+                              fontSize: 15,
+                              fontStyle: FontStyle.italic,
+                            ),
                           ),
+                          Text(
+                            ' lúc ',
+                            style: TextStyle(fontSize: 15),
+                          ),
+                          Expanded(
+                              child: Text(
+                            answer.time,
+                            overflow: TextOverflow.visible,
+                            maxLines: 3,
+                            style: TextStyle(
+                                fontSize: 15,
+                                fontStyle: FontStyle.italic,
+                                overflow: TextOverflow.visible),
+                          )),
                         ],
                       ),
-                    ),
+                      Padding(padding: EdgeInsets.fromLTRB(5, 5, 5, 5)),
+                      Container(
+                          padding: EdgeInsets.fromLTRB(5, 0, 5, 5),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: <Widget>[
+                              Expanded(
+                                child: Text(
+                                  answer.content,
+                                  overflow: TextOverflow.visible,
+                                  maxLines: 20,
+                                  style: TextStyle(
+                                      fontSize: 20,
+                                      fontStyle: FontStyle.italic,
+                                      fontWeight: FontWeight.w400),
+                                ),
+                              )
+                            ],
+                          )),
+                    ],
                   ),
-                ],
-              ),
-              CircleAvatar(
-                radius: 22,
-                backgroundColor: Colors.tealAccent,
-                child: CircleAvatar(
-                  backgroundImage:
-                  new NetworkImage(answer.employee.image!),
-                  radius: 20,
-
                 ),
               ),
             ],
           ),
-
-        )
-    );
+          CircleAvatar(
+            radius: 22,
+            backgroundColor: Colors.tealAccent,
+            child: CircleAvatar(
+              backgroundImage: new NetworkImage(answer.employee.image!),
+              radius: 20,
+            ),
+          ),
+        ],
+      ),
+    ));
   });
   return Column(children: answerList);
 }
 
 class _DetailQuestionState extends State<DetailQuestion> {
+  @override
+  void dispose() {
+    super.dispose();
+  }
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
@@ -216,190 +226,242 @@ class _DetailQuestionState extends State<DetailQuestion> {
                   width: 20, height: 20, child: CircularProgressIndicator()),
             );
           }
-    snapshot.data!.docs.map((e) {
-    UserModel userModel = new UserModel("", " ", "", "", "", "");
-    userModel.id = (e.data() as Map)['userId'];
-    userModel.name = (e.data() as Map)['name'];
-    userModel.email = (e.data() as Map)['email'];
-    userModel.image = (e.data() as Map)['image'];
-    userModel.password = (e.data() as Map)['pass'];
-    userModel.phone = (e.data() as Map)['phone'];
+          snapshot.data!.docs.map((e) {
+            UserModel userModel = new UserModel("", " ", "", "", "", "", "");
+            userModel.id = (e.data() as Map)['userId'];
+            userModel.name = (e.data() as Map)['name'];
+            userModel.email = (e.data() as Map)['email'];
+            userModel.image = (e.data() as Map)['image'];
+            userModel.password = (e.data() as Map)['pass'];
+            userModel.phone = (e.data() as Map)['phone'];
+            userModel.status = (e.data() as Map)['status'];
 
-    question = new Question(widget.question.id, widget.question.title, widget.question.content,
-    widget.question.time, widget.question.department, widget.question.category, widget.question.status,
-    userModel, widget.question.information, widget.question.file,);
-    return question;
-    }).toString();
+            question = new Question(
+              widget.question.id,
+              widget.question.title,
+              widget.question.content,
+              widget.question.time,
+              widget.question.department,
+              widget.question.category,
+              widget.question.status,
+              userModel,
+              widget.question.information,
+              widget.question.file,
+            );
+            return question;
+          }).toString();
 
-    return FutureBuilder<QuerySnapshot>(
-    future: FirebaseFirestore.instance
-        .collection("employee")
-        .where("id", isEqualTo: userr.uid)
-        .get(),
-    builder: (context, snapshot) {
-    if (!snapshot.hasData) {
-    return Center(
-    child: Container(
-    width: 20,
-    height: 20,
-    child: CircularProgressIndicator()),
-    );
-    }
-    snapshot.data!.docs.map((e) {
-    employeeModel.id = (e.data() as Map)['id'];
-    employeeModel.name = (e.data() as Map)['name'];
-    employeeModel.email = (e.data() as Map)['email'];
-    employeeModel.image = (e.data() as Map)['image'];
-    employeeModel.password = (e.data() as Map)['password'];
-    employeeModel.phone = (e.data() as Map)['phone'];
-    employeeModel.department = (e.data() as Map)['department'];
-    employeeModel.category = (e.data() as Map)['category'];
-    employeeModel.roles = (e.data() as Map)['roles'];
+          return FutureBuilder<QuerySnapshot>(
+              future: FirebaseFirestore.instance
+                  .collection("employee")
+                  .where("id", isEqualTo: userr.uid)
+                  .get(),
+              builder: (context, snapshot) {
+                if (!snapshot.hasData) {
+                  return Center(
+                    child: Container(
+                        width: 20,
+                        height: 20,
+                        child: CircularProgressIndicator()),
+                  );
+                }
+                snapshot.data!.docs.map((e) {
+                  employeeModel.id = (e.data() as Map)['id'];
+                  employeeModel.name = (e.data() as Map)['name'];
+                  employeeModel.email = (e.data() as Map)['email'];
+                  employeeModel.image = (e.data() as Map)['image'];
+                  employeeModel.password = (e.data() as Map)['password'];
+                  employeeModel.phone = (e.data() as Map)['phone'];
+                  employeeModel.department = (e.data() as Map)['department'];
+                  employeeModel.category = (e.data() as Map)['category'];
+                  employeeModel.roles = (e.data() as Map)['roles'];
+                  employeeModel.status = (e.data() as Map)['status'];
 
-    return employeeModel;
-
-    }).toString();
-          return Scaffold(
-            appBar: new AppBar(
-              title: const Text("Chi tiết câu hỏi"),
-            ),
-            body: SafeArea(
-              minimum: const EdgeInsets.only(left: 20, right: 10),
-              child: SingleChildScrollView(
-                child: Column(
-
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    //Text("chi tiet cau hoi"),
-                    //Text(widget.question.title),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.min,
-                      children: <Widget>[
-                        Padding(padding: EdgeInsets.fromLTRB(0, 10, 0, 10)),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            CircleAvatar(
-                              radius: 22,
-                              backgroundColor: Colors.tealAccent,
-                              child: CircleAvatar(
-                                backgroundImage:
-                                new NetworkImage(question.user.image!),
-                                radius: 20,
-
-                              ),
-                            ),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              //mainAxisSize: MainAxisSize.min,
-
-                              children: <Widget>[
-                                Container(
-                                  width: MediaQuery.of(context).size.width -75,
-                                  child:Card(
-                                    margin: EdgeInsets.all(5),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(10),
-
-                                    ),
-                                    color: Colors.lightBlueAccent,
-                                    elevation: 10,
-
-                                    child: Column(
-                                      mainAxisAlignment: MainAxisAlignment.start,
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      mainAxisSize: MainAxisSize.min,
-
-                                      children: <Widget>[
-
-                                        Row(
-                                          mainAxisAlignment: MainAxisAlignment.start,
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: <Widget>[
-
-                                          ],
-
-                                        ),
-                                        Row(
-                                          mainAxisAlignment: MainAxisAlignment.start,
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-
-                                          children: <Widget>[
-                                            Padding(padding: EdgeInsets.fromLTRB(5, 5, 5, 5)),
-
-                                            Text(question.user.name,
-                                              style: TextStyle(fontSize: 15, fontStyle: FontStyle.italic, ),),
-
-                                            Text(' lúc ', style: TextStyle(fontSize: 15),),
-                                            Expanded(child:Text(
-                                              widget.question.time,
-                                              overflow: TextOverflow.visible,
-                                              maxLines: 3,
-                                              style: TextStyle(fontSize: 15, fontStyle: FontStyle.italic, overflow: TextOverflow.visible),)
-                                            ),
-
-                                          ],
-                                        ),
-
-                                    Row(
-                                          mainAxisAlignment: MainAxisAlignment.start,
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: <Widget>[
-                                            Padding(padding: EdgeInsets.all(5)),
-
-                                            Text('Gửi: ', style: TextStyle(fontSize: 15),),
-                                            Expanded(child:Text(question.department, style: TextStyle(fontSize: 15, fontStyle: FontStyle.italic, overflow: TextOverflow.visible),)
-                                            ),
-
-                                          ],
-                                        ),
-                                        Padding(padding: EdgeInsets.fromLTRB(5, 5, 5, 5)),
-                                        Container(
-                                            padding: EdgeInsets.fromLTRB(5, 0, 5, 5),
-
-                                            child:  Row(
-                                              crossAxisAlignment: CrossAxisAlignment.start,
-                                              mainAxisAlignment: MainAxisAlignment.start,
-
-                                              children: <Widget>[
-                                                Expanded(child: Text(
-                                                  question.content,
-                                                  overflow: TextOverflow.visible,
-                                                  maxLines: 20,
-                                                  style: TextStyle(
-                                                    fontSize: 20,  fontStyle: FontStyle.italic, fontWeight: FontWeight.w400 ),
-                                                ),)
-
-                                              ],
-                                            )
-                                        ),
-                                      ],
+                  return employeeModel;
+                }).toString();
+                return Scaffold(
+                  appBar: new AppBar(
+                    title: const Text("Chi tiết câu hỏi"),
+                  ),
+                  body: SafeArea(
+                    minimum: const EdgeInsets.only(left: 20, right: 10),
+                    child: SingleChildScrollView(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          //Text("chi tiet cau hoi"),
+                          //Text(widget.question.title),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            mainAxisSize: MainAxisSize.min,
+                            children: <Widget>[
+                              Padding(
+                                  padding: EdgeInsets.fromLTRB(0, 10, 0, 10)),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  CircleAvatar(
+                                    radius: 22,
+                                    backgroundColor: Colors.tealAccent,
+                                    child: CircleAvatar(
+                                      backgroundImage: new NetworkImage(
+                                          question.user.image!),
+                                      radius: 20,
                                     ),
                                   ),
-                                )
-                              ],
-                            ),
-                          ],
-                        ),
-                        Padding(padding: EdgeInsets.fromLTRB(0, 10, 0, 10)),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            _buildAnswers(setState)
-                          ],
-                        ),
-                      ],
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    //mainAxisSize: MainAxisSize.min,
+
+                                    children: <Widget>[
+                                      Container(
+                                        width:
+                                            MediaQuery.of(context).size.width -
+                                                75,
+                                        child: Card(
+                                          margin: EdgeInsets.all(5),
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(10),
+                                          ),
+                                          color: Colors.lightBlueAccent,
+                                          elevation: 10,
+                                          child: Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.start,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: <Widget>[
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.start,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: <Widget>[],
+                                              ),
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.start,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: <Widget>[
+                                                  Padding(
+                                                      padding:
+                                                          EdgeInsets.fromLTRB(
+                                                              5, 5, 5, 5)),
+                                                  Text(
+                                                    question.user.name,
+                                                    style: TextStyle(
+                                                      fontSize: 15,
+                                                      fontStyle:
+                                                          FontStyle.italic,
+                                                    ),
+                                                  ),
+                                                  Text(
+                                                    ' lúc ',
+                                                    style:
+                                                        TextStyle(fontSize: 15),
+                                                  ),
+                                                  Expanded(
+                                                      child: Text(
+                                                    widget.question.time,
+                                                    overflow:
+                                                        TextOverflow.visible,
+                                                    maxLines: 3,
+                                                    style: TextStyle(
+                                                        fontSize: 15,
+                                                        fontStyle:
+                                                            FontStyle.italic,
+                                                        overflow: TextOverflow
+                                                            .visible),
+                                                  )),
+                                                ],
+                                              ),
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.start,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: <Widget>[
+                                                  Padding(
+                                                      padding:
+                                                          EdgeInsets.all(5)),
+                                                  Text(
+                                                    'Gửi: ',
+                                                    style:
+                                                        TextStyle(fontSize: 15),
+                                                  ),
+                                                  Expanded(
+                                                      child: Text(
+                                                    question.department,
+                                                    style: TextStyle(
+                                                        fontSize: 15,
+                                                        fontStyle:
+                                                            FontStyle.italic,
+                                                        overflow: TextOverflow
+                                                            .visible),
+                                                  )),
+                                                ],
+                                              ),
+                                              Padding(
+                                                  padding: EdgeInsets.fromLTRB(
+                                                      5, 5, 5, 5)),
+                                              Container(
+                                                  padding: EdgeInsets.fromLTRB(
+                                                      5, 0, 5, 5),
+                                                  child: Row(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment.start,
+                                                    children: <Widget>[
+                                                      Expanded(
+                                                        child: Text(
+                                                          question.content,
+                                                          overflow: TextOverflow
+                                                              .visible,
+                                                          maxLines: 20,
+                                                          style: TextStyle(
+                                                              fontSize: 20,
+                                                              fontStyle:
+                                                                  FontStyle
+                                                                      .italic,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w400),
+                                                        ),
+                                                      )
+                                                    ],
+                                                  )),
+                                            ],
+                                          ),
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                ],
+                              ),
+                              Padding(
+                                  padding: EdgeInsets.fromLTRB(0, 10, 0, 10)),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[_buildAnswers(setState)],
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
-                  ],
-                ),
-              ),
-            ),
-          );
-        });});
+                  ),
+                );
+              });
+        });
   }
 }

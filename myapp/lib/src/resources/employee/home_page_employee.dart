@@ -26,8 +26,11 @@ class HomePageEmployee extends StatefulWidget {
 class _HomePageState extends State<HomePageEmployee> {
   FirebaseAuth auth = FirebaseAuth.instance;
   var userr = FirebaseAuth.instance.currentUser!;
-  EmployeeModel employeeModel = new EmployeeModel("", " ", "", "", "", "", "", "", "");
-
+  EmployeeModel employeeModel = new EmployeeModel("", " ", "", "", "", "", "", "", "", "");
+  @override
+  void dispose() {
+    super.dispose();
+  }
   @override
   void initState() {
     super.initState();
@@ -60,6 +63,7 @@ class _HomePageState extends State<HomePageEmployee> {
             employeeModel.department = (e.data() as Map)['department'];
             employeeModel.category = (e.data() as Map)['category'];
             employeeModel.roles = (e.data() as Map)['roles'];
+            employeeModel.status = (e.data() as Map)['status'];
 
             return employeeModel;
 

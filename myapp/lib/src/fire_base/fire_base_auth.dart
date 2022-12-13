@@ -41,6 +41,7 @@ class FireAuth {
     'pass':pass,
     'name':name,
     'phone': phone,
+    'status': "enabled",
     'image': 'https://firebasestorage.googleapis.com/v0/b/uteapp-7ab04.appspot.com/o/avatar%2Fdefault_avatar.jpg?alt=media&token=3c5e96ba-7e96-4299-871f-c16285df1e2a'}).then((value) {
       onSuccess();
       print("add user");

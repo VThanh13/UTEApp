@@ -9,32 +9,28 @@ import 'package:myapp/src/resources/about_page/admission_history.dart';
 import 'package:myapp/src/resources/login_page.dart';
 import 'package:myapp/src/resources/messenger/messenger_page.dart';
 import 'package:myapp/src/resources/messenger/test.dart';
-import 'package:myapp/src/models/UserModel.dart';
+import 'package:myapp/src/models/EmployeeModel.dart';
 import 'package:myapp/src/screens/signin_screen.dart';
 
+import '../../models/EmployeeModel.dart';
+import '../employee/employee_info.dart';
 import '../dialog/loading_dialog.dart';
+import 'messenger_leader.dart';
 
-class HomePageAdmin extends StatefulWidget {
+class HomePageLeader extends StatefulWidget {
 
   @override
   _HomePageState createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePageAdmin> {
+class _HomePageState extends State<HomePageLeader> {
   FirebaseAuth auth = FirebaseAuth.instance;
   var userr = FirebaseAuth.instance.currentUser!;
-  String name = "1234";
-  UserModel userModel = new UserModel("", " ", "", "", "", "", "");
-
-  Future<String> getUserNameFromUID() async {
-    final snapshot = await FirebaseFirestore.instance
-        .collection('user')
-        .where('userId', isEqualTo: userr.uid)
-        .get();
-    return snapshot.docs.first['name'];
+  EmployeeModel employeeModel = new EmployeeModel("", " ", "", "", "", "", "", "", "", "");
+  @override
+  void dispose() {
+    super.dispose();
   }
-
-
   @override
   void initState() {
     super.initState();
@@ -45,8 +41,8 @@ class _HomePageState extends State<HomePageAdmin> {
   Widget build(BuildContext context) {
     return FutureBuilder<QuerySnapshot>(
         future: FirebaseFirestore.instance
-            .collection("user")
-            .where("userId", isEqualTo: userr.uid)
+            .collection("employee")
+            .where("id", isEqualTo: userr.uid)
             .get(),
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
@@ -58,15 +54,18 @@ class _HomePageState extends State<HomePageAdmin> {
             );
           }
           snapshot.data!.docs.map((e) {
-            userModel.id = (e.data() as Map)['userId'];
-            userModel.name = (e.data() as Map)['name'];
-            userModel.email = (e.data() as Map)['email'];
-            userModel.image = (e.data() as Map)['image'];
-            userModel.password = (e.data() as Map)['pass'];
-            userModel.phone = (e.data() as Map)['phone'];
-            userModel.status = (e.data() as Map)['status'];
+            employeeModel.id = (e.data() as Map)['id'];
+            employeeModel.name = (e.data() as Map)['name'];
+            employeeModel.email = (e.data() as Map)['email'];
+            employeeModel.image = (e.data() as Map)['image'];
+            employeeModel.password = (e.data() as Map)['password'];
+            employeeModel.phone = (e.data() as Map)['phone'];
+            employeeModel.department = (e.data() as Map)['department'];
+            employeeModel.category = (e.data() as Map)['category'];
+            employeeModel.roles = (e.data() as Map)['roles'];
+            employeeModel.status = (e.data() as Map)['status'];
 
-            return userModel;
+            return employeeModel;
 
           }).toString();
 
@@ -81,7 +80,7 @@ class _HomePageState extends State<HomePageAdmin> {
                           context,
                           new MaterialPageRoute(
                               builder: (BuildContext context) =>
-                                  MessengerPage()));
+                                  MessengerPageLeader()));
                     },
                     icon: Icon(
                       AppIcons.chat,
@@ -104,20 +103,20 @@ class _HomePageState extends State<HomePageAdmin> {
               child: ListView(
                 children: <Widget>[
                   new UserAccountsDrawerHeader(
-                    accountName: new Text(userModel.name!),
-                    accountEmail: new Text(userModel.email!),
+                    accountName: new Text(employeeModel.name!),
+                    accountEmail: new Text(employeeModel.email!),
                     currentAccountPicture: new CircleAvatar(
                       backgroundImage:
-                          new NetworkImage(userModel.image!),
+                          new NetworkImage(employeeModel.image!),
                     ),
                   ),
                   new ListTile(
-                    title: new Text('Thông tin cá nhân'),
+                    title: new Text('Thông tin cá nhân trưởng nhóm'),
                     onTap: () {
                       Navigator.push(
                           context,
                           new MaterialPageRoute(
-                              builder: (BuildContext context) => new MyInfo()));
+                              builder: (BuildContext context) => new EmployeeInfo()));
                     },
                   ),
                   new Divider(

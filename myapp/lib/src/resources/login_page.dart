@@ -15,6 +15,7 @@ import 'dialog/loading_dialog.dart';
 import 'dialog/msg_dialog.dart';
 import 'employee/home_page_employee.dart';
 import 'home_page.dart';
+import 'leader/home_page_leader.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -154,6 +155,7 @@ class _LoginPageState extends State<LoginPage> {
                 var snapshot = await FirebaseFirestore.instance
                     .collection('user')
                     .where('userId', isEqualTo: userr.uid)
+                    .where('status', isEqualTo: "enabled")
                     .get();
                 if(snapshot.docs!= null && snapshot.docs.isNotEmpty){
                   LoadingDialog.hideLoadingDialog(context);
@@ -163,11 +165,21 @@ class _LoginPageState extends State<LoginPage> {
                 snapshot = await FirebaseFirestore.instance
                     .collection('employee')
                     .where('id', isEqualTo: userr.uid)
+                    .where('status', isEqualTo: "enabled")
                     .get();
                 if(snapshot.docs!= null && snapshot.docs.isNotEmpty){
-                  LoadingDialog.hideLoadingDialog(context);
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => HomePageEmployee()));
+                  if(snapshot.docs.first['roles'] == "Tư vấn viên") {
+                    LoadingDialog.hideLoadingDialog(context);
+                    Navigator.push(context,
+                        MaterialPageRoute(
+                            builder: (context) => HomePageEmployee()));
+                  }
+                  else if(snapshot.docs.first['roles'] == "Trưởng nhóm") {
+                    LoadingDialog.hideLoadingDialog(context);
+                    Navigator.push(context,
+                        MaterialPageRoute(
+                            builder: (context) => HomePageLeader()));
+                  }
                 }
           }, (msg) {
             LoadingDialog.hideLoadingDialog(context);

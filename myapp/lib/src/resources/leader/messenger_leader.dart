@@ -14,14 +14,14 @@ import 'package:myapp/src/resources/messenger/detail_question.dart';
 import '../../models/EmployeeModel.dart';
 import '../../models/UserModel.dart';
 import '../dialog/loading_dialog.dart';
-import 'detail_question_employee.dart';
+import '../employee/detail_question_employee.dart';
 
-class MessengerPageEmployee extends StatefulWidget {
+class MessengerPageLeader extends StatefulWidget {
   @override
   _MessengerPageState createState() => _MessengerPageState();
 }
 
-class _MessengerPageState extends State<MessengerPageEmployee> {
+class _MessengerPageState extends State<MessengerPageLeader> {
   CollectionReference derpart =
       FirebaseFirestore.instance.collection('departments');
   FirebaseFirestore db = FirebaseFirestore.instance;

@@ -31,7 +31,7 @@ class _HomePageState extends State<HomePage> {
   FirebaseAuth auth = FirebaseAuth.instance;
   var userr = FirebaseAuth.instance.currentUser!;
   String name = "1234";
-  UserModel userModel = new UserModel("", " ", "", "", "", "");
+  UserModel userModel = new UserModel("", " ", "", "", "", "", "");
 
   Future<String> getUserNameFromUID() async {
     final snapshot = await FirebaseFirestore.instance
@@ -50,6 +50,10 @@ class _HomePageState extends State<HomePage> {
     userModel = snapshot.docs.first as UserModel;
   }
 
+  @override
+  void dispose() {
+    super.dispose();
+  }
   @override
   void initState() {
     super.initState();
@@ -79,6 +83,7 @@ class _HomePageState extends State<HomePage> {
             userModel.image = (e.data() as Map)['image'];
             userModel.password = (e.data() as Map)['pass'];
             userModel.phone = (e.data() as Map)['phone'];
+            userModel.status = (e.data() as Map)['status'];
 
             return userModel;
 

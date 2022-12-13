@@ -43,7 +43,7 @@ class _MessengerPageState extends State<MessengerPage> {
 
   FirebaseAuth auth = FirebaseAuth.instance;
   var userr = FirebaseAuth.instance.currentUser!;
-  UserModel userModel = new UserModel("", " ", "", "", "", "");
+  UserModel userModel = new UserModel("", " ", "", "", "", "", "");
 
   Future<List> getDataDropdownProblem(String? value_khoa) async {
     QuerySnapshot snapshot = await FirebaseFirestore.instance
@@ -181,6 +181,7 @@ class _MessengerPageState extends State<MessengerPage> {
     _questionControl.close();
     _titleControl.close();
     _informationControl.close();
+    super.dispose();
   }
 
 
@@ -241,6 +242,7 @@ class _MessengerPageState extends State<MessengerPage> {
                         userModel.image = (e.data() as Map)['image'];
                         userModel.password = (e.data() as Map)['pass'];
                         userModel.phone = (e.data() as Map)['phone'];
+                        userModel.status = (e.data() as Map)['status'];
                         return userModel;
                       }).toString();
 
@@ -269,296 +271,306 @@ class _MessengerPageState extends State<MessengerPage> {
                                                   MediaQuery.of(context).size.width,
                                                   MediaQuery.of(context).size.height * 0.75)),
                                             shape: RoundedRectangleBorder(
-                                              borderRadius: BorderRadius.circular(20.0),
+                                              borderRadius: BorderRadius.only(
+                                                  topLeft: Radius.circular(20),
+                                                  topRight: Radius.circular(20),
+                                              )
                                             ),
 
                                             context: context,
                                             builder: (BuildContext context) {
                                               return StatefulBuilder(builder: (BuildContext context, StateSetter setStateKhoa) {
-                                                return SingleChildScrollView(
-                                                    child: Container(
-                                                  height: 900,
-                                                  child: Column(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment.start,
-                                                    children: <Widget>[
-                                                      Padding(padding: EdgeInsets.fromLTRB(0, 10,0, 10)),
-                                                      Text("Đặt câu hỏi cho tư vấn viên",
-                                                        style: TextStyle(
-                                                            fontSize: 15,
-                                                            fontWeight:FontWeight.bold),
-                                                      ),
-                                                      Container(
-                                                          margin: EdgeInsets.fromLTRB(0, 10, 0, 15),
-                                                          width: 400,
-                                                          padding: EdgeInsets.symmetric(horizontal:12,vertical: 4),
-                                                          decoration:
-                                                              BoxDecoration(
-                                                            borderRadius: BorderRadius.circular(12),
-                                                            border: Border.all(color: Colors.blueAccent,width: 4),
-                                                          ),
-                                                          child:
-                                                              DropdownButtonHideUnderline(
-                                                            child:
-                                                                DropdownButton(
-                                                                  isExpanded: true,
-                                                              value: value_khoa,
-                                                              hint: new Text("Vui lòng chọn đơn vị để hỏi"),
-                                                              iconSize: 36,
-                                                              items:render(list),
-                                                              onChanged:(value) async{
-                                                                final List<dynamic> list_problem = await getDataDropdownProblem(value) as List;
-                                                                setStateKhoa(() {
-                                                                  setState(() {
-                                                                    this.value_vande=null;
-                                                                    this.value_khoa =value;
-                                                                    this.listt = list_problem;
-                                                                  });
-                                                                });
-                                                              },
-                                                            ),
-                                                          )),
-                                                      Container(
-                                                          margin: EdgeInsets.fromLTRB( 0, 10, 0, 15),
-                                                          width: 400,
-                                                          padding: EdgeInsets
-                                                              .symmetric(horizontal:12,vertical: 4),
-                                                          decoration:
-                                                              BoxDecoration(
-                                                            borderRadius:
-                                                                BorderRadius.circular(12),
-                                                            border: Border.all(color: Colors.blueAccent, width: 4),
-                                                          ),
-                                                          child:
-                                                              DropdownButtonHideUnderline(
-                                                            child:
-                                                                DropdownButton(
-                                                                  isExpanded: true,
-                                                              value: value_vande,
-                                                              hint: new Text( "Vui lòng chọn vấn đề để hỏi"),
-                                                              iconSize: 36,
-                                                              items: renderr(listt),
-                                                              onChanged:(value) {
-                                                                setStateKhoa(() {
-                                                                  setState(() {
-                                                                    this.value_vande = value;
-                                                                  });
-                                                                });
-                                                              },
-                                                            ),
-                                                          )),
-                                                      Container(
-                                                          margin: EdgeInsets
-                                                              .fromLTRB(
-                                                                  0, 10, 0, 15),
-                                                          width: 400,
-                                                          padding: EdgeInsets
-                                                              .symmetric(
-                                                                  horizontal:
-                                                                      12,
-                                                                  vertical: 4),
-                                                          decoration:
-                                                              BoxDecoration(
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        12),
-                                                            border: Border.all(
-                                                                color: Colors
-                                                                    .blueAccent,
-                                                                width: 4),
-                                                          ),
-                                                          child:
-                                                              DropdownButtonHideUnderline(
-                                                            child:
-                                                                DropdownButton<String>(
-                                                                  isExpanded: true,
-                                                              value:value_doituong,
-                                                              hint: new Text(
-                                                                  "Vui lòng chọn đối tượng"),
-                                                              iconSize: 36,
-                                                              items: item_doituong
-                                                                  .map(
-                                                                      buildMenuItem)
-                                                                  .toList(),
-                                                              onChanged:
-                                                                  (value) {
-                                                                setStateKhoa(
-                                                                    () {
-                                                                  setState(() {
-                                                                    this.value_doituong =
-                                                                        value;
-                                                                  });
-                                                                });
-                                                              },
-                                                            ),
-                                                          )),
-                                                      Container(
-                                                        margin:
-                                                            EdgeInsets.fromLTRB(
-                                                                0, 10, 0, 15),
-                                                        width: 400,
-                                                        child: StreamBuilder(
-                                                          stream: informationControl,
-                                                          builder: (context, snapshot) =>TextField(
-                                                            controller: _informationController,
-                                                            decoration:
-                                                            InputDecoration(
-                                                                labelText:
-                                                                "Phương thức liên hệ",
-                                                                hintText:
-                                                                'Nhập Email/SĐT của bạn',
-                                                                enabledBorder:
-                                                                OutlineInputBorder(
-                                                                    borderRadius: BorderRadius.circular(10),
-                                                                    borderSide: BorderSide(color:Colors.blueAccent, width:1,)),
-                                                                focusedBorder: OutlineInputBorder(
-                                                                    borderRadius:
-                                                                    BorderRadius.circular(
-                                                                        10),
-                                                                    borderSide: BorderSide(
-                                                                        color: Colors
-                                                                            .blue,
-                                                                        width:
-                                                                        4))),
-                                                          ),
-                                                        )
-                                                      ),
-                                                      Container(
-                                                        margin:
-                                                        EdgeInsets.fromLTRB(
-                                                            0, 10, 0, 15),
-                                                        width: 400,
-                                                        child: StreamBuilder(
-                                                          stream: titleControl,
-                                                          builder: (context, snapshot) => TextField(
-                                                            controller: _titleController,
-                                                            decoration:
-                                                            InputDecoration(
-                                                                labelText:
-                                                                "Tiêu đề",
-                                                                hintText:
-                                                                'Nhập Tiêu đề',
-                                                                enabledBorder:
-                                                                OutlineInputBorder(
-                                                                    borderRadius: BorderRadius.circular(10),
-                                                                    borderSide: BorderSide(color:Colors.blueAccent, width:1,)),
-                                                                focusedBorder: OutlineInputBorder(
-                                                                    borderRadius:
-                                                                    BorderRadius.circular(
-                                                                        10),
-                                                                    borderSide: BorderSide(
-                                                                        color: Colors
-                                                                            .blue,
-                                                                        width:
-                                                                        4))),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                      Container(
-                                                        margin: EdgeInsets.fromLTRB(0, 10, 0, 15),
-                                                        child: StreamBuilder(
-                                                          stream: questionControl,
-                                                          builder: (context, snapshot) => TextField(
-                                                            controller: _questionController,
-                                                            maxLines: 7,
-                                                            maxLength: 500,
-                                                            decoration:
-                                                            InputDecoration(
-                                                                hintMaxLines: 5,
-                                                                helperMaxLines:
-                                                                5,
-                                                                labelText:
-                                                                "Đặt câu hỏi",
-                                                                hintText:
-                                                                'Nhập câu hỏi của bạn',
-                                                                enabledBorder:
-                                                                OutlineInputBorder(
-                                                                    borderRadius:
-                                                                    BorderRadius.circular(
-                                                                        10),
-                                                                    borderSide:
-                                                                    BorderSide(
-                                                                      color:
-                                                                      Colors.blueAccent,
-                                                                      width:
-                                                                      1,
-                                                                    )),
-                                                                focusedBorder: OutlineInputBorder(
-                                                                    borderRadius:
-                                                                    BorderRadius.circular(
-                                                                        10),
-                                                                    borderSide: BorderSide(
-                                                                        color: Colors
-                                                                            .blue,
-                                                                        width:
-                                                                        4))),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                      IconButton(
-                                                          onPressed: () {},
-                                                          icon: Icon(AppIcons
-                                                              .file_pdf)),
-                                                      Container(
-                                                        padding:
-                                                            EdgeInsets.all(10),
-                                                        child: Row(
+                                                return Container(
+                                                  // child: Column(
+                                                  //     children:<Widget>[
+                                                  // Padding(padding: EdgeInsets.fromLTRB(0, 10,0, 10)),
+                                                  //     Text("Đặt câu hỏi cho tư vấn viên",
+                                                  //       style: TextStyle(
+                                                  //           fontSize: 15,
+                                                  //           fontWeight:FontWeight.bold),),
+
+                                                  child: SingleChildScrollView(
+                                                      child: Container(
+                                                        height: 900,
+                                                        child: Column(
                                                           mainAxisAlignment:
-                                                              MainAxisAlignment
-                                                                  .spaceAround,
+                                                          MainAxisAlignment.start,
                                                           children: <Widget>[
-                                                            Expanded(
-                                                              child:
-                                                                  ElevatedButton(
-                                                                onPressed: () {
-                                                                  _onSendQuestionClicked();
-                                                                  print(
-                                                                      'press save');
-                                                                },
-                                                                child: Text(
-                                                                  'Gửi',
-                                                                  style: TextStyle(
-                                                                      fontSize:
-                                                                          16,
+                                                            Padding(padding: EdgeInsets.fromLTRB(0, 10,0, 10)),
+                                                            Container(
+                                                                margin: EdgeInsets.fromLTRB(0, 10, 0, 15),
+                                                                width: 340,
+                                                                padding: EdgeInsets.symmetric(horizontal:12,vertical: 4),
+                                                                decoration:
+                                                                BoxDecoration(
+                                                                  borderRadius: BorderRadius.circular(12),
+                                                                  border: Border.all(color: Colors.blueAccent,width: 4),
+                                                                ),
+                                                                child:
+                                                                DropdownButtonHideUnderline(
+                                                                  child:
+                                                                  DropdownButton(
+                                                                    isExpanded: true,
+                                                                    value: value_khoa,
+                                                                    hint: new Text("Vui lòng chọn đơn vị để hỏi"),
+                                                                    iconSize: 36,
+                                                                    items:render(list),
+                                                                    onChanged:(value) async{
+                                                                      final List<dynamic> list_problem = await getDataDropdownProblem(value) as List;
+                                                                      setStateKhoa(() {
+                                                                        setState(() {
+                                                                          this.value_vande=null;
+                                                                          this.value_khoa =value;
+                                                                          this.listt = list_problem;
+                                                                        });
+                                                                      });
+                                                                    },
+                                                                  ),
+                                                                )),
+                                                            Container(
+                                                                margin: EdgeInsets.fromLTRB( 0, 10, 0, 15),
+                                                                width: 340,
+                                                                padding: EdgeInsets
+                                                                    .symmetric(horizontal:12,vertical: 4),
+                                                                decoration:
+                                                                BoxDecoration(
+                                                                  borderRadius:
+                                                                  BorderRadius.circular(12),
+                                                                  border: Border.all(color: Colors.blueAccent, width: 4),
+                                                                ),
+                                                                child:
+                                                                DropdownButtonHideUnderline(
+                                                                  child:
+                                                                  DropdownButton(
+                                                                    isExpanded: true,
+                                                                    value: value_vande,
+                                                                    hint: new Text( "Vui lòng chọn vấn đề để hỏi"),
+                                                                    iconSize: 36,
+                                                                    items: renderr(listt),
+                                                                    onChanged:(value) {
+                                                                      setStateKhoa(() {
+                                                                        setState(() {
+                                                                          this.value_vande = value;
+                                                                        });
+                                                                      });
+                                                                    },
+                                                                  ),
+                                                                )),
+                                                            Container(
+                                                                margin: EdgeInsets
+                                                                    .fromLTRB(
+                                                                    0, 10, 0, 15),
+                                                                width: 340,
+                                                                padding: EdgeInsets
+                                                                    .symmetric(
+                                                                    horizontal:
+                                                                    12,
+                                                                    vertical: 4),
+                                                                decoration:
+                                                                BoxDecoration(
+                                                                  borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                      12),
+                                                                  border: Border.all(
                                                                       color: Colors
-                                                                          .white),
+                                                                          .blueAccent,
+                                                                      width: 4),
+                                                                ),
+                                                                child:
+                                                                DropdownButtonHideUnderline(
+                                                                  child:
+                                                                  DropdownButton<String>(
+                                                                    isExpanded: true,
+                                                                    value:value_doituong,
+                                                                    hint: new Text(
+                                                                        "Vui lòng chọn đối tượng"),
+                                                                    iconSize: 36,
+                                                                    items: item_doituong
+                                                                        .map(
+                                                                        buildMenuItem)
+                                                                        .toList(),
+                                                                    onChanged:
+                                                                        (value) {
+                                                                      setStateKhoa(
+                                                                              () {
+                                                                            setState(() {
+                                                                              this.value_doituong =
+                                                                                  value;
+                                                                            });
+                                                                          });
+                                                                    },
+                                                                  ),
+                                                                )),
+                                                            Container(
+                                                                margin:
+                                                                EdgeInsets.fromLTRB(
+                                                                    0, 10, 0, 15),
+                                                                width: 340,
+                                                                child: StreamBuilder(
+                                                                  stream: informationControl,
+                                                                  builder: (context, snapshot) =>TextField(
+                                                                    controller: _informationController,
+                                                                    decoration:
+                                                                    InputDecoration(
+                                                                        labelText:
+                                                                        "Phương thức liên hệ",
+                                                                        hintText:
+                                                                        'Nhập Email/SĐT của bạn',
+                                                                        enabledBorder:
+                                                                        OutlineInputBorder(
+                                                                            borderRadius: BorderRadius.circular(10),
+                                                                            borderSide: BorderSide(color:Colors.blueAccent, width:1,)),
+                                                                        focusedBorder: OutlineInputBorder(
+                                                                            borderRadius:
+                                                                            BorderRadius.circular(
+                                                                                10),
+                                                                            borderSide: BorderSide(
+                                                                                color: Colors
+                                                                                    .blue,
+                                                                                width:
+                                                                                4))),
+                                                                  ),
+                                                                )
+                                                            ),
+                                                            Container(
+                                                              margin:
+                                                              EdgeInsets.fromLTRB(
+                                                                  0, 10, 0, 15),
+                                                              width: 340,
+                                                              child: StreamBuilder(
+                                                                stream: titleControl,
+                                                                builder: (context, snapshot) => TextField(
+                                                                  controller: _titleController,
+                                                                  decoration:
+                                                                  InputDecoration(
+                                                                      labelText:
+                                                                      "Tiêu đề",
+                                                                      hintText:
+                                                                      'Nhập Tiêu đề',
+                                                                      enabledBorder:
+                                                                      OutlineInputBorder(
+                                                                          borderRadius: BorderRadius.circular(10),
+                                                                          borderSide: BorderSide(color:Colors.blueAccent, width:1,)),
+                                                                      focusedBorder: OutlineInputBorder(
+                                                                          borderRadius:
+                                                                          BorderRadius.circular(
+                                                                              10),
+                                                                          borderSide: BorderSide(
+                                                                              color: Colors
+                                                                                  .blue,
+                                                                              width:
+                                                                              4))),
                                                                 ),
                                                               ),
                                                             ),
-                                                            Padding(
-                                                                padding:
-                                                                    EdgeInsets
-                                                                        .all(
-                                                                            10)),
-                                                            Expanded(
-                                                                child:
+                                                            Container(
+                                                              width: 340,
+                                                              margin: EdgeInsets.fromLTRB(0, 10, 0, 15),
+                                                              child: StreamBuilder(
+                                                                stream: questionControl,
+                                                                builder: (context, snapshot) => TextField(
+                                                                  controller: _questionController,
+                                                                  maxLines: 7,
+                                                                  maxLength: 500,
+                                                                  decoration:
+                                                                  InputDecoration(
+                                                                      hintMaxLines: 5,
+                                                                      helperMaxLines:
+                                                                      5,
+                                                                      labelText:
+                                                                      "Đặt câu hỏi",
+                                                                      hintText:
+                                                                      'Nhập câu hỏi của bạn',
+                                                                      enabledBorder:
+                                                                      OutlineInputBorder(
+                                                                          borderRadius:
+                                                                          BorderRadius.circular(
+                                                                              10),
+                                                                          borderSide:
+                                                                          BorderSide(
+                                                                            color:
+                                                                            Colors.blueAccent,
+                                                                            width:
+                                                                            1,
+                                                                          )),
+                                                                      focusedBorder: OutlineInputBorder(
+                                                                          borderRadius:
+                                                                          BorderRadius.circular(
+                                                                              10),
+                                                                          borderSide: BorderSide(
+                                                                              color: Colors
+                                                                                  .blue,
+                                                                              width:
+                                                                              4))),
+                                                                ),
+                                                              ),
+                                                            ),
+                                                            IconButton(
+                                                                onPressed: () {},
+                                                                icon: Icon(AppIcons
+                                                                    .file_pdf)),
+                                                            Container(
+                                                              padding:
+                                                              EdgeInsets.all(10),
+                                                              child: Row(
+                                                                mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .spaceAround,
+                                                                children: <Widget>[
+                                                                  Expanded(
+                                                                    child:
                                                                     ElevatedButton(
-                                                                        onPressed:
-                                                                            () =>
-                                                                                {
-                                                                                  Navigator.pop(context)
-                                                                                },
-                                                                        child:
-                                                                            Text(
-                                                                          'Thoát',
-                                                                          style: TextStyle(
-                                                                              fontSize: 16,
-                                                                              color: Colors.white),
-                                                                        ))),
-                                                            Padding(
-                                                                padding: EdgeInsets
-                                                                    .fromLTRB(
-                                                                        0,
-                                                                        10,
-                                                                        0,
-                                                                        30)),
+                                                                      onPressed: () {
+                                                                        _onSendQuestionClicked();
+                                                                        print(
+                                                                            'press save');
+                                                                      },
+                                                                      child: Text(
+                                                                        'Gửi',
+                                                                        style: TextStyle(
+                                                                            fontSize:
+                                                                            16,
+                                                                            color: Colors
+                                                                                .white),
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                  Padding(
+                                                                      padding:
+                                                                      EdgeInsets
+                                                                          .all(
+                                                                          10)),
+                                                                  Expanded(
+                                                                      child:
+                                                                      ElevatedButton(
+                                                                          onPressed:
+                                                                              () =>
+                                                                          {
+                                                                            Navigator.pop(context)
+                                                                          },
+                                                                          child:
+                                                                          Text(
+                                                                            'Thoát',
+                                                                            style: TextStyle(
+                                                                                fontSize: 16,
+                                                                                color: Colors.white),
+                                                                          ))),
+                                                                  Padding(
+                                                                      padding: EdgeInsets
+                                                                          .fromLTRB(
+                                                                          0,
+                                                                          10,
+                                                                          0,
+                                                                          30)),
+                                                                ],
+                                                              ),
+                                                            )
                                                           ],
                                                         ),
-                                                      )
-                                                    ],
-                                                  ),
-                                                ));
+                                                      )),
+                                                 // ],)
+                                                );
                                               });
                                             });
                                       },

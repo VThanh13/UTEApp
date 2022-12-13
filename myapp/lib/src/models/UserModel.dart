@@ -5,9 +5,10 @@ class UserModel{
   String image;
   String password;
   String phone;
+  String status;
 
   UserModel(
-      this.id, this.name, this.email, this.image, this.password, this.phone);
+      this.id, this.name, this.email, this.image, this.password, this.phone, this.status);
 
   factory UserModel.fromMap(Map<String, dynamic> json){
     return UserModel(
@@ -17,6 +18,7 @@ class UserModel{
         json['image'],
         json['password'],
         json['phone'],
+        json['status'],
     );
   }
 

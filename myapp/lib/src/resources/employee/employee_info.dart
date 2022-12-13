@@ -66,13 +66,51 @@ class _MyInfoState extends State<EmployeeInfo> {
     _emailControll.close();
 
     _phoneControll.close();
+    super.dispose();
   }
 
   FirebaseAuth auth = FirebaseAuth.instance;
   var userr = FirebaseAuth.instance.currentUser!;
-  EmployeeModel employeeModel = new EmployeeModel("", " ", "", "", "", "", "", "", "");
+  EmployeeModel employeeModel = new EmployeeModel("", "", "", "", "", "", "", "", "", "");
+  String departmentName = "";
+  getEmployee() async {
+    await FirebaseFirestore.instance.collection('employee')
+        .where('id', isEqualTo: userr.uid)
+        .get()
+        .then((value) => {
+      //setState((){
+        employeeModel.id = value.docs.first['id'],
+        employeeModel.name = value.docs.first['name'],
+        employeeModel.email = value.docs.first['email'],
+        employeeModel.image = value.docs.first['image'],
+        employeeModel.password = value.docs.first['password'],
+        employeeModel.phone = value.docs.first['phone'],
+        employeeModel.department = value.docs.first['department'],
+        employeeModel.category = value.docs.first['category'],
+        employeeModel.roles = value.docs.first['roles'],
+        employeeModel.status = value.docs.first['status']
+      //})
+    });
 
+    await getDepartmentName();
+  }
 
+  getDepartmentName() async {
+    var snapshot = await FirebaseFirestore.instance.collection('departments')
+        .where('id', isEqualTo: employeeModel.department)
+        .get()
+        .then((value) => {
+          setState((){
+            departmentName = value.docs.first["name"];
+          })
+        });
+  }
+  @override
+  void initState() {
+    super.initState();
+    getEmployee();
+    //getDepartmentName();
+  }
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<QuerySnapshot>(
@@ -88,16 +126,17 @@ class _MyInfoState extends State<EmployeeInfo> {
             );
           }
           snapshot.data!.docs.map((e) {
-            employeeModel.id = (e.data() as Map)['id'];
-            employeeModel.name = (e.data() as Map)['name'];
-            employeeModel.email = (e.data() as Map)['email'];
-            employeeModel.image = (e.data() as Map)['image'];
-            employeeModel.password = (e.data() as Map)['password'];
-            employeeModel.phone = (e.data() as Map)['phone'];
-            employeeModel.department = (e.data() as Map)['department'];
-            employeeModel.category = (e.data() as Map)['category'];
-            employeeModel.roles = (e.data() as Map)['roles'];
-
+            // employeeModel.id = (e.data() as Map)['id'];
+            // employeeModel.name = (e.data() as Map)['name'];
+            // employeeModel.email = (e.data() as Map)['email'];
+            // employeeModel.image = (e.data() as Map)['image'];
+            // employeeModel.password = (e.data() as Map)['password'];
+            // employeeModel.phone = (e.data() as Map)['phone'];
+            // employeeModel.department = (e.data() as Map)['department'];
+            // employeeModel.category = (e.data() as Map)['category'];
+            // employeeModel.roles = (e.data() as Map)['roles'];
+            // employeeModel.status = (e.data() as Map)['status'];
+            //getDepartmentName(setState);
             return employeeModel;
           }).toString();
           // TODO: implement build
@@ -127,10 +166,7 @@ class _MyInfoState extends State<EmployeeInfo> {
                                 backgroundImage:
                                 new NetworkImage(employeeModel.image!),
                                 radius: 50,
-
                               ),
-
-
                             ),
                             Padding(padding: EdgeInsets.fromLTRB(0, 0, 0, 0)),
                             Positioned(
@@ -265,6 +301,28 @@ class _MyInfoState extends State<EmployeeInfo> {
                         onChanged: (text) => {},
                         decoration: InputDecoration(
                             labelText: "Mật khẩu của bạn",
+                            enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10),
+                                borderSide: BorderSide(
+                                  color: Colors.blueAccent,
+                                  width: 1,
+                                )),
+                            focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10),
+                                borderSide:
+                                BorderSide(color: Colors.blue, width: 4))),
+                      ),
+                    ),
+                    Container(
+                      margin: EdgeInsets.fromLTRB(0, 20, 0, 15),
+                      width: 400,
+                      child: TextField(
+                        readOnly: true,
+                        controller: TextEditingController()
+                          ..text = departmentName,
+                        onChanged: (text) => {},
+                        decoration: InputDecoration(
+                            labelText: "Khoa của bạn",
                             enabledBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(10),
                                 borderSide: BorderSide(
