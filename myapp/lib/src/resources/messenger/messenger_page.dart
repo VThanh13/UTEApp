@@ -152,8 +152,8 @@ class _MessengerPageState extends State<MessengerPage> {
                           overflow: TextOverflow.ellipsis,
                         ),
                         Text(question.status,
-                        style: TextStyle(fontSize: 12, fontWeight: FontWeight.w400),
-                        overflow: TextOverflow.ellipsis,)
+                        style: TextStyle(fontSize: 12, fontWeight: FontWeight.w400, color: question.status == "Chưa trả lời"? Colors.redAccent : Colors.green,
+                        overflow: TextOverflow.ellipsis,))
 
                       ],
                     ),
