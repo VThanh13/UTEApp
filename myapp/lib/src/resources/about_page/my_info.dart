@@ -351,6 +351,11 @@ class _MyInfoState extends State<MyInfo> {
                               child: ElevatedButton(
                                   onPressed: () {
                                     showModalBottomSheet(
+                                        shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.only(
+                                              topLeft: Radius.circular(20),
+                                              topRight: Radius.circular(20),
+                                            )),
                                         context: context,
                                         builder: (BuildContext context) {
                                           return SingleChildScrollView(
@@ -633,27 +638,27 @@ uploadImage() async {
   //Check Permissions
   await Permission.photos.request();
 
-  // var permissionStatus = await Permission.photos.status;
-  //
-  // if (permissionStatus.isGranted) {
-  //   //Select Image
-  //   image = (await _imagePicker.getImage(source: ImageSource.gallery))!;
-  //   var file = File(image.path);
-  //
-  //   if (image != null) {
-  //     //Upload to Firebase
-  //     // var snapshot = await _firebaseStorage.ref()
-  //     //     .child('images/imageName')
-  //     //     .putFile(file).onComplete;
-  //     // var downloadUrl = await snapshot.ref.getDownloadURL();
-  //     // setState(() {
-  //     //   imageUrl = downloadUrl;
-  //     // });
-  //     print('Avatar');
-  //   } else {
-  //     print('No Image Path Received');
-  //   }
-  // } else {
-  //   print('Permission not granted. Try Again with permission access');
-  //}
+  var permissionStatus = await Permission.photos.status;
+
+  if (permissionStatus.isGranted) {
+    //Select Image
+    image = (await _imagePicker.getImage(source: ImageSource.gallery))!;
+    var file = File(image.path);
+
+    if (image != null) {
+      //Upload to Firebase
+      // var snapshot = await _firebaseStorage.ref()
+      //     .child('images/imageName')
+      //     .putFile(file).onComplete;
+      // var downloadUrl = await snapshot.ref.getDownloadURL();
+      // setState(() {
+      //   imageUrl = downloadUrl;
+      // });
+      print('Avatar');
+    } else {
+      print('No Image Path Received');
+    }
+  } else {
+    print('Permission not granted. Try Again with permission access');
+  }
 }

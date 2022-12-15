@@ -57,7 +57,10 @@ class _LoginPageState extends State<LoginPage> {
                   padding: EdgeInsets.fromLTRB(
                       20, 10, 20, 50),
                   child: Column(children: <Widget>[
-                    logoWidget("assets/ute_logo.png"),
+                    Container(
+                      child: logoWidget("assets/ute_logo.png"),
+                    ),
+
                     Padding(
                       padding: EdgeInsets.fromLTRB(0, 20, 0, 20),
                       child: StreamBuilder(

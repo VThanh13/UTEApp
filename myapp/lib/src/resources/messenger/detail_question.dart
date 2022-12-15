@@ -137,37 +137,34 @@ _buildAnswers(setState) {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[],
                       ),
-                      Row(
+                      Column(
                         mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
                           Padding(padding: EdgeInsets.fromLTRB(5, 5, 5, 5)),
-                          Text(
+                          Text('   '+
                             answer.employee.name,
                             style: TextStyle(
                               fontSize: 15,
                               fontStyle: FontStyle.italic,
+                              fontWeight: FontWeight.w600,
                             ),
                           ),
-                          Text(
-                            ' lúc ',
-                            style: TextStyle(fontSize: 15),
-                          ),
-                          Expanded(
-                              child: Text(
+                          Text('   Lúc '+
                             answer.time,
                             overflow: TextOverflow.visible,
                             maxLines: 3,
                             style: TextStyle(
                                 fontSize: 15,
                                 fontStyle: FontStyle.italic,
+                                fontWeight: FontWeight.w600,
                                 overflow: TextOverflow.visible),
-                          )),
+                          ),
                         ],
                       ),
                       Padding(padding: EdgeInsets.fromLTRB(5, 5, 5, 5)),
                       Container(
-                          padding: EdgeInsets.fromLTRB(5, 0, 5, 5),
+                          padding: EdgeInsets.fromLTRB(10, 0, 5, 5),
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             mainAxisAlignment: MainAxisAlignment.start,
@@ -178,8 +175,7 @@ _buildAnswers(setState) {
                                   overflow: TextOverflow.visible,
                                   maxLines: 20,
                                   style: TextStyle(
-                                      fontSize: 20,
-                                      fontStyle: FontStyle.italic,
+                                      fontSize: 15,
                                       fontWeight: FontWeight.w400),
                                 ),
                               )
@@ -329,7 +325,7 @@ class _DetailQuestionState extends State<DetailQuestion> {
                                             borderRadius:
                                                 BorderRadius.circular(10),
                                           ),
-                                          color: Colors.lightBlueAccent,
+                                          color: Colors.grey,
                                           elevation: 10,
                                           child: Column(
                                             mainAxisAlignment:
@@ -338,14 +334,7 @@ class _DetailQuestionState extends State<DetailQuestion> {
                                                 CrossAxisAlignment.start,
                                             mainAxisSize: MainAxisSize.min,
                                             children: <Widget>[
-                                              Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.start,
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: <Widget>[],
-                                              ),
-                                              Row(
+                                              Column(
                                                 mainAxisAlignment:
                                                     MainAxisAlignment.start,
                                                 crossAxisAlignment:
@@ -355,21 +344,16 @@ class _DetailQuestionState extends State<DetailQuestion> {
                                                       padding:
                                                           EdgeInsets.fromLTRB(
                                                               5, 5, 5, 5)),
-                                                  Text(
+                                                  Text('   '+
                                                     question.user.name,
                                                     style: TextStyle(
                                                       fontSize: 15,
                                                       fontStyle:
                                                           FontStyle.italic,
+                                                      fontWeight: FontWeight.w600,
                                                     ),
                                                   ),
-                                                  Text(
-                                                    ' lúc ',
-                                                    style:
-                                                        TextStyle(fontSize: 15),
-                                                  ),
-                                                  Expanded(
-                                                      child: Text(
+                                                  Text('   Lúc '+
                                                     widget.question.time,
                                                     overflow:
                                                         TextOverflow.visible,
@@ -378,35 +362,20 @@ class _DetailQuestionState extends State<DetailQuestion> {
                                                         fontSize: 15,
                                                         fontStyle:
                                                             FontStyle.italic,
+                                                        fontWeight: FontWeight.w600,
                                                         overflow: TextOverflow
                                                             .visible),
-                                                  )),
-                                                ],
-                                              ),
-                                              Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.start,
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: <Widget>[
-                                                  Padding(
-                                                      padding:
-                                                          EdgeInsets.all(5)),
-                                                  Text(
-                                                    'Gửi: ',
-                                                    style:
-                                                        TextStyle(fontSize: 15),
                                                   ),
-                                                  Expanded(
-                                                      child: Text(
-                                                    question.department,
+                                                  Text('   Gửi: '+
+                                                      question.department,
                                                     style: TextStyle(
                                                         fontSize: 15,
                                                         fontStyle:
-                                                            FontStyle.italic,
+                                                        FontStyle.italic,
+                                                        fontWeight: FontWeight.w600,
                                                         overflow: TextOverflow
                                                             .visible),
-                                                  )),
+                                                  ),
                                                 ],
                                               ),
                                               Padding(
@@ -414,7 +383,7 @@ class _DetailQuestionState extends State<DetailQuestion> {
                                                       5, 5, 5, 5)),
                                               Container(
                                                   padding: EdgeInsets.fromLTRB(
-                                                      5, 0, 5, 5),
+                                                      10, 0, 5, 5),
                                                   child: Row(
                                                     crossAxisAlignment:
                                                         CrossAxisAlignment
@@ -429,13 +398,7 @@ class _DetailQuestionState extends State<DetailQuestion> {
                                                               .visible,
                                                           maxLines: 20,
                                                           style: TextStyle(
-                                                              fontSize: 20,
-                                                              fontStyle:
-                                                                  FontStyle
-                                                                      .italic,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w400),
+                                                              fontSize: 15,),
                                                         ),
                                                       )
                                                     ],

@@ -64,7 +64,7 @@ class _DetailQuestionState extends State<DetailQuestionEmployee> {
 
   TextEditingController _answerController = new TextEditingController();
 
-  StreamController _answerControl = new StreamController();
+  StreamController _answerControl = new StreamController.broadcast();
 
   Stream get answerControl => _answerControl.stream;
 
@@ -164,37 +164,34 @@ class _DetailQuestionState extends State<DetailQuestionEmployee> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[],
                         ),
-                        Row(
+                        Column(
                           mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
                             Padding(padding: EdgeInsets.fromLTRB(5, 5, 5, 5)),
                             Text(
-                              answer.employee.name,
+                              '   ' + answer.employee.name,
                               style: TextStyle(
                                 fontSize: 15,
                                 fontStyle: FontStyle.italic,
+                                fontWeight: FontWeight.w600,
                               ),
                             ),
                             Text(
-                              ' lúc ',
-                              style: TextStyle(fontSize: 15),
-                            ),
-                            Expanded(
-                                child: Text(
-                              answer.time,
+                              '   Lúc ' + answer.time,
                               overflow: TextOverflow.visible,
                               maxLines: 3,
                               style: TextStyle(
                                   fontSize: 15,
                                   fontStyle: FontStyle.italic,
+                                  fontWeight: FontWeight.w600,
                                   overflow: TextOverflow.visible),
-                            )),
+                            ),
                           ],
                         ),
                         Padding(padding: EdgeInsets.fromLTRB(5, 5, 5, 5)),
                         Container(
-                            padding: EdgeInsets.fromLTRB(5, 0, 5, 5),
+                            padding: EdgeInsets.fromLTRB(10, 0, 5, 5),
                             child: Row(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               mainAxisAlignment: MainAxisAlignment.start,
@@ -205,8 +202,7 @@ class _DetailQuestionState extends State<DetailQuestionEmployee> {
                                     overflow: TextOverflow.visible,
                                     maxLines: 20,
                                     style: TextStyle(
-                                        fontSize: 20,
-                                        fontStyle: FontStyle.italic,
+                                        fontSize: 15,
                                         fontWeight: FontWeight.w400),
                                   ),
                                 )
@@ -231,6 +227,167 @@ class _DetailQuestionState extends State<DetailQuestionEmployee> {
       ));
     });
     return Column(children: answerList);
+  }
+  _modalBottomSheetAddAnswer(){
+    return showModalBottomSheet(
+        isScrollControlled: true,
+        constraints: BoxConstraints.loose(Size(
+            MediaQuery.of(context).size.width,
+            MediaQuery.of(context).size.height *
+                0.65)),
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(20),
+              topRight: Radius.circular(20),
+            )),
+        context: context,
+        builder: (BuildContext context) {
+          return StatefulBuilder(builder:
+              (BuildContext context,
+              StateSetter setStateKhoa) {
+            return Container(
+              child: Column(
+                children: <Widget>[
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(
+                        5, 20, 5, 10),
+                    child: Text(
+                      'Trả lời câu hỏi',
+                      style: TextStyle(
+                          fontSize: 24,
+                          fontWeight:
+                          FontWeight.w600,
+                          letterSpacing: 1.0),
+                    ),
+                  ),
+                  SingleChildScrollView(
+                    physics:
+                    BouncingScrollPhysics(),
+                    child: Column(
+                      crossAxisAlignment:
+                      CrossAxisAlignment
+                          .start,
+                      children: <Widget>[
+                        Container(
+                          height: MediaQuery.of(
+                              context)
+                              .size
+                              .height *
+                              0.55,
+                          child:
+                          SingleChildScrollView(
+                              child:
+                              Container(
+                                height: 600,
+                                child: Column(
+                                  mainAxisAlignment:
+                                  MainAxisAlignment
+                                      .start,
+                                  children: <Widget>[
+                                    Padding(
+                                        padding: EdgeInsets
+                                            .fromLTRB(
+                                            0,
+                                            10,
+                                            0,
+                                            10)),
+                                    Container(
+                                      margin: EdgeInsets
+                                          .fromLTRB(
+                                          10,
+                                          10,
+                                          10,
+                                          15),
+                                      child:
+                                      StreamBuilder(
+                                        stream:
+                                        answerControl,
+                                        builder: (context,
+                                            snapshot) =>
+                                            TextField(
+                                              controller:
+                                              _answerController,
+                                              maxLines: 7,
+                                              maxLength:
+                                              500,
+                                              decoration: InputDecoration(
+                                                  hintMaxLines: 5,
+                                                  helperMaxLines: 5,
+                                                  labelText: "Trả lời câu hỏi",
+                                                  hintText: 'Nhập nội dung câu trả lời',
+                                                  enabledBorder: OutlineInputBorder(
+                                                      borderRadius: BorderRadius.circular(10),
+                                                      borderSide: BorderSide(
+                                                        color: Colors.blueAccent,
+                                                        width: 1,
+                                                      )),
+                                                  focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide(color: Colors.blue, width: 4))),
+                                            ),
+                                      ),
+                                    ),
+                                    Container(
+                                      padding:
+                                      EdgeInsets
+                                          .all(
+                                          10),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                        MainAxisAlignment
+                                            .spaceAround,
+                                        children: <
+                                            Widget>[
+                                          Expanded(
+                                            child:
+                                            ElevatedButton(
+                                              onPressed:
+                                                  () {
+                                                _onSendAnswerClicked();
+                                                print(
+                                                    'press save');
+                                              },
+                                              child:
+                                              Text(
+                                                'Gửi',
+                                                style: TextStyle(
+                                                    fontSize: 16,
+                                                    color: Colors.white),
+                                              ),
+                                            ),
+                                          ),
+                                          Padding(
+                                              padding:
+                                              EdgeInsets.all(10)),
+                                          Expanded(
+                                              child:
+                                              ElevatedButton(
+                                                  onPressed: () => {
+                                                    Navigator.pop(context)
+                                                  },
+                                                  child: Text(
+                                                    'Thoát',
+                                                    style: TextStyle(fontSize: 16, color: Colors.white),
+                                                  ))),
+                                          Padding(
+                                              padding: EdgeInsets.fromLTRB(
+                                                  0,
+                                                  10,
+                                                  0,
+                                                  30)),
+                                        ],
+                                      ),
+                                    )
+                                  ],
+                                ),
+                              )),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            );
+          });
+        });
   }
 
   @override
@@ -308,12 +465,17 @@ class _DetailQuestionState extends State<DetailQuestionEmployee> {
                   ),
                   body: SafeArea(
                     minimum: const EdgeInsets.only(left: 20, right: 10),
-                    child: SingleChildScrollView(
+                      child: Column(
+                          children: <Widget>[
+                    SingleChildScrollView(
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
-                          Column(
+                      Container(
+                      height: MediaQuery.of(context).size.height * 0.75,
+                    child: SingleChildScrollView(
+                          child:Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             mainAxisAlignment: MainAxisAlignment.start,
                             mainAxisSize: MainAxisSize.min,
@@ -350,7 +512,7 @@ class _DetailQuestionState extends State<DetailQuestionEmployee> {
                                             borderRadius:
                                                 BorderRadius.circular(10),
                                           ),
-                                          color: Colors.lightBlueAccent,
+                                          color: Colors.grey,
                                           elevation: 10,
                                           child: Column(
                                             mainAxisAlignment:
@@ -366,7 +528,7 @@ class _DetailQuestionState extends State<DetailQuestionEmployee> {
                                                     CrossAxisAlignment.start,
                                                 children: <Widget>[],
                                               ),
-                                              Row(
+                                              Column(
                                                 mainAxisAlignment:
                                                     MainAxisAlignment.start,
                                                 crossAxisAlignment:
@@ -377,21 +539,17 @@ class _DetailQuestionState extends State<DetailQuestionEmployee> {
                                                           EdgeInsets.fromLTRB(
                                                               5, 5, 5, 5)),
                                                   Text(
-                                                    question.user.name,
+                                                    '   ' + question.user.name,
                                                     style: TextStyle(
                                                       fontSize: 15,
                                                       fontStyle:
                                                           FontStyle.italic,
+                                                      fontWeight:
+                                                          FontWeight.w600,
                                                     ),
                                                   ),
                                                   Text(
-                                                    ' lúc ',
-                                                    style:
-                                                        TextStyle(fontSize: 15),
-                                                  ),
-                                                  Expanded(
-                                                      child: Text(
-                                                    question.time,
+                                                    '   Lúc ' + question.time,
                                                     overflow:
                                                         TextOverflow.visible,
                                                     maxLines: 3,
@@ -399,35 +557,23 @@ class _DetailQuestionState extends State<DetailQuestionEmployee> {
                                                         fontSize: 15,
                                                         fontStyle:
                                                             FontStyle.italic,
+                                                        fontWeight:
+                                                            FontWeight.w600,
                                                         overflow: TextOverflow
                                                             .visible),
-                                                  )),
-                                                ],
-                                              ),
-                                              Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.start,
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: <Widget>[
-                                                  Padding(
-                                                      padding:
-                                                          EdgeInsets.all(5)),
-                                                  Text(
-                                                    'Gửi: ',
-                                                    style:
-                                                        TextStyle(fontSize: 15),
                                                   ),
-                                                  Expanded(
-                                                      child: Text(
-                                                    question.department,
+                                                  Text(
+                                                    '   Gửi: ' +
+                                                        question.department,
                                                     style: TextStyle(
                                                         fontSize: 15,
                                                         fontStyle:
                                                             FontStyle.italic,
+                                                        fontWeight:
+                                                            FontWeight.w600,
                                                         overflow: TextOverflow
                                                             .visible),
-                                                  )),
+                                                  ),
                                                 ],
                                               ),
                                               Padding(
@@ -435,7 +581,7 @@ class _DetailQuestionState extends State<DetailQuestionEmployee> {
                                                       5, 5, 5, 5)),
                                               Container(
                                                   padding: EdgeInsets.fromLTRB(
-                                                      5, 0, 5, 5),
+                                                      10, 0, 5, 5),
                                                   child: Row(
                                                     crossAxisAlignment:
                                                         CrossAxisAlignment
@@ -450,10 +596,7 @@ class _DetailQuestionState extends State<DetailQuestionEmployee> {
                                                               .visible,
                                                           maxLines: 20,
                                                           style: TextStyle(
-                                                              fontSize: 20,
-                                                              fontStyle:
-                                                                  FontStyle
-                                                                      .italic,
+                                                              fontSize: 15,
                                                               fontWeight:
                                                                   FontWeight
                                                                       .w400),
@@ -477,161 +620,41 @@ class _DetailQuestionState extends State<DetailQuestionEmployee> {
                               ),
                             ],
                           ),
-                          Padding(
-                            padding: EdgeInsets.fromLTRB(0, 10, 0, 20),
-                            child: SizedBox(
-                              width: double.infinity,
-                              height: 70,
-                              child: ElevatedButton(
-                                onPressed: () {
-                                  showModalBottomSheet(
-                                      isScrollControlled: true,
-                                      constraints: BoxConstraints.loose(Size(
-                                          MediaQuery.of(context).size.width,
-                                          MediaQuery.of(context).size.height *
-                                              0.5)),
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(20.0),
-                                      ),
-                                      context: context,
-                                      builder: (BuildContext context) {
-                                        return StatefulBuilder(builder:
-                                            (BuildContext context,
-                                                StateSetter setStateKhoa) {
-                                          return SingleChildScrollView(
-                                              child: Container(
-                                            height: 600,
-                                            child: Column(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.start,
-                                              children: <Widget>[
-                                                Padding(
-                                                    padding:
-                                                        EdgeInsets.fromLTRB(
-                                                            0, 10, 0, 10)),
-                                                Text(
-                                                  "Trả lời câu hỏi",
-                                                  style: TextStyle(
-                                                      fontSize: 15,
-                                                      fontWeight:
-                                                          FontWeight.bold),
-                                                ),
-                                                Container(
-                                                  margin: EdgeInsets.fromLTRB(
-                                                      0, 10, 0, 15),
-                                                  child: StreamBuilder(
-                                                    stream: answerControl,
-                                                    builder:
-                                                        (context, snapshot) =>
-                                                            TextField(
-                                                      controller:
-                                                          _answerController,
-                                                      maxLines: 7,
-                                                      maxLength: 500,
-                                                      decoration:
-                                                          InputDecoration(
-                                                              hintMaxLines: 5,
-                                                              helperMaxLines: 5,
-                                                              labelText:
-                                                                  "Trả lời câu hỏi",
-                                                              hintText:
-                                                                  'Nhập nội dung câu trả lời',
-                                                              enabledBorder:
-                                                                  OutlineInputBorder(
-                                                                      borderRadius:
-                                                                          BorderRadius.circular(
-                                                                              10),
-                                                                      borderSide:
-                                                                          BorderSide(
-                                                                        color: Colors
-                                                                            .blueAccent,
-                                                                        width:
-                                                                            1,
-                                                                      )),
-                                                              focusedBorder: OutlineInputBorder(
-                                                                  borderRadius:
-                                                                      BorderRadius
-                                                                          .circular(
-                                                                              10),
-                                                                  borderSide: BorderSide(
-                                                                      color: Colors
-                                                                          .blue,
-                                                                      width:
-                                                                          4))),
-                                                    ),
-                                                  ),
-                                                ),
-                                                Container(
-                                                  padding: EdgeInsets.all(10),
-                                                  child: Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .spaceAround,
-                                                    children: <Widget>[
-                                                      Expanded(
-                                                        child: ElevatedButton(
-                                                          onPressed: () {
-                                                            _onSendAnswerClicked();
-                                                            print('press save');
-                                                          },
-                                                          child: Text(
-                                                            'Gửi',
-                                                            style: TextStyle(
-                                                                fontSize: 16,
-                                                                color: Colors
-                                                                    .white),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                      Padding(
-                                                          padding:
-                                                              EdgeInsets.all(
-                                                                  10)),
-                                                      Expanded(
-                                                          child: ElevatedButton(
-                                                              onPressed: () => {
-                                                                    Navigator.pop(
-                                                                        context)
-                                                                  },
-                                                              child: Text(
-                                                                'Thoát',
-                                                                style: TextStyle(
-                                                                    fontSize:
-                                                                        16,
-                                                                    color: Colors
-                                                                        .white),
-                                                              ))),
-                                                      Padding(
-                                                          padding: EdgeInsets
-                                                              .fromLTRB(0, 10,
-                                                                  0, 30)),
-                                                    ],
-                                                  ),
-                                                )
-                                              ],
-                                            ),
-                                          ));
-                                        });
-                                      });
-                                },
-                                style: ElevatedButton.styleFrom(
-                                    primary: Colors.white70,
-                                    shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(12))),
-                                child: Text(
-                                  employeeModel.name! +
-                                      " ơi, bạn có muốn đặt câu hỏi?",
-                                  style: TextStyle(
-                                      color: Colors.black54, fontSize: 15),
-                                ),
-                              ),
-                            ),
-                          ),
+                    ),
+                      ),
                         ],
                       ),
                     ),
+                            Container(
+                              padding: EdgeInsets.fromLTRB(
+                                  0,
+                                  10,
+                                  0,
+                                  10),
+                              alignment: Alignment.bottomRight,
+                              child: SizedBox.fromSize(
+                                size: Size(56, 56), // button width and height
+                                child: ClipOval(
+                                  child: Material(
+                                    color: Colors.blue, // button color
+                                    child: InkWell(
+                                      splashColor: Colors.green, // splash color
+                                      onTap: () {
+                                        return _modalBottomSheetAddAnswer();
+                                      }, // button pressed
+                                      child: Column(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: <Widget>[
+                                          Icon(Icons.send), // text
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                      ),
                   ),
                 );
               });

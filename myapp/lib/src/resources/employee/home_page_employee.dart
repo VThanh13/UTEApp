@@ -111,7 +111,7 @@ class _HomePageState extends State<HomePageEmployee> {
                     ),
                   ),
                   new ListTile(
-                    title: new Text('Thông tin cá nhân employee'),
+                    title: new Text('Thông tin cá nhân'),
                     onTap: () {
                       Navigator.push(
                           context,
