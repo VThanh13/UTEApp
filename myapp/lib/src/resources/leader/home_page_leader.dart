@@ -3,18 +3,17 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:myapp/icons/app_icons_icons.dart';
 import 'package:myapp/src/resources/about_page/my_file.dart';
-import 'package:myapp/src/resources/about_page/my_info.dart';
 import 'package:myapp/src/resources/about_page/about_university.dart';
 import 'package:myapp/src/resources/about_page/admission_history.dart';
 import 'package:myapp/src/resources/login_page.dart';
-import 'package:myapp/src/resources/messenger/messenger_page.dart';
 import 'package:myapp/src/resources/messenger/test.dart';
 import 'package:myapp/src/models/EmployeeModel.dart';
 import 'package:myapp/src/screens/signin_screen.dart';
 
-import '../../models/EmployeeModel.dart';
 import '../employee/employee_info.dart';
 import '../dialog/loading_dialog.dart';
+import 'manage_category.dart';
+import 'manage_employee.dart';
 import 'messenger_leader.dart';
 
 class HomePageLeader extends StatefulWidget {
@@ -158,6 +157,32 @@ class _HomePageState extends State<HomePageLeader> {
                           context,
                           new MaterialPageRoute(
                               builder: (BuildContext context) => new MyFile()));
+                    },
+                  ),
+                  new Divider(
+                    color: Colors.black,
+                    height: 5.0,
+                  ),
+                  new ListTile(
+                    title: new Text('Quản lý Tư vấn viên'),
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          new MaterialPageRoute(
+                              builder: (BuildContext context) => new ManageEmployee()));
+                    },
+                  ),
+                  new Divider(
+                    color: Colors.black,
+                    height: 5.0,
+                  ),
+                  new ListTile(
+                    title: new Text('Quản lý Lĩnh vực'),
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          new MaterialPageRoute(
+                              builder: (BuildContext context) => new ManageCategory()));
                     },
                   ),
                   new Divider(
