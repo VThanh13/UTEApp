@@ -16,6 +16,7 @@ import 'dialog/msg_dialog.dart';
 import 'employee/home_page_employee.dart';
 import 'home_page.dart';
 import 'leader/home_page_leader.dart';
+import 'manager/home_page_manager.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -179,6 +180,12 @@ class _LoginPageState extends State<LoginPage> {
                     Navigator.push(context,
                         MaterialPageRoute(
                             builder: (context) => HomePageLeader()));
+                  }
+                  else if(snapshot.docs.first['roles'] == "Manager") {
+                    LoadingDialog.hideLoadingDialog(context);
+                    Navigator.push(context,
+                        MaterialPageRoute(
+                            builder: (context) => HomePageManager()));
                   }
                 }
           }, (msg) {

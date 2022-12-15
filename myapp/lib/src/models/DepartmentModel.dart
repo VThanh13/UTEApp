@@ -1,16 +1,16 @@
 class DepartmentModel{
   String id;
   String name;
-  String categoryId;
+  List<String> category;
 
   DepartmentModel(
-      this.id, this.name, this.categoryId);
+      this.id, this.name, this.category);
 
   factory DepartmentModel.fromMap(Map<String, dynamic> json){
     return DepartmentModel(
         json['id'],
         json['name'],
-        json['categoryId'],
+        json['category'],
     );
   }
 

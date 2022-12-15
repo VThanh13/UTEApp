@@ -10,6 +10,7 @@ import 'package:myapp/src/resources/home_page.dart';
 import 'package:myapp/src/resources/messenger/detail_question.dart';
 
 import '../../blocs/auth_bloc.dart';
+import '../../models/DepartmentModel.dart';
 import '../../models/EmployeeModel.dart';
 import '../../models/UserModel.dart';
 import '../dialog/edit_employee_dialog.dart';
@@ -17,19 +18,19 @@ import '../dialog/loading_dialog.dart';
 import '../dialog/msg_dialog.dart';
 import '../employee/detail_question_employee.dart';
 
-class ManageCategory extends StatefulWidget {
+class ManageDepartment extends StatefulWidget {
   @override
-  _ManageCategoryState createState() => _ManageCategoryState();
+  _ManageDepartmentState createState() => _ManageDepartmentState();
 }
 
-class _ManageCategoryState extends State<ManageCategory> {
+class _ManageDepartmentState extends State<ManageDepartment> {
   FirebaseFirestore db = FirebaseFirestore.instance;
   FirebaseAuth auth = FirebaseAuth.instance;
   var user_auth = FirebaseAuth.instance.currentUser!;
   AuthBloc authBloc = new AuthBloc();
   EmployeeModel current_employee =
       EmployeeModel("", "", "", "", "", "", "", "", "", "");
-  List<String> list_category = [];
+  List<DepartmentModel> list_department = [];
 
   TextEditingController _categoryController = new TextEditingController();
   StreamController _categoryControll = new StreamController();
@@ -51,7 +52,12 @@ class _ManageCategoryState extends State<ManageCategory> {
   Stream get passwordControl => _passwordControl.stream;
 
   String? value_category;
-  String departmentName = "";
+
+  var item_category = ['Học sinh THPT',
+    'Sinh viên',
+    'Phụ huynh',
+    'Cựu sinh viên',
+    'Khác'];
 
   @override
   void dispose() {
@@ -83,12 +89,12 @@ class _ManageCategoryState extends State<ManageCategory> {
               current_employee.status = value.docs.first['status']
             });
 
-    await getListCategoy();
+    await getListDepartment();
   }
-  _buildCategory(BuildContext context, String category) {
+  _buildDepartment(BuildContext context, DepartmentModel department) {
     return GestureDetector(
       onTap: () {
-        return _modalBottomSheetEditCategory(category);
+        return _modalBottomSheetEditDepartment(department.name);
       },
       child: Card(
         child: Column(
@@ -102,7 +108,7 @@ class _ManageCategoryState extends State<ManageCategory> {
                     Container(
                         padding: EdgeInsets.fromLTRB(10, 20, 10, 20),
                       child: Expanded(
-                        child: Text(category,
+                        child: Text(department.name,
                             textAlign: TextAlign.left,
                             style: TextStyle(
                                 fontSize: 15,
@@ -118,18 +124,24 @@ class _ManageCategoryState extends State<ManageCategory> {
     );
   }
 
-  getListCategoy() async {
+  getListDepartment() async {
     await FirebaseFirestore.instance.collection('departments')
-        .where('id', isEqualTo: current_employee.department)
         .get()
         .then((value) => {
-      setState((){
-        list_category = value.docs.first["category"].cast<String>();
-        departmentName = value.docs.first["name"];
+      setState(() {
+        value.docs.forEach((element) {
+          DepartmentModel departmentModel =
+          DepartmentModel("", "", []);
+          departmentModel.id = element['id'];
+          departmentModel.name = element['name'];
+          departmentModel.category = element['category'].cast<String>();
+
+          list_department.add(departmentModel);
+        });
       })
     });
   }
-  _modalBottomSheetEditCategory(String category) {
+  _modalBottomSheetEditDepartment(String departmentName) {
     return showModalBottomSheet(
         isScrollControlled: true,
         constraints: BoxConstraints.loose(Size(
@@ -151,7 +163,7 @@ class _ManageCategoryState extends State<ManageCategory> {
                 children: <Widget>[
                   Padding(
                       padding: EdgeInsets.fromLTRB(5, 20, 5, 10),
-                      child: Text('Chỉnh sửa lĩnh vực',
+                      child: Text('Chỉnh sửa khoa',
                           style: TextStyle(
                               fontSize: 24,
                               fontWeight: FontWeight.w600,
@@ -181,13 +193,13 @@ class _ManageCategoryState extends State<ManageCategory> {
                                       builder: (context, snapshot) => TextField(
                                         //controller: _categoryController,
                                         controller: TextEditingController()
-                                          ..text = category,
+                                          ..text = departmentName,
                                         decoration:
                                         InputDecoration(
                                             labelText:
-                                            "Tên lĩnh vực",
+                                            "Tên khoa",
                                             hintText:
-                                            'Nhập Tên lĩnh vực',
+                                            'Nhập Tên khoa',
                                             enabledBorder:
                                             OutlineInputBorder(
                                                 borderRadius: BorderRadius.circular(10),
@@ -298,7 +310,7 @@ class _ManageCategoryState extends State<ManageCategory> {
         });
 
   }
-  _modalBottomSheetAddCategory() {
+  _modalBottomSheetAddDepartment() {
     return showModalBottomSheet(
         isScrollControlled: true,
         constraints: BoxConstraints.loose(Size(
@@ -320,7 +332,7 @@ class _ManageCategoryState extends State<ManageCategory> {
                     children: <Widget>[
                       Padding(
                         padding: EdgeInsets.fromLTRB(5, 20, 5, 10),
-                        child: Text('Thêm Lĩnh vực',
+                        child: Text('Thêm Khoa',
                           style: TextStyle(
                               fontSize: 24,
                               fontWeight: FontWeight.w600,
@@ -352,9 +364,9 @@ class _ManageCategoryState extends State<ManageCategory> {
                                             decoration:
                                             InputDecoration(
                                                 labelText:
-                                                "Tên lĩnh vực",
+                                                "Tên khoa",
                                                 hintText:
-                                                'Nhập Tên lĩnh vực',
+                                                'Nhập Tên khoa',
                                                 enabledBorder:
                                                 OutlineInputBorder(
                                                     borderRadius: BorderRadius.circular(10),
@@ -446,7 +458,7 @@ class _ManageCategoryState extends State<ManageCategory> {
     // TODO: implement build
     return Scaffold(
       appBar: new AppBar(
-        title: const Text("Quản lý lĩnh vực trong khoa"),
+        title: const Text("Quản lý các khoa"),
       ),
       body: SafeArea(
         minimum: const EdgeInsets.only(left: 20, right: 10),
@@ -454,7 +466,7 @@ class _ManageCategoryState extends State<ManageCategory> {
           children: <Widget>[
             Padding(
                 padding: EdgeInsets.fromLTRB(5, 20, 5, 10),
-                child: Text(departmentName,
+                child: Text("Quản lý khoa",
                     style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.w600,
@@ -464,13 +476,13 @@ class _ManageCategoryState extends State<ManageCategory> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Container(
-                    height: MediaQuery.of(context).size.height * 0.65,
+                    height: MediaQuery.of(context).size.height * 0.68,
                     child: ListView.builder(
                       physics: BouncingScrollPhysics(),
                       //padding: EdgeInsets.only(),
-                      itemCount: list_category.length,
+                      itemCount: list_department.length,
                       itemBuilder: (BuildContext context, int index) {
-                        return _buildCategory(context, list_category[index]);
+                        return _buildDepartment(context, list_department[index]);
                       },
                     ),
                   ),
@@ -487,7 +499,7 @@ class _ManageCategoryState extends State<ManageCategory> {
                     child: InkWell(
                       splashColor: Colors.green, // splash color
                       onTap: () {
-                        return _modalBottomSheetAddCategory();
+                        return _modalBottomSheetAddDepartment();
                       }, // button pressed
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,

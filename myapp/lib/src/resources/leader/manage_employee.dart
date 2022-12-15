@@ -32,7 +32,7 @@ class _ManageEmployeeState extends State<ManageEmployee> {
   List<String> list_category = [];
 
   TextEditingController _categoryController = new TextEditingController();
-  StreamController _categoryControll = new StreamController();
+  StreamController _categoryControll = new StreamController.broadcast();
   Stream get categoryStream => _categoryControll.stream;
 
   TextEditingController _emailController = new TextEditingController();
@@ -40,10 +40,10 @@ class _ManageEmployeeState extends State<ManageEmployee> {
   TextEditingController _phoneController = new TextEditingController();
   TextEditingController _passwordController = new TextEditingController();
 
-  StreamController _emailControl = new StreamController();
-  StreamController _nameControl = new StreamController();
-  StreamController _phoneControl = new StreamController();
-  StreamController _passwordControl = new StreamController();
+  StreamController _emailControl = new StreamController.broadcast();
+  StreamController _nameControl = new StreamController.broadcast();
+  StreamController _phoneControl = new StreamController.broadcast();
+  StreamController _passwordControl = new StreamController.broadcast();
 
   Stream get emailControl => _emailControl.stream;
   Stream get nameControl => _nameControl.stream;
@@ -484,12 +484,12 @@ class _ManageEmployeeState extends State<ManageEmployee> {
                                     Container(
                                         margin:
                                         EdgeInsets.fromLTRB(
-                                            0, 10, 0, 15),
-                                        width: 340,
+                                            10, 10, 10, 15),
+                                        width: 400,
                                         child: StreamBuilder(
-                                          //stream: informationControl,
+                                          stream: emailControl,
                                           builder: (context, snapshot) =>TextField(
-                                            //controller: _informationController,
+                                            controller: _emailController,
                                             decoration:
                                             InputDecoration(
                                                 labelText:
@@ -515,12 +515,12 @@ class _ManageEmployeeState extends State<ManageEmployee> {
                                     Container(
                                         margin:
                                         EdgeInsets.fromLTRB(
-                                            0, 10, 0, 15),
-                                        width: 340,
+                                            10, 10, 10, 15),
+                                        width: 400,
                                         child: StreamBuilder(
-                                          //stream: informationControl,
+                                          stream: nameControl,
                                           builder: (context, snapshot) =>TextField(
-                                            //controller: _informationController,
+                                            controller: _nameController,
                                             decoration:
                                             InputDecoration(
                                                 labelText:
@@ -546,12 +546,12 @@ class _ManageEmployeeState extends State<ManageEmployee> {
                                     Container(
                                         margin:
                                         EdgeInsets.fromLTRB(
-                                            0, 10, 0, 15),
-                                        width: 340,
+                                            10, 10, 10, 15),
+                                        width: 400,
                                         child: StreamBuilder(
-                                          //stream: informationControl,
+                                          stream: phoneControl,
                                           builder: (context, snapshot) =>TextField(
-                                            //controller: _informationController,
+                                            controller: _phoneController,
                                             decoration:
                                             InputDecoration(
                                                 labelText:
@@ -577,12 +577,12 @@ class _ManageEmployeeState extends State<ManageEmployee> {
                                     Container(
                                         margin:
                                         EdgeInsets.fromLTRB(
-                                            0, 10, 0, 15),
-                                        width: 340,
+                                            10, 10, 10, 15),
+                                        width: 400,
                                         child: StreamBuilder(
-                                          //stream: informationControl,
+                                          stream: passwordControl,
                                           builder: (context, snapshot) =>TextField(
-                                            //controller: _informationController,
+                                            controller: _passwordController,
                                             decoration:
                                             InputDecoration(
                                                 labelText:
@@ -731,11 +731,11 @@ class _ManageEmployeeState extends State<ManageEmployee> {
     });
   }
   _onAddEmployeeClicked(){
-    String email = "tin@gmail.com";
-    String name = "Tá Đức";
-    String phone = "0128398927";
-    String password = "123456";
-    String category = "a";
+    String email = _emailController.text;
+    String name = _nameController.text;
+    String phone = _phoneController.text;
+    String password = _passwordController.text;
+    String category = value_category!;
     String department = current_employee.department;
     if(isValid(email, name, phone, password)){
       LoadingDialog.showLoadingDialog(context, "loading...");
