@@ -29,13 +29,13 @@ class _MyInfoState extends State<MyInfo> {
   TextEditingController _passnew1Controller = new TextEditingController();
   TextEditingController _passnew2Controller = new TextEditingController();
 
-  StreamController _nameControll = new StreamController();
-  StreamController _phoneControll = new StreamController();
-  StreamController _emailControll = new StreamController();
-  StreamController _passwordControll = new StreamController();
-  StreamController _passControll = new StreamController();
-  StreamController _passnew1Controll = new StreamController();
-  StreamController _passnew2Controll = new StreamController();
+  StreamController _nameControll = new StreamController.broadcast();
+  StreamController _phoneControll = new StreamController.broadcast();
+  StreamController _emailControll = new StreamController.broadcast();
+  StreamController _passwordControll = new StreamController.broadcast();
+  StreamController _passControll = new StreamController.broadcast();
+  StreamController _passnew1Controll = new StreamController.broadcast();
+  StreamController _passnew2Controll = new StreamController.broadcast();
 
   Stream get emailStream => _emailControll.stream;
   Stream get nameStream => _nameControll.stream;
@@ -66,27 +66,28 @@ class _MyInfoState extends State<MyInfo> {
 
     return true;
   }
-  
-  bool isValidChangePass(String pass, String passnew1, String passnew2, String password){
-    if(pass == null|| pass.length == 0){
+
+  bool isValidChangePass(
+      String pass, String passnew1, String passnew2, String password) {
+    if (pass == null || pass.length == 0) {
       _passControll.sink.addError("Nhập password");
       return false;
     }
-    if(passnew1 == null || passnew1.length == 0){
+    if (passnew1 == null || passnew1.length == 0) {
       _passnew1Controll.sink.addError("Nhập mật khẩu mới");
       return false;
     }
 
-    if(passnew2 == null || passnew2.length == 0){
+    if (passnew2 == null || passnew2.length == 0) {
       _passnew2Controll.sink.addError("Xác nhận mật khẩu");
       return false;
     }
 
-    if(passnew1 != passnew2){
+    if (passnew1 != passnew2) {
       _passnew2Controll.sink.addError("Mật khẩu không trùng khớp");
       return false;
     }
-    if(pass != password){
+    if (pass != password) {
       _passControll.sink.addError("Mật khẩu không đúng");
       return false;
     }
@@ -103,6 +104,9 @@ class _MyInfoState extends State<MyInfo> {
     _passControll.close();
     _passnew1Controll.close();
     _passnew2Controll.close();
+
+
+
     super.dispose();
   }
 
@@ -319,8 +323,8 @@ class _MyInfoState extends State<MyInfo> {
                                   )),
                               focusedBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(10),
-                                  borderSide:
-                                  BorderSide(color: Colors.blue, width: 4))),
+                                  borderSide: BorderSide(
+                                      color: Colors.blue, width: 4))),
                         ),
                       ),
                     ),
@@ -353,142 +357,148 @@ class _MyInfoState extends State<MyInfo> {
                                             child: Column(
                                               children: <Widget>[
                                                 Padding(
-                                                    padding: EdgeInsets.fromLTRB(
-                                                        0, 10, 0, 15)),
+                                                    padding:
+                                                        EdgeInsets.fromLTRB(
+                                                            0, 10, 0, 15)),
                                                 Text(
                                                   "Đổi mật khẩu",
                                                   style: TextStyle(
                                                       fontSize: 15,
                                                       fontWeight:
-                                                      FontWeight.bold),
+                                                          FontWeight.bold),
                                                 ),
                                                 Container(
                                                   margin: EdgeInsets.fromLTRB(
-                                                      0, 10, 0, 15),
+                                                      15, 10, 15, 15),
                                                   width: 400,
                                                   child: StreamBuilder(
                                                     stream: passStream,
-                                                    builder: (context, snapshot) =>TextField(
-                                                      decoration: InputDecoration(
-                                                          labelText: "Mật khẩu",
-                                                          hintText:
-                                                          'Nhập mật khẩu của bạn',
-                                                          enabledBorder:
-                                                          OutlineInputBorder(
-                                                              borderRadius:
-                                                              BorderRadius
-                                                                  .circular(
-                                                                  10),
-                                                              borderSide:
-                                                              BorderSide(
-                                                                color: Colors
-                                                                    .blueAccent,
-                                                                width: 1,
-                                                              )),
-                                                          focusedBorder:
-                                                          OutlineInputBorder(
-                                                              borderRadius:
-                                                              BorderRadius
-                                                                  .circular(
-                                                                  10),
-                                                              borderSide:
-                                                              BorderSide(
-                                                                  color:
-                                                                  Colors
-                                                                      .blue,
-                                                                  width:
-                                                                  4))),
-                                                      controller: _passController,
+                                                    builder:
+                                                        (context, snapshot) =>
+                                                            TextField(
+                                                      decoration:
+                                                          InputDecoration(
+                                                              labelText:
+                                                                  "Mật khẩu",
+                                                              hintText:
+                                                                  'Nhập mật khẩu của bạn',
+                                                              enabledBorder:
+                                                                  OutlineInputBorder(
+                                                                      borderRadius:
+                                                                          BorderRadius.circular(
+                                                                              10),
+                                                                      borderSide:
+                                                                          BorderSide(
+                                                                        color: Colors
+                                                                            .blueAccent,
+                                                                        width:
+                                                                            1,
+                                                                      )),
+                                                              focusedBorder: OutlineInputBorder(
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .circular(
+                                                                              10),
+                                                                  borderSide: BorderSide(
+                                                                      color: Colors
+                                                                          .blue,
+                                                                      width:
+                                                                          4))),
+                                                      controller:
+                                                          _passController,
                                                     ),
                                                   ),
                                                 ),
                                                 Container(
                                                   margin: EdgeInsets.fromLTRB(
-                                                      0, 10, 0, 15),
+                                                      15, 10, 15, 15),
                                                   width: 400,
                                                   child: StreamBuilder(
                                                     stream: passnew1Stream,
-                                                    builder: (context, snapshot) => TextField(
-                                                      decoration: InputDecoration(
-                                                          labelText: "Mật khẩu mới",
-                                                          hintText:
-                                                          'Nhập mật khẩu mới của bạn',
-                                                          enabledBorder:
-                                                          OutlineInputBorder(
-                                                              borderRadius:
-                                                              BorderRadius
-                                                                  .circular(
-                                                                  10),
-                                                              borderSide:
-                                                              BorderSide(
-                                                                color: Colors
-                                                                    .blueAccent,
-                                                                width: 1,
-                                                              )),
-                                                          focusedBorder:
-                                                          OutlineInputBorder(
-                                                              borderRadius:
-                                                              BorderRadius
-                                                                  .circular(
-                                                                  10),
-                                                              borderSide:
-                                                              BorderSide(
-                                                                  color:
-                                                                  Colors
-                                                                      .blue,
-                                                                  width:
-                                                                  4))),
-                                                      controller: _passnew1Controller,
+                                                    builder:
+                                                        (context, snapshot) =>
+                                                            TextField(
+                                                      decoration:
+                                                          InputDecoration(
+                                                              labelText:
+                                                                  "Mật khẩu mới",
+                                                              hintText:
+                                                                  'Nhập mật khẩu mới của bạn',
+                                                              enabledBorder:
+                                                                  OutlineInputBorder(
+                                                                      borderRadius:
+                                                                          BorderRadius.circular(
+                                                                              10),
+                                                                      borderSide:
+                                                                          BorderSide(
+                                                                        color: Colors
+                                                                            .blueAccent,
+                                                                        width:
+                                                                            1,
+                                                                      )),
+                                                              focusedBorder: OutlineInputBorder(
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .circular(
+                                                                              10),
+                                                                  borderSide: BorderSide(
+                                                                      color: Colors
+                                                                          .blue,
+                                                                      width:
+                                                                          4))),
+                                                      controller:
+                                                          _passnew1Controller,
                                                     ),
                                                   ),
                                                 ),
                                                 Container(
                                                   margin: EdgeInsets.fromLTRB(
-                                                      0, 10, 0, 15),
+                                                      15, 10, 15, 15),
                                                   width: 400,
                                                   child: StreamBuilder(
                                                     stream: passnew2Stream,
                                                     builder:
                                                         (context, snapshot) =>
-                                                        TextField(
-
-                                                          decoration: InputDecoration(
+                                                            TextField(
+                                                      decoration:
+                                                          InputDecoration(
                                                               labelText:
-                                                              "Xác nhận mật khẩu",
+                                                                  "Xác nhận mật khẩu",
                                                               hintText:
-                                                              'Nhập lại mật khẩu của bạn',
+                                                                  'Nhập lại mật khẩu của bạn',
                                                               enabledBorder:
-                                                              OutlineInputBorder(
+                                                                  OutlineInputBorder(
+                                                                      borderRadius:
+                                                                          BorderRadius.circular(
+                                                                              10),
+                                                                      borderSide:
+                                                                          BorderSide(
+                                                                        color: Colors
+                                                                            .blueAccent,
+                                                                        width:
+                                                                            1,
+                                                                      )),
+                                                              focusedBorder: OutlineInputBorder(
                                                                   borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                      10),
-                                                                  borderSide:
-                                                                  BorderSide(
-                                                                    color: Colors
-                                                                        .blueAccent,
-                                                                    width: 1,
-                                                                  )),
-                                                              focusedBorder:
-                                                              OutlineInputBorder(
-                                                                  borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                      10),
+                                                                      BorderRadius
+                                                                          .circular(
+                                                                              10),
                                                                   borderSide: BorderSide(
                                                                       color: Colors
                                                                           .blue,
-                                                                      width: 4))),
-                                                          controller: _passnew2Controller,
-                                                        ),
+                                                                      width:
+                                                                          4))),
+                                                      controller:
+                                                          _passnew2Controller,
+                                                    ),
                                                   ),
                                                 ),
                                                 Container(
                                                   padding: EdgeInsets.all(10),
                                                   child: Row(
                                                     mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceAround,
+                                                        MainAxisAlignment
+                                                            .spaceAround,
                                                     children: <Widget>[
                                                       Expanded(
                                                         child: ElevatedButton(
@@ -500,24 +510,26 @@ class _MyInfoState extends State<MyInfo> {
                                                             'Lưu',
                                                             style: TextStyle(
                                                                 fontSize: 16,
-                                                                color:
-                                                                Colors.white),
+                                                                color: Colors
+                                                                    .white),
                                                           ),
                                                         ),
                                                       ),
                                                       Padding(
                                                           padding:
-                                                          EdgeInsets.all(10)),
+                                                              EdgeInsets.all(
+                                                                  10)),
                                                       Expanded(
                                                           child: ElevatedButton(
                                                               onPressed: () => {
-                                                                Navigator.pop(
-                                                                    context)
-                                                              },
+                                                                    Navigator.pop(
+                                                                        context)
+                                                                  },
                                                               child: Text(
                                                                 'Thoát',
                                                                 style: TextStyle(
-                                                                    fontSize: 16,
+                                                                    fontSize:
+                                                                        16,
                                                                     color: Colors
                                                                         .white),
                                                               ))),
@@ -557,16 +569,20 @@ class _MyInfoState extends State<MyInfo> {
     }
   }
 
-  _onChangePassword(){
-    var isvalid = isValidChangePass( _passController.text, _passnew1Controller.text,
-    _passnew2Controller.text, _passwordController.text);
+  _onChangePassword() {
+    var isvalid = isValidChangePass(
+        _passController.text,
+        _passnew1Controller.text,
+        _passnew2Controller.text,
+        _passwordController.text);
 
-    if(isvalid){
+    if (isvalid) {
       LoadingDialog.showLoadingDialog(context, "loading...");
       userr.updatePassword(_passnew2Controller.text);
-      changePassword(_passnew2Controller.text, (){
+      changePassword(_passnew2Controller.text, () {
         LoadingDialog.hideLoadingDialog(context);
-        Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage()));
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => HomePage()));
       });
     }
   }
@@ -592,26 +608,23 @@ class _MyInfoState extends State<MyInfo> {
       print("err");
     });
   }
-  void changePassword(String pass, Function onSuccess) async{
-    QuerySnapshot snapshot = await FirebaseFirestore.instance.collection('user')
-        .where('userId', isEqualTo: userr.uid ).get();
+
+  void changePassword(String pass, Function onSuccess) async {
+    QuerySnapshot snapshot = await FirebaseFirestore.instance
+        .collection('user')
+        .where('userId', isEqualTo: userr.uid)
+        .get();
     String id = snapshot.docs.first.id;
     var ref = FirebaseFirestore.instance.collection('user');
 
     ref.doc(id).update({'pass': pass}).then((value) {
       onSuccess();
       print("change pass ok");
-    }).catchError((err){
+    }).catchError((err) {
       print("err");
     });
-
-
   }
 }
-
-
-
-
 
 uploadImage() async {
   final _firebaseStorage = FirebaseStorage.instance;

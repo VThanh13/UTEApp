@@ -53,7 +53,7 @@ Question question = new Question("", "", "", "", "", "", "", uModel, "", "");
 
 TextEditingController _answerController = new TextEditingController();
 
-StreamController _answerControl = new StreamController();
+StreamController _answerControl = new StreamController.broadcast();
 
 Stream get answerControl => _answerControl.stream;
 

@@ -8,9 +8,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:myapp/icons/app_icons_icons.dart';
+import 'package:myapp/src/models/EmployeeModel.dart';
 import 'package:myapp/src/models/QuestionModel.dart';
 import 'package:myapp/src/resources/home_page.dart';
 import 'package:myapp/src/resources/messenger/detail_question.dart';
+import 'package:myapp/src/resources/messenger/view_employee_byuser.dart';
 
 import '../../models/UserModel.dart';
 import '../dialog/loading_dialog.dart';
@@ -59,6 +61,22 @@ class _MessengerPageState extends State<MessengerPage> {
     return list;
   }
 
+  String departmentName = "";
+
+  getDepartmentName() async {
+    var snapshot = await FirebaseFirestore.instance
+        .collection('departments')
+        .where('id', isEqualTo: employeeModel.department)
+        .get()
+        .then((value) => {
+      setState(() {
+        departmentName = value.docs.first["name"];
+      })
+    });
+  }
+
+
+
   List<QuestionModel> listQuestion = [];
   Future<List<QuestionModel>> getQuestionData() async {
     List<QuestionModel> list = [];
@@ -87,6 +105,8 @@ class _MessengerPageState extends State<MessengerPage> {
       listQuestion=testlistQuestion;
     });
   }
+
+
   _buildQuestions(setState) {
     fillListQuestion(setState);
 
@@ -148,14 +168,108 @@ class _MessengerPageState extends State<MessengerPage> {
     return Column(children: questionsList);
   }
 
+  List<EmployeeModel> listEmployee = [];
+  getEmployeeData() async{
+    await FirebaseFirestore.instance
+        .collection('employee')
+        .get()
+        .then((value) => {
+
+      value.docs.forEach((element) {
+        EmployeeModel eModel =
+        new EmployeeModel("", " ", "", "", "", "", "", "", "", "");
+        eModel.id = element['id'];
+        eModel.name = element['name'];
+        eModel.email = element['email'];
+        eModel.image = element['image'];
+        eModel.password = element['password'];
+        eModel.phone = element['phone'];
+        eModel.department = element['department'];
+        eModel.category = element['category'];
+        eModel.roles = element['roles'];
+        eModel.status = element['status'];
+
+          listEmployee.add(eModel);
+
+      })
+    });
+  }
+
+  _buildEmployee(BuildContext context, EmployeeModel employeeModel){
+    return Container(
+            margin: EdgeInsets.all(10.0),
+            width: 320,
+            decoration:  BoxDecoration(
+                color:  Colors.white,
+                borderRadius: BorderRadius.circular(15.0),
+                border: Border.all(
+                  width: 1.0,
+                  color: Colors.pinkAccent,
+                )
+            ),
+            child: Row(
+              mainAxisAlignment:  MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                Container(
+                  padding: EdgeInsets.fromLTRB(20, 0, 10 , 0),
+                  child:  CircleAvatar(
+                    radius: 30,
+                    backgroundColor: Colors.tealAccent,
+                    child: CircleAvatar(
+                      backgroundImage: new NetworkImage(employeeModel.image!),
+                      radius: 28,
+                    ),
+
+                  ) ,
+                ),
+
+               
+                Expanded(child: Container(
+                  margin: EdgeInsets.all(12.0),
+                  child: Column(
+                    mainAxisAlignment:  MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Text(employeeModel.name,
+                      style: TextStyle(fontSize: 18, fontStyle: FontStyle.italic, fontWeight: FontWeight.w500), overflow: TextOverflow.ellipsis,),
+                      Text(employeeModel.roles,
+                      style: TextStyle(fontSize: 15, fontWeight: FontWeight.w400), overflow: TextOverflow.ellipsis,),
+                      Text("Khoa",
+                      style: TextStyle(fontSize: 15, fontWeight: FontWeight.w400), overflow: TextOverflow.ellipsis,),
+                    ],
+                  ),
+                )),
+                Container(
+                  margin: EdgeInsets.only(right: 10),
+                  width: 48,
+                  decoration: BoxDecoration(
+                    color:  Colors.deepOrange,
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                  child: IconButton(
+                    icon: Icon(AppIcons.user),
+                    iconSize: 30,
+                    color: Colors.white70,
+                    onPressed: (){
+                      Navigator.push(context, new MaterialPageRoute(builder: (BuildContext context) => ViewEmployeeByUser(employee: employeeModel, users: userModel)));
+                    },
+
+                  ),
+                )
+              ],
+            ),
+
+          );
+  }
+
 
   TextEditingController _informationController = new TextEditingController();
   TextEditingController _titleController = new TextEditingController();
   TextEditingController _questionController = new TextEditingController();
 
-  StreamController _informationControl = new StreamController();
-  StreamController _titleControl = new StreamController();
-  StreamController _questionControl = new StreamController();
+  StreamController _informationControl = new StreamController.broadcast();
+  StreamController _titleControl = new StreamController.broadcast();
+  StreamController _questionControl = new StreamController.broadcast();
   
   Stream get informationControl => _informationControl.stream;
   Stream get titleControl => _titleControl.stream;
@@ -183,8 +297,12 @@ class _MessengerPageState extends State<MessengerPage> {
     _informationControl.close();
     super.dispose();
   }
-
-
+  @override
+  void initState() {
+    super.initState();
+    getEmployeeData();
+    // getCurrentUser();
+  }
 
 
 
@@ -635,6 +753,30 @@ class _MessengerPageState extends State<MessengerPage> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: <Widget>[
                                     Padding(padding: EdgeInsets.symmetric(horizontal: 20.0),
+                                    child: Text('Đội ngũ tư vấn viên',
+                                    style: TextStyle(fontSize: 24, fontWeight:  FontWeight.w600, letterSpacing: 1.0,
+                                    fontStyle: FontStyle.italic),),),
+                                    Container(
+                                      height: 120.0,
+                                      child: ListView.builder(
+                                        physics: BouncingScrollPhysics(),
+                                        padding: EdgeInsets.only(left: 10.0),
+                                        scrollDirection: Axis.horizontal,
+                                        itemCount: listEmployee.length,
+                                        itemBuilder: (BuildContext context, int index) {
+                                          // EmployeeModel employeeModel = listEmployee[index];
+                                          return _buildEmployee(context, listEmployee[index]);
+                                        }
+                                      ),
+                                    )
+
+                                  ],
+                                ),
+
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: <Widget>[
+                                    Padding(padding: EdgeInsets.symmetric(horizontal: 20.0),
                                       child: Text(
                                         'Câu hỏi của bạn',
                                         style: TextStyle(
@@ -703,7 +845,7 @@ class _MessengerPageState extends State<MessengerPage> {
 
   void sendQuestion(String userId, String title, String time, String status,
       String information, String file, String department, String content, String category, String people, Function onSucces) {
-    
+
     var ref = FirebaseFirestore.instance.collection('questions');
     String id = ref.doc().id;
     ref.doc(id).set({
