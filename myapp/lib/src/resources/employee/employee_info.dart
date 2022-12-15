@@ -274,13 +274,13 @@ class _MyInfoState extends State<EmployeeInfo> {
                                 enabledBorder: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(10),
                                     borderSide: BorderSide(
-                                      color: Colors.blueAccent,
+                                      color: Colors.orangeAccent,
                                       width: 1,
                                     )),
                                 focusedBorder: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(10),
                                     borderSide: BorderSide(
-                                        color: Colors.blue, width: 4))),
+                                        color: Colors.orange, width: 4))),
                           ),
                         )),
                     Container(
@@ -300,13 +300,13 @@ class _MyInfoState extends State<EmployeeInfo> {
                                 enabledBorder: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(10),
                                     borderSide: BorderSide(
-                                      color: Colors.blueAccent,
+                                      color: Colors.orangeAccent,
                                       width: 1,
                                     )),
                                 focusedBorder: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(10),
                                     borderSide: BorderSide(
-                                        color: Colors.blue, width: 4))),
+                                        color: Colors.orange, width: 4))),
                           ),
                         )),
                     Container(
@@ -326,13 +326,13 @@ class _MyInfoState extends State<EmployeeInfo> {
                                 enabledBorder: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(10),
                                     borderSide: BorderSide(
-                                      color: Colors.blueAccent,
+                                      color: Colors.orangeAccent,
                                       width: 1,
                                     )),
                                 focusedBorder: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(10),
                                     borderSide: BorderSide(
-                                        color: Colors.blue, width: 4))),
+                                        color: Colors.orange, width: 4))),
                           ),
                         )),
                     Container(
@@ -350,13 +350,13 @@ class _MyInfoState extends State<EmployeeInfo> {
                               enabledBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(10),
                                   borderSide: BorderSide(
-                                    color: Colors.blueAccent,
+                                    color: Colors.orangeAccent,
                                     width: 1,
                                   )),
                               focusedBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(10),
                                   borderSide: BorderSide(
-                                      color: Colors.blue, width: 4))),
+                                      color: Colors.orange, width: 4))),
                         ),
                       ),
                     ),
@@ -373,13 +373,13 @@ class _MyInfoState extends State<EmployeeInfo> {
                             enabledBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(10),
                                 borderSide: BorderSide(
-                                  color: Colors.blueAccent,
+                                  color: Colors.orangeAccent,
                                   width: 1,
                                 )),
                             focusedBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(10),
                                 borderSide:
-                                    BorderSide(color: Colors.blue, width: 4))),
+                                    BorderSide(color: Colors.orange, width: 4))),
                       ),
                     ),
                     Container(
@@ -388,27 +388,32 @@ class _MyInfoState extends State<EmployeeInfo> {
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: <Widget>[
                           Expanded(
-                            child: ElevatedButton(
+                            child: ElevatedButton.icon(
                               onPressed: () {
                                 print('press save');
                                 _onSaveClicked();
                               },
-                              child: Text(
+                              label: Text(
                                 'Lưu',
                                 style: TextStyle(
                                     fontSize: 16, color: Colors.white),
+                              ),
+                              icon: Icon(Icons.save_outlined),
+                              style: ElevatedButton.styleFrom(
+                                primary: Colors.orangeAccent
                               ),
                             ),
                           ),
                           Padding(padding: EdgeInsets.all(10)),
                           Expanded(
-                              child: ElevatedButton(
+                              child: ElevatedButton.icon(
                                   onPressed: () {
                                     showModalBottomSheet(
                                         context: context,
                                         builder: (BuildContext context) {
                                           return Column(
                                             children: <Widget>[
+                                              Padding(padding: EdgeInsets.fromLTRB(0, 10, 0, 10)),
                                               Text(
                                                 "Đổi mật khẩu",
                                                 style: TextStyle(
@@ -437,8 +442,7 @@ class _MyInfoState extends State<EmployeeInfo> {
                                                                             10),
                                                                 borderSide:
                                                                     BorderSide(
-                                                                  color: Colors
-                                                                      .blueAccent,
+                                                                  color: Colors.orangeAccent,
                                                                   width: 1,
                                                                 )),
                                                         focusedBorder:
@@ -449,7 +453,7 @@ class _MyInfoState extends State<EmployeeInfo> {
                                                                             10),
                                                                 borderSide: BorderSide(
                                                                     color: Colors
-                                                                        .blue,
+                                                                        .orange,
                                                                     width: 4))),
                                                     controller: _passController,
                                                   ),
@@ -477,8 +481,7 @@ class _MyInfoState extends State<EmployeeInfo> {
                                                                             10),
                                                                 borderSide:
                                                                     BorderSide(
-                                                                  color: Colors
-                                                                      .blueAccent,
+                                                                  color: Colors.orangeAccent,
                                                                   width: 1,
                                                                 )),
                                                         focusedBorder:
@@ -488,8 +491,7 @@ class _MyInfoState extends State<EmployeeInfo> {
                                                                         .circular(
                                                                             10),
                                                                 borderSide: BorderSide(
-                                                                    color: Colors
-                                                                        .blue,
+                                                                    color: Colors.orange,
                                                                     width: 4))),
                                                     controller:
                                                         _passnew1Controller,
@@ -518,8 +520,7 @@ class _MyInfoState extends State<EmployeeInfo> {
                                                                             10),
                                                                 borderSide:
                                                                     BorderSide(
-                                                                  color: Colors
-                                                                      .blueAccent,
+                                                                  color: Colors.orangeAccent,
                                                                   width: 1,
                                                                 )),
                                                         focusedBorder:
@@ -530,7 +531,7 @@ class _MyInfoState extends State<EmployeeInfo> {
                                                                             10),
                                                                 borderSide: BorderSide(
                                                                     color: Colors
-                                                                        .blue,
+                                                                        .orange,
                                                                     width: 4))),
                                                     controller:
                                                         _passnew2Controller,
@@ -545,17 +546,21 @@ class _MyInfoState extends State<EmployeeInfo> {
                                                           .spaceAround,
                                                   children: <Widget>[
                                                     Expanded(
-                                                      child: ElevatedButton(
+                                                      child: ElevatedButton.icon(
                                                         onPressed: () {
                                                           _onChangePassword();
                                                           print('press save');
                                                         },
-                                                        child: Text(
+                                                        label: Text(
                                                           'Lưu',
                                                           style: TextStyle(
                                                               fontSize: 16,
                                                               color:
                                                                   Colors.white),
+                                                        ),
+                                                        icon: Icon(Icons.check),
+                                                        style: ElevatedButton.styleFrom(
+                                                          primary: Colors.orangeAccent
                                                         ),
                                                       ),
                                                     ),
@@ -563,18 +568,22 @@ class _MyInfoState extends State<EmployeeInfo> {
                                                         padding:
                                                             EdgeInsets.all(10)),
                                                     Expanded(
-                                                        child: ElevatedButton(
+                                                        child: ElevatedButton.icon(
                                                             onPressed: () => {
                                                                   Navigator.pop(
                                                                       context)
                                                                 },
-                                                            child: Text(
+                                                            label: Text(
                                                               'Thoát',
                                                               style: TextStyle(
                                                                   fontSize: 16,
                                                                   color: Colors
                                                                       .white),
-                                                            ))),
+                                                            ),
+                                                        icon: Icon(Icons.cancel_rounded),
+                                                        style: ElevatedButton.styleFrom(
+                                                          primary: Colors.orangeAccent
+                                                        ),)),
                                                   ],
                                                 ),
                                               )
@@ -582,7 +591,11 @@ class _MyInfoState extends State<EmployeeInfo> {
                                           );
                                         });
                                   },
-                                  child: const Text('Đổi mật khẩu'))),
+                                  label: const Text('Đổi mật khẩu'),
+                              icon: Icon(Icons.security_rounded),
+                              style: ElevatedButton.styleFrom(
+                                primary: Colors.orangeAccent
+                              ),)),
                         ],
                       ),
                     ),
