@@ -43,6 +43,8 @@ dependencies:
   cloud_firestore: ^2.5.4
   url_launcher: ^6.0.0-nullsafety
   passwordfield: ^0.1.0
+  animated_bottom_navigation_bar: ^1.1.0
+  syncfusion_flutter_charts: ^20.3.60
 
 
 

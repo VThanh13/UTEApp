@@ -6,6 +6,7 @@ import 'package:myapp/src/resources/about_page/my_file.dart';
 import 'package:myapp/src/resources/about_page/about_university.dart';
 import 'package:myapp/src/resources/about_page/admission_history.dart';
 import 'package:myapp/src/resources/login_page.dart';
+import 'package:myapp/src/resources/manager/stats.dart';
 import 'package:myapp/src/resources/messenger/test.dart';
 import 'package:myapp/src/models/EmployeeModel.dart';
 import 'package:myapp/src/screens/signin_screen.dart';
@@ -151,12 +152,12 @@ class _HomePageState extends State<HomePageManager> {
                     height: 5.0,
                   ),
                   new ListTile(
-                    title: new Text('Hồ sơ của bạn'),
+                    title: new Text('Thống kê'),
                     onTap: () {
                       Navigator.push(
                           context,
                           new MaterialPageRoute(
-                              builder: (BuildContext context) => new MyFile()));
+                              builder: (BuildContext context) => new StatsPage()));
                     },
                   ),
                   new Divider(

@@ -186,10 +186,6 @@ class _MessengerPageState extends State<MessengerPageLeader> {
     super.dispose();
   }
 
-
-
-
-
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<QuerySnapshot>(

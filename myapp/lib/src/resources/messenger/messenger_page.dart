@@ -60,17 +60,17 @@ class _MessengerPageState extends State<MessengerPage> {
 
   String departmentName = "";
 
-  getDepartmentName() async {
-    var snapshot = await FirebaseFirestore.instance
-        .collection('departments')
-        .where('id', isEqualTo: employeeModel.department)
-        .get()
-        .then((value) => {
-              setState(() {
-                departmentName = value.docs.first["name"];
-              })
-            });
-  }
+  // getDepartmentName() async {
+  //   var snapshot = await FirebaseFirestore.instance
+  //       .collection('departments')
+  //       .where('id', isEqualTo: employeeModel.department)
+  //       .get()
+  //       .then((value) => {
+  //             setState(() {
+  //               departmentName = value.docs.first["name"];
+  //             })
+  //           });
+  // }
 
   List<QuestionModel> listQuestion = [];
   Future<List<QuestionModel>> getQuestionData() async {

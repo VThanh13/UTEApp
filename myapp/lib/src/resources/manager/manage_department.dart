@@ -476,7 +476,7 @@ class _ManageDepartmentState extends State<ManageDepartment> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Container(
-                    height: MediaQuery.of(context).size.height * 0.68,
+                    height: MediaQuery.of(context).size.height * 0.75,
                     child: ListView.builder(
                       physics: BouncingScrollPhysics(),
                       //padding: EdgeInsets.only(),
@@ -489,32 +489,46 @@ class _ManageDepartmentState extends State<ManageDepartment> {
                 ],
               ),
             ),
-            Container(
-              alignment: Alignment.bottomRight,
-              child: SizedBox.fromSize(
-                size: Size(56, 56), // button width and height
-                child: ClipOval(
-                  child: Material(
-                    color: Colors.blue, // button color
-                    child: InkWell(
-                      splashColor: Colors.green, // splash color
-                      onTap: () {
-                        return _modalBottomSheetAddDepartment();
-                      }, // button pressed
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          Icon(Icons.add), // text
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ),
+
+            // Container(
+            //   alignment: Alignment.bottomRight,
+            //   child: SizedBox.fromSize(
+            //     size: Size(56, 56), // button width and height
+            //     child: ClipOval(
+            //       child: Material(
+            //         color: Colors.blue, // button color
+            //         child: InkWell(
+            //           splashColor: Colors.green, // splash color
+            //           onTap: () {
+            //             return _modalBottomSheetAddDepartment();
+            //           }, // button pressed
+            //           child: Column(
+            //             mainAxisAlignment: MainAxisAlignment.center,
+            //             children: <Widget>[
+            //               Icon(Icons.add), // text
+            //             ],
+            //           ),
+            //         ),
+            //       ),
+            //     ),
+            //   ),
+            // ),
           ],
         ),
       ),
+        floatingActionButton: FloatingActionButton(
+            onPressed: () {
+              return _modalBottomSheetAddDepartment();
+            },
+            child: Icon(
+              Icons.add,
+              size: 25,
+            ),
+            backgroundColor: Colors.blue
+          //params
+        ),
+        floatingActionButtonLocation:
+        FloatingActionButtonLocation.miniEndFloat
     );
   }
 }
