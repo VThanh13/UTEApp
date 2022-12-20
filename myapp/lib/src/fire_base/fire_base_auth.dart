@@ -45,7 +45,7 @@ class FireAuth {
   _createUser(String userId, String email, String pass, String name, String phone, Function onSuccess,
       Function(String) onRegisterError) {
     var ref = FirebaseFirestore.instance.collection('user');
-    ref.add({'userId': userId,
+    ref.doc(userId).set({'userId': userId,
     'email':email,
     'pass':pass,
     'name':name,

@@ -44,6 +44,20 @@ class _MessengerPageState extends State<MessengerPage> {
   var userr = FirebaseAuth.instance.currentUser!;
   UserModel userModel = new UserModel("", " ", "", "", "", "", "");
 
+  @override
+  void initState() {
+    super.initState();
+    getEmployeeData();
+    getDepartmentName();
+  }
+  @override
+  void dispose() {
+    _questionControl.close();
+    _titleControl.close();
+    _informationControl.close();
+    super.dispose();
+  }
+
   Future<List> getDataDropdownProblem(String? value_khoa) async {
     QuerySnapshot snapshot = await FirebaseFirestore.instance
         .collection("departments")
@@ -58,19 +72,19 @@ class _MessengerPageState extends State<MessengerPage> {
     return list;
   }
 
-  String departmentName = "";
-
-  // getDepartmentName() async {
-  //   var snapshot = await FirebaseFirestore.instance
-  //       .collection('departments')
-  //       .where('id', isEqualTo: employeeModel.department)
-  //       .get()
-  //       .then((value) => {
-  //             setState(() {
-  //               departmentName = value.docs.first["name"];
-  //             })
-  //           });
-  // }
+  var departmentName = new Map();
+  getDepartmentName() async {
+    await FirebaseFirestore.instance
+        .collection('departments')
+        .get()
+        .then((value) => {
+      setState(() {
+        value.docs.forEach((element) {
+          departmentName[element.id] = element["name"];
+        });
+      })
+    });
+  }
 
   List<QuestionModel> listQuestion = [];
   Future<List<QuestionModel>> getQuestionData() async {
@@ -303,20 +317,6 @@ class _MessengerPageState extends State<MessengerPage> {
     }
 
     return true;
-  }
-
-  void dispose() {
-    _questionControl.close();
-    _titleControl.close();
-    _informationControl.close();
-    super.dispose();
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    getEmployeeData();
-    // getCurrentUser();
   }
 
   @override
@@ -927,6 +927,7 @@ class _MessengerPageState extends State<MessengerPage> {
       Function onSucces) {
     var ref = FirebaseFirestore.instance.collection('questions');
     String id = ref.doc().id;
+    String departmentId = departmentName.keys.firstWhere((k) => departmentName[k] == department, orElse: () => null);
     ref.doc(id).set({
       'id': id,
       'userId': userId,
@@ -935,7 +936,7 @@ class _MessengerPageState extends State<MessengerPage> {
       'status': status,
       'information': information,
       'file': file,
-      'department': department,
+      'department': departmentId,
       'content': content,
       'people': people,
       'category': category,

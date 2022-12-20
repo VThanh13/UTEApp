@@ -69,6 +69,12 @@ class ChartSampleData {
   /// Holds open value of the datapoint
   final num? volume;
 }
+class PieChartData {
+  PieChartData(this.x, this.y, this.color);
+  final String x;
+  final double y;
+  final Color color;
+}
 
 class _StatsPageState extends State<StatsPage> {
   FirebaseAuth auth = FirebaseAuth.instance;
@@ -76,8 +82,14 @@ class _StatsPageState extends State<StatsPage> {
   EmployeeModel employeeModel =
       new EmployeeModel("", " ", "", "", "", "", "", "", "", "");
   int pageIndex = 0;
+  int all_user = 0;
+  int all_employee = 0;
+  int all_question = 0;
+  int all_category = 0;
   TooltipBehavior? _tooltipBehavior;
   List<ChartSampleData>? chartData;
+  List<PieChartData>? chartDataPie;
+  var departmentName = new Map();
   @override
   void dispose() {
     super.dispose();
@@ -85,95 +97,146 @@ class _StatsPageState extends State<StatsPage> {
 
   @override
   void initState() {
+    getDataStats();
+    getDataColumn();
     _tooltipBehavior =
         TooltipBehavior(enable: true, header: '', canShowMarker: false);
-    chartData = <ChartSampleData>[
-      ChartSampleData(
-          x: 'Q1',
-          y: 50,
-          yValue: 55,
-          secondSeriesYValue: 72,
-          thirdSeriesYValue: 65),
-      ChartSampleData(
-          x: 'Q2',
-          y: 80,
-          yValue: 75,
-          secondSeriesYValue: 70,
-          thirdSeriesYValue: 60),
-      ChartSampleData(
-          x: 'Q3',
-          y: 35,
-          yValue: 45,
-          secondSeriesYValue: 55,
-          thirdSeriesYValue: 52),
-      ChartSampleData(
-          x: 'Q4',
-          y: 65,
-          yValue: 50,
-          secondSeriesYValue: 70,
-          thirdSeriesYValue: 65),
-      ChartSampleData(
-          x: 'Q5',
-          y: 50,
-          yValue: 55,
-          secondSeriesYValue: 72,
-          thirdSeriesYValue: 65),
-      ChartSampleData(
-          x: 'Q6',
-          y: 80,
-          yValue: 75,
-          secondSeriesYValue: 70,
-          thirdSeriesYValue: 60),
-      ChartSampleData(
-          x: 'Q7',
-          y: 35,
-          yValue: 45,
-          secondSeriesYValue: 55,
-          thirdSeriesYValue: 52),
-      ChartSampleData(
-          x: 'Q8',
-          y: 65,
-          yValue: 50,
-          secondSeriesYValue: 70,
-          thirdSeriesYValue: 65),
-      ChartSampleData(
-          x: 'Q9',
-          y: 50,
-          yValue: 55,
-          secondSeriesYValue: 72,
-          thirdSeriesYValue: 65),
-      ChartSampleData(
-          x: 'Q10',
-          y: 80,
-          yValue: 75,
-          secondSeriesYValue: 70,
-          thirdSeriesYValue: 60),
-      ChartSampleData(
-          x: 'Q11',
-          y: 35,
-          yValue: 45,
-          secondSeriesYValue: 55,
-          thirdSeriesYValue: 52),
-      ChartSampleData(
-          x: 'Q12',
-          y: 65,
-          yValue: 50,
-          secondSeriesYValue: 70,
-          thirdSeriesYValue: 65),
-    ];
     super.initState();
   }
 
+  getDataStats() async {
+    await FirebaseFirestore.instance
+        .collection('user')
+        .get()
+        .then((value) => {
+          setState(() {
+            all_user = value.size;
+          })
+        });
+    await FirebaseFirestore.instance
+        .collection('employee')
+        .get()
+        .then((value) => {
+      setState(() {
+        all_employee = value.size;
+      })
+    });
+    await FirebaseFirestore.instance
+        .collection('questions')
+        .get()
+        .then((value) => {
+      setState(() {
+        all_question = value.size;
+      })
+    });
+    await FirebaseFirestore.instance
+        .collection('departments')
+        .get()
+        .then((value) => {
+          value.docs.forEach((element) {
+            setState(() {
+              departmentName[element.id] = element["name"];
+              List<String> list_category = element['category'].cast<String>();
+              all_category += list_category.length;
+            });
+          })
+    });
+  }
+
+  getDataColumn(){
+    chartData = <ChartSampleData>[];
+    int dtl = 0;
+    int ctl = 0;
+    departmentName.forEach((key, value){
+      FirebaseFirestore.instance
+          .collection('questions')
+          .where('department', isEqualTo: value)
+          .get()
+          .then((values) => {
+            setState(() {
+              if(values.docs.isEmpty){
+                dtl=0;
+                ctl=0;
+              }
+              else{
+                values.docs.forEach((element) {
+                  if(element['status'] == 'Đã trả lời'){
+                    dtl+=1;
+                  }
+                  else{
+                    ctl+=1;
+                  }
+                });
+              }
+              chartData?.add(
+                  ChartSampleData(
+                      x: value,               //Tên khoa
+                      y: dtl,      //Đã trả lời
+                      yValue: ctl,   //Chưa trả lời
+                      secondSeriesYValue: 72,
+                      thirdSeriesYValue: 65)
+              );
+            })
+      });
+    });
+  }
+  getDataPie() async{
+    chartDataPie = [];
+    departmentName.forEach((key, value) {
+      setState(() {
+        chartDataPie?.add(
+            PieChartData(value, 35, Colors.red)
+        );
+      });
+    });
+    chartDataPie?.add(
+        PieChartData("d", 35, Colors.red));
+  }
   Widget getChart(){
     if(pageIndex==0){
       return getStats();
     }
-    else {
+    else if(pageIndex==1){
+      return getColumnChart();
+    }
+    else if(pageIndex==2){
+      return getPieChart();
+    }
+    else{
       return getColumnChart();
     }
   }
 
+  Widget getPieChart(){
+    getDataPie();
+    return SfCircularChart(
+      // Enables the tooltip for all the series in chart
+        tooltipBehavior: _tooltipBehavior,
+        title: ChartTitle(text: 'Biểu đồ tròn'),
+      legend: Legend(isVisible: true),
+      series: <CircularSeries>[
+          // Initialize line series
+          PieSeries<PieChartData, String>(
+            // Enables the tooltip for individual series
+              enableTooltip: true,
+              dataSource: chartDataPie,
+              xValueMapper: (PieChartData data, _) => data.x,
+              yValueMapper: (PieChartData data, _) => data.y,
+              //dataLabelSettings:DataLabelSettings(isVisible : true)
+          )
+        ],
+    );
+  }
+
   Widget getColumnChart(){
+    if (departmentName.isEmpty) {
+      return Center(
+        child: Container(
+            width: 20,
+            height: 20,
+            child: CircularProgressIndicator()),
+      );
+    }
     var size = MediaQuery.of(context).size;
     return SfCartesianChart(
       plotAreaBorderWidth: 0,
@@ -186,8 +249,8 @@ class _StatsPageState extends State<StatsPage> {
       ),
       primaryYAxis: NumericAxis(
           axisLine: const AxisLine(width: 0),
-          labelFormat: '{value}K',
-          maximum: 300,
+          labelFormat: '{value}',
+          maximum: 30,
           majorTickLines: const MajorTickLines(size: 0)),
       series: _getStackedColumnSeries(),
       tooltipBehavior: _tooltipBehavior,
@@ -210,6 +273,14 @@ class _StatsPageState extends State<StatsPage> {
 
   Widget getStats(){
     var size = MediaQuery.of(context).size;
+    if (all_user == 0 || all_question == 0 || all_employee == 0 || all_category == 0) {
+      return Center(
+        child: Container(
+            width: 20,
+            height: 20,
+            child: CircularProgressIndicator()),
+      );
+    }
     return Column(
       children: [
         Wrap(
@@ -261,7 +332,7 @@ class _StatsPageState extends State<StatsPage> {
                           height: 8,
                         ),
                         Text(
-                          "1235",
+                          all_user.toString(),
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 20,
@@ -319,7 +390,7 @@ class _StatsPageState extends State<StatsPage> {
                           height: 8,
                         ),
                         Text(
-                          "150",
+                          all_employee.toString(),
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 20,
@@ -385,7 +456,7 @@ class _StatsPageState extends State<StatsPage> {
                           height: 8,
                         ),
                         Text(
-                          "34921",
+                          all_question.toString(),
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 20,
@@ -443,7 +514,7 @@ class _StatsPageState extends State<StatsPage> {
                           height: 8,
                         ),
                         Text(
-                          "92",
+                          all_category.toString(),
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 20,
