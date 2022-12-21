@@ -381,6 +381,7 @@ class _MessengerPageState extends State<MessengerPage> {
                       return Scaffold(
                         appBar: new AppBar(
                           title: const Text("Tin nhắn"),
+                          backgroundColor: Colors.pinkAccent,
                         ),
                         body: SafeArea(
                           minimum: const EdgeInsets.only(left: 20, right: 10),
@@ -481,7 +482,7 @@ class _MessengerPageState extends State<MessengerPage> {
                                                                           borderRadius:
                                                                               BorderRadius.circular(12),
                                                                           border: Border.all(
-                                                                              color: Colors.blueAccent,
+                                                                              color: Colors.pinkAccent,
                                                                               width: 4),
                                                                         ),
                                                                         child:
@@ -529,7 +530,7 @@ class _MessengerPageState extends State<MessengerPage> {
                                                                           borderRadius:
                                                                               BorderRadius.circular(12),
                                                                           border: Border.all(
-                                                                              color: Colors.blueAccent,
+                                                                              color: Colors.pinkAccent,
                                                                               width: 4),
                                                                         ),
                                                                         child:
@@ -574,7 +575,7 @@ class _MessengerPageState extends State<MessengerPage> {
                                                                           borderRadius:
                                                                               BorderRadius.circular(12),
                                                                           border: Border.all(
-                                                                              color: Colors.blueAccent,
+                                                                              color: Colors.pinkAccent,
                                                                               width: 4),
                                                                         ),
                                                                         child:
@@ -623,10 +624,10 @@ class _MessengerPageState extends State<MessengerPage> {
                                                                                 enabledBorder: OutlineInputBorder(
                                                                                     borderRadius: BorderRadius.circular(10),
                                                                                     borderSide: BorderSide(
-                                                                                      color: Colors.blueAccent,
+                                                                                      color: Colors.pinkAccent,
                                                                                       width: 1,
                                                                                     )),
-                                                                                focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide(color: Colors.blue, width: 4))),
+                                                                                focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide(color: Colors.pink, width: 4))),
                                                                           ),
                                                                         )),
                                                                     Container(
@@ -653,10 +654,10 @@ class _MessengerPageState extends State<MessengerPage> {
                                                                               enabledBorder: OutlineInputBorder(
                                                                                   borderRadius: BorderRadius.circular(10),
                                                                                   borderSide: BorderSide(
-                                                                                    color: Colors.blueAccent,
+                                                                                    color: Colors.pinkAccent,
                                                                                     width: 1,
                                                                                   )),
-                                                                              focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide(color: Colors.blue, width: 4))),
+                                                                              focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide(color: Colors.pink, width: 4))),
                                                                         ),
                                                                       ),
                                                                     ),
@@ -678,10 +679,9 @@ class _MessengerPageState extends State<MessengerPage> {
                                                                                 TextField(
                                                                           controller:
                                                                               _questionController,
-                                                                          maxLines:
-                                                                              7,
-                                                                          maxLength:
-                                                                              500,
+                                                                          maxLines:50,
+                                                                          minLines: 10,
+                                                                          maxLength:3000,
                                                                           decoration: InputDecoration(
                                                                               hintMaxLines: 5,
                                                                               helperMaxLines: 5,
@@ -690,10 +690,10 @@ class _MessengerPageState extends State<MessengerPage> {
                                                                               enabledBorder: OutlineInputBorder(
                                                                                   borderRadius: BorderRadius.circular(10),
                                                                                   borderSide: BorderSide(
-                                                                                    color: Colors.blueAccent,
+                                                                                    color: Colors.pinkAccent,
                                                                                     width: 1,
                                                                                   )),
-                                                                              focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide(color: Colors.blue, width: 4))),
+                                                                              focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide(color: Colors.pink, width: 4))),
                                                                         ),
                                                                       ),
                                                                     ),
@@ -714,26 +714,34 @@ class _MessengerPageState extends State<MessengerPage> {
                                                                             Widget>[
                                                                           Expanded(
                                                                             child:
-                                                                                ElevatedButton(
+                                                                                ElevatedButton.icon(
                                                                               onPressed: () {
                                                                                 _onSendQuestionClicked();
                                                                                 print('press save');
                                                                               },
-                                                                              child: Text(
+                                                                              label: Text(
                                                                                 'Gửi',
                                                                                 style: TextStyle(fontSize: 16, color: Colors.white),
                                                                               ),
+                                                                                  icon: Icon(Icons.send_rounded),
+                                                                                  style: ElevatedButton.styleFrom(
+                                                                                    primary: Colors.pinkAccent
+                                                                                  ),
                                                                             ),
                                                                           ),
                                                                           Padding(
                                                                               padding: EdgeInsets.all(10)),
                                                                           Expanded(
-                                                                              child: ElevatedButton(
+                                                                              child: ElevatedButton.icon(
                                                                                   onPressed: () => {Navigator.pop(context)},
-                                                                                  child: Text(
+                                                                                  label: Text(
                                                                                     'Thoát',
                                                                                     style: TextStyle(fontSize: 16, color: Colors.white),
-                                                                                  ))),
+                                                                                  ),
+                                                                              icon: Icon(Icons.cancel_presentation),
+                                                                              style: ElevatedButton.styleFrom(
+                                                                                primary: Colors.pinkAccent
+                                                                              ),)),
                                                                           Padding(
                                                                               padding: EdgeInsets.fromLTRB(0, 10, 0, 30)),
                                                                         ],

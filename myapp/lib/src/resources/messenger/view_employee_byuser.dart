@@ -414,8 +414,9 @@ class _ViewEmployeeByUser extends State<ViewEmployeeByUser> {
                                           builder: (context, snapshot) =>
                                               TextField(
                                             controller: _questionController,
-                                            maxLines: 7,
-                                            maxLength: 500,
+                                            maxLines: 50,
+                                            minLines: 7,
+                                            maxLength: 3000,
                                             decoration: InputDecoration(
                                                 hintMaxLines: 5,
                                                 helperMaxLines: 5,
