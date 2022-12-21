@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -89,10 +91,7 @@ class _HomePageState extends State<HomePage> {
     userModel = snapshot.docs.first as UserModel;
   }
 
-  @override
-  void dispose() {
-    super.dispose();
-  }
+
   @override
   void initState() {
     super.initState();
@@ -211,6 +210,210 @@ class _HomePageState extends State<HomePage> {
                   style: TextStyle(fontSize: 16,fontWeight: FontWeight.w500),)
                 ,)
             ],
+          ),
+          Container(
+            margin: EdgeInsets.fromLTRB(240, 10, 0, 10),
+            width: 48,
+            decoration: BoxDecoration(
+              color: Colors.pinkAccent,
+              borderRadius: BorderRadius.circular(30),
+            ),
+            child: IconButton(
+              icon: Icon(Icons.send_sharp),
+              iconSize: 30,
+              color: Colors.white70,
+              onPressed: () {
+                showModalBottomSheet(
+                  isScrollControlled: true,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(20),
+                      topRight: Radius.circular(20),
+                    )
+                  ),
+                  context: context,
+                  builder: (BuildContext contetxt){
+                    return StatefulBuilder(builder: (BuildContext context, StateSetter setStateKhoa ){
+                      return Container(
+                        height: 600,
+                        child: SingleChildScrollView(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: <Widget>[
+                              Padding(
+                                  padding: EdgeInsets.fromLTRB(
+                                      0, 10, 0, 20)),
+                              Text(
+                                "Gửi thắc mắc về bài đăng",
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.w400),
+                              ),
+                              Container(
+                                margin: EdgeInsets.fromLTRB(0, 10, 0, 15),
+                                width: 340,
+                                padding: EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(12),
+                                  border: Border.all(
+                                    color: Colors.pinkAccent, width: 4,
+                                  )
+                                ),
+                                child: DropdownButtonHideUnderline(
+                                  child: DropdownButton<String>(
+                                    isExpanded: true,
+                                    value: value_doituong,
+                                    hint: new Text(
+                                        "Vui lòng chọn đối tượng"),
+                                    iconSize: 36,
+                                    items: item_doituong.map(buildMenuItem).toList(),
+                                    onChanged: (value){
+                                      setStateKhoa((){
+                                        setState(() {
+                                          this.value_doituong = value;
+                                        });
+                                      });
+                                    },
+                                  ),
+                                ),
+                              ),
+                              Container(
+                                  margin:
+                                  EdgeInsets.fromLTRB(0, 10, 0, 15),
+                                  width: 340,
+                                  child: StreamBuilder(
+                                    stream: informationControl,
+                                    builder: (context, snapshot) =>
+                                        TextField(
+                                          controller:
+                                          _informationController,
+                                          decoration: InputDecoration(
+                                              labelText:
+                                              "Phương thức liên hệ",
+                                              hintText:
+                                              'Nhập Email/SĐT của bạn',
+                                              enabledBorder:
+                                              OutlineInputBorder(
+                                                  borderRadius:
+                                                  BorderRadius
+                                                      .circular(10),
+                                                  borderSide:
+                                                  BorderSide(
+                                                    color: Colors
+                                                        .pinkAccent,
+                                                    width: 1,
+                                                  )),
+                                              focusedBorder:
+                                              OutlineInputBorder(
+                                                  borderRadius:
+                                                  BorderRadius
+                                                      .circular(10),
+                                                  borderSide: BorderSide(
+                                                      color:
+                                                      Colors.pink,
+                                                      width: 4))),
+                                        ),
+                                  )),
+                              Container(
+                                width: 340,
+                                margin:
+                                EdgeInsets.fromLTRB(0, 10, 0, 15),
+                                child: StreamBuilder(
+                                  stream: questionControl,
+                                  builder: (context, snapshot) =>
+                                      TextField(
+                                        controller: _questionController,
+                                        maxLines: 50,
+                                        minLines: 7,
+                                        maxLength: 3000,
+                                        decoration: InputDecoration(
+                                            hintMaxLines: 5,
+                                            helperMaxLines: 5,
+                                            labelText: "Đặt câu hỏi",
+                                            hintText:
+                                            'Nhập câu hỏi của bạn',
+                                            enabledBorder:
+                                            OutlineInputBorder(
+                                                borderRadius:
+                                                BorderRadius
+                                                    .circular(10),
+                                                borderSide: BorderSide(
+                                                  color:
+                                                  Colors.pinkAccent,
+                                                  width: 1,
+                                                )),
+                                            focusedBorder:
+                                            OutlineInputBorder(
+                                                borderRadius:
+                                                BorderRadius
+                                                    .circular(10),
+                                                borderSide: BorderSide(
+                                                    color: Colors.pink,
+                                                    width: 4))),
+                                      ),
+                                ),
+                              ),
+                              Container(
+                                padding: EdgeInsets.all(10),
+                                child: Row(
+                                  mainAxisAlignment:
+                                  MainAxisAlignment.spaceAround,
+                                  children: <Widget>[
+                                    Expanded(
+                                      child: ElevatedButton.icon(
+
+                                        onPressed: () {
+                                          //_onSendQuestionClicked();
+                                          print('press save');
+                                        },
+                                        label: Text(
+                                          'Gửi',
+                                          style: TextStyle(
+                                              fontSize: 16,
+                                              color: Colors.white),
+                                        ),
+                                        icon: Icon(Icons.mail_outline_rounded),
+                                        style: ElevatedButton.styleFrom(
+                                            primary: Colors.pinkAccent
+                                        ),
+                                      ),
+                                    ),
+                                    Padding(
+                                        padding: EdgeInsets.all(10)),
+                                    Expanded(
+                                        child: ElevatedButton.icon(
+                                          onPressed: () => {
+                                            Navigator.pop(context)
+                                          },
+                                          label: Text(
+                                            'Thoát',
+                                            style: TextStyle(
+                                                fontSize: 16,
+                                                color: Colors.white),
+                                          ),
+                                          icon: Icon(Icons.cancel_presentation),
+                                          style: ElevatedButton.styleFrom(
+                                              primary: Colors.pinkAccent
+                                          ),
+                                        )),
+                                    Padding(
+                                        padding: EdgeInsets.fromLTRB(
+                                            0, 10, 0, 30)),
+                                  ],
+                                ),
+                              )
+                            ],
+
+                          ),
+                        ),
+                      );
+                    });
+                  }
+                );
+                
+              },
+            ),
           )
         ],
       ),
@@ -229,6 +432,39 @@ class _HomePageState extends State<HomePage> {
       })
     });
   }
+  var item_doituong = [
+    'Học sinh THPT',
+    'Sinh viên',
+    'Phụ huynh',
+    'Cựu sinh viên',
+    'Khác'
+  ];
+
+  String? value_doituong;
+
+  TextEditingController _informationController = new TextEditingController();
+  TextEditingController _questionController = new TextEditingController();
+
+  StreamController _informationControl = new StreamController.broadcast();
+  StreamController _questionControl = new StreamController.broadcast();
+
+  Stream get informationControl => _informationControl.stream;
+  Stream get questionControl => _questionControl.stream;
+
+  void dispose() {
+    _questionControl.close();
+
+    _informationControl.close();
+    super.dispose();
+  }
+
+  DropdownMenuItem<String> buildMenuItem(String item) => DropdownMenuItem(
+      value: item,
+      child: Text(
+        item,
+        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+      ));
+
 
 
   @override
@@ -263,6 +499,9 @@ class _HomePageState extends State<HomePage> {
           // TODO: implement build
           return Scaffold(
             appBar: new AppBar(
+              backgroundColor: Colors.pinkAccent,
+
+
               title: new Text("UTE APP"),
               actions: <Widget>[
                 IconButton(
@@ -291,11 +530,14 @@ class _HomePageState extends State<HomePage> {
               ],
             ),
             drawer: new Drawer(
+
               child: ListView(
                 children: <Widget>[
                   new UserAccountsDrawerHeader(
+
                     accountName: new Text(userModel.name!),
                     accountEmail: new Text(userModel.email!),
+                    arrowColor: Colors.redAccent,
                     currentAccountPicture: new CircleAvatar(
                       backgroundImage:
                           new NetworkImage(userModel.image!),

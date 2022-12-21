@@ -162,6 +162,7 @@ class _MyInfoState extends State<MyInfo> {
           return new Scaffold(
             appBar: new AppBar(
               title: new Text('Thông tin cá nhân'),
+              backgroundColor: Colors.pinkAccent,
             ),
             body: SafeArea(
               minimum: const EdgeInsets.only(left: 20, right: 10),
@@ -242,13 +243,13 @@ class _MyInfoState extends State<MyInfo> {
                                 enabledBorder: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(10),
                                     borderSide: BorderSide(
-                                      color: Colors.blueAccent,
+                                      color: Colors.pinkAccent,
                                       width: 1,
                                     )),
                                 focusedBorder: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(10),
                                     borderSide: BorderSide(
-                                        color: Colors.blue, width: 4))),
+                                        color: Colors.pink, width: 4))),
                           ),
                         )),
                     Container(
@@ -268,13 +269,13 @@ class _MyInfoState extends State<MyInfo> {
                                 enabledBorder: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(10),
                                     borderSide: BorderSide(
-                                      color: Colors.blueAccent,
+                                      color: Colors.pinkAccent,
                                       width: 1,
                                     )),
                                 focusedBorder: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(10),
                                     borderSide: BorderSide(
-                                        color: Colors.blue, width: 4))),
+                                        color: Colors.pink, width: 4))),
                           ),
                         )),
                     Container(
@@ -294,13 +295,13 @@ class _MyInfoState extends State<MyInfo> {
                                 enabledBorder: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(10),
                                     borderSide: BorderSide(
-                                      color: Colors.blueAccent,
+                                      color: Colors.pinkAccent,
                                       width: 1,
                                     )),
                                 focusedBorder: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(10),
                                     borderSide: BorderSide(
-                                        color: Colors.blue, width: 4))),
+                                        color: Colors.pink, width: 4))),
                           ),
                         )),
                     Container(
@@ -318,13 +319,13 @@ class _MyInfoState extends State<MyInfo> {
                               enabledBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(10),
                                   borderSide: BorderSide(
-                                    color: Colors.blueAccent,
+                                    color: Colors.pinkAccent,
                                     width: 1,
                                   )),
                               focusedBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(10),
                                   borderSide: BorderSide(
-                                      color: Colors.blue, width: 4))),
+                                      color: Colors.pink, width: 4))),
                         ),
                       ),
                     ),
@@ -334,21 +335,25 @@ class _MyInfoState extends State<MyInfo> {
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: <Widget>[
                           Expanded(
-                            child: ElevatedButton(
+                            child: ElevatedButton.icon(
                               onPressed: () {
                                 print('press save');
                                 _onSaveClicked();
                               },
-                              child: Text(
+                              label: Text(
                                 'Lưu',
                                 style: TextStyle(
                                     fontSize: 16, color: Colors.white),
+                              ),
+                              icon: Icon(Icons.save_outlined),
+                              style: ElevatedButton.styleFrom(
+                                primary: Colors.pinkAccent
                               ),
                             ),
                           ),
                           Padding(padding: EdgeInsets.all(10)),
                           Expanded(
-                              child: ElevatedButton(
+                              child: ElevatedButton.icon(
                                   onPressed: () {
                                     showModalBottomSheet(
                                         shape: RoundedRectangleBorder(
@@ -394,8 +399,7 @@ class _MyInfoState extends State<MyInfo> {
                                                                               10),
                                                                       borderSide:
                                                                           BorderSide(
-                                                                        color: Colors
-                                                                            .blueAccent,
+                                                                        color: Colors.pinkAccent,
                                                                         width:
                                                                             1,
                                                                       )),
@@ -405,8 +409,7 @@ class _MyInfoState extends State<MyInfo> {
                                                                           .circular(
                                                                               10),
                                                                   borderSide: BorderSide(
-                                                                      color: Colors
-                                                                          .blue,
+                                                                      color: Colors.pink,
                                                                       width:
                                                                           4))),
                                                       controller:
@@ -436,8 +439,7 @@ class _MyInfoState extends State<MyInfo> {
                                                                               10),
                                                                       borderSide:
                                                                           BorderSide(
-                                                                        color: Colors
-                                                                            .blueAccent,
+                                                                        color: Colors.pinkAccent,
                                                                         width:
                                                                             1,
                                                                       )),
@@ -448,7 +450,7 @@ class _MyInfoState extends State<MyInfo> {
                                                                               10),
                                                                   borderSide: BorderSide(
                                                                       color: Colors
-                                                                          .blue,
+                                                                          .pink,
                                                                       width:
                                                                           4))),
                                                       controller:
@@ -478,8 +480,7 @@ class _MyInfoState extends State<MyInfo> {
                                                                               10),
                                                                       borderSide:
                                                                           BorderSide(
-                                                                        color: Colors
-                                                                            .blueAccent,
+                                                                        color: Colors.pinkAccent,
                                                                         width:
                                                                             1,
                                                                       )),
@@ -489,8 +490,7 @@ class _MyInfoState extends State<MyInfo> {
                                                                           .circular(
                                                                               10),
                                                                   borderSide: BorderSide(
-                                                                      color: Colors
-                                                                          .blue,
+                                                                      color: Colors.pink,
                                                                       width:
                                                                           4))),
                                                       controller:
@@ -506,17 +506,21 @@ class _MyInfoState extends State<MyInfo> {
                                                             .spaceAround,
                                                     children: <Widget>[
                                                       Expanded(
-                                                        child: ElevatedButton(
+                                                        child: ElevatedButton.icon(
                                                           onPressed: () {
                                                             _onChangePassword();
                                                             print('press save');
                                                           },
-                                                          child: Text(
+                                                          label: Text(
                                                             'Lưu',
                                                             style: TextStyle(
                                                                 fontSize: 16,
                                                                 color: Colors
                                                                     .white),
+                                                          ),
+                                                          icon: Icon(Icons.check),
+                                                          style: ElevatedButton.styleFrom(
+                                                            primary: Colors.pinkAccent
                                                           ),
                                                         ),
                                                       ),
@@ -525,19 +529,23 @@ class _MyInfoState extends State<MyInfo> {
                                                               EdgeInsets.all(
                                                                   10)),
                                                       Expanded(
-                                                          child: ElevatedButton(
+                                                          child: ElevatedButton.icon(
                                                               onPressed: () => {
                                                                     Navigator.pop(
                                                                         context)
                                                                   },
-                                                              child: Text(
+                                                              label: Text(
                                                                 'Thoát',
                                                                 style: TextStyle(
                                                                     fontSize:
                                                                         16,
                                                                     color: Colors
                                                                         .white),
-                                                              ))),
+                                                              ),
+                                                          icon: Icon(Icons.cancel_outlined),
+                                                          style: ElevatedButton.styleFrom(
+                                                            primary: Colors.pinkAccent
+                                                          ),)),
                                                     ],
                                                   ),
                                                 )
@@ -546,7 +554,12 @@ class _MyInfoState extends State<MyInfo> {
                                           );
                                         });
                                   },
-                                  child: const Text('Đổi mật khẩu'))),
+                                  label: const Text('Đổi mật khẩu'),
+                                icon: Icon(Icons.password_outlined),
+                                style: ElevatedButton.styleFrom(
+                                  primary: Colors.pinkAccent
+                                ),
+                              )),
                         ],
                       ),
                     ),
