@@ -45,6 +45,8 @@ dependencies:
   passwordfield: ^0.1.0
   animated_bottom_navigation_bar: ^1.1.0
   syncfusion_flutter_charts: ^20.3.60
+  advance_pdf_viewer: ^2.0.1
+  flutter_pdfview: ^1.2.1
 
 
 

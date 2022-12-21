@@ -12,6 +12,7 @@ import '../../models/EmployeeModel.dart';
 import '../../models/QuestionModel.dart';
 import '../../models/UserModel.dart';
 import '../dialog/loading_dialog.dart';
+import 'messenger_employee.dart';
 
 class DetailQuestionEmployee extends StatefulWidget {
   _DetailQuestionState createState() => _DetailQuestionState();
@@ -587,11 +588,11 @@ class _DetailQuestionState extends State<DetailQuestionEmployee> {
     if (isvalid) {
       LoadingDialog.showLoadingDialog(context, "loading...");
       sendAnswer(
-          employeeModel.id, _answerController.text, timestring, question.id,
+          userr.uid, _answerController.text, timestring, question.id,
           () {
         LoadingDialog.hideLoadingDialog(context);
         Navigator.push(context,
-            MaterialPageRoute(builder: (context) => HomePageEmployee()));
+            MaterialPageRoute(builder: (context) => MessengerPageEmployee()));
       });
     }
     return 0;

@@ -98,12 +98,10 @@ class _StatsPageState extends State<StatsPage> {
   @override
   void initState() {
     getDataStats();
-    getDataColumn();
     _tooltipBehavior =
         TooltipBehavior(enable: true, header: '', canShowMarker: false);
     super.initState();
   }
-
   getDataStats() async {
     await FirebaseFirestore.instance
         .collection('user')
@@ -141,16 +139,20 @@ class _StatsPageState extends State<StatsPage> {
             });
           })
     });
+    await getDataColumn();
+    await getDataPie();
   }
 
   getDataColumn(){
     chartData = <ChartSampleData>[];
-    int dtl = 0;
-    int ctl = 0;
+    int dtl;
+    int ctl;
     departmentName.forEach((key, value){
+      dtl=0;
+      ctl=0;
       FirebaseFirestore.instance
           .collection('questions')
-          .where('department', isEqualTo: value)
+          .where('department', isEqualTo: key)
           .get()
           .then((values) => {
             setState(() {
@@ -160,11 +162,11 @@ class _StatsPageState extends State<StatsPage> {
               }
               else{
                 values.docs.forEach((element) {
-                  if(element['status'] == 'Đã trả lời'){
-                    dtl+=1;
+                  if(element['status'] == 'Chưa trả lời'){
+                    ctl+=1;
                   }
                   else{
-                    ctl+=1;
+                    dtl+=1;
                   }
                 });
               }
@@ -176,6 +178,8 @@ class _StatsPageState extends State<StatsPage> {
                       secondSeriesYValue: 72,
                       thirdSeriesYValue: 65)
               );
+              dtl=0;
+              ctl=0;
             })
       });
     });
@@ -183,14 +187,25 @@ class _StatsPageState extends State<StatsPage> {
   getDataPie() async{
     chartDataPie = [];
     departmentName.forEach((key, value) {
-      setState(() {
-        chartDataPie?.add(
-            PieChartData(value, 35, Colors.red)
-        );
+      FirebaseFirestore.instance
+          .collection('employee')
+          .where('department', isEqualTo: key)
+          .get()
+          .then((values) => {
+        setState(() {
+          if(values.docs.isEmpty){
+            chartDataPie?.add(
+                PieChartData(value, 0, Colors.red)
+            );
+          }
+          else{
+            chartDataPie?.add(
+                PieChartData(value, values.docs.length.toDouble(), Colors.red)
+            );
+          }
+        }),
       });
     });
-    chartDataPie?.add(
-        PieChartData("d", 35, Colors.red));
   }
   Widget getChart(){
     if(pageIndex==0){
@@ -208,11 +223,10 @@ class _StatsPageState extends State<StatsPage> {
   }
 
   Widget getPieChart(){
-    getDataPie();
     return SfCircularChart(
       // Enables the tooltip for all the series in chart
         tooltipBehavior: _tooltipBehavior,
-        title: ChartTitle(text: 'Biểu đồ tròn'),
+        title: ChartTitle(text: 'Thống kê tư vấn viên'),
       legend: Legend(isVisible: true),
       series: <CircularSeries>[
           // Initialize line series
@@ -229,23 +243,17 @@ class _StatsPageState extends State<StatsPage> {
   }
 
   Widget getColumnChart(){
-    if (departmentName.isEmpty) {
-      return Center(
-        child: Container(
-            width: 20,
-            height: 20,
-            child: CircularProgressIndicator()),
-      );
-    }
     var size = MediaQuery.of(context).size;
     return SfCartesianChart(
+      enableAxisAnimation: true,
       plotAreaBorderWidth: 0,
       title: ChartTitle(
           text: 'Thống kê số câu hỏi các khoa'),
       legend: Legend(
           isVisible: true, overflowMode: LegendItemOverflowMode.wrap),
       primaryXAxis: CategoryAxis(
-        majorGridLines: const MajorGridLines(width: 0),
+        majorGridLines: const MajorGridLines(width: 1),
+        maximumLabelWidth: 20,
       ),
       primaryYAxis: NumericAxis(
           axisLine: const AxisLine(width: 0),
@@ -273,7 +281,7 @@ class _StatsPageState extends State<StatsPage> {
 
   Widget getStats(){
     var size = MediaQuery.of(context).size;
-    if (all_user == 0 || all_question == 0 || all_employee == 0 || all_category == 0) {
+    if (all_user == 0 || all_question == 0 || all_employee == 0 || all_category == 0 || departmentName.isEmpty) {
       return Center(
         child: Container(
             width: 20,
@@ -541,6 +549,7 @@ class _StatsPageState extends State<StatsPage> {
           Container(
             decoration: BoxDecoration(color: Colors.white, boxShadow: [
               BoxShadow(
+                //color: Colors.grey.withOpacity(0.01),
                 color: Colors.grey.withOpacity(0.01),
                 spreadRadius: 10,
                 blurRadius: 3,
@@ -565,9 +574,9 @@ class _StatsPageState extends State<StatsPage> {
                       Icon(Icons.search)
                     ],
                   ),
-                  SizedBox(
-                    height: 25,
-                  ),
+                  // SizedBox(
+                  //   height: 25,
+                  // ),
                 ],
               ),
             ),
@@ -585,8 +594,8 @@ class _StatsPageState extends State<StatsPage> {
     List<IconData> iconItems = [
       Icons.table_chart_rounded,
       Icons.bar_chart,
-      Icons.area_chart,
-      Icons.add_a_photo,
+      Icons.pie_chart,
+      Icons.bubble_chart,
     ];
     return AnimatedBottomNavigationBar(
       activeColor: Colors.blue,

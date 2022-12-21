@@ -20,7 +20,7 @@ class EmployeeInfo extends StatefulWidget {
 
 class _MyInfoState extends State<EmployeeInfo> {
   AuthBloc authBloc = new AuthBloc();
-
+  var user_auth = FirebaseAuth.instance.currentUser!;
   TextEditingController _nameController = new TextEditingController();
   TextEditingController _phoneController = new TextEditingController();
   TextEditingController _emailController = new TextEditingController();
@@ -169,16 +169,6 @@ class _MyInfoState extends State<EmployeeInfo> {
             );
           }
           snapshot.data!.docs.map((e) {
-            // employeeModel.id = (e.data() as Map)['id'];
-            // employeeModel.name = (e.data() as Map)['name'];
-            // employeeModel.email = (e.data() as Map)['email'];
-            // employeeModel.image = (e.data() as Map)['image'];
-            // employeeModel.password = (e.data() as Map)['password'];
-            // employeeModel.phone = (e.data() as Map)['phone'];
-            // employeeModel.department = (e.data() as Map)['department'];
-            // employeeModel.category = (e.data() as Map)['category'];
-            // employeeModel.roles = (e.data() as Map)['roles'];
-            // employeeModel.status = (e.data() as Map)['status'];
             //getDepartmentName(setState);
             return employeeModel;
           }).toString();
@@ -669,6 +659,7 @@ class _MyInfoState extends State<EmployeeInfo> {
     var ref = FirebaseFirestore.instance.collection('employee');
 
     ref
+
         .doc(id)
         .update({'email': email, 'name': name, 'phone': phone}).then((value) {
       onSuccess();
@@ -678,36 +669,60 @@ class _MyInfoState extends State<EmployeeInfo> {
       print("err");
     });
   }
-}
+  uploadImage() async {
+    final _firebaseStorage = FirebaseStorage.instance;
+    final _imagePicker = ImagePicker();
+    String image_url;
+    //PickedFile image;
+    //Check Permissions
+    await Permission.photos.request();
 
-uploadImage() async {
-  final _firebaseStorage = FirebaseStorage.instance;
-  final _imagePicker = ImagePicker();
-  PickedFile image;
-  //Check Permissions
-  await Permission.photos.request();
+    var permissionStatus = await Permission.photos.status;
 
-  var permissionStatus = await Permission.photos.status;
+    if (permissionStatus.isGranted) {
+      //Select Image
+      var image = await _imagePicker.pickImage(source: ImageSource.gallery);
 
-  if (permissionStatus.isGranted) {
-    //Select Image
-    image = (await _imagePicker.getImage(source: ImageSource.gallery))!;
-    var file = File(image.path);
-
-    if (image != null) {
-      //Upload to Firebase
-      // var snapshot = await _firebaseStorage.ref()
-      //     .child('images/imageName')
-      //     .putFile(file).onComplete;
-      // var downloadUrl = await snapshot.ref.getDownloadURL();
-      // setState(() {
-      //   imageUrl = downloadUrl;
-      // });
-      print('Avatar');
+      if (image != null) {
+        var file = File(image.path);
+        FirebaseStorage storage = FirebaseStorage.instance;
+        Reference ref =
+        storage.ref().child("avatar/"+image.name);
+        UploadTask uploadTask = ref.putFile(file);
+        await uploadTask.whenComplete(() async {
+          var url = await ref.getDownloadURL();
+          image_url = url.toString();
+          updateAvatar(user_auth.uid, image_url, () {
+            LoadingDialog.hideLoadingDialog(context);
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => EmployeeInfo()));
+          });
+        }).catchError((onError) {
+          print(onError);
+        });
+        print('Avatar');
+      } else {
+        print('No Image Path Received');
+      }
     } else {
-      print('No Image Path Received');
+      print('Permission not granted. Try Again with permission access');
     }
-  } else {
-    print('Permission not granted. Try Again with permission access');
+  }
+
+  updateAvatar(id, image_url, Function onSuccess) async {
+    var ref = FirebaseFirestore.instance.collection('employee');
+
+    ref.doc(id).update({
+      'image': image_url
+    }).then((value) {
+      onSuccess();
+      print("update successful");
+    }).catchError((err){
+      //TODO
+      print("err");
+      print(err);
+    });
   }
 }
+
+

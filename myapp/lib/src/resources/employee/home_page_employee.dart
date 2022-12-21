@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -13,6 +15,7 @@ import 'package:myapp/src/models/EmployeeModel.dart';
 import 'package:myapp/src/screens/signin_screen.dart';
 
 import '../../models/EmployeeModel.dart';
+import '../pdf_viewer.dart';
 import 'employee_info.dart';
 import '../dialog/loading_dialog.dart';
 import 'messenger_employee.dart';
@@ -153,11 +156,11 @@ class _HomePageState extends State<HomePageEmployee> {
                   ),
                   new ListTile(
                     title: new Text('Hồ sơ của bạn'),
-                    onTap: () {
-                      Navigator.push(
-                          context,
-                          new MaterialPageRoute(
-                              builder: (BuildContext context) => new MyFile()));
+                    onTap: () async {
+                      final url =
+                          'https://www.adobe.com/support/products/enterprise/knowledgecenter/media/c4611_sample_explain.pdf';
+                      final file = await PDFApi.loadNetwork(url);
+                      openPDF(context, file);
                     },
                   ),
                   new Divider(
@@ -180,4 +183,7 @@ class _HomePageState extends State<HomePageEmployee> {
           );
         });
   }
+  void openPDF(BuildContext context, File file) => Navigator.of(context).push(
+    MaterialPageRoute(builder: (context) => PDFViewerPage(file: file)),
+  );
 }

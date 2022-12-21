@@ -52,8 +52,9 @@ class _DetailQuestionState extends State<DetailQuestion> {
 
   @override
   void initState() {
-    super.initState();
+    getDepartmentName();
     getQuestion();
+    super.initState();
   }
 
   FirebaseAuth auth = FirebaseAuth.instance;
@@ -63,6 +64,20 @@ class _DetailQuestionState extends State<DetailQuestion> {
 
   Question question = new Question("", "", "", "", "", "", "", uModel, "", "");
   List<Answer> listAnswer = [];
+
+  var departmentName = new Map();
+  getDepartmentName() async {
+    await FirebaseFirestore.instance
+        .collection('departments')
+        .get()
+        .then((value) => {
+      setState(() {
+        value.docs.forEach((element) {
+          departmentName[element.id] = element["name"];
+        });
+      })
+    });
+  }
   getQuestion() async {
     UserModel userModel = new UserModel("", " ", "", "", "", "", "");
     await FirebaseFirestore.instance
@@ -141,7 +156,7 @@ class _DetailQuestionState extends State<DetailQuestion> {
   }
 
   _buildQuestion() {
-    if (question.id == "") {
+    if (question.id == "" || departmentName.isEmpty) {
       return Center(
       child: Container(
       width: 20,
@@ -222,7 +237,7 @@ class _DetailQuestionState extends State<DetailQuestion> {
                         ),
                         Text(
                           '   Gửi: ' +
-                              question.department,
+                              departmentName[question.department],
                           style: TextStyle(
                               fontSize: 15,
                               fontStyle: FontStyle.italic,
@@ -373,6 +388,7 @@ class _DetailQuestionState extends State<DetailQuestion> {
     return Scaffold(
       appBar: new AppBar(
         title: const Text("Chi tiết câu hỏi"),
+        backgroundColor: Colors.pinkAccent,
       ),
       body: SafeArea(
         minimum: const EdgeInsets.only(left: 20, right: 10),
