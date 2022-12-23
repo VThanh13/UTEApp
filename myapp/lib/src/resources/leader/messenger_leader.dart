@@ -64,7 +64,7 @@ class _MessengerPageState extends State<MessengerPageLeader> {
   List<QuestionModel> listQuestion = [];
   Future<List<QuestionModel>> getQuestionData() async {
     List<QuestionModel> list = [];
-    QuerySnapshot snapshot = await FirebaseFirestore.instance.collection('questions').where('category', isEqualTo: employeeModel.category).get();
+    QuerySnapshot snapshot = await FirebaseFirestore.instance.collection('questions').where('department', isEqualTo: employeeModel.department).get();
       snapshot.docs.map((e) {
         QuestionModel questionModel = new QuestionModel("", "", "", "", "", "", "", "", "", "");
         questionModel.id = e.reference.id;
@@ -168,6 +168,7 @@ class _MessengerPageState extends State<MessengerPageLeader> {
       _informationControl.sink.addError("Nhập thông tin liên lạc");
       return false;
     }
+
     
     if(title == null || title.length == 0){
       _titleControl.sink.addError("Nhập tiêu đề");
@@ -275,8 +276,7 @@ class _MessengerPageState extends State<MessengerPageLeader> {
                                               borderRadius:
                                                   BorderRadius.circular(12))),
                                       child: Text(
-                                        employeeModel.name! +
-                                            " ơi, bạn có 6 câu hỏi chưa trả lời",
+                                            "Trả lời câu hỏi",
                                         style: TextStyle(
                                             color: Colors.black54,
                                             fontSize: 15),
@@ -315,7 +315,6 @@ class _MessengerPageState extends State<MessengerPageLeader> {
                                           fontSize: 24.0,
                                           fontWeight: FontWeight.w600,
                                           letterSpacing: 1.0,
-                                          fontStyle: FontStyle.italic
                                         ),
                                       ),
                                     ),

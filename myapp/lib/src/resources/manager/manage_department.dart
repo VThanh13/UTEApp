@@ -71,6 +71,21 @@ class _ManageDepartmentState extends State<ManageDepartment> {
     getCurrentUser();
   }
 
+  var leader = new Map();
+  getLeader() async {
+    await FirebaseFirestore.instance
+        .collection('employee')
+        .get()
+        .then((value) => {
+      setState(() {
+        value.docs.forEach((element) {
+          if(element['roles']=='Trưởng nhóm') {
+            leader[element['department']] = element["name"];
+          }
+        });
+      })
+    });
+  }
   getCurrentUser() async {
     await FirebaseFirestore.instance
         .collection('employee')
@@ -90,11 +105,12 @@ class _ManageDepartmentState extends State<ManageDepartment> {
             });
 
     await getListDepartment();
+    await getLeader();
   }
   _buildDepartment(BuildContext context, DepartmentModel department) {
     return GestureDetector(
       onTap: () {
-        return _modalBottomSheetEditDepartment(department.name);
+        return _modalBottomSheetEditDepartment(department);
       },
       child: Card(
         child: Column(
@@ -141,7 +157,7 @@ class _ManageDepartmentState extends State<ManageDepartment> {
       })
     });
   }
-  _modalBottomSheetEditDepartment(String departmentName) {
+  _modalBottomSheetEditDepartment(DepartmentModel department) {
     return showModalBottomSheet(
         isScrollControlled: true,
         constraints: BoxConstraints.loose(Size(
@@ -176,7 +192,7 @@ class _ManageDepartmentState extends State<ManageDepartment> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
                           Container(
-                            height: MediaQuery.of(context).size.height * 0.45,
+                            height: MediaQuery.of(context).size.height * 0.5,
                             child: SingleChildScrollView(
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.start,
@@ -193,7 +209,7 @@ class _ManageDepartmentState extends State<ManageDepartment> {
                                       builder: (context, snapshot) => TextField(
                                         //controller: _categoryController,
                                         controller: TextEditingController()
-                                          ..text = departmentName,
+                                          ..text = department.name,
                                         decoration:
                                         InputDecoration(
                                             labelText:
@@ -216,6 +232,30 @@ class _ManageDepartmentState extends State<ManageDepartment> {
                                       ),
                                     ),
                                   ),
+                                  Padding(
+                                      padding: EdgeInsets.fromLTRB(0, 0, 0, 0)),
+                                  Container(
+                                    child:Column(
+                                      children: [
+                                        Text('Trưởng khoa',
+                                          style: TextStyle(
+                                              fontSize: 20,
+                                              fontWeight: FontWeight.w400,
+                                              letterSpacing: 1.0,
+                                          color: Colors.black38),
+                                        ),
+                                        Text(leader[department.id],
+                                          style: TextStyle(
+                                              fontSize: 22,
+                                              fontWeight: FontWeight.w600,
+                                              letterSpacing: 1.0,
+                                              color: Colors.red),
+                                        ),
+                                      ],
+                                    )
+                                  ),
+                                  Padding(
+                                      padding: EdgeInsets.fromLTRB(0, 40, 0, 10)),
                                   Container(
                                     width: 300,
                                     height: 55,
@@ -270,32 +310,26 @@ class _ManageDepartmentState extends State<ManageDepartment> {
                                       ],
                                     ),
                                   ),
-                                  Padding(padding: EdgeInsets.all(5)),
+                                  Padding(padding: EdgeInsets.fromLTRB(0, 10, 0, 10)),
+                                  new Divider(
+                                    color: Colors.black,
+                                    height: 5.0,
+                                  ),
+                                  Padding(padding: EdgeInsets.fromLTRB(0, 10, 0, 10)),
                                   Container(
-                                    width: 300,
-                                    height: 45,
-                                    child: ElevatedButton(
-                                      style: ButtonStyle(
-                                        backgroundColor: MaterialStateProperty.all<Color>(Colors.red),
-                                        shape: MaterialStateProperty.all(
-                                          RoundedRectangleBorder(
-                                            // Change your radius here
-                                            borderRadius: BorderRadius.circular(16),
-                                          ),
-                                        ),
-                                      ),
-                                      onPressed: () {
-                                        //_onCancelAccountClicked(employee.id, employee.status);
-                                        print('press cancel account');
-                                      },
+                                    child: GestureDetector(
+                                    onTap: () {
+
+                                    },
                                       child: Text(
-                                        "Xóa",
+                                        "Thay đổi trưởng khoa",
                                         style: TextStyle(
                                             fontSize: 16,
-                                            color: Colors.white),
+                                            color: Colors.red),
+
                                       ),
                                     ),
-                                  ),
+                                    ),
                                 ],
                               ),
                             ),
@@ -476,7 +510,7 @@ class _ManageDepartmentState extends State<ManageDepartment> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Container(
-                    height: MediaQuery.of(context).size.height * 0.75,
+                    height: MediaQuery.of(context).size.height * 0.78,
                     child: ListView.builder(
                       physics: BouncingScrollPhysics(),
                       //padding: EdgeInsets.only(),
@@ -489,30 +523,6 @@ class _ManageDepartmentState extends State<ManageDepartment> {
                 ],
               ),
             ),
-
-            // Container(
-            //   alignment: Alignment.bottomRight,
-            //   child: SizedBox.fromSize(
-            //     size: Size(56, 56), // button width and height
-            //     child: ClipOval(
-            //       child: Material(
-            //         color: Colors.blue, // button color
-            //         child: InkWell(
-            //           splashColor: Colors.green, // splash color
-            //           onTap: () {
-            //             return _modalBottomSheetAddDepartment();
-            //           }, // button pressed
-            //           child: Column(
-            //             mainAxisAlignment: MainAxisAlignment.center,
-            //             children: <Widget>[
-            //               Icon(Icons.add), // text
-            //             ],
-            //           ),
-            //         ),
-            //       ),
-            //     ),
-            //   ),
-            // ),
           ],
         ),
       ),

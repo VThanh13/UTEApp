@@ -178,7 +178,9 @@ class _ManageEmployeeState extends State<ManageEmployee> {
       })
     });
   }
+
   _modalBottomSheetEditEmployee(EmployeeModel employee) {
+    bool isSwitched = employee.status == "enabled" ? true : false;
     value_category = employee.category;
     return showModalBottomSheet(
         isScrollControlled: true,
@@ -380,7 +382,40 @@ class _ManageEmployeeState extends State<ManageEmployee> {
                                       ),
                                     ),
                                   ),
-                                ],
+                                  // Row(
+                                  //   children:[
+                                  //     Padding(
+                                  //     padding: EdgeInsets.only(left: 30),
+                                  //       child: Text('Trạng thái tài khoản',
+                                  //       style: TextStyle(
+                                  //       fontSize: 16,
+                                  //       color: Colors.black,
+                                  //           fontWeight: FontWeight.w600)),
+                                  //     ),
+                                  //     Padding(
+                                  //     padding: EdgeInsets.only(left: 90),
+                                  //     child: Column(
+                                  //       mainAxisAlignment: MainAxisAlignment.center,
+                                  //       children:[ Transform.scale(
+                                  //         scale: 1,
+                                  //         child: Switch(
+                                  //           onChanged: (value) {
+                                  //             setState(() {
+                                  //               isSwitched = value;
+                                  //             });
+                                  //           },
+                                  //           value: isSwitched,
+                                  //           activeColor: Colors.blue,
+                                  //           activeTrackColor: Colors.grey,
+                                  //           inactiveThumbColor: Colors.red,
+                                  //           inactiveTrackColor: Colors.grey,
+                                  //           )
+                                  //         ),
+                                  //     ]),
+                                  //     ),
+                                  // ],
+                                  // ),
+                                  ],
                               ),
                             ),
                           ),
@@ -778,6 +813,19 @@ class _ManageEmployeeState extends State<ManageEmployee> {
       appBar: new AppBar(
         title: const Text("Quản lý Tư vấn viên"),
       ),
+      floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            _modalBottomSheetAddEmployee();
+          },
+          child: Icon(
+            Icons.add,
+            size: 25,
+          ),
+          backgroundColor: Colors.blue
+        //params
+      ),
+      floatingActionButtonLocation:
+      FloatingActionButtonLocation.endFloat,
       body: SafeArea(
         minimum: const EdgeInsets.only(left: 20, right: 10),
         child: Column(
@@ -794,7 +842,7 @@ class _ManageEmployeeState extends State<ManageEmployee> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Container(
-                    height: MediaQuery.of(context).size.height * 0.65,
+                    height: MediaQuery.of(context).size.height * 0.75,
                     child: ListView.builder(
                       physics: BouncingScrollPhysics(),
                       //padding: EdgeInsets.only(),
@@ -805,29 +853,6 @@ class _ManageEmployeeState extends State<ManageEmployee> {
                     ),
                   ),
                 ],
-              ),
-            ),
-            Container(
-              alignment: Alignment.bottomRight,
-              child: SizedBox.fromSize(
-                size: Size(56, 56), // button width and height
-                child: ClipOval(
-                  child: Material(
-                    color: Colors.blue, // button color
-                    child: InkWell(
-                      splashColor: Colors.green, // splash color
-                      onTap: () {
-                        return _modalBottomSheetAddEmployee();
-                      }, // button pressed
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          Icon(Icons.add), // text
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
               ),
             ),
           ],

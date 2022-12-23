@@ -1,5 +1,7 @@
 import 'dart:async';
+import 'dart:io';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:intl/intl.dart';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -12,6 +14,7 @@ import '../../models/EmployeeModel.dart';
 import '../../models/QuestionModel.dart';
 import '../../models/UserModel.dart';
 import '../dialog/loading_dialog.dart';
+import '../pdf_viewer.dart';
 import 'messenger_employee.dart';
 
 class DetailQuestionEmployee extends StatefulWidget {
@@ -59,6 +62,7 @@ class _DetailQuestionState extends State<DetailQuestionEmployee> {
   @override
   void initState() {
     super.initState();
+    getDepartmentName();
     getQuestion();
   }
 
@@ -82,7 +86,19 @@ class _DetailQuestionState extends State<DetailQuestionEmployee> {
 
     return true;
   }
-
+  var departmentName = new Map();
+  getDepartmentName() async {
+    await FirebaseFirestore.instance
+        .collection('departments')
+        .get()
+        .then((value) => {
+      setState(() {
+        value.docs.forEach((element) {
+          departmentName[element.id] = element["name"];
+        });
+      })
+    });
+  }
   getQuestion() async {
     UserModel userModel = new UserModel("", " ", "", "", "", "", "");
     await FirebaseFirestore.instance
@@ -162,7 +178,7 @@ class _DetailQuestionState extends State<DetailQuestionEmployee> {
   }
 
   _buildQuestion() {
-    if (question.id == "") {
+    if (question.id == "" || departmentName.isEmpty) {
       return Center(
         child: Container(
             width: 20,
@@ -243,7 +259,7 @@ class _DetailQuestionState extends State<DetailQuestionEmployee> {
                         ),
                         Text(
                           '   Gửi: ' +
-                              question.department,
+                              departmentName[question.department],
                           style: TextStyle(
                               fontSize: 15,
                               fontStyle: FontStyle.italic,
@@ -510,7 +526,51 @@ class _DetailQuestionState extends State<DetailQuestionEmployee> {
           });
         });
   }
+  void openPDF(BuildContext context, File file) => Navigator.of(context).push(
+    MaterialPageRoute(builder: (context) => PDFViewerPage(file: file)),
+  );
+  Widget _getFAB() {
+    return SpeedDial(
+      animatedIcon: AnimatedIcons.menu_close,
+      animatedIconTheme: IconThemeData(size: 22),
+      backgroundColor: Colors.blue,
+      visible: true,
+      curve: Curves.bounceIn,
+      children: [
+        // FAB 1
+        SpeedDialChild(
+            child: Icon(Icons.send),
+            backgroundColor: Colors.blue,
+            onTap: () {
+              _modalBottomSheetAddAnswer();
+            },
+            label: 'Gửi câu trả lời',
+            labelStyle: TextStyle(
+                fontWeight: FontWeight.w500,
+                color: Colors.white,
+                fontSize: 16.0),
+            labelBackgroundColor: Colors.blue),
+        // FAB 2
+        if(widget.question.file!='file.pdf')
+          SpeedDialChild(
+              child: Icon(Icons.picture_as_pdf),
+              backgroundColor: Colors.blue,
+              onTap: () async {
+                final url =
+                    widget.question.file;
+                final file = await PDFApi.loadNetwork(url);
+                openPDF(context, file);
+              },
+              label: 'Mở file PDF',
+              labelStyle: TextStyle(
+                  fontWeight: FontWeight.w500,
+                  color: Colors.white,
+                  fontSize: 16.0),
+              labelBackgroundColor: Colors.blue)
 
+      ],
+    );
+  }
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
@@ -518,6 +578,20 @@ class _DetailQuestionState extends State<DetailQuestionEmployee> {
       appBar: new AppBar(
         title: const Text("Chi tiết câu hỏi"),
       ),
+      floatingActionButton:_getFAB(),
+    //   FloatingActionButton(
+    //     onPressed: () {
+    //       _modalBottomSheetAddAnswer();
+    //     },
+    //     child: Icon(
+    //       Icons.send,
+    //       size: 25,
+    //     ),
+    //     backgroundColor: Colors.blue
+    //   //params
+    // ),
+      floatingActionButtonLocation:
+      FloatingActionButtonLocation.endFloat,
       body: SafeArea(
         minimum: const EdgeInsets.only(left: 20, right: 10),
         child: Column(
@@ -528,7 +602,7 @@ class _DetailQuestionState extends State<DetailQuestionEmployee> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Container(
-                    height: MediaQuery.of(context).size.height * 0.75,
+                    height: MediaQuery.of(context).size.height * 0.85,
                     child: SingleChildScrollView(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -547,30 +621,6 @@ class _DetailQuestionState extends State<DetailQuestionEmployee> {
                     ),
                   ),
                 ],
-              ),
-            ),
-            Container(
-              padding: EdgeInsets.fromLTRB(0, 10, 0, 10),
-              alignment: Alignment.bottomRight,
-              child: SizedBox.fromSize(
-                size: Size(56, 56), // button width and height
-                child: ClipOval(
-                  child: Material(
-                    color: Colors.blue, // button color
-                    child: InkWell(
-                      splashColor: Colors.green, // splash color
-                      onTap: () {
-                        return _modalBottomSheetAddAnswer();
-                      }, // button pressed
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          Icon(Icons.send), // text
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
               ),
             ),
           ],
@@ -592,7 +642,7 @@ class _DetailQuestionState extends State<DetailQuestionEmployee> {
           () {
         LoadingDialog.hideLoadingDialog(context);
         Navigator.push(context,
-            MaterialPageRoute(builder: (context) => MessengerPageEmployee()));
+            MaterialPageRoute(builder: (context) => DetailQuestionEmployee(question: widget.question)));
       });
     }
     return 0;

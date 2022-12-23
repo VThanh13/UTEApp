@@ -31,7 +31,7 @@ class _PDFViewerPageState extends State<PDFViewerPage> {
   }
   @override
   Widget build(BuildContext context) {
-    final name = basename(widget.file.path);
+    final name = 'PDF File';
     final text = '${indexPage + 1} of $pages';
 
     return Scaffold(

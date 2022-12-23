@@ -165,19 +165,6 @@ class _HomePageState extends State<HomePageManager> {
                     height: 5.0,
                   ),
                   new ListTile(
-                    title: new Text('Quản lý Tư vấn viên'),
-                    onTap: () {
-                      Navigator.push(
-                          context,
-                          new MaterialPageRoute(
-                              builder: (BuildContext context) => new ManageEmployee()));
-                    },
-                  ),
-                  new Divider(
-                    color: Colors.black,
-                    height: 5.0,
-                  ),
-                  new ListTile(
                     title: new Text('Quản lý khoa'),
                     onTap: () {
                       Navigator.push(

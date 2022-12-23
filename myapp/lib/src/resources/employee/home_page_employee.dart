@@ -150,19 +150,19 @@ class _HomePageState extends State<HomePageEmployee> {
                                   new AdmissionHistory()));
                     },
                   ),
-                  new Divider(
-                    color: Colors.black,
-                    height: 5.0,
-                  ),
-                  new ListTile(
-                    title: new Text('Hồ sơ của bạn'),
-                    onTap: () async {
-                      final url =
-                          'https://www.adobe.com/support/products/enterprise/knowledgecenter/media/c4611_sample_explain.pdf';
-                      final file = await PDFApi.loadNetwork(url);
-                      openPDF(context, file);
-                    },
-                  ),
+                  // new Divider(
+                  //   color: Colors.black,
+                  //   height: 5.0,
+                  // ),
+                  // new ListTile(
+                  //   title: new Text('Hồ sơ của bạn'),
+                  //   onTap: () async {
+                  //     final url =
+                  //         'https://firebasestorage.googleapis.com/v0/b/uteapp-7ab04.appspot.com/o/pdf%2Fbug.pdf?alt=media&token=4e323cf7-a880-4ff8-a57a-a311533aee0c';
+                  //     final file = await PDFApi.loadNetwork(url);
+                  //     openPDF(context, file);
+                  //   },
+                  // ),
                   new Divider(
                     color: Colors.black,
                     height: 5.0,

@@ -331,7 +331,7 @@ class _HomePageState extends State<HomePageLeader> {
                     ),
                   ),
                   new ListTile(
-                    title: new Text('Thông tin cá nhân trưởng nhóm'),
+                    title: new Text('Thông tin cá nhân'),
                     onTap: () {
                       Navigator.push(
                           context,
@@ -344,47 +344,34 @@ class _HomePageState extends State<HomePageLeader> {
                     color: Colors.black,
                     height: 5.0,
                   ),
-                  new ListTile(
-                    title: new Text('Giới thiệu về trường'),
-                    onTap: () {
-                      Navigator.push(
-                          context,
-                          new MaterialPageRoute(
-                              builder: (BuildContext context) =>
-                                  new AboutUniversity()));
-                    },
-                  ),
-                  new Divider(
-                    color: Colors.black,
-                    height: 5.0,
-                  ),
-                  new ListTile(
-                    title: new Text('Lịch sử tuyển sinh'),
-                    onTap: () {
-                      Navigator.push(
-                          context,
-                          new MaterialPageRoute(
-                              builder: (BuildContext context) =>
-                                  new AdmissionHistory()));
-                    },
-                  ),
-                  new Divider(
-                    color: Colors.black,
-                    height: 5.0,
-                  ),
-                  new ListTile(
-                    title: new Text('Hồ sơ của bạn'),
-                    onTap: () {
-                      Navigator.push(
-                          context,
-                          new MaterialPageRoute(
-                              builder: (BuildContext context) => new MyFile()));
-                    },
-                  ),
-                  new Divider(
-                    color: Colors.black,
-                    height: 5.0,
-                  ),
+                  // new ListTile(
+                  //   title: new Text('Giới thiệu về trường'),
+                  //   onTap: () {
+                  //     Navigator.push(
+                  //         context,
+                  //         new MaterialPageRoute(
+                  //             builder: (BuildContext context) =>
+                  //                 new AboutUniversity()));
+                  //   },
+                  // ),
+                  // new Divider(
+                  //   color: Colors.black,
+                  //   height: 5.0,
+                  // ),
+                  // new ListTile(
+                  //   title: new Text('Lịch sử tuyển sinh'),
+                  //   onTap: () {
+                  //     Navigator.push(
+                  //         context,
+                  //         new MaterialPageRoute(
+                  //             builder: (BuildContext context) =>
+                  //                 new AdmissionHistory()));
+                  //   },
+                  // ),
+                  // new Divider(
+                  //   color: Colors.black,
+                  //   height: 5.0,
+                  // ),
                   new ListTile(
                     title: new Text('Quản lý Tư vấn viên'),
                     onTap: () {

@@ -32,23 +32,13 @@ class _ManageCategoryState extends State<ManageCategory> {
   List<String> list_category = [];
 
   TextEditingController _categoryController = new TextEditingController();
-  StreamController _categoryControll = new StreamController();
-  Stream get categoryStream => _categoryControll.stream;
+  StreamController _categoryControl = new StreamController.broadcast();
+  Stream get categoryControl => _categoryControl.stream;
 
-  TextEditingController _emailController = new TextEditingController();
-  TextEditingController _nameController = new TextEditingController();
-  TextEditingController _phoneController = new TextEditingController();
-  TextEditingController _passwordController = new TextEditingController();
+  TextEditingController _categoryEditController = new TextEditingController();
+  StreamController _categoryEditControl = new StreamController.broadcast();
+  Stream get categoryEditControl => _categoryEditControl.stream;
 
-  StreamController _emailControl = new StreamController();
-  StreamController _nameControl = new StreamController();
-  StreamController _phoneControl = new StreamController();
-  StreamController _passwordControl = new StreamController();
-
-  Stream get emailControl => _emailControl.stream;
-  Stream get nameControl => _nameControl.stream;
-  Stream get phoneControl => _phoneControl.stream;
-  Stream get passwordControl => _passwordControl.stream;
 
   String? value_category;
   String departmentName = "";
@@ -85,10 +75,10 @@ class _ManageCategoryState extends State<ManageCategory> {
 
     await getListCategoy();
   }
-  _buildCategory(BuildContext context, String category) {
+  _buildCategory(BuildContext context, String category, index) {
     return GestureDetector(
       onTap: () {
-        return _modalBottomSheetEditCategory(category);
+        return _modalBottomSheetEditCategory(category, index);
       },
       child: Card(
         child: Column(
@@ -129,7 +119,7 @@ class _ManageCategoryState extends State<ManageCategory> {
       })
     });
   }
-  _modalBottomSheetEditCategory(String category) {
+  _modalBottomSheetEditCategory(String category, index) {
     return showModalBottomSheet(
         isScrollControlled: true,
         constraints: BoxConstraints.loose(Size(
@@ -144,8 +134,6 @@ class _ManageCategoryState extends State<ManageCategory> {
         ),
         context: context,
         builder: (BuildContext context) {
-          return StatefulBuilder(
-              builder: (BuildContext context, StateSetter setStateKhoa) {
             return Container(
               child: Column(
                 children: <Widget>[
@@ -172,37 +160,36 @@ class _ManageCategoryState extends State<ManageCategory> {
                                   Padding(
                                       padding: EdgeInsets.fromLTRB(0, 0, 0, 0)),
                                   Container(
-                                    margin:
-                                    EdgeInsets.fromLTRB(
-                                        10, 10, 10, 15),
-                                    width: 400,
-                                    child: StreamBuilder(
-                                      //stream: categoryControl,
-                                      builder: (context, snapshot) => TextField(
-                                        //controller: _categoryController,
-                                        controller: TextEditingController()
-                                          ..text = category,
-                                        decoration:
-                                        InputDecoration(
-                                            labelText:
-                                            "Tên lĩnh vực",
-                                            hintText:
-                                            'Nhập Tên lĩnh vực',
-                                            enabledBorder:
-                                            OutlineInputBorder(
-                                                borderRadius: BorderRadius.circular(10),
-                                                borderSide: BorderSide(color:Colors.blueAccent, width:1,)),
-                                            focusedBorder: OutlineInputBorder(
-                                                borderRadius:
-                                                BorderRadius.circular(
-                                                    10),
-                                                borderSide: BorderSide(
-                                                    color: Colors
-                                                        .blue,
-                                                    width:
-                                                    4))),
-                                      ),
-                                    ),
+                                      margin:
+                                      EdgeInsets.fromLTRB(
+                                          10, 10, 10, 15),
+                                      width: 400,
+                                      child: StreamBuilder(
+                                        stream: categoryEditControl,
+                                        builder: (context, snapshot) =>TextField(
+                                          controller: _categoryEditController
+                                            ..text = category,
+                                          decoration:
+                                          InputDecoration(
+                                              labelText:
+                                              "Tên lĩnh vực",
+                                              hintText:
+                                              'Nhập Tên lĩnh vực',
+                                              enabledBorder:
+                                              OutlineInputBorder(
+                                                  borderRadius: BorderRadius.circular(10),
+                                                  borderSide: BorderSide(color:Colors.blueAccent, width:1,)),
+                                              focusedBorder: OutlineInputBorder(
+                                                  borderRadius:
+                                                  BorderRadius.circular(
+                                                      10),
+                                                  borderSide: BorderSide(
+                                                      color: Colors
+                                                          .blue,
+                                                      width:
+                                                      4))),
+                                        ),
+                                      )
                                   ),
                                   Container(
                                     width: 300,
@@ -223,7 +210,7 @@ class _ManageCategoryState extends State<ManageCategory> {
                                               ),
                                             ),
                                             onPressed: () {
-                                              //_onChangeCategoryClicked(employee.id, value_category);
+                                              _onChangeCategoryClicked(category, index);
                                               print('press save');
                                             },
                                             child: Text(
@@ -273,7 +260,7 @@ class _ManageCategoryState extends State<ManageCategory> {
                                         ),
                                       ),
                                       onPressed: () {
-                                        //_onCancelAccountClicked(employee.id, employee.status);
+                                        _onDeleteCategoryClicked(index);
                                         print('press cancel account');
                                       },
                                       child: Text(
@@ -294,7 +281,6 @@ class _ManageCategoryState extends State<ManageCategory> {
                 ],
               ),
             );
-          });
         });
 
   }
@@ -346,9 +332,9 @@ class _ManageCategoryState extends State<ManageCategory> {
                                             10, 10, 10, 15),
                                         width: 400,
                                         child: StreamBuilder(
-                                          //stream: informationControl,
+                                          stream: categoryControl,
                                           builder: (context, snapshot) =>TextField(
-                                            //controller: _informationController,
+                                            controller: _categoryController,
                                             decoration:
                                             InputDecoration(
                                                 labelText:
@@ -390,7 +376,7 @@ class _ManageCategoryState extends State<ManageCategory> {
                                                 ),
                                               ),
                                               onPressed: () {
-                                                //_onAddEmployeeClicked();
+                                                _onAddCategoryClicked();
                                                 print('press save');
                                               },
                                               child: Text(
@@ -440,6 +426,27 @@ class _ManageCategoryState extends State<ManageCategory> {
         });
 
   }
+  _onAddCategoryClicked(){
+    String category = _categoryController.text;
+    list_category.add(category);
+    if(category != null && category.length != 0){
+      FirebaseFirestore.instance.collection('departments')
+          .doc(current_employee.department)
+          .update({"category": FieldValue.arrayUnion(list_category)});
+    }
+  }
+  _onChangeCategoryClicked(category, index){
+    list_category[index] = _categoryEditController.text;
+    FirebaseFirestore.instance.collection('departments')
+        .doc(current_employee.department)
+        .update({"category": FieldValue.arrayUnion(list_category)});
+  }
+  _onDeleteCategoryClicked(index){
+    list_category.removeAt(index);
+    FirebaseFirestore.instance.collection('departments')
+          .doc(current_employee.department)
+          .update({"category": FieldValue.arrayUnion(list_category)});
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -448,6 +455,19 @@ class _ManageCategoryState extends State<ManageCategory> {
       appBar: new AppBar(
         title: const Text("Quản lý lĩnh vực trong khoa"),
       ),
+      floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            _modalBottomSheetAddCategory();
+          },
+          child: Icon(
+            Icons.add,
+            size: 25,
+          ),
+          backgroundColor: Colors.blue
+        //params
+      ),
+      floatingActionButtonLocation:
+      FloatingActionButtonLocation.endFloat,
       body: SafeArea(
         minimum: const EdgeInsets.only(left: 20, right: 10),
         child: Column(
@@ -464,40 +484,17 @@ class _ManageCategoryState extends State<ManageCategory> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Container(
-                    height: MediaQuery.of(context).size.height * 0.65,
+                    height: MediaQuery.of(context).size.height * 0.78,
                     child: ListView.builder(
                       physics: BouncingScrollPhysics(),
                       //padding: EdgeInsets.only(),
                       itemCount: list_category.length,
                       itemBuilder: (BuildContext context, int index) {
-                        return _buildCategory(context, list_category[index]);
+                        return _buildCategory(context, list_category[index], index);
                       },
                     ),
                   ),
                 ],
-              ),
-            ),
-            Container(
-              alignment: Alignment.bottomRight,
-              child: SizedBox.fromSize(
-                size: Size(56, 56), // button width and height
-                child: ClipOval(
-                  child: Material(
-                    color: Colors.blue, // button color
-                    child: InkWell(
-                      splashColor: Colors.green, // splash color
-                      onTap: () {
-                        return _modalBottomSheetAddCategory();
-                      }, // button pressed
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          Icon(Icons.add), // text
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
               ),
             ),
           ],

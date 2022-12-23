@@ -47,6 +47,7 @@ dependencies:
   syncfusion_flutter_charts: ^20.3.60
   advance_pdf_viewer: ^2.0.1
   flutter_pdfview: ^1.2.1
+  flutter_speed_dial: ^6.2.0
 
 
 

@@ -282,8 +282,7 @@ class _MessengerPageState extends State<MessengerPageEmployee> {
                                               borderRadius:
                                                   BorderRadius.circular(12))),
                                       child: Text(
-                                        employeeModel.name! +
-                                            " ơi, bạn có 6 câu hỏi chưa trả lời",
+                                            "Trả lời câu hỏi",
                                         style: TextStyle(
                                             color: Colors.black54,
                                             fontSize: 15),
@@ -322,7 +321,6 @@ class _MessengerPageState extends State<MessengerPageEmployee> {
                                           fontSize: 24.0,
                                           fontWeight: FontWeight.w600,
                                           letterSpacing: 1.0,
-                                          fontStyle: FontStyle.italic
                                         ),
                                       ),
                                     ),
