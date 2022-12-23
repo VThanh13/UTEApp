@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:intl/intl.dart';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -99,6 +100,82 @@ class _HomePageState extends State<HomePage> {
   }
 
   var departmentName = new Map();
+
+  void sendQuestion(
+      String userId,
+      String title,
+      String time,
+      String status,
+      String information,
+      String file,
+      String department,
+      String content,
+      String category,
+      String people,
+      Function onSucces) {
+    var ref = FirebaseFirestore.instance.collection('questions');
+    String id = ref.doc().id;
+    ref.doc(id).set({
+      'id': id,
+      'userId': userId,
+      'title': title,
+      'time': time,
+      'status': status,
+      'information': information,
+      'file': file,
+      'department': department,
+      'content': content,
+      'people': people,
+      'category': category,
+    }).then((value) {
+      onSucces();
+      print("add nice");
+    }).catchError((err) {
+      print(err);
+    });
+  }
+
+  bool isValid(String information, String question) {
+    if (information == null || information.length == 0) {
+      _informationControl.sink.addError("Nhập thông tin liên lạc");
+      return false;
+    }
+
+    if (question == null || question.length == 0) {
+      _questionControl.sink.addError("Nhập câu hỏi");
+      return false;
+    }
+
+    return true;
+  }
+
+  _onSendQuestionClicked(Post post) {
+    var isvalid =
+    isValid(_informationController.text, _questionController.text);
+    var time = DateTime.now();
+    String timestring = DateFormat('dd-MM-yyyy HH:mm:ss').format(time);
+    print(timestring);
+
+    if (isvalid) {
+      LoadingDialog.showLoadingDialog(context, "loading...");
+      sendQuestion(
+          userr.uid,
+          "Thắc mắc bài đăng ngày " + post.time,
+          timestring,
+          "Chưa trả lời",
+          _informationController.text,
+          "file.pdf",
+          post.employee.departmentId,
+          _questionController.text,
+          "",
+          value_doituong!, () {
+        LoadingDialog.hideLoadingDialog(context);
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => MessengerPage()));
+      });
+    }
+    return 0;
+  }
 
 
   List<Post> listPost = [];
@@ -354,6 +431,11 @@ class _HomePageState extends State<HomePage> {
                                       ),
                                 ),
                               ),
+                              IconButton(
+                                  onPressed:
+                                      () {},
+                                  icon: Icon(
+                                      AppIcons.file_pdf)),
                               Container(
                                 padding: EdgeInsets.all(10),
                                 child: Row(
@@ -364,7 +446,7 @@ class _HomePageState extends State<HomePage> {
                                       child: ElevatedButton.icon(
 
                                         onPressed: () {
-                                          //_onSendQuestionClicked();
+                                          _onSendQuestionClicked(post);
                                           print('press save');
                                         },
                                         label: Text(
