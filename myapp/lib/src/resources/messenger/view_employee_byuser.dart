@@ -444,6 +444,11 @@ class _ViewEmployeeByUser extends State<ViewEmployeeByUser> {
                                           ),
                                         ),
                                       ),
+                                      IconButton(
+                                          onPressed:
+                                              () {},
+                                          icon: Icon(
+                                              AppIcons.file_pdf)),
                                       Container(
                                         padding: EdgeInsets.all(10),
                                         child: Row(
