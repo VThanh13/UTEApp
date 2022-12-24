@@ -145,14 +145,6 @@ class _HomePageState extends State<HomePageManager> {
                     Text(post.employee.departmentName,
                       style: TextStyle(fontSize: 13),),
 
-                    // Container(
-                    //   child: Expanded(
-                    //     child: Text(post.content,
-                    //     ),
-                    //   ),
-                    // )
-
-
                   ],
                 ),
               ),

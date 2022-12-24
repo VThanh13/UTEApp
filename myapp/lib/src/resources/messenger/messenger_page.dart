@@ -56,6 +56,7 @@ class _MessengerPageState extends State<MessengerPage> {
     getDepartmentName();
     getAllQuestion();
   }
+
   @override
   void dispose() {
     _questionControl.close();
@@ -77,6 +78,7 @@ class _MessengerPageState extends State<MessengerPage> {
     }).toList();
     return list;
   }
+
   List<String> listDepartment = [];
   var departmentName = new Map();
   getDepartmentName() async {
@@ -84,13 +86,13 @@ class _MessengerPageState extends State<MessengerPage> {
         .collection('departments')
         .get()
         .then((value) => {
-      setState(() {
-        value.docs.forEach((element) {
-          departmentName[element.id] = element["name"];
-          listDepartment.add(element['name']);
-        });
-      })
-    });
+              setState(() {
+                value.docs.forEach((element) {
+                  departmentName[element.id] = element["name"];
+                  listDepartment.add(element['name']);
+                });
+              })
+            });
   }
 
   List<QuestionModel> listQuestion = [];
@@ -194,31 +196,33 @@ class _MessengerPageState extends State<MessengerPage> {
     });
     return Column(children: questionsList);
   }
+
   List<QuestionModel> listAllQuestion = [];
   getAllQuestion() async {
     await FirebaseFirestore.instance
         .collection('questions')
         .get()
         .then((value) => {
-      setState(() {
-        value.docs.forEach((element) {
-          QuestionModel questionModel =
-          new QuestionModel("", "", "", "", "", "", "", "", "", "");
-          questionModel.id = element.id;
-          questionModel.title = element['title'];
-          questionModel.content = element['content'];
-          questionModel.time = element['time'];
-          questionModel.department = element['department'];
-          questionModel.category = element['category'];
-          questionModel.status = element['status'];
-          questionModel.userId = element['userId'];
-          questionModel.information = element['information'];
-          questionModel.file = element['file'];
-          listAllQuestion.add(questionModel);
-        });
-      })
-    });
+              setState(() {
+                value.docs.forEach((element) {
+                  QuestionModel questionModel =
+                      new QuestionModel("", "", "", "", "", "", "", "", "", "");
+                  questionModel.id = element.id;
+                  questionModel.title = element['title'];
+                  questionModel.content = element['content'];
+                  questionModel.time = element['time'];
+                  questionModel.department = element['department'];
+                  questionModel.category = element['category'];
+                  questionModel.status = element['status'];
+                  questionModel.userId = element['userId'];
+                  questionModel.information = element['information'];
+                  questionModel.file = element['file'];
+                  listAllQuestion.add(questionModel);
+                });
+              })
+            });
   }
+
   _buildAllQuestions() {
     List<Widget> questionsList = [];
     listAllQuestion.forEach((QuestionModel question) {
@@ -243,42 +247,42 @@ class _MessengerPageState extends State<MessengerPage> {
             children: <Widget>[
               Expanded(
                   child: Container(
-                    margin: EdgeInsets.all(12.0),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Text(
-                          question.title,
-                          style: TextStyle(
-                            fontSize: 20.0,
-                            fontWeight: FontWeight.bold,
-                          ),
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        SizedBox(
-                          height: 4.0,
-                        ),
-                        Text(
-                          question.time,
-                          style: TextStyle(
-                            fontSize: 16.0,
-                            fontWeight: FontWeight.w600,
-                          ),
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        Text(question.status,
-                            style: TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w400,
-                              color: question.status == "Chưa trả lời"
-                                  ? Colors.redAccent
-                                  : Colors.green,
-                              overflow: TextOverflow.ellipsis,
-                            ))
-                      ],
+                margin: EdgeInsets.all(12.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Text(
+                      question.title,
+                      style: TextStyle(
+                        fontSize: 20.0,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      overflow: TextOverflow.ellipsis,
                     ),
-                  ))
+                    SizedBox(
+                      height: 4.0,
+                    ),
+                    Text(
+                      question.time,
+                      style: TextStyle(
+                        fontSize: 16.0,
+                        fontWeight: FontWeight.w600,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    Text(question.status,
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w400,
+                          color: question.status == "Chưa trả lời"
+                              ? Colors.redAccent
+                              : Colors.green,
+                          overflow: TextOverflow.ellipsis,
+                        ))
+                  ],
+                ),
+              ))
             ],
           ),
         ),
@@ -477,19 +481,19 @@ class _MessengerPageState extends State<MessengerPage> {
                           backgroundColor: Colors.pinkAccent,
                         ),
                         bottomNavigationBar: getFooter(),
-                          floatingActionButton: FloatingActionButton(
-                              onPressed: () {
-                                modalBottomSheetQuestion();
-                              },
-                              child: Icon(
-                                Icons.add,
-                                size: 25,
-                              ),
-                              backgroundColor: Colors.pink
+                        floatingActionButton: FloatingActionButton(
+                            onPressed: () {
+                              modalBottomSheetQuestion();
+                            },
+                            child: Icon(
+                              Icons.add,
+                              size: 25,
+                            ),
+                            backgroundColor: Colors.pink
                             //params
-                          ),
-                          floatingActionButtonLocation:
-                          FloatingActionButtonLocation.centerDocked,
+                            ),
+                        floatingActionButtonLocation:
+                            FloatingActionButtonLocation.centerDocked,
                         body: SafeArea(
                           minimum: const EdgeInsets.only(left: 20, right: 10),
                           child: SingleChildScrollView(
@@ -546,7 +550,6 @@ class _MessengerPageState extends State<MessengerPage> {
                                   ],
                                 ),
                                 getQuestion(),
-
                               ],
                             ),
                           ),
@@ -556,14 +559,14 @@ class _MessengerPageState extends State<MessengerPage> {
               });
         });
   }
-  Widget getQuestion(){
-    if(pageIndex==0){
+
+  Widget getQuestion() {
+    if (pageIndex == 0) {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Padding(
-            padding: EdgeInsets.symmetric(
-                horizontal: 20.0),
+            padding: EdgeInsets.symmetric(horizontal: 20.0),
             child: Text(
               'Câu hỏi của bạn',
               textAlign: TextAlign.center,
@@ -576,14 +579,12 @@ class _MessengerPageState extends State<MessengerPage> {
           _buildQuestions(setState)
         ],
       );
-    }
-    else{
+    } else {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Padding(
-            padding: EdgeInsets.symmetric(
-                horizontal: 20.0),
+            padding: EdgeInsets.symmetric(horizontal: 20.0),
             child: Text(
               'Tất cả câu hỏi',
               textAlign: TextAlign.right,
@@ -598,113 +599,70 @@ class _MessengerPageState extends State<MessengerPage> {
       );
     }
   }
-  modalBottomSheetQuestion(){
+
+  modalBottomSheetQuestion() {
     return showModalBottomSheet(
         isScrollControlled: true,
-        constraints: BoxConstraints.loose(
-            Size(
-                MediaQuery.of(context)
-                    .size
-                    .width,
-                MediaQuery.of(context)
-                    .size
-                    .height *
-                    0.75)),
+        constraints: BoxConstraints.loose(Size(
+            MediaQuery.of(context).size.width,
+            MediaQuery.of(context).size.height * 0.75)),
         shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(20),
-              topRight: Radius.circular(20),
-            )),
+          topLeft: Radius.circular(20),
+          topRight: Radius.circular(20),
+        )),
         context: context,
         builder: (BuildContext context) {
-          return StatefulBuilder(builder:
-              (BuildContext context,
-              StateSetter
-              setStateKhoa) {
+          return StatefulBuilder(
+              builder: (BuildContext context, StateSetter setStateKhoa) {
             return Container(
               child: Column(
                 children: <Widget>[
                   Padding(
-                    padding:
-                    EdgeInsets.fromLTRB(
-                        5, 20, 5, 10),
+                    padding: EdgeInsets.fromLTRB(5, 20, 5, 10),
                     child: Text(
                       'Đặt câu hỏi',
                       style: TextStyle(
                           fontSize: 24,
-                          fontWeight:
-                          FontWeight
-                              .w600,
-                          letterSpacing:
-                          1.0),
+                          fontWeight: FontWeight.w600,
+                          letterSpacing: 1.0),
                     ),
                   ),
                   SingleChildScrollView(
-                    physics:
-                    BouncingScrollPhysics(),
+                    physics: BouncingScrollPhysics(),
                     child: Column(
-                      crossAxisAlignment:
-                      CrossAxisAlignment
-                          .start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
                         Container(
-                          height: MediaQuery.of(
-                              context)
-                              .size
-                              .height *
-                              0.65,
-                          child:
-                          SingleChildScrollView(
+                          height: MediaQuery.of(context).size.height * 0.65,
+                          child: SingleChildScrollView(
                             child: Column(
-                              mainAxisAlignment:
-                              MainAxisAlignment
-                                  .start,
-                              children: <
-                                  Widget>[
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: <Widget>[
                                 Padding(
-                                    padding: EdgeInsets.fromLTRB(
-                                        0,
-                                        10,
-                                        0,
-                                        10)),
+                                    padding: EdgeInsets.fromLTRB(0, 10, 0, 10)),
                                 Container(
-                                    margin: EdgeInsets.fromLTRB(
-                                        0,
-                                        10,
-                                        0,
-                                        15),
-                                    width:
-                                    340,
+                                    margin: EdgeInsets.fromLTRB(0, 10, 0, 15),
+                                    width: 340,
                                     padding: EdgeInsets.symmetric(
-                                        horizontal:
-                                        12,
-                                        vertical:
-                                        4),
-                                    decoration:
-                                    BoxDecoration(
-                                      borderRadius:
-                                      BorderRadius.circular(12),
+                                        horizontal: 12, vertical: 4),
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(12),
                                       border: Border.all(
-                                          color: Colors.pinkAccent,
-                                          width: 4),
+                                          color: Colors.pinkAccent, width: 4),
                                     ),
-                                    child:
-                                    DropdownButtonHideUnderline(
-                                      child:
-                                      DropdownButton(
-                                        isExpanded:
-                                        true,
-                                        value:
-                                        value_khoa,
-                                        hint:
-                                        new Text("Vui lòng chọn đơn vị để hỏi"),
-                                        iconSize:
-                                        36,
-                                        items:
-                                        render(listDepartment),
-                                        onChanged:
-                                            (value) async {
-                                          final List<dynamic> list_problem = await getDataDropdownProblem(value) as List;
+                                    child: DropdownButtonHideUnderline(
+                                      child: DropdownButton(
+                                        isExpanded: true,
+                                        value: value_khoa,
+                                        hint: new Text(
+                                            "Vui lòng chọn đơn vị để hỏi"),
+                                        iconSize: 36,
+                                        items: render(listDepartment),
+                                        onChanged: (value) async {
+                                          final List<dynamic> list_problem =
+                                              await getDataDropdownProblem(
+                                                  value) as List;
                                           setStateKhoa(() {
                                             setState(() {
                                               this.value_vande = null;
@@ -716,42 +674,24 @@ class _MessengerPageState extends State<MessengerPage> {
                                       ),
                                     )),
                                 Container(
-                                    margin: EdgeInsets.fromLTRB(
-                                        0,
-                                        10,
-                                        0,
-                                        15),
-                                    width:
-                                    340,
+                                    margin: EdgeInsets.fromLTRB(0, 10, 0, 15),
+                                    width: 340,
                                     padding: EdgeInsets.symmetric(
-                                        horizontal:
-                                        12,
-                                        vertical:
-                                        4),
-                                    decoration:
-                                    BoxDecoration(
-                                      borderRadius:
-                                      BorderRadius.circular(12),
+                                        horizontal: 12, vertical: 4),
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(12),
                                       border: Border.all(
-                                          color: Colors.pinkAccent,
-                                          width: 4),
+                                          color: Colors.pinkAccent, width: 4),
                                     ),
-                                    child:
-                                    DropdownButtonHideUnderline(
-                                      child:
-                                      DropdownButton(
-                                        isExpanded:
-                                        true,
-                                        value:
-                                        value_vande,
-                                        hint:
-                                        new Text("Vui lòng chọn vấn đề để hỏi"),
-                                        iconSize:
-                                        36,
-                                        items:
-                                        renderr(listt),
-                                        onChanged:
-                                            (value) {
+                                    child: DropdownButtonHideUnderline(
+                                      child: DropdownButton(
+                                        isExpanded: true,
+                                        value: value_vande,
+                                        hint: new Text(
+                                            "Vui lòng chọn vấn đề để hỏi"),
+                                        iconSize: 36,
+                                        items: renderr(listt),
+                                        onChanged: (value) {
                                           setStateKhoa(() {
                                             setState(() {
                                               this.value_vande = value;
@@ -761,42 +701,26 @@ class _MessengerPageState extends State<MessengerPage> {
                                       ),
                                     )),
                                 Container(
-                                    margin: EdgeInsets.fromLTRB(
-                                        0,
-                                        10,
-                                        0,
-                                        15),
-                                    width:
-                                    340,
+                                    margin: EdgeInsets.fromLTRB(0, 10, 0, 15),
+                                    width: 340,
                                     padding: EdgeInsets.symmetric(
-                                        horizontal:
-                                        12,
-                                        vertical:
-                                        4),
-                                    decoration:
-                                    BoxDecoration(
-                                      borderRadius:
-                                      BorderRadius.circular(12),
+                                        horizontal: 12, vertical: 4),
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(12),
                                       border: Border.all(
-                                          color: Colors.pinkAccent,
-                                          width: 4),
+                                          color: Colors.pinkAccent, width: 4),
                                     ),
-                                    child:
-                                    DropdownButtonHideUnderline(
-                                      child:
-                                      DropdownButton<String>(
-                                        isExpanded:
-                                        true,
-                                        value:
-                                        value_doituong,
+                                    child: DropdownButtonHideUnderline(
+                                      child: DropdownButton<String>(
+                                        isExpanded: true,
+                                        value: value_doituong,
                                         hint:
-                                        new Text("Vui lòng chọn đối tượng"),
-                                        iconSize:
-                                        36,
-                                        items:
-                                        item_doituong.map(buildMenuItem).toList(),
-                                        onChanged:
-                                            (value) {
+                                            new Text("Vui lòng chọn đối tượng"),
+                                        iconSize: 36,
+                                        items: item_doituong
+                                            .map(buildMenuItem)
+                                            .toList(),
+                                        onChanged: (value) {
                                           setStateKhoa(() {
                                             setState(() {
                                               this.value_doituong = value;
@@ -806,148 +730,133 @@ class _MessengerPageState extends State<MessengerPage> {
                                       ),
                                     )),
                                 Container(
-                                    margin: EdgeInsets.fromLTRB(
-                                        0,
-                                        10,
-                                        0,
-                                        15),
-                                    width:
-                                    340,
-                                    child:
-                                    StreamBuilder(
-                                      stream:
-                                      informationControl,
-                                      builder: (context, snapshot) =>
-                                          TextField(
-                                            controller:
-                                            _informationController,
-                                            decoration: InputDecoration(
-                                                labelText: "Phương thức liên hệ",
-                                                hintText: 'Nhập Email/SĐT của bạn',
-                                                enabledBorder: OutlineInputBorder(
-                                                    borderRadius: BorderRadius.circular(10),
-                                                    borderSide: BorderSide(
-                                                      color: Colors.pinkAccent,
-                                                      width: 1,
-                                                    )),
-                                                focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide(color: Colors.pink, width: 4))),
-                                          ),
+                                    margin: EdgeInsets.fromLTRB(0, 10, 0, 15),
+                                    width: 340,
+                                    child: StreamBuilder(
+                                      stream: informationControl,
+                                      builder: (context, snapshot) => TextField(
+                                        controller: _informationController,
+                                        decoration: InputDecoration(
+                                            labelText: "Phương thức liên hệ",
+                                            hintText: 'Nhập Email/SĐT của bạn',
+                                            enabledBorder: OutlineInputBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(10),
+                                                borderSide: BorderSide(
+                                                  color: Colors.pinkAccent,
+                                                  width: 1,
+                                                )),
+                                            focusedBorder: OutlineInputBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(10),
+                                                borderSide: BorderSide(
+                                                    color: Colors.pink,
+                                                    width: 4))),
+                                      ),
                                     )),
                                 Container(
-                                  margin: EdgeInsets
-                                      .fromLTRB(
-                                      0,
-                                      10,
-                                      0,
-                                      15),
-                                  width:
-                                  340,
-                                  child:
-                                  StreamBuilder(
-                                    stream:
-                                    titleControl,
-                                    builder:
-                                        (context, snapshot) =>
-                                        TextField(
-                                          controller:
-                                          _titleController,
-                                          decoration: InputDecoration(
-                                              labelText: "Tiêu đề",
-                                              hintText: 'Nhập Tiêu đề',
-                                              enabledBorder: OutlineInputBorder(
-                                                  borderRadius: BorderRadius.circular(10),
-                                                  borderSide: BorderSide(
-                                                    color: Colors.pinkAccent,
-                                                    width: 1,
-                                                  )),
-                                              focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide(color: Colors.pink, width: 4))),
-                                        ),
+                                  margin: EdgeInsets.fromLTRB(0, 10, 0, 15),
+                                  width: 340,
+                                  child: StreamBuilder(
+                                    stream: titleControl,
+                                    builder: (context, snapshot) => TextField(
+                                      controller: _titleController,
+                                      decoration: InputDecoration(
+                                          labelText: "Tiêu đề",
+                                          hintText: 'Nhập Tiêu đề',
+                                          enabledBorder: OutlineInputBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                              borderSide: BorderSide(
+                                                color: Colors.pinkAccent,
+                                                width: 1,
+                                              )),
+                                          focusedBorder: OutlineInputBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                              borderSide: BorderSide(
+                                                  color: Colors.pink,
+                                                  width: 4))),
+                                    ),
                                   ),
                                 ),
                                 Container(
-                                  width:
-                                  340,
-                                  margin: EdgeInsets
-                                      .fromLTRB(
-                                      0,
-                                      10,
-                                      0,
-                                      15),
-                                  child:
-                                  StreamBuilder(
-                                    stream:
-                                    questionControl,
-                                    builder:
-                                        (context, snapshot) =>
-                                        TextField(
-                                          controller:
-                                          _questionController,
-                                          maxLines:50,
-                                          minLines: 10,
-                                          maxLength:3000,
-                                          decoration: InputDecoration(
-                                              hintMaxLines: 5,
-                                              helperMaxLines: 5,
-                                              labelText: "Đặt câu hỏi",
-                                              hintText: 'Nhập câu hỏi của bạn',
-                                              enabledBorder: OutlineInputBorder(
-                                                  borderRadius: BorderRadius.circular(10),
-                                                  borderSide: BorderSide(
-                                                    color: Colors.pinkAccent,
-                                                    width: 1,
-                                                  )),
-                                              focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide(color: Colors.pink, width: 4))),
-                                        ),
+                                  width: 340,
+                                  margin: EdgeInsets.fromLTRB(0, 10, 0, 15),
+                                  child: StreamBuilder(
+                                    stream: questionControl,
+                                    builder: (context, snapshot) => TextField(
+                                      controller: _questionController,
+                                      maxLines: 50,
+                                      minLines: 10,
+                                      maxLength: 3000,
+                                      decoration: InputDecoration(
+                                          hintMaxLines: 5,
+                                          helperMaxLines: 5,
+                                          labelText: "Đặt câu hỏi",
+                                          hintText: 'Nhập câu hỏi của bạn',
+                                          enabledBorder: OutlineInputBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                              borderSide: BorderSide(
+                                                color: Colors.pinkAccent,
+                                                width: 1,
+                                              )),
+                                          focusedBorder: OutlineInputBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                              borderSide: BorderSide(
+                                                  color: Colors.pink,
+                                                  width: 4))),
+                                    ),
                                   ),
                                 ),
                                 IconButton(
-                                    onPressed:() {
+                                    onPressed: () {
                                       importPdf();
                                     },
-                                    icon: Icon(
-                                        AppIcons.file_pdf)),
+                                    icon: Icon(AppIcons.file_pdf)),
                                 Container(
-                                  padding:
-                                  EdgeInsets.all(
-                                      10),
-                                  child:
-                                  Row(
+                                  padding: EdgeInsets.all(10),
+                                  child: Row(
                                     mainAxisAlignment:
-                                    MainAxisAlignment.spaceAround,
-                                    children: <
-                                        Widget>[
+                                        MainAxisAlignment.spaceAround,
+                                    children: <Widget>[
                                       Expanded(
-                                        child:
-                                        ElevatedButton.icon(
+                                        child: ElevatedButton.icon(
                                           onPressed: () {
                                             _onSendQuestionClicked();
                                             print('press save');
                                           },
                                           label: Text(
                                             'Gửi',
-                                            style: TextStyle(fontSize: 16, color: Colors.white),
+                                            style: TextStyle(
+                                                fontSize: 16,
+                                                color: Colors.white),
                                           ),
                                           icon: Icon(Icons.send_rounded),
                                           style: ElevatedButton.styleFrom(
-                                              primary: Colors.pinkAccent
-                                          ),
+                                              primary: Colors.pinkAccent),
                                         ),
                                       ),
-                                      Padding(
-                                          padding: EdgeInsets.all(10)),
+                                      Padding(padding: EdgeInsets.all(10)),
                                       Expanded(
                                           child: ElevatedButton.icon(
-                                            onPressed: () => {Navigator.pop(context)},
-                                            label: Text(
-                                              'Thoát',
-                                              style: TextStyle(fontSize: 16, color: Colors.white),
-                                            ),
-                                            icon: Icon(Icons.cancel_presentation),
-                                            style: ElevatedButton.styleFrom(
-                                                primary: Colors.pinkAccent
-                                            ),)),
+                                        onPressed: () =>
+                                            {Navigator.pop(context)},
+                                        label: Text(
+                                          'Thoát',
+                                          style: TextStyle(
+                                              fontSize: 16,
+                                              color: Colors.white),
+                                        ),
+                                        icon: Icon(Icons.cancel_presentation),
+                                        style: ElevatedButton.styleFrom(
+                                            primary: Colors.pinkAccent),
+                                      )),
                                       Padding(
-                                          padding: EdgeInsets.fromLTRB(0, 10, 0, 30)),
+                                          padding: EdgeInsets.fromLTRB(
+                                              0, 10, 0, 30)),
                                     ],
                                   ),
                                 )
@@ -964,22 +873,26 @@ class _MessengerPageState extends State<MessengerPage> {
           });
         });
   }
+
   late PlatformFile file;
   importPdf() async {
-    final result = await FilePicker.platform.pickFiles(allowMultiple: false);
+    final result = await FilePicker.platform.pickFiles(
+        type: FileType.custom,
+        allowMultiple: false,
+        allowedExtensions: ['jpg', 'jpeg', 'png', 'pdf']);
     if (result == null) return;
     file = result.files.first as PlatformFile;
-    setState((){
+    setState(() {
       print(file.name);
     });
   }
+
   String pdf_url = "file.pdf";
   uploadPdf() async {
-    if(file!=null){
+    if (file != null) {
       File fileForFirebase = File(file.path!);
       FirebaseStorage storage = FirebaseStorage.instance;
-      Reference ref =
-      storage.ref().child("pdf/"+file.name);
+      Reference ref = storage.ref().child("pdf/" + file.name);
       UploadTask uploadTask = ref.putFile(fileForFirebase);
       await uploadTask.whenComplete(() async {
         var url = await ref.getDownloadURL();
@@ -990,6 +903,7 @@ class _MessengerPageState extends State<MessengerPage> {
       print('pdf');
     }
   }
+
   Widget getFooter() {
     List<IconData> iconItems = [
       Icons.message,
@@ -1012,6 +926,7 @@ class _MessengerPageState extends State<MessengerPage> {
       //other params
     );
   }
+
   selectedTab(index) {
     setState(() {
       pageIndex = index;
@@ -1079,7 +994,8 @@ class _MessengerPageState extends State<MessengerPage> {
       Function onSucces) {
     var ref = FirebaseFirestore.instance.collection('questions');
     String id = ref.doc().id;
-    String departmentId = departmentName.keys.firstWhere((k) => departmentName[k] == department, orElse: () => null);
+    String departmentId = departmentName.keys
+        .firstWhere((k) => departmentName[k] == department, orElse: () => null);
     ref.doc(id).set({
       'id': id,
       'userId': userId,

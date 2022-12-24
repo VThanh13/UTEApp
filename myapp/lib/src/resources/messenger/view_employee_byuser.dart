@@ -1,5 +1,8 @@
 import 'dart:async';
+import 'dart:io';
+import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:intl/intl.dart';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -43,7 +46,8 @@ class _ViewEmployeeByUser extends State<ViewEmployeeByUser> {
       child: Text(
         item,
         style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-      ));
+      )
+  );
 
   String departmentName = "";
 
@@ -130,12 +134,12 @@ class _ViewEmployeeByUser extends State<ViewEmployeeByUser> {
     });
   }
 
-  _onSendQuestionClicked() {
+  _onSendQuestionClicked() async {
     var isvalid =
         isValid(_informationController.text, _questionController.text);
     var time = DateTime.now();
     String timestring = DateFormat('dd-MM-yyyy HH:mm:ss').format(time);
-    print(timestring);
+    await uploadPdf();
 
     if (isvalid) {
       LoadingDialog.showLoadingDialog(context, "loading...");
@@ -145,7 +149,7 @@ class _ViewEmployeeByUser extends State<ViewEmployeeByUser> {
           timestring,
           "Chưa trả lời",
           _informationController.text,
-          "file.pdf",
+          pdf_url,
           departmentName,
           _questionController.text,
           widget.employee.category,
@@ -158,7 +162,32 @@ class _ViewEmployeeByUser extends State<ViewEmployeeByUser> {
     return 0;
   }
 
-
+  late PlatformFile file;
+  importPdf() async {
+    final result = await FilePicker.platform.pickFiles(type: FileType.custom,allowMultiple: false, allowedExtensions: ['jpg', 'jpeg', 'png', 'pdf']);
+    if (result == null) return;
+    file = result.files.first as PlatformFile;
+    setState((){
+      print(file.name);
+    });
+  }
+  String pdf_url = "file.pdf";
+  uploadPdf() async {
+    if(file!=null){
+      File fileForFirebase = File(file.path!);
+      FirebaseStorage storage = FirebaseStorage.instance;
+      Reference ref =
+      storage.ref().child("pdf/"+file.name);
+      UploadTask uploadTask = ref.putFile(fileForFirebase);
+      await uploadTask.whenComplete(() async {
+        var url = await ref.getDownloadURL();
+        pdf_url = url.toString();
+      }).catchError((onError) {
+        print(onError);
+      });
+      print('pdf');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -445,8 +474,9 @@ class _ViewEmployeeByUser extends State<ViewEmployeeByUser> {
                                         ),
                                       ),
                                       IconButton(
-                                          onPressed:
-                                              () {},
+                                          onPressed:() {
+                                            importPdf();
+                                              },
                                           icon: Icon(
                                               AppIcons.file_pdf)),
                                       Container(

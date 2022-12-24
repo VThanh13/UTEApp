@@ -17,6 +17,7 @@ import 'package:myapp/src/screens/signin_screen.dart';
 import '../../models/NewfeedModel.dart';
 import '../employee/employee_info.dart';
 import '../dialog/loading_dialog.dart';
+import '../employee/messenger_employee.dart';
 import 'manage_category.dart';
 import 'manage_employee.dart';
 import 'messenger_leader.dart';
@@ -219,14 +220,6 @@ class _HomePageState extends State<HomePageLeader> {
                     Text(post.employee.departmentName,
                     style: TextStyle(fontSize: 13),),
 
-                    // Container(
-                    //   child: Expanded(
-                    //     child: Text(post.content,
-                    //     ),
-                    //   ),
-                    // )
-
-
                   ],
                 ),
               ),
@@ -301,7 +294,7 @@ class _HomePageState extends State<HomePageLeader> {
                           context,
                           new MaterialPageRoute(
                               builder: (BuildContext context) =>
-                                  MessengerPageLeader()));
+                                  MessengerPageEmployee()));
                     },
                     icon: Icon(
                       AppIcons.chat,

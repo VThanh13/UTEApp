@@ -508,7 +508,7 @@ class _HomePageState extends State<HomePage> {
   }
   late PlatformFile file;
   importPdf() async {
-    final result = await FilePicker.platform.pickFiles(allowMultiple: false);
+    final result = await FilePicker.platform.pickFiles(type: FileType.custom,allowMultiple: false, allowedExtensions: ['jpg', 'jpeg', 'png', 'pdf']);
     if (result == null) return;
     file = result.files.first as PlatformFile;
     setState((){
@@ -575,7 +575,8 @@ class _HomePageState extends State<HomePage> {
       child: Text(
         item,
         style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-      ));
+      )
+  );
 
 
 
