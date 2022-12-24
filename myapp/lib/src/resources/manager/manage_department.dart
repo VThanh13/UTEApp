@@ -30,7 +30,7 @@ class _ManageDepartmentState extends State<ManageDepartment> {
   AuthBloc authBloc = new AuthBloc();
   EmployeeModel current_employee =
       EmployeeModel("", "", "", "", "", "", "", "", "", "");
-  List<DepartmentModel> list_department = [];
+  List<EmployeeModel> list_employee = [];
 
   TextEditingController _categoryController = new TextEditingController();
   StreamController _categoryControll = new StreamController();
@@ -80,7 +80,18 @@ class _ManageDepartmentState extends State<ManageDepartment> {
       setState(() {
         value.docs.forEach((element) {
           if(element['roles']=='Trưởng nhóm') {
-            leader[element['department']] = element["name"];
+            EmployeeModel employeeModel = EmployeeModel("", "", "", "", "", "", "", "", "", "");
+            employeeModel.id = element['id'];
+            employeeModel.name = element['name'];
+            employeeModel.category = element['category'];
+            employeeModel.email = element['email'];
+            employeeModel.image = element['image'];
+            employeeModel.password = element['password'];
+            employeeModel.phone = element['phone'];
+            employeeModel.department = element['department'];
+            employeeModel.roles = element['roles'];
+            employeeModel.status = element['status'];
+            leader[element['department']] = employeeModel;
           }
         });
       })
@@ -105,6 +116,7 @@ class _ManageDepartmentState extends State<ManageDepartment> {
             });
 
     await getListDepartment();
+    await getListEmployee();
     await getLeader();
   }
   _buildDepartment(BuildContext context, DepartmentModel department) {
@@ -139,20 +151,75 @@ class _ManageDepartmentState extends State<ManageDepartment> {
       ),
     );
   }
+  _buildEmployee(BuildContext context, EmployeeModel employee, EmployeeModel leader) {
+    return GestureDetector(
+      onTap: () {
+        changeLeader(leader, employee);
+      },
+      child: Card(
+        child: Column(
+          children: <Widget>[
+            Padding(padding: EdgeInsets.fromLTRB(5, 5, 5, 5)),
+            Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
 
+                Container(
+                  padding: EdgeInsets.fromLTRB(10, 20, 10, 20),
+                  child: Expanded(
+                      child: Text(employee.name,
+                          textAlign: TextAlign.left,
+                          style: TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.w600,
+                              letterSpacing: 1.0))),
+                ),
+
+              ],
+            )
+          ],
+        ),
+      ),
+    );
+  }
+  var list_department = new Map();
   getListDepartment() async {
     await FirebaseFirestore.instance.collection('departments')
         .get()
         .then((value) => {
       setState(() {
         value.docs.forEach((element) {
-          DepartmentModel departmentModel =
-          DepartmentModel("", "", []);
+          DepartmentModel departmentModel = DepartmentModel("", "", []);
           departmentModel.id = element['id'];
           departmentModel.name = element['name'];
           departmentModel.category = element['category'].cast<String>();
 
-          list_department.add(departmentModel);
+          list_department[departmentModel.id] = departmentModel;
+        });
+      })
+    });
+  }
+
+  getListEmployee() async {
+    await FirebaseFirestore.instance.collection('employee')
+        .get()
+        .then((value) => {
+      setState(() {
+        value.docs.forEach((element) {
+          EmployeeModel employeeModel = EmployeeModel("", "", "", "", "", "", "", "", "", "");
+          employeeModel.id = element['id'];
+          employeeModel.name = element['name'];
+          employeeModel.category = element['category'];
+          employeeModel.email = element['email'];
+          employeeModel.image = element['image'];
+          employeeModel.password = element['password'];
+          employeeModel.phone = element['phone'];
+          employeeModel.department = element['department'];
+          employeeModel.roles = element['roles'];
+          employeeModel.status = element['status'];
+
+          list_employee.add(employeeModel);
         });
       })
     });
@@ -244,7 +311,7 @@ class _ManageDepartmentState extends State<ManageDepartment> {
                                               letterSpacing: 1.0,
                                           color: Colors.black38),
                                         ),
-                                        Text(leader[department.id],
+                                        Text(leader[department.id].name,
                                           style: TextStyle(
                                               fontSize: 22,
                                               fontWeight: FontWeight.w600,
@@ -319,7 +386,7 @@ class _ManageDepartmentState extends State<ManageDepartment> {
                                   Container(
                                     child: GestureDetector(
                                     onTap: () {
-
+                                      return _modalBottomSheetChangeLeader(leader[department.id]);
                                     },
                                       child: Text(
                                         "Thay đổi trưởng khoa",
@@ -342,6 +409,73 @@ class _ManageDepartmentState extends State<ManageDepartment> {
             );
           });
         });
+
+  }
+  _modalBottomSheetChangeLeader(EmployeeModel leader){
+    return showModalBottomSheet(
+        isScrollControlled: true,
+        constraints: BoxConstraints.loose(Size(
+            MediaQuery.of(context).size.width,
+            MediaQuery.of(context).size.height * 0.85),
+        ),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(20),
+            topRight: Radius.circular(20),
+          ),
+        ),
+        context: context,
+        builder: (BuildContext context) {
+          return Container(
+            child: Column(
+              children: <Widget>[
+                Padding(
+                  padding: EdgeInsets.fromLTRB(5, 20, 5, 10),
+                  child: Text('Thay đổi trưởng khoa',
+                    style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.w600,
+                        letterSpacing: 1.0),
+                  ),
+                ),
+                SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Container(
+                        height: MediaQuery.of(context).size.height * 0.75,
+                        child: ListView.builder(
+                          physics: BouncingScrollPhysics(),
+                          //padding: EdgeInsets.only(),
+                          itemCount: list_employee.length,
+                          itemBuilder: (BuildContext context, int index) {
+                            return _buildEmployee(context, list_employee[index], leader);
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          );
+        });
+  }
+  changeLeader(EmployeeModel old_leader, EmployeeModel new_leader){
+    var ref = FirebaseFirestore.instance.collection('employee');
+    LoadingDialog.showLoadingDialog(context, "loading...");
+    ref.doc(old_leader.id).update({
+      'category': list_department[old_leader.department].category.first,
+      'roles': 'Tư vấn viên'
+    });
+    ref.doc(new_leader.id).update({
+      'department': old_leader.department,
+      'category': '',
+      'roles': 'Trưởng nhóm'
+    });
+    LoadingDialog.hideLoadingDialog(context);
+    Navigator.push(
+        context, MaterialPageRoute(builder: (context) => ManageDepartment()));
 
   }
   _modalBottomSheetAddDepartment() {
@@ -516,7 +650,7 @@ class _ManageDepartmentState extends State<ManageDepartment> {
                       //padding: EdgeInsets.only(),
                       itemCount: list_department.length,
                       itemBuilder: (BuildContext context, int index) {
-                        return _buildDepartment(context, list_department[index]);
+                        return _buildDepartment(context, list_department.values.elementAt(index));
                       },
                     ),
                   ),

@@ -1,4 +1,7 @@
 import 'dart:async';
+import 'dart:io';
+import 'package:file_picker/file_picker.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:intl/intl.dart';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -149,12 +152,12 @@ class _HomePageState extends State<HomePage> {
     return true;
   }
 
-  _onSendQuestionClicked(Post post) {
+  _onSendQuestionClicked(Post post) async {
     var isvalid =
     isValid(_informationController.text, _questionController.text);
     var time = DateTime.now();
     String timestring = DateFormat('dd-MM-yyyy HH:mm:ss').format(time);
-    print(timestring);
+    await uploadPdf();
 
     if (isvalid) {
       LoadingDialog.showLoadingDialog(context, "loading...");
@@ -164,7 +167,7 @@ class _HomePageState extends State<HomePage> {
           timestring,
           "Chưa trả lời",
           _informationController.text,
-          "file.pdf",
+          pdf_url,
           post.employee.departmentId,
           _questionController.text,
           "",
@@ -432,8 +435,9 @@ class _HomePageState extends State<HomePage> {
                                 ),
                               ),
                               IconButton(
-                                  onPressed:
-                                      () {},
+                                  onPressed:() {
+                                    importPdf();
+                                  },
                                   icon: Icon(
                                       AppIcons.file_pdf)),
                               Container(
@@ -501,6 +505,32 @@ class _HomePageState extends State<HomePage> {
       ),
 
     );
+  }
+  late PlatformFile file;
+  importPdf() async {
+    final result = await FilePicker.platform.pickFiles(allowMultiple: false);
+    if (result == null) return;
+    file = result.files.first as PlatformFile;
+    setState((){
+      print(file.name);
+    });
+  }
+  String pdf_url = "file.pdf";
+  uploadPdf() async {
+    if(file!=null){
+      File fileForFirebase = File(file.path!);
+      FirebaseStorage storage = FirebaseStorage.instance;
+      Reference ref =
+      storage.ref().child("pdf/"+file.name);
+      UploadTask uploadTask = ref.putFile(fileForFirebase);
+      await uploadTask.whenComplete(() async {
+        var url = await ref.getDownloadURL();
+        pdf_url = url.toString();
+      }).catchError((onError) {
+        print(onError);
+      });
+      print('pdf');
+    }
   }
   getDepartmentName() async {
     await FirebaseFirestore.instance
@@ -598,17 +628,17 @@ class _HomePageState extends State<HomePage> {
                       AppIcons.chat,
                       color: Colors.white,
                     )),
-                IconButton(
-                    onPressed: () {
-                      Navigator.push(
-                          context,
-                          new MaterialPageRoute(
-                              builder: (BuildContext context) => TestPage()));
-                    },
-                    icon: Icon(
-                      AppIcons.bell_alt,
-                      color: Colors.white,
-                    ))
+                // IconButton(
+                //     onPressed: () {
+                //       Navigator.push(
+                //           context,
+                //           new MaterialPageRoute(
+                //               builder: (BuildContext context) => TestPage()));
+                //     },
+                //     icon: Icon(
+                //       AppIcons.bell_alt,
+                //       color: Colors.white,
+                //     ))
               ],
             ),
             drawer: new Drawer(
@@ -648,33 +678,33 @@ class _HomePageState extends State<HomePage> {
                                   new AboutUniversity()));
                     },
                   ),
-                  new Divider(
-                    color: Colors.black,
-                    height: 5.0,
-                  ),
-                  new ListTile(
-                    title: new Text('Lịch sử tuyển sinh'),
-                    onTap: () {
-                      Navigator.push(
-                          context,
-                          new MaterialPageRoute(
-                              builder: (BuildContext context) =>
-                                  new AdmissionHistory()));
-                    },
-                  ),
-                  new Divider(
-                    color: Colors.black,
-                    height: 5.0,
-                  ),
-                  new ListTile(
-                    title: new Text('Hồ sơ của bạn'),
-                    onTap: () {
-                      Navigator.push(
-                          context,
-                          new MaterialPageRoute(
-                              builder: (BuildContext context) => new MyFile()));
-                    },
-                  ),
+                  // new Divider(
+                  //   color: Colors.black,
+                  //   height: 5.0,
+                  // ),
+                  // new ListTile(
+                  //   title: new Text('Lịch sử tuyển sinh'),
+                  //   onTap: () {
+                  //     Navigator.push(
+                  //         context,
+                  //         new MaterialPageRoute(
+                  //             builder: (BuildContext context) =>
+                  //                 new AdmissionHistory()));
+                  //   },
+                  // ),
+                  // new Divider(
+                  //   color: Colors.black,
+                  //   height: 5.0,
+                  // ),
+                  // new ListTile(
+                  //   title: new Text('Hồ sơ của bạn'),
+                  //   onTap: () {
+                  //     Navigator.push(
+                  //         context,
+                  //         new MaterialPageRoute(
+                  //             builder: (BuildContext context) => new MyFile()));
+                  //   },
+                  // ),
                   new Divider(
                     color: Colors.black,
                     height: 5.0,

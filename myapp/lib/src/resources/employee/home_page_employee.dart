@@ -89,17 +89,17 @@ class _HomePageState extends State<HomePageEmployee> {
                       AppIcons.chat,
                       color: Colors.white,
                     )),
-                IconButton(
-                    onPressed: () {
-                      Navigator.push(
-                          context,
-                          new MaterialPageRoute(
-                              builder: (BuildContext context) => TestPage()));
-                    },
-                    icon: Icon(
-                      AppIcons.bell_alt,
-                      color: Colors.white,
-                    ))
+                // IconButton(
+                //     onPressed: () {
+                //       Navigator.push(
+                //           context,
+                //           new MaterialPageRoute(
+                //               builder: (BuildContext context) => TestPage()));
+                //     },
+                //     icon: Icon(
+                //       AppIcons.bell_alt,
+                //       color: Colors.white,
+                //     ))
               ],
             ),
             drawer: new Drawer(
@@ -136,20 +136,20 @@ class _HomePageState extends State<HomePageEmployee> {
                                   new AboutUniversity()));
                     },
                   ),
-                  new Divider(
-                    color: Colors.black,
-                    height: 5.0,
-                  ),
-                  new ListTile(
-                    title: new Text('Lịch sử tuyển sinh'),
-                    onTap: () {
-                      Navigator.push(
-                          context,
-                          new MaterialPageRoute(
-                              builder: (BuildContext context) =>
-                                  new AdmissionHistory()));
-                    },
-                  ),
+                  // new Divider(
+                  //   color: Colors.black,
+                  //   height: 5.0,
+                  // ),
+                  // new ListTile(
+                  //   title: new Text('Lịch sử tuyển sinh'),
+                  //   onTap: () {
+                  //     Navigator.push(
+                  //         context,
+                  //         new MaterialPageRoute(
+                  //             builder: (BuildContext context) =>
+                  //                 new AdmissionHistory()));
+                  //   },
+                  // ),
                   // new Divider(
                   //   color: Colors.black,
                   //   height: 5.0,
