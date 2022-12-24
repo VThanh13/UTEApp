@@ -307,17 +307,17 @@ class _HomePageState extends State<HomePageLeader> {
                       AppIcons.chat,
                       color: Colors.white,
                     )),
-                IconButton(
-                    onPressed: () {
-                      Navigator.push(
-                          context,
-                          new MaterialPageRoute(
-                              builder: (BuildContext context) => TestPage()));
-                    },
-                    icon: Icon(
-                      AppIcons.bell_alt,
-                      color: Colors.white,
-                    ))
+                // IconButton(
+                //     onPressed: () {
+                //       Navigator.push(
+                //           context,
+                //           new MaterialPageRoute(
+                //               builder: (BuildContext context) => TestPage()));
+                //     },
+                //     icon: Icon(
+                //       AppIcons.bell_alt,
+                //       color: Colors.white,
+                //     ))
               ],
             ),
             drawer: new Drawer(

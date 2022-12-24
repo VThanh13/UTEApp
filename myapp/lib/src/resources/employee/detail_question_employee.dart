@@ -9,6 +9,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:myapp/src/resources/employee/home_page_employee.dart';
 
+import '../../../icons/app_icons_icons.dart';
 import '../../models/AnswerModel.dart';
 import '../../models/EmployeeModel.dart';
 import '../../models/QuestionModel.dart';
@@ -294,7 +295,41 @@ class _DetailQuestionState extends State<DetailQuestionEmployee> {
                               ),
                             )
                           ],
-                        )),
+                        ),
+                    ),
+                    if(widget.question.file!='file.pdf')
+                      if(widget.question.file.substring(widget.question.file.length - 57).startsWith('.pdf'))(
+                        Column(
+                          children: [
+                            Row(
+                              children: [
+                                Text("  "),
+                                Icon(AppIcons.file_pdf,
+                                color: Color(0xED0565B2)),
+                                Text(" File PDF đính kèm",
+                                  overflow:
+                                  TextOverflow.visible,
+                                  style: TextStyle(
+                                      fontSize: 15,
+                                      fontWeight:
+                                      FontWeight.w400,
+                                  color: Color(0xED0565B2)),
+                                ),
+                              ],
+                            ),
+                            Padding(
+                                padding: EdgeInsets.fromLTRB(
+                                    5, 5, 5, 5)),
+                          ],
+                        )
+                      )
+                      else
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(8.0),
+                              child: Image.network(question.file,
+                                ),
+                          ),
+
                   ],
                 ),
               ),
@@ -552,21 +587,22 @@ class _DetailQuestionState extends State<DetailQuestionEmployee> {
             labelBackgroundColor: Colors.blue),
         // FAB 2
         if(widget.question.file!='file.pdf')
-          SpeedDialChild(
-              child: Icon(Icons.picture_as_pdf),
-              backgroundColor: Colors.blue,
-              onTap: () async {
-                final url =
-                    widget.question.file;
-                final file = await PDFApi.loadNetwork(url);
-                openPDF(context, file);
-              },
-              label: 'Mở file PDF',
-              labelStyle: TextStyle(
-                  fontWeight: FontWeight.w500,
-                  color: Colors.white,
-                  fontSize: 16.0),
-              labelBackgroundColor: Colors.blue)
+          if(widget.question.file.substring(widget.question.file.length - 57).startsWith('.pdf'))
+            SpeedDialChild(
+                child: Icon(AppIcons.file_pdf),
+                backgroundColor: Colors.blue,
+                onTap: () async {
+                  final url =
+                      widget.question.file;
+                  final file = await PDFApi.loadNetwork(url);
+                  openPDF(context, file);
+                },
+                label: 'Mở file PDF',
+                labelStyle: TextStyle(
+                    fontWeight: FontWeight.w500,
+                    color: Colors.white,
+                    fontSize: 16.0),
+                labelBackgroundColor: Colors.blue)
 
       ],
     );
@@ -579,17 +615,6 @@ class _DetailQuestionState extends State<DetailQuestionEmployee> {
         title: const Text("Chi tiết câu hỏi"),
       ),
       floatingActionButton:_getFAB(),
-    //   FloatingActionButton(
-    //     onPressed: () {
-    //       _modalBottomSheetAddAnswer();
-    //     },
-    //     child: Icon(
-    //       Icons.send,
-    //       size: 25,
-    //     ),
-    //     backgroundColor: Colors.blue
-    //   //params
-    // ),
       floatingActionButtonLocation:
       FloatingActionButtonLocation.endFloat,
       body: SafeArea(

@@ -11,8 +11,10 @@ import 'package:myapp/src/resources/messenger/test.dart';
 import 'package:myapp/src/models/EmployeeModel.dart';
 import 'package:myapp/src/screens/signin_screen.dart';
 
+import '../../models/NewfeedModel.dart';
 import '../employee/employee_info.dart';
 import '../dialog/loading_dialog.dart';
+import '../home_page.dart';
 import '../leader/manage_employee.dart';
 import '../messenger/messenger_page.dart';
 import 'manage_department.dart';
@@ -22,7 +24,15 @@ class HomePageManager extends StatefulWidget {
   @override
   _HomePageState createState() => _HomePageState();
 }
+class Post {
+  String id;
+  Employee employee;
+  String content;
+  String time;
+  String file;
 
+  Post(this.id, this.employee, this.content, this.time, this.file);
+}
 class _HomePageState extends State<HomePageManager> {
   FirebaseAuth auth = FirebaseAuth.instance;
   var userr = FirebaseAuth.instance.currentUser!;
@@ -34,9 +44,135 @@ class _HomePageState extends State<HomePageManager> {
   @override
   void initState() {
     super.initState();
-    // getCurrentUser();
+    getListPost();
   }
+  var departmentName = new Map();
+  getDepartmentName() async {
+    await FirebaseFirestore.instance
+        .collection('departments')
+        .get()
+        .then((value) => {
+      setState(() {
+        value.docs.forEach((element) {
+          departmentName[element.id] = element["name"];
+        });
+      })
+    });
+  }
+  List<Post> listPost = [];
+  getListPost() async {
+    await getDepartmentName();
+    List<NewfeedModel> listNewfeed = [];
+    await FirebaseFirestore.instance
+        .collection('newfeed')
+        .get()
+        .then((value) => {
+      value.docs.forEach((element) {
+        NewfeedModel newfeed = new NewfeedModel("", "", "", "", "");
+        newfeed.id = element['id'];
+        newfeed.content = element['content'];
+        newfeed.time = element['time'];
+        newfeed.file = element['file'];
+        newfeed.employeeId = element['employeeId'];
 
+        listNewfeed.add(newfeed);
+      })
+    });
+    print(listNewfeed);
+    listNewfeed.forEach((element) async {
+      Employee employee =
+      new Employee("", "", "", "", "", "", "", "", "", "", "");
+      Post post = new Post(
+          element.id, employee, element.content, element.time, element.file);
+      await FirebaseFirestore.instance
+          .collection('employee')
+          .where("id", isEqualTo: element.employeeId)
+          .get()
+          .then((value) => {
+        setState(() {
+          employee.id = value.docs.first['id'];
+          employee.name = value.docs.first['name'];
+          employee.email = value.docs.first['email'];
+          employee.image = value.docs.first['image'];
+          employee.password = value.docs.first['password'];
+          employee.phone = value.docs.first['phone'];
+          employee.departmentId = value.docs.first['department'];
+          employee.departmentName =
+          departmentName[employee.departmentId];
+          employee.category = value.docs.first['category'];
+          employee.roles = value.docs.first['roles'];
+          employee.status = value.docs.first['status'];
+          post.employee = employee;
+          listPost.add(post);
+        })
+      });
+    });
+  }
+  _buildNewfeed(BuildContext context, Post post) {
+    return Container(
+      margin: EdgeInsets.all(10.0),
+      decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(15.0),
+          border: Border.all(width: 1.0, color: Colors.pinkAccent)),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: <Widget>[
+          Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: <Widget>[
+              Container(
+                padding: EdgeInsets.fromLTRB(20, 0, 10, 0),
+                child: CircleAvatar(
+                  radius: 30,
+                  backgroundColor: Colors.tealAccent,
+                  child: CircleAvatar(
+                    backgroundImage: new NetworkImage(post.employee.image!),
+                    radius: 28,
+                  ),
+                ),
+              ),
+              Container(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: <Widget>[
+                    Text(post.employee.name,
+                      style: TextStyle(fontSize: 17,fontStyle: FontStyle.italic,fontWeight: FontWeight.w500 ),),
+                    Text(post.time,
+                      style: TextStyle(fontSize: 12,),),
+                    Text(post.employee.departmentName,
+                      style: TextStyle(fontSize: 13),),
+
+                    // Container(
+                    //   child: Expanded(
+                    //     child: Text(post.content,
+                    //     ),
+                    //   ),
+                    // )
+
+
+                  ],
+                ),
+              ),
+            ],
+          ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Padding(padding: EdgeInsets.symmetric(horizontal: 10),
+                child: Text(post.content, overflow: TextOverflow.visible, maxLines: 50,
+                  style: TextStyle(fontSize: 16,fontWeight: FontWeight.w500),)
+                ,)
+            ],
+          )
+        ],
+      ),
+
+    );
+  }
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<QuerySnapshot>(
@@ -86,17 +222,17 @@ class _HomePageState extends State<HomePageManager> {
                       AppIcons.chat,
                       color: Colors.white,
                     )),
-                IconButton(
-                    onPressed: () {
-                      Navigator.push(
-                          context,
-                          new MaterialPageRoute(
-                              builder: (BuildContext context) => TestPage()));
-                    },
-                    icon: Icon(
-                      AppIcons.bell_alt,
-                      color: Colors.white,
-                    ))
+                // IconButton(
+                //     onPressed: () {
+                //       Navigator.push(
+                //           context,
+                //           new MaterialPageRoute(
+                //               builder: (BuildContext context) => TestPage()));
+                //     },
+                //     icon: Icon(
+                //       AppIcons.bell_alt,
+                //       color: Colors.white,
+                //     ))
               ],
             ),
             drawer: new Drawer(
@@ -133,20 +269,20 @@ class _HomePageState extends State<HomePageManager> {
                                   new AboutUniversity()));
                     },
                   ),
-                  new Divider(
-                    color: Colors.black,
-                    height: 5.0,
-                  ),
-                  new ListTile(
-                    title: new Text('Lịch sử tuyển sinh'),
-                    onTap: () {
-                      Navigator.push(
-                          context,
-                          new MaterialPageRoute(
-                              builder: (BuildContext context) =>
-                                  new AdmissionHistory()));
-                    },
-                  ),
+                  // new Divider(
+                  //   color: Colors.black,
+                  //   height: 5.0,
+                  // ),
+                  // new ListTile(
+                  //   title: new Text('Lịch sử tuyển sinh'),
+                  //   onTap: () {
+                  //     Navigator.push(
+                  //         context,
+                  //         new MaterialPageRoute(
+                  //             builder: (BuildContext context) =>
+                  //                 new AdmissionHistory()));
+                  //   },
+                  // ),
                   new Divider(
                     color: Colors.black,
                     height: 5.0,
@@ -188,6 +324,30 @@ class _HomePageState extends State<HomePageManager> {
                     },
                   ),
                 ],
+              ),
+            ),
+            body: SafeArea(
+              minimum: const EdgeInsets.all(10),
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: <Widget>[
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Container(
+                          height: MediaQuery.of(context).size.height * 0.85,
+                          child: ListView.builder(
+                              physics: BouncingScrollPhysics(),
+                              itemCount: listPost.length,
+                              itemBuilder: (BuildContext context, int index) {
+                                return _buildNewfeed(context, listPost[index]);
+                              }),
+                        )
+                      ],
+                    )
+                  ],
+                ),
               ),
             ),
           );

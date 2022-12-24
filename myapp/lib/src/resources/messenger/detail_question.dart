@@ -1,12 +1,15 @@
+import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import '../../../icons/app_icons_icons.dart';
 import '../../models/AnswerModel.dart';
 import '../../models/EmployeeModel.dart';
 import '../../models/QuestionModel.dart';
 import '../../models/UserModel.dart';
+import '../pdf_viewer.dart';
 
 class DetailQuestion extends StatefulWidget {
   _DetailQuestionState createState() => _DetailQuestionState();
@@ -164,6 +167,7 @@ class _DetailQuestionState extends State<DetailQuestion> {
       child: CircularProgressIndicator()),
       );
     }
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -273,6 +277,42 @@ class _DetailQuestionState extends State<DetailQuestion> {
                             )
                           ],
                         )),
+
+                    if(widget.question.file!='file.pdf')
+                      if(widget.question.file.substring(widget.question.file.length - 57).startsWith('.pdf'))(
+                          Column(
+                            children: [
+                              Row(
+                                children: [
+                                  IconButton(
+                                      onPressed:() async {
+                                        final url =
+                                            question.file;
+                                        final file = await PDFApi.loadNetwork(url);
+                                        openPDF(context, file);
+                                      },
+                                      icon: Icon(AppIcons.file_pdf,
+                                          color: Color(0xED0565B2)),),
+                                  Text("File PDF đính kèm",
+                                    overflow:
+                                    TextOverflow.visible,
+                                    style: TextStyle(
+                                        fontSize: 15,
+                                        fontWeight:
+                                        FontWeight.w400,
+                                        color: Color(0xED0565B2)),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          )
+                      )
+                      else
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(8.0),
+                          child: Image.network(question.file,
+                          ),
+                        ),
                   ],
                 ),
               ),
@@ -282,7 +322,9 @@ class _DetailQuestionState extends State<DetailQuestion> {
       ],
     );
   }
-
+  void openPDF(BuildContext context, File file) => Navigator.of(context).push(
+    MaterialPageRoute(builder: (context) => PDFViewerPage(file: file)),
+  );
   _buildAnswers() {
     List<Widget> answerList = [];
     listAnswer.forEach((Answer answer) {

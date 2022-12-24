@@ -54,6 +54,7 @@ class _MessengerPageState extends State<MessengerPage> {
     super.initState();
     getEmployeeData();
     getDepartmentName();
+    getAllQuestion();
   }
   @override
   void dispose() {
@@ -186,6 +187,98 @@ class _MessengerPageState extends State<MessengerPage> {
                   ],
                 ),
               ))
+            ],
+          ),
+        ),
+      ));
+    });
+    return Column(children: questionsList);
+  }
+  List<QuestionModel> listAllQuestion = [];
+  getAllQuestion() async {
+    await FirebaseFirestore.instance
+        .collection('questions')
+        .get()
+        .then((value) => {
+      setState(() {
+        value.docs.forEach((element) {
+          QuestionModel questionModel =
+          new QuestionModel("", "", "", "", "", "", "", "", "", "");
+          questionModel.id = element.id;
+          questionModel.title = element['title'];
+          questionModel.content = element['content'];
+          questionModel.time = element['time'];
+          questionModel.department = element['department'];
+          questionModel.category = element['category'];
+          questionModel.status = element['status'];
+          questionModel.userId = element['userId'];
+          questionModel.information = element['information'];
+          questionModel.file = element['file'];
+          listAllQuestion.add(questionModel);
+        });
+      })
+    });
+  }
+  _buildAllQuestions() {
+    List<Widget> questionsList = [];
+    listAllQuestion.forEach((QuestionModel question) {
+      questionsList.add(GestureDetector(
+        onTap: () {
+          Navigator.push(
+              context,
+              new MaterialPageRoute(
+                  builder: (BuildContext context) =>
+                      DetailQuestion(question: question)));
+        },
+        child: Container(
+          margin: EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
+          decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(15.0),
+              border: Border.all(
+                width: 1.0,
+                color: Colors.grey,
+              )),
+          child: Row(
+            children: <Widget>[
+              Expanded(
+                  child: Container(
+                    margin: EdgeInsets.all(12.0),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Text(
+                          question.title,
+                          style: TextStyle(
+                            fontSize: 20.0,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        SizedBox(
+                          height: 4.0,
+                        ),
+                        Text(
+                          question.time,
+                          style: TextStyle(
+                            fontSize: 16.0,
+                            fontWeight: FontWeight.w600,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        Text(question.status,
+                            style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w400,
+                              color: question.status == "Chưa trả lời"
+                                  ? Colors.redAccent
+                                  : Colors.green,
+                              overflow: TextOverflow.ellipsis,
+                            ))
+                      ],
+                    ),
+                  ))
             ],
           ),
         ),
@@ -500,7 +593,7 @@ class _MessengerPageState extends State<MessengerPage> {
                   letterSpacing: 1.0),
             ),
           ),
-          _buildQuestions(setState)
+          _buildAllQuestions()
         ],
       );
     }
@@ -966,7 +1059,7 @@ class _MessengerPageState extends State<MessengerPage> {
           value_doituong!, () {
         LoadingDialog.hideLoadingDialog(context);
         Navigator.push(
-            context, MaterialPageRoute(builder: (context) => HomePage()));
+            context, MaterialPageRoute(builder: (context) => MessengerPage()));
       });
     }
     return 0;
