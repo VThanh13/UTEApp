@@ -25,41 +25,16 @@ class _MessengerPageState extends State<MessengerPageLeader> {
   CollectionReference derpart =
       FirebaseFirestore.instance.collection('departments');
   FirebaseFirestore db = FirebaseFirestore.instance;
-  String? value;
+
   String? value_khoa;
-  String? value4;
   var selectedDerpartments;
-  String? value2;
-  String? value_doituong;
-  String? value_vande;
   var departmentsItems = [];
-  var item_doituong = [
-    'Học sinh THPT',
-    'Sinh viên',
-    'Phụ huynh',
-    'Cựu sinh viên',
-    'Khác'
-  ];
   List<dynamic> listt = [];
 
   FirebaseAuth auth = FirebaseAuth.instance;
   var userr = FirebaseAuth.instance.currentUser!;
   EmployeeModel employeeModel = new EmployeeModel("", " ", "", "", "", "", "", "", "", "");
 
-
-  Future<List> getDataDropdownProblem(String? value_khoa) async {
-    QuerySnapshot snapshot = await FirebaseFirestore.instance
-        .collection("departments")
-        .where("name", isEqualTo: value_khoa)
-        .get();
-
-    List<dynamic> list = [];
-    snapshot.docs.map((e) {
-      list = (e.data() as Map)["category"];
-      return list;
-    }).toList();
-    return list;
-  }
 
   List<QuestionModel> listQuestion = [];
   Future<List<QuestionModel>> getQuestionData() async {
