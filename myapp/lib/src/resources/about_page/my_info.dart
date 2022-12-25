@@ -161,6 +161,16 @@ class _MyInfoState extends State<MyInfo> {
           // TODO: implement build
           return new Scaffold(
             appBar: new AppBar(
+              leading: IconButton(
+                  icon: Icon(Icons.arrow_back, color: Colors.white),
+                  onPressed: () {
+                    Navigator.push(
+                        context,
+                        new MaterialPageRoute(
+                            builder: (BuildContext context) =>
+                            new HomePage()));
+                  }
+              ),
               title: new Text('Thông tin cá nhân'),
               backgroundColor: Colors.pinkAccent,
             ),
@@ -582,7 +592,7 @@ class _MyInfoState extends State<MyInfo> {
           () {
         LoadingDialog.hideLoadingDialog(context);
         Navigator.push(
-            context, MaterialPageRoute(builder: (context) => HomePage()));
+            context, MaterialPageRoute(builder: (context) => MyInfo()));
       });
     }
   }
@@ -600,7 +610,7 @@ class _MyInfoState extends State<MyInfo> {
       changePassword(_passnew2Controller.text, () {
         LoadingDialog.hideLoadingDialog(context);
         Navigator.push(
-            context, MaterialPageRoute(builder: (context) => HomePage()));
+            context, MaterialPageRoute(builder: (context) => MyInfo()));
       });
     }
   }

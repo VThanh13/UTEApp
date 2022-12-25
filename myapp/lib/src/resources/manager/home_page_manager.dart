@@ -5,6 +5,7 @@ import 'package:myapp/icons/app_icons_icons.dart';
 import 'package:myapp/src/resources/about_page/my_file.dart';
 import 'package:myapp/src/resources/about_page/about_university.dart';
 import 'package:myapp/src/resources/about_page/admission_history.dart';
+import 'package:myapp/src/resources/employee/messenger_employee.dart';
 import 'package:myapp/src/resources/login_page.dart';
 import 'package:myapp/src/resources/manager/stats.dart';
 import 'package:myapp/src/resources/messenger/test.dart';
@@ -209,7 +210,7 @@ class _HomePageState extends State<HomePageManager> {
                           context,
                           new MaterialPageRoute(
                               builder: (BuildContext context) =>
-                                  MessengerPage()));
+                                  MessengerPageEmployee()));
                     },
                     icon: Icon(
                       AppIcons.chat,
@@ -308,7 +309,8 @@ class _HomePageState extends State<HomePageManager> {
                   ),
                   new ListTile(
                     title: new Text('Đăng xuất'),
-                    onTap: () {
+                    onTap: () async {
+                      await FirebaseAuth.instance.signOut();
                       Navigator.push(
                           context,
                           new MaterialPageRoute(

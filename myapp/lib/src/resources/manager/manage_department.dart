@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:myapp/icons/app_icons_icons.dart';
 import 'package:myapp/src/models/QuestionModel.dart';
 import 'package:myapp/src/resources/home_page.dart';
+import 'package:myapp/src/resources/manager/home_page_manager.dart';
 import 'package:myapp/src/resources/messenger/detail_question.dart';
 
 import '../../blocs/auth_bloc.dart';
@@ -634,6 +635,16 @@ class _ManageDepartmentState extends State<ManageDepartment> {
     // TODO: implement build
     return Scaffold(
       appBar: new AppBar(
+        leading: IconButton(
+            icon: Icon(Icons.arrow_back, color: Colors.white),
+            onPressed: () {
+              Navigator.push(
+                  context,
+                  new MaterialPageRoute(
+                      builder: (BuildContext context) =>
+                      new HomePageManager()));
+            }
+        ),
         title: const Text("Quản lý các khoa"),
         backgroundColor: Colors.pinkAccent,
       ),

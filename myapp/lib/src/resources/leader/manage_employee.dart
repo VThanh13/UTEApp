@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:myapp/icons/app_icons_icons.dart';
 import 'package:myapp/src/models/QuestionModel.dart';
 import 'package:myapp/src/resources/home_page.dart';
+import 'package:myapp/src/resources/manager/home_page_manager.dart';
 import 'package:myapp/src/resources/messenger/detail_question.dart';
 
 import '../../blocs/auth_bloc.dart';
@@ -16,6 +17,7 @@ import '../dialog/edit_employee_dialog.dart';
 import '../dialog/loading_dialog.dart';
 import '../dialog/msg_dialog.dart';
 import '../employee/detail_question_employee.dart';
+import 'home_page_leader.dart';
 
 class ManageEmployee extends StatefulWidget {
   @override
@@ -39,16 +41,19 @@ class _ManageEmployeeState extends State<ManageEmployee> {
   TextEditingController _nameController = new TextEditingController();
   TextEditingController _phoneController = new TextEditingController();
   TextEditingController _passwordController = new TextEditingController();
+  TextEditingController _newPasswordController = new TextEditingController();
 
   StreamController _emailControl = new StreamController.broadcast();
   StreamController _nameControl = new StreamController.broadcast();
   StreamController _phoneControl = new StreamController.broadcast();
   StreamController _passwordControl = new StreamController.broadcast();
+  StreamController _newPasswordControl = new StreamController.broadcast();
 
   Stream get emailControl => _emailControl.stream;
   Stream get nameControl => _nameControl.stream;
   Stream get phoneControl => _phoneControl.stream;
   Stream get passwordControl => _passwordControl.stream;
+  Stream get newPasswordControl => _newPasswordControl.stream;
 
   String? value_category;
 
@@ -362,31 +367,71 @@ class _ManageEmployeeState extends State<ManageEmployee> {
                                     ),
                                   ),
                                   Padding(padding: EdgeInsets.all(5)),
+                                  // Container(
+                                  //   width: 300,
+                                  //   height: 45,
+                                  //   child: ElevatedButton(
+                                  //     style: ButtonStyle(
+                                  //       backgroundColor: MaterialStateProperty.all<Color>(Colors.red),
+                                  //       shape: MaterialStateProperty.all(
+                                  //         RoundedRectangleBorder(
+                                  //           // Change your radius here
+                                  //           borderRadius: BorderRadius.circular(16),
+                                  //         ),
+                                  //       ),
+                                  //     ),
+                                  //     onPressed: () {
+                                  //       _onCancelAccountClicked(employee.id, employee.status);
+                                  //       print('press cancel account');
+                                  //     },
+                                  //     child: Text(
+                                  //       employee.status == "enabled" ? "Vô hiệu hóa tài khoản": "Kích hoạt tài khoản",
+                                  //       style: TextStyle(
+                                  //           fontSize: 16,
+                                  //           color: Colors.white),
+                                  //     ),
+                                  //   ),
+                                  // ),
+                                  new Divider(
+                                    color: Colors.black,
+                                    height: 5.0,
+                                  ),
+                                  Padding(padding: EdgeInsets.fromLTRB(0, 10, 0, 10)),
                                   Container(
-                                    width: 300,
-                                    height: 45,
-                                    child: ElevatedButton(
-                                      style: ButtonStyle(
-                                        backgroundColor: MaterialStateProperty.all<Color>(Colors.red),
-                                        shape: MaterialStateProperty.all(
-                                          RoundedRectangleBorder(
-                                            // Change your radius here
-                                            borderRadius: BorderRadius.circular(16),
-                                          ),
-                                        ),
+                                    child: GestureDetector(
+                                      onTap: () {
+                                        return _modalBottomSheetResetPassword(employee);
+                                      },
+                                      child: Text(
+                                        "Reset Mật Khẩu",
+                                        style: TextStyle(
+                                            fontSize: 16,
+                                            color: Colors.red),
+
                                       ),
-                                      onPressed: () {
-                                        _onCancelAccountClicked(employee.id, employee.status);
-                                        print('press cancel account');
+                                    ),
+                                  ),
+                                  Padding(padding: EdgeInsets.fromLTRB(0, 10, 0, 10)),
+                                  new Divider(
+                                    color: Colors.black,
+                                    height: 5.0,
+                                  ),
+                                  Padding(padding: EdgeInsets.fromLTRB(0, 10, 0, 10)),
+                                  Container(
+                                    child: GestureDetector(
+                                      onTap: () {
+                                        return _onCancelAccountClicked(employee.id, employee.status);
                                       },
                                       child: Text(
                                         employee.status == "enabled" ? "Vô hiệu hóa tài khoản": "Kích hoạt tài khoản",
                                         style: TextStyle(
                                             fontSize: 16,
-                                            color: Colors.white),
+                                            color: Colors.red),
+
                                       ),
                                     ),
                                   ),
+                                  Padding(padding: EdgeInsets.fromLTRB(0, 10, 0, 10)),
                                   // Row(
                                   //   children:[
                                   //     Padding(
@@ -433,6 +478,193 @@ class _ManageEmployeeState extends State<ManageEmployee> {
           });
         });
 
+  }
+  _modalBottomSheetResetPassword(employee){
+    return showModalBottomSheet(
+        isScrollControlled: true,
+        constraints: BoxConstraints.loose(Size(
+            MediaQuery.of(context).size.width,
+            MediaQuery.of(context).size.height * 0.75),
+        ),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(20),
+            topRight: Radius.circular(20),
+          ),
+        ),
+        context: context,
+        builder: (BuildContext context) {
+          return StatefulBuilder(
+              builder: (BuildContext context, StateSetter setStateKhoa) {
+                return Container(
+                  child: Column(
+                    children: <Widget>[
+                      Padding(
+                        padding: EdgeInsets.fromLTRB(5, 20, 5, 10),
+                        child: Text('Reset Password',
+                          style: TextStyle(
+                              fontSize: 24,
+                              fontWeight: FontWeight.w600,
+                              letterSpacing: 1.0),
+                        ),
+                      ),
+                      SingleChildScrollView(
+                        physics: BouncingScrollPhysics(),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Container(
+                              height: MediaQuery.of(context).size.height * 0.65,
+                              child: SingleChildScrollView(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: <Widget>[
+                                    Padding(
+                                        padding: EdgeInsets.fromLTRB(0, 0, 0, 0)),
+                                    Container(
+                                        margin:
+                                        EdgeInsets.fromLTRB(
+                                            10, 10, 10, 15),
+                                        width: 400,
+                                        child: StreamBuilder(
+                                          stream: newPasswordControl,
+                                          builder: (context, snapshot) =>TextField(
+                                            controller: _newPasswordController,
+                                            decoration:
+                                            InputDecoration(
+                                                labelText:
+                                                "Password",
+                                                hintText:
+                                                'Nhập password',
+                                                enabledBorder:
+                                                OutlineInputBorder(
+                                                    borderRadius: BorderRadius.circular(10),
+                                                    borderSide: BorderSide(color:Colors.orangeAccent, width:1,)),
+                                                focusedBorder: OutlineInputBorder(
+                                                    borderRadius:
+                                                    BorderRadius.circular(
+                                                        10),
+                                                    borderSide: BorderSide(
+                                                        color: Colors.orange,
+                                                        width:
+                                                        4))),
+                                          ),
+                                        )
+                                    ),
+                                    Container(
+                                      width: 300,
+                                      height: 55,
+                                      padding: EdgeInsets.all(0),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                        MainAxisAlignment.spaceAround,
+                                        children: <Widget>[
+                                          Expanded(
+                                            child: ElevatedButton.icon(
+                                              style: ButtonStyle(
+                                                shape: MaterialStateProperty.all(
+                                                  RoundedRectangleBorder(
+                                                    // Change your radius here
+                                                    borderRadius: BorderRadius.circular(16),
+                                                  ),
+
+                                                ),
+                                                backgroundColor: MaterialStateProperty.all(Colors.orangeAccent),
+                                              ),
+                                              onPressed: () {
+                                                _onChangePasswordClicked(employee);
+                                                print('press save');
+                                              },
+                                              label: Text(
+                                                'Lưu',
+                                                style: TextStyle(
+                                                    fontSize: 16,
+                                                    color: Colors.white),
+                                              ),
+                                              icon: Icon(Icons.add),
+
+                                            ),
+                                          ),
+                                          Padding(padding: EdgeInsets.all(10)),
+                                          Expanded(
+                                            child: ElevatedButton.icon(
+                                              style: ButtonStyle(
+                                                shape: MaterialStateProperty.all(
+                                                  RoundedRectangleBorder(
+                                                    // Change your radius here
+                                                    borderRadius: BorderRadius.circular(16),
+                                                  ),
+                                                ),
+                                                backgroundColor: MaterialStateProperty.all(Colors.orangeAccent),
+                                              ),
+                                              onPressed: () =>
+                                              {Navigator.pop(context)},
+                                              label: Text(
+                                                'Thoát',
+                                                style: TextStyle(
+                                                    fontSize: 16,
+                                                    color: Colors.white),
+                                              ),
+                                              icon: Icon(Icons.cancel),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    Padding(padding: EdgeInsets.all(5)),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              });
+        });
+  }
+  bool isValidChangePass(String password) {
+    if (password == null || password.length == 0) {
+      _newPasswordControl.sink.addError("Nhập password");
+      return false;
+    }
+    if (password.length < 6) {
+      _newPasswordControl.sink.addError("Password phải từ 6 ký tự trở lên");
+      return false;
+    }
+
+    return true;
+  }
+  _onChangePasswordClicked(employee){
+    var isvalid = isValidChangePass(
+        _newPasswordController.text);
+    if (isvalid) {
+      String password = _newPasswordController.text;
+      LoadingDialog.showLoadingDialog(context, "loading...");
+
+      FirebaseAuth.instance.signInWithEmailAndPassword(email: employee.email, password: employee.password);
+      FirebaseAuth.instance.currentUser?.updatePassword(password);
+      FirebaseAuth.instance.signInWithEmailAndPassword(email: current_employee.email, password: current_employee.password);
+
+      changePassword(employee.id, password, () {
+        LoadingDialog.hideLoadingDialog(context);
+        Navigator.push(context,
+            MaterialPageRoute(builder: (context) => ManageEmployee()));
+      });
+    }
+  }
+
+  changePassword(id, password, Function onSuccess) async {
+    var ref = FirebaseFirestore.instance.collection('employee');
+
+    ref.doc(id).update({'password': password}).then((value) {
+      onSuccess();
+      print("change pass ok");
+    }).catchError((err) {
+      print("err");
+    });
   }
   _modalBottomSheetAddEmployee() {
     return showModalBottomSheet(
@@ -821,6 +1053,16 @@ class _ManageEmployeeState extends State<ManageEmployee> {
     // TODO: implement build
     return Scaffold(
       appBar: new AppBar(
+        leading: IconButton(
+            icon: Icon(Icons.arrow_back, color: Colors.white),
+            onPressed: () {
+              Navigator.push(
+                  context,
+                  new MaterialPageRoute(
+                      builder: (BuildContext context) =>
+                      new HomePageLeader()));
+            }
+        ),
         title: const Text("Quản lý Tư vấn viên"),
         backgroundColor: Colors.orangeAccent,
       ),

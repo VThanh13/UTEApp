@@ -252,7 +252,8 @@ class _HomePageState extends State<HomePageEmployee> {
                   ),
                   new ListTile(
                     title: new Text('Đăng xuất'),
-                    onTap: () {
+                    onTap: () async {
+                      await FirebaseAuth.instance.signOut();
                       Navigator.push(
                           context,
                           new MaterialPageRoute(

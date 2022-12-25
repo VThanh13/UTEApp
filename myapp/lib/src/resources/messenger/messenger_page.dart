@@ -362,7 +362,7 @@ class _MessengerPageState extends State<MessengerPage> {
                   overflow: TextOverflow.ellipsis,
                 ),
                 Text(
-                  "Khoa",
+                  departmentName[employeeModel.department],
                   style: TextStyle(fontSize: 15, fontWeight: FontWeight.w400),
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -414,9 +414,11 @@ class _MessengerPageState extends State<MessengerPage> {
 
     if (title == null || title.length == 0) {
       _titleControl.sink.addError("Nhập tiêu đề");
+      return false;
     }
     if (question == null || question.length == 0) {
       _questionControl.sink.addError("Nhập câu hỏi");
+      return false;
     }
 
     return true;
@@ -477,13 +479,25 @@ class _MessengerPageState extends State<MessengerPage> {
                       // TODO: implement build
                       return Scaffold(
                         appBar: new AppBar(
+                          leading: IconButton(
+                              icon: Icon(Icons.arrow_back, color: Colors.white),
+                              onPressed: () {
+                                Navigator.push(
+                                    context,
+                                    new MaterialPageRoute(
+                                        builder: (BuildContext context) =>
+                                        new HomePage()));
+                              }
+                          ),
                           title: const Text("Tin nhắn"),
                           backgroundColor: Colors.pinkAccent,
                         ),
                         bottomNavigationBar: getFooter(),
                         floatingActionButton: FloatingActionButton(
                             onPressed: () {
-                              modalBottomSheetQuestion();
+                              if(userModel.id!="") {
+                                modalBottomSheetQuestion();
+                              }
                             },
                             child: Icon(
                               Icons.add,

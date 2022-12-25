@@ -147,9 +147,11 @@ class _MessengerPageState extends State<MessengerPageLeader> {
     
     if(title == null || title.length == 0){
       _titleControl.sink.addError("Nhập tiêu đề");
+      return false;
     }
     if(question == null || question.length == 0){
       _questionControl.sink.addError("Nhập câu hỏi");
+      return false;
     }
     
     return true;

@@ -118,7 +118,6 @@ class _HomePageState extends State<HomePageLeader> {
     var isvalidcontent = isvalidContent(_infoPostController.text);
     var time = DateTime.now();
     String timestring = DateFormat('dd-MM-yyyy HH:mm:ss').format(time);
-    print(timestring);
 
     if (isvalidcontent) {
       LoadingDialog.showLoadingDialog(context, "loading...");
@@ -152,7 +151,6 @@ class _HomePageState extends State<HomePageLeader> {
                 listNewfeed.add(newfeed);
               })
             });
-    print(listNewfeed);
     listNewfeed.forEach((element) async {
       Employee employee =
           new Employee("", "", "", "", "", "", "", "", "", "", "");
@@ -338,34 +336,6 @@ class _HomePageState extends State<HomePageLeader> {
                     color: Colors.black,
                     height: 5.0,
                   ),
-                  // new ListTile(
-                  //   title: new Text('Giới thiệu về trường'),
-                  //   onTap: () {
-                  //     Navigator.push(
-                  //         context,
-                  //         new MaterialPageRoute(
-                  //             builder: (BuildContext context) =>
-                  //                 new AboutUniversity()));
-                  //   },
-                  // ),
-                  // new Divider(
-                  //   color: Colors.black,
-                  //   height: 5.0,
-                  // ),
-                  // new ListTile(
-                  //   title: new Text('Lịch sử tuyển sinh'),
-                  //   onTap: () {
-                  //     Navigator.push(
-                  //         context,
-                  //         new MaterialPageRoute(
-                  //             builder: (BuildContext context) =>
-                  //                 new AdmissionHistory()));
-                  //   },
-                  // ),
-                  // new Divider(
-                  //   color: Colors.black,
-                  //   height: 5.0,
-                  // ),
                   new ListTile(
                     title: new Text('Quản lý Tư vấn viên'),
                     onTap: () {
@@ -396,7 +366,8 @@ class _HomePageState extends State<HomePageLeader> {
                   ),
                   new ListTile(
                     title: new Text('Đăng xuất'),
-                    onTap: () {
+                    onTap: () async {
+                      await FirebaseAuth.instance.signOut();
                       Navigator.push(
                           context,
                           new MaterialPageRoute(

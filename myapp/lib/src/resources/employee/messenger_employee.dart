@@ -7,12 +7,15 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:myapp/icons/app_icons_icons.dart';
 import 'package:myapp/src/models/QuestionModel.dart';
+import 'package:myapp/src/resources/employee/home_page_employee.dart';
 import 'package:myapp/src/resources/home_page.dart';
+import 'package:myapp/src/resources/manager/home_page_manager.dart';
 import 'package:myapp/src/resources/messenger/detail_question.dart';
 
 import '../../models/EmployeeModel.dart';
 import '../../models/UserModel.dart';
 import '../dialog/loading_dialog.dart';
+import '../leader/home_page_leader.dart';
 import 'detail_question_employee.dart';
 
 class MessengerPageEmployee extends StatefulWidget {
@@ -208,9 +211,11 @@ class _MessengerPageState extends State<MessengerPageEmployee> {
 
     if (title == null || title.length == 0) {
       _titleControl.sink.addError("Nhập tiêu đề");
+      return false;
     }
     if (question == null || question.length == 0) {
       _questionControl.sink.addError("Nhập câu hỏi");
+      return false;
     }
 
     return true;
@@ -244,6 +249,32 @@ class _MessengerPageState extends State<MessengerPageEmployee> {
           // TODO: implement build
           return Scaffold(
             appBar: new AppBar(
+              leading: IconButton(
+                  icon: Icon(Icons.arrow_back, color: Colors.white),
+                  onPressed: () {
+                    if(current_employee.roles=="Tư vấn viên"){
+                      Navigator.push(
+                          context,
+                          new MaterialPageRoute(
+                              builder: (BuildContext context) =>
+                              new HomePageEmployee()));
+                    }
+                    else if(current_employee.roles=="Trưởng nhóm"){
+                      Navigator.push(
+                          context,
+                          new MaterialPageRoute(
+                              builder: (BuildContext context) =>
+                              new HomePageLeader()));
+                    }
+                    else if(current_employee.roles=="Manager"){
+                      Navigator.push(
+                          context,
+                          new MaterialPageRoute(
+                              builder: (BuildContext context) =>
+                              new HomePageManager()));
+                    }
+                  }
+              ),
               title: const Text("Tin nhắn"),
               backgroundColor: Colors.orangeAccent,
             ),
@@ -254,25 +285,6 @@ class _MessengerPageState extends State<MessengerPageEmployee> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: <Widget>[
-                    // Padding(
-                    //   padding: EdgeInsets.fromLTRB(0, 10, 0, 20),
-                    //   child: SizedBox(
-                    //     width: double.infinity,
-                    //     height: 70,
-                    //     child: ElevatedButton(
-                    //       onPressed: () {},
-                    //       style: ElevatedButton.styleFrom(
-                    //           primary: Colors.white70,
-                    //           shape: RoundedRectangleBorder(
-                    //               borderRadius: BorderRadius.circular(12))),
-                    //       child: Text(
-                    //         "Trả lời câu hỏi",
-                    //         style:
-                    //             TextStyle(color: Colors.black54, fontSize: 15),
-                    //       ),
-                    //     ),
-                    //   ),
-                    // ),
                     Padding(
                       padding: EdgeInsets.fromLTRB(0, 0, 0, 5),
                     ),

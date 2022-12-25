@@ -32,7 +32,6 @@ class _ViewEmployeeByUser extends State<ViewEmployeeByUser> {
 
   String? value_doituong;
 
-
   var item_doituong = [
     'Học sinh THPT',
     'Sinh viên',
@@ -211,6 +210,16 @@ class _ViewEmployeeByUser extends State<ViewEmployeeByUser> {
     // TODO: implement build
     return new Scaffold(
       appBar: new AppBar(
+        leading: IconButton(
+            icon: Icon(Icons.arrow_back, color: Colors.white),
+            onPressed: () {
+              Navigator.push(
+                  context,
+                  new MaterialPageRoute(
+                      builder: (BuildContext context) =>
+                      new MessengerPage()));
+            }
+        ),
         backgroundColor: Colors.pinkAccent,
         title: new Text("Thông tin tư vấn viên"),
       ),

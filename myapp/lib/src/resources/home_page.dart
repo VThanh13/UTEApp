@@ -679,40 +679,14 @@ class _HomePageState extends State<HomePage> {
                                   new AboutUniversity()));
                     },
                   ),
-                  // new Divider(
-                  //   color: Colors.black,
-                  //   height: 5.0,
-                  // ),
-                  // new ListTile(
-                  //   title: new Text('Lịch sử tuyển sinh'),
-                  //   onTap: () {
-                  //     Navigator.push(
-                  //         context,
-                  //         new MaterialPageRoute(
-                  //             builder: (BuildContext context) =>
-                  //                 new AdmissionHistory()));
-                  //   },
-                  // ),
-                  // new Divider(
-                  //   color: Colors.black,
-                  //   height: 5.0,
-                  // ),
-                  // new ListTile(
-                  //   title: new Text('Hồ sơ của bạn'),
-                  //   onTap: () {
-                  //     Navigator.push(
-                  //         context,
-                  //         new MaterialPageRoute(
-                  //             builder: (BuildContext context) => new MyFile()));
-                  //   },
-                  // ),
                   new Divider(
                     color: Colors.black,
                     height: 5.0,
                   ),
                   new ListTile(
                     title: new Text('Đăng xuất'),
-                    onTap: () {
+                    onTap: () async {
+                      await FirebaseAuth.instance.signOut();
                       Navigator.push(
                           context,
                           new MaterialPageRoute(

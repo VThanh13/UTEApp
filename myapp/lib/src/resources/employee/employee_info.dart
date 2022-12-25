@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:myapp/src/resources/leader/home_page_leader.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import '../../blocs/auth_bloc.dart';
@@ -12,6 +13,8 @@ import '../../models/EmployeeModel.dart';
 import '../../models/UserModel.dart';
 import '../dialog/loading_dialog.dart';
 import '../home_page.dart';
+import '../manager/home_page_manager.dart';
+import 'home_page_employee.dart';
 
 class EmployeeInfo extends StatefulWidget {
   @override
@@ -109,7 +112,7 @@ class _MyInfoState extends State<EmployeeInfo> {
 
   FirebaseAuth auth = FirebaseAuth.instance;
   var userr = FirebaseAuth.instance.currentUser!;
-  EmployeeModel employeeModel =
+  EmployeeModel current_employee =
       new EmployeeModel("", "", "", "", "", "", "", "", "", "");
   String departmentName = "";
   getEmployee() async {
@@ -119,16 +122,16 @@ class _MyInfoState extends State<EmployeeInfo> {
         .get()
         .then((value) => {
               //setState((){
-              employeeModel.id = value.docs.first['id'],
-              employeeModel.name = value.docs.first['name'],
-              employeeModel.email = value.docs.first['email'],
-              employeeModel.image = value.docs.first['image'],
-              employeeModel.password = value.docs.first['password'],
-              employeeModel.phone = value.docs.first['phone'],
-              employeeModel.department = value.docs.first['department'],
-              employeeModel.category = value.docs.first['category'],
-              employeeModel.roles = value.docs.first['roles'],
-              employeeModel.status = value.docs.first['status']
+      current_employee.id = value.docs.first['id'],
+      current_employee.name = value.docs.first['name'],
+      current_employee.email = value.docs.first['email'],
+      current_employee.image = value.docs.first['image'],
+      current_employee.password = value.docs.first['password'],
+      current_employee.phone = value.docs.first['phone'],
+      current_employee.department = value.docs.first['department'],
+      current_employee.category = value.docs.first['category'],
+      current_employee.roles = value.docs.first['roles'],
+      current_employee.status = value.docs.first['status']
               //})
             });
 
@@ -138,7 +141,7 @@ class _MyInfoState extends State<EmployeeInfo> {
   getDepartmentName() async {
     var snapshot = await FirebaseFirestore.instance
         .collection('departments')
-        .where('id', isEqualTo: employeeModel.department)
+        .where('id', isEqualTo: current_employee.department)
         .get()
         .then((value) => {
               setState(() {
@@ -170,11 +173,37 @@ class _MyInfoState extends State<EmployeeInfo> {
           }
           snapshot.data!.docs.map((e) {
             //getDepartmentName(setState);
-            return employeeModel;
+            return current_employee;
           }).toString();
           // TODO: implement build
           return new Scaffold(
             appBar: new AppBar(
+              leading: IconButton(
+                  icon: Icon(Icons.arrow_back, color: Colors.white),
+                  onPressed: () {
+                    if(current_employee.roles=="Tư vấn viên"){
+                      Navigator.push(
+                          context,
+                          new MaterialPageRoute(
+                              builder: (BuildContext context) =>
+                              new HomePageEmployee()));
+                    }
+                    else if(current_employee.roles=="Trưởng nhóm"){
+                      Navigator.push(
+                          context,
+                          new MaterialPageRoute(
+                              builder: (BuildContext context) =>
+                              new HomePageLeader()));
+                    }
+                    else if(current_employee.roles=="Manager"){
+                      Navigator.push(
+                          context,
+                          new MaterialPageRoute(
+                              builder: (BuildContext context) =>
+                              new HomePageManager()));
+                    }
+                  }
+              ),
               title: new Text('Thông tin cá nhân'),
               backgroundColor: Colors.orangeAccent,
             ),
@@ -196,7 +225,7 @@ class _MyInfoState extends State<EmployeeInfo> {
                               backgroundColor: Colors.tealAccent,
                               child: CircleAvatar(
                                 backgroundImage:
-                                    new NetworkImage(employeeModel.image!),
+                                    new NetworkImage(current_employee.image!),
                                 radius: 50,
                               ),
                             ),
@@ -234,14 +263,14 @@ class _MyInfoState extends State<EmployeeInfo> {
                     ),
                     Padding(padding: EdgeInsets.fromLTRB(0, 0, 0, 20)),
                     Text(
-                      employeeModel.roles!,
+                      current_employee.roles!,
                       style: TextStyle(
                         fontSize: 15,
                         fontWeight: FontWeight.w200,
                       ),
                     ),
                     Text(
-                      employeeModel.name!,
+                      current_employee.name!,
                       style: TextStyle(
                         fontSize: 25,
                         fontWeight: FontWeight.w600,
@@ -255,7 +284,7 @@ class _MyInfoState extends State<EmployeeInfo> {
                           stream: nameStream,
                           builder: (context, snapshot) => TextField(
                             controller: _nameController
-                              ..text = employeeModel.name!,
+                              ..text = current_employee.name!,
                             onChanged: (text) => {},
                             decoration: InputDecoration(
                                 labelText: "Tên của bạn",
@@ -281,7 +310,7 @@ class _MyInfoState extends State<EmployeeInfo> {
                           stream: phoneStream,
                           builder: (context, snapshot) => TextField(
                             controller: _phoneController
-                              ..text = employeeModel.phone!,
+                              ..text = current_employee.phone!,
                             onChanged: (text) => {},
                             decoration: InputDecoration(
                                 labelText: "SĐT của bạn",
@@ -307,7 +336,7 @@ class _MyInfoState extends State<EmployeeInfo> {
                           stream: emailStream,
                           builder: (context, snapshot) => TextField(
                             controller: _emailController
-                              ..text = employeeModel.email!,
+                              ..text = current_employee.email!,
                             onChanged: (text) => {},
                             decoration: InputDecoration(
                                 labelText: "Email của bạn",
@@ -334,7 +363,7 @@ class _MyInfoState extends State<EmployeeInfo> {
                         builder: (context, snapshot) => TextField(
                           readOnly: true,
                           controller: _passwordController
-                            ..text = employeeModel.password!,
+                            ..text = current_employee.password!,
                           onChanged: (text) => {},
                           decoration: InputDecoration(
                               labelText: "Mật khẩu của bạn",
@@ -659,9 +688,7 @@ class _MyInfoState extends State<EmployeeInfo> {
 
     var ref = FirebaseFirestore.instance.collection('employee');
 
-    ref
-
-        .doc(id)
+    ref.doc(id)
         .update({'email': email, 'name': name, 'phone': phone}).then((value) {
       onSuccess();
       print("add user");

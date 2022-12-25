@@ -15,6 +15,7 @@ import '../../models/EmployeeModel.dart';
 import '../../models/QuestionModel.dart';
 import '../../models/UserModel.dart';
 import '../dialog/loading_dialog.dart';
+import '../leader/messenger_leader.dart';
 import '../pdf_viewer.dart';
 import 'messenger_employee.dart';
 
@@ -65,6 +66,7 @@ class _DetailQuestionState extends State<DetailQuestionEmployee> {
   @override
   void initState() {
     super.initState();
+    getCurrentUser();
     getDepartmentName();
     getQuestion();
   }
@@ -73,7 +75,8 @@ class _DetailQuestionState extends State<DetailQuestionEmployee> {
   var userr = FirebaseAuth.instance.currentUser!;
   EmployeeModel employeeModel =
       EmployeeModel("", "", "", "", "", "", "", "", "", "");
-  //UserModel uModel = UserModel("", "", "", "", "", "", "");
+  EmployeeModel current_employee =
+      EmployeeModel("", "", "", "", "", "", "", "", "", "");
   Question question = Question("", "", "", "", "", "", "", uModel, "", "");
 
   TextEditingController _answerController = new TextEditingController();
@@ -81,10 +84,28 @@ class _DetailQuestionState extends State<DetailQuestionEmployee> {
   StreamController _answerControl = new StreamController.broadcast();
 
   Stream get answerControl => _answerControl.stream;
-
+  getCurrentUser() async {
+    await FirebaseFirestore.instance
+        .collection('employee')
+        .where('id', isEqualTo: userr.uid)
+        .get()
+        .then((value) => {
+      current_employee.id = value.docs.first['id'],
+      current_employee.name = value.docs.first['name'],
+      current_employee.email = value.docs.first['email'],
+      current_employee.image = value.docs.first['image'],
+      current_employee.password = value.docs.first['password'],
+      current_employee.phone = value.docs.first['phone'],
+      current_employee.department = value.docs.first['department'],
+      current_employee.category = value.docs.first['category'],
+      current_employee.roles = value.docs.first['roles'],
+      current_employee.status = value.docs.first['status']
+    });
+  }
   bool isValid(String answer) {
     if (answer == null || answer.length == 0) {
       _answerControl.sink.addError("Nhập câu trả lời");
+      return false;
     }
 
     return true;
@@ -818,6 +839,17 @@ class _DetailQuestionState extends State<DetailQuestionEmployee> {
     // TODO: implement build
     return Scaffold(
       appBar: new AppBar(
+        leading: IconButton(
+            icon: Icon(Icons.arrow_back, color: Colors.white),
+            onPressed: () {
+              Navigator.push(
+                  context,
+                  new MaterialPageRoute(
+                      builder: (BuildContext context) =>
+                      new MessengerPageEmployee()));
+
+            }
+        ),
         title: const Text("Chi tiết câu hỏi"),
         backgroundColor: Colors.orangeAccent,
       ),

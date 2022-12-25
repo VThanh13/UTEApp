@@ -16,6 +16,7 @@ import '../dialog/edit_employee_dialog.dart';
 import '../dialog/loading_dialog.dart';
 import '../dialog/msg_dialog.dart';
 import '../employee/detail_question_employee.dart';
+import '../manager/home_page_manager.dart';
 
 class ManageCategory extends StatefulWidget {
   @override
@@ -459,6 +460,16 @@ class _ManageCategoryState extends State<ManageCategory> {
     // TODO: implement build
     return Scaffold(
       appBar: new AppBar(
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () {
+            Navigator.push(
+                context,
+                new MaterialPageRoute(
+                    builder: (BuildContext context) =>
+                    new HomePageManager()));
+          }
+        ),
         title: const Text("Quản lý lĩnh vực trong khoa"),
         backgroundColor: Colors.orangeAccent,
       ),

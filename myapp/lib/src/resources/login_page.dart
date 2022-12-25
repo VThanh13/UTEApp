@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/gestures.dart';
@@ -35,10 +36,31 @@ class _LoginPageState extends State<LoginPage> {
     super.dispose();
   }
 
+  Future<bool> _onWillPop() async {
+    return (await showDialog(
+      context: context,
+      builder: (context) => new AlertDialog(
+        title: new Text('Thoát ứng dụng'),
+        content: new Text('Bạn có chắc chắn muốn thoát ứng dụng không?'),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: new Text('Hủy'),
+          ),
+          TextButton(
+            onPressed: () => exit(0),
+            child: new Text('Thoát'),
+          ),
+        ],
+      ),
+    )) ?? false;
+  }
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
-    return Scaffold(
+    return new WillPopScope(
+        onWillPop: _onWillPop,
+    child: Scaffold(
         body: SafeArea(
             child: Container(
                 //padding: EdgeInsets.fromLTRB(30, 0, 30, 0),
@@ -145,7 +167,8 @@ class _LoginPageState extends State<LoginPage> {
 
                     )
                   ]),
-                )))));
+                )))))
+    );
   }
 
   _onLoginClick() {
