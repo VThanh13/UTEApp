@@ -62,11 +62,25 @@ class _ViewEmployeeByUser extends State<ViewEmployeeByUser> {
               })
             });
   }
+  var listDepartmentName = new Map();
+  getDepartment() async {
+    await FirebaseFirestore.instance
+        .collection('departments')
+        .get()
+        .then((value) => {
+      setState(() {
+        value.docs.forEach((element) {
+          listDepartmentName[element.id] = element["name"];
+        });
+      })
+    });
+  }
 
   @override
   void initState() {
     super.initState();
     getDepartmentName();
+    getDepartment();
     //getDepartmentName();
   }
 
@@ -114,6 +128,8 @@ class _ViewEmployeeByUser extends State<ViewEmployeeByUser> {
       Function onSucces) {
     var ref = FirebaseFirestore.instance.collection('questions');
     String id = ref.doc().id;
+    String departmentId = listDepartmentName.keys
+        .firstWhere((k) => listDepartmentName[k] == department, orElse: () => null);
     ref.doc(id).set({
       'id': id,
       'userId': userId,
@@ -122,7 +138,7 @@ class _ViewEmployeeByUser extends State<ViewEmployeeByUser> {
       'status': status,
       'information': information,
       'file': file,
-      'department': department,
+      'department': departmentId,
       'content': content,
       'people': people,
       'category': category,
@@ -140,6 +156,7 @@ class _ViewEmployeeByUser extends State<ViewEmployeeByUser> {
     var time = DateTime.now();
     String timestring = DateFormat('dd-MM-yyyy HH:mm:ss').format(time);
     await uploadPdf();
+
 
     if (isvalid) {
       LoadingDialog.showLoadingDialog(context, "loading...");

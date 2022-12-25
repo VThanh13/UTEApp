@@ -176,6 +176,7 @@ class _MyInfoState extends State<EmployeeInfo> {
           return new Scaffold(
             appBar: new AppBar(
               title: new Text('Thông tin cá nhân'),
+              backgroundColor: Colors.orangeAccent,
             ),
             body: SafeArea(
               minimum: const EdgeInsets.only(left: 20, right: 10),

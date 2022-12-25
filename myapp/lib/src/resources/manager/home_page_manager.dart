@@ -201,6 +201,7 @@ class _HomePageState extends State<HomePageManager> {
           return Scaffold(
             appBar: new AppBar(
               title: new Text("UTE APP"),
+              backgroundColor: Colors.pinkAccent,
               actions: <Widget>[
                 IconButton(
                     onPressed: () {

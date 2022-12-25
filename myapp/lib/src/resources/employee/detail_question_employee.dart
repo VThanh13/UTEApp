@@ -508,7 +508,7 @@ class _DetailQuestionState extends State<DetailQuestionEmployee> {
                                     decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(12),
                                       border: Border.all(
-                                          color: Colors.blueAccent, width: 4),
+                                          color: Colors.orangeAccent, width: 4),
                                     ),
                                     child: DropdownButtonHideUnderline(
                                       child: DropdownButton(
@@ -540,7 +540,7 @@ class _DetailQuestionState extends State<DetailQuestionEmployee> {
                                     decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(12),
                                       border: Border.all(
-                                          color: Colors.blueAccent, width: 4),
+                                          color: Colors.orangeAccent, width: 4),
                                     ),
                                     child: DropdownButtonHideUnderline(
                                       child: DropdownButton(
@@ -566,30 +566,35 @@ class _DetailQuestionState extends State<DetailQuestionEmployee> {
                                         MainAxisAlignment.spaceAround,
                                     children: <Widget>[
                                       Expanded(
-                                        child: ElevatedButton(
+                                        child: ElevatedButton.icon(
                                           onPressed: () {
                                             _onChangeQuestionClicked(question.id);
                                             print('press save');
                                           },
-                                          child: Text(
+                                          label: Text(
                                             'Lưu',
                                             style: TextStyle(
                                                 fontSize: 16,
                                                 color: Colors.white),
                                           ),
+                                          icon: Icon(Icons.save_outlined),
+                                          style: ElevatedButton.styleFrom(backgroundColor: Colors.orangeAccent),
                                         ),
                                       ),
                                       Padding(padding: EdgeInsets.all(10)),
                                       Expanded(
-                                          child: ElevatedButton(
+                                          child: ElevatedButton.icon(
                                               onPressed: () =>
                                                   {Navigator.pop(context)},
-                                              child: Text(
+                                              label: Text(
                                                 'Thoát',
                                                 style: TextStyle(
                                                     fontSize: 16,
                                                     color: Colors.white),
-                                              ))),
+                                              ),
+                                            icon: Icon(Icons.cancel_presentation),
+                                            style: ElevatedButton.styleFrom(backgroundColor: Colors.orangeAccent),
+                                          )),
                                       Padding(
                                           padding: EdgeInsets.fromLTRB(
                                               0, 10, 0, 30)),
@@ -757,14 +762,14 @@ class _DetailQuestionState extends State<DetailQuestionEmployee> {
     return SpeedDial(
       animatedIcon: AnimatedIcons.menu_close,
       animatedIconTheme: IconThemeData(size: 22),
-      backgroundColor: Colors.blue,
+      backgroundColor: Colors.orange,
       visible: true,
       curve: Curves.bounceIn,
       children: [
         // FAB 1
         SpeedDialChild(
             child: Icon(Icons.send),
-            backgroundColor: Colors.blue,
+            backgroundColor: Colors.orange,
             onTap: () {
               _modalBottomSheetAddAnswer();
             },
@@ -773,13 +778,13 @@ class _DetailQuestionState extends State<DetailQuestionEmployee> {
                 fontWeight: FontWeight.w500,
                 color: Colors.white,
                 fontSize: 16.0),
-            labelBackgroundColor: Colors.blue),
+            labelBackgroundColor: Colors.orangeAccent),
         // FAB 2
         if(widget.question.file!='file.pdf')
           if(widget.question.file.substring(widget.question.file.length - 57).startsWith('.pdf'))
             SpeedDialChild(
                 child: Icon(AppIcons.file_pdf),
-                backgroundColor: Colors.blue,
+                backgroundColor: Colors.orange,
                 onTap: () async {
                   final url =
                       widget.question.file;
@@ -791,11 +796,11 @@ class _DetailQuestionState extends State<DetailQuestionEmployee> {
                     fontWeight: FontWeight.w500,
                     color: Colors.white,
                     fontSize: 16.0),
-                labelBackgroundColor: Colors.blue),
+                labelBackgroundColor: Colors.orangeAccent),
 
         SpeedDialChild(
             child: Icon(Icons.published_with_changes),
-            backgroundColor: Colors.blue,
+            backgroundColor: Colors.orange,
             onTap: () {
               _modalBottomSheetChange();
             },
@@ -804,7 +809,7 @@ class _DetailQuestionState extends State<DetailQuestionEmployee> {
                 fontWeight: FontWeight.w500,
                 color: Colors.white,
                 fontSize: 16.0),
-            labelBackgroundColor: Colors.blue),
+            labelBackgroundColor: Colors.orangeAccent),
       ],
     );
   }
@@ -814,6 +819,7 @@ class _DetailQuestionState extends State<DetailQuestionEmployee> {
     return Scaffold(
       appBar: new AppBar(
         title: const Text("Chi tiết câu hỏi"),
+        backgroundColor: Colors.orangeAccent,
       ),
       floatingActionButton:_getFAB(),
       floatingActionButtonLocation:
@@ -842,6 +848,7 @@ class _DetailQuestionState extends State<DetailQuestionEmployee> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: <Widget>[_buildAnswers()],
                           ),
+                          Padding(padding: EdgeInsets.fromLTRB(0, 10, 0, 10))
                         ],
                       ),
                     ),

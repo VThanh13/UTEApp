@@ -245,6 +245,7 @@ class _MessengerPageState extends State<MessengerPageEmployee> {
           return Scaffold(
             appBar: new AppBar(
               title: const Text("Tin nhắn"),
+              backgroundColor: Colors.orangeAccent,
             ),
             bottomNavigationBar: getFooter(),
             body: SafeArea(
@@ -253,25 +254,25 @@ class _MessengerPageState extends State<MessengerPageEmployee> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: <Widget>[
-                    Padding(
-                      padding: EdgeInsets.fromLTRB(0, 10, 0, 20),
-                      child: SizedBox(
-                        width: double.infinity,
-                        height: 70,
-                        child: ElevatedButton(
-                          onPressed: () {},
-                          style: ElevatedButton.styleFrom(
-                              primary: Colors.white70,
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(12))),
-                          child: Text(
-                            "Trả lời câu hỏi",
-                            style:
-                                TextStyle(color: Colors.black54, fontSize: 15),
-                          ),
-                        ),
-                      ),
-                    ),
+                    // Padding(
+                    //   padding: EdgeInsets.fromLTRB(0, 10, 0, 20),
+                    //   child: SizedBox(
+                    //     width: double.infinity,
+                    //     height: 70,
+                    //     child: ElevatedButton(
+                    //       onPressed: () {},
+                    //       style: ElevatedButton.styleFrom(
+                    //           primary: Colors.white70,
+                    //           shape: RoundedRectangleBorder(
+                    //               borderRadius: BorderRadius.circular(12))),
+                    //       child: Text(
+                    //         "Trả lời câu hỏi",
+                    //         style:
+                    //             TextStyle(color: Colors.black54, fontSize: 15),
+                    //       ),
+                    //     ),
+                    //   ),
+                    // ),
                     Padding(
                       padding: EdgeInsets.fromLTRB(0, 0, 0, 5),
                     ),

@@ -12,6 +12,7 @@ class _AboutUniversityState extends State<AboutUniversity>{
     return new Scaffold(
       appBar: new  AppBar(
         title: new Text('Giới thiệu về trường'),
+        backgroundColor: Colors.pinkAccent,
       ),
       body: Container(
         padding: EdgeInsets.fromLTRB(30, 0, 30, 0),

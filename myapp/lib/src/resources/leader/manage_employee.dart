@@ -276,7 +276,7 @@ class _ManageEmployeeState extends State<ManageEmployee> {
                                             12),
                                         border: Border.all(
                                             color: Colors
-                                                .blueAccent,
+                                                .orangeAccent,
                                             width: 4),
                                       ),
                                       child:
@@ -311,7 +311,7 @@ class _ManageEmployeeState extends State<ManageEmployee> {
                                           MainAxisAlignment.spaceAround,
                                       children: <Widget>[
                                         Expanded(
-                                          child: ElevatedButton(
+                                          child: ElevatedButton.icon(
                                             style: ButtonStyle(
                                               shape: MaterialStateProperty.all(
                                                 RoundedRectangleBorder(
@@ -319,22 +319,25 @@ class _ManageEmployeeState extends State<ManageEmployee> {
                                                   borderRadius: BorderRadius.circular(16),
                                                 ),
                                               ),
+                                                backgroundColor: MaterialStateProperty.all(Colors.orangeAccent)
+
                                             ),
                                             onPressed: () {
                                               _onChangeCategoryClicked(employee.id, value_category);
                                               print('press save');
                                             },
-                                            child: Text(
+                                            label: Text(
                                               'Lưu',
                                               style: TextStyle(
                                                   fontSize: 16,
                                                   color: Colors.white),
                                             ),
+                                            icon: Icon(Icons.save_outlined),
                                           ),
                                         ),
                                         Padding(padding: EdgeInsets.all(10)),
                                         Expanded(
-                                            child: ElevatedButton(
+                                            child: ElevatedButton.icon(
                                               style: ButtonStyle(
                                                 shape: MaterialStateProperty.all(
                                                   RoundedRectangleBorder(
@@ -342,15 +345,17 @@ class _ManageEmployeeState extends State<ManageEmployee> {
                                                     borderRadius: BorderRadius.circular(16),
                                                   ),
                                                 ),
+                                                backgroundColor: MaterialStateProperty.all(Colors.orangeAccent)
                                               ),
                                                 onPressed: () =>
                                                     {Navigator.pop(context)},
-                                                child: Text(
+                                                label: Text(
                                                   'Thoát',
                                                   style: TextStyle(
                                                       fontSize: 16,
                                                       color: Colors.white),
                                                 ),
+                                              icon: Icon(Icons.cancel),
                                             ),
                                         ),
                                       ],
@@ -489,7 +494,7 @@ class _ManageEmployeeState extends State<ManageEmployee> {
                                               12),
                                           border: Border.all(
                                               color: Colors
-                                                  .blueAccent,
+                                                  .orangeAccent,
                                               width: 4),
                                         ),
                                         child:
@@ -534,14 +539,13 @@ class _ManageEmployeeState extends State<ManageEmployee> {
                                                 enabledBorder:
                                                 OutlineInputBorder(
                                                     borderRadius: BorderRadius.circular(10),
-                                                    borderSide: BorderSide(color:Colors.blueAccent, width:1,)),
+                                                    borderSide: BorderSide(color:Colors.orangeAccent, width:1,)),
                                                 focusedBorder: OutlineInputBorder(
                                                     borderRadius:
                                                     BorderRadius.circular(
                                                         10),
                                                     borderSide: BorderSide(
-                                                        color: Colors
-                                                            .blue,
+                                                        color: Colors.orange,
                                                         width:
                                                         4))),
                                           ),
@@ -565,14 +569,13 @@ class _ManageEmployeeState extends State<ManageEmployee> {
                                                 enabledBorder:
                                                 OutlineInputBorder(
                                                     borderRadius: BorderRadius.circular(10),
-                                                    borderSide: BorderSide(color:Colors.blueAccent, width:1,)),
+                                                    borderSide: BorderSide(color:Colors.orangeAccent, width:1,)),
                                                 focusedBorder: OutlineInputBorder(
                                                     borderRadius:
                                                     BorderRadius.circular(
                                                         10),
                                                     borderSide: BorderSide(
-                                                        color: Colors
-                                                            .blue,
+                                                        color: Colors.orange,
                                                         width:
                                                         4))),
                                           ),
@@ -596,14 +599,13 @@ class _ManageEmployeeState extends State<ManageEmployee> {
                                                 enabledBorder:
                                                 OutlineInputBorder(
                                                     borderRadius: BorderRadius.circular(10),
-                                                    borderSide: BorderSide(color:Colors.blueAccent, width:1,)),
+                                                    borderSide: BorderSide(color:Colors.orangeAccent, width:1,)),
                                                 focusedBorder: OutlineInputBorder(
                                                     borderRadius:
                                                     BorderRadius.circular(
                                                         10),
                                                     borderSide: BorderSide(
-                                                        color: Colors
-                                                            .blue,
+                                                        color: Colors.orange,
                                                         width:
                                                         4))),
                                           ),
@@ -627,14 +629,13 @@ class _ManageEmployeeState extends State<ManageEmployee> {
                                                 enabledBorder:
                                                 OutlineInputBorder(
                                                     borderRadius: BorderRadius.circular(10),
-                                                    borderSide: BorderSide(color:Colors.blueAccent, width:1,)),
+                                                    borderSide: BorderSide(color:Colors.orangeAccent, width:1,)),
                                                 focusedBorder: OutlineInputBorder(
                                                     borderRadius:
                                                     BorderRadius.circular(
                                                         10),
                                                     borderSide: BorderSide(
-                                                        color: Colors
-                                                            .blue,
+                                                        color: Colors.orange,
                                                         width:
                                                         4))),
                                           ),
@@ -649,30 +650,37 @@ class _ManageEmployeeState extends State<ManageEmployee> {
                                         MainAxisAlignment.spaceAround,
                                         children: <Widget>[
                                           Expanded(
-                                            child: ElevatedButton(
+                                            child: ElevatedButton.icon(
                                               style: ButtonStyle(
                                                 shape: MaterialStateProperty.all(
                                                   RoundedRectangleBorder(
                                                     // Change your radius here
                                                     borderRadius: BorderRadius.circular(16),
                                                   ),
+                                                  
+                                                  
                                                 ),
+                                                backgroundColor: MaterialStateProperty.all(Colors.orangeAccent),
+                                                
                                               ),
+                                              
                                               onPressed: () {
                                                 _onAddEmployeeClicked();
                                                 print('press save');
                                               },
-                                              child: Text(
+                                              label: Text(
                                                 'Lưu',
                                                 style: TextStyle(
                                                     fontSize: 16,
                                                     color: Colors.white),
                                               ),
+                                              icon: Icon(Icons.add),
+                                              
                                             ),
                                           ),
                                           Padding(padding: EdgeInsets.all(10)),
                                           Expanded(
-                                            child: ElevatedButton(
+                                            child: ElevatedButton.icon(
                                               style: ButtonStyle(
                                                 shape: MaterialStateProperty.all(
                                                   RoundedRectangleBorder(
@@ -680,15 +688,17 @@ class _ManageEmployeeState extends State<ManageEmployee> {
                                                     borderRadius: BorderRadius.circular(16),
                                                   ),
                                                 ),
+                                                backgroundColor: MaterialStateProperty.all(Colors.orangeAccent),
                                               ),
                                               onPressed: () =>
                                               {Navigator.pop(context)},
-                                              child: Text(
+                                              label: Text(
                                                 'Thoát',
                                                 style: TextStyle(
                                                     fontSize: 16,
                                                     color: Colors.white),
                                               ),
+                                              icon: Icon(Icons.cancel),
                                             ),
                                           ),
                                         ],
@@ -812,6 +822,7 @@ class _ManageEmployeeState extends State<ManageEmployee> {
     return Scaffold(
       appBar: new AppBar(
         title: const Text("Quản lý Tư vấn viên"),
+        backgroundColor: Colors.orangeAccent,
       ),
       floatingActionButton: FloatingActionButton(
           onPressed: () {
@@ -821,7 +832,7 @@ class _ManageEmployeeState extends State<ManageEmployee> {
             Icons.add,
             size: 25,
           ),
-          backgroundColor: Colors.blue
+          backgroundColor: Colors.orange
         //params
       ),
       floatingActionButtonLocation:
