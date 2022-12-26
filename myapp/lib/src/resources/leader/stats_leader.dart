@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:myapp/src/models/EmployeeModel.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
-class StatsPage extends StatefulWidget {
+class StatsLeaderPage extends StatefulWidget {
   @override
   _StatsPageState createState() => _StatsPageState();
 }
@@ -76,11 +76,11 @@ class PieChartData {
   final Color color;
 }
 
-class _StatsPageState extends State<StatsPage> {
+class _StatsPageState extends State<StatsLeaderPage> {
   FirebaseAuth auth = FirebaseAuth.instance;
-  var userr = FirebaseAuth.instance.currentUser!;
-  EmployeeModel employeeModel =
-      new EmployeeModel("", " ", "", "", "", "", "", "", "", "");
+  var user_auth = FirebaseAuth.instance.currentUser!;
+  EmployeeModel current_employee =
+  new EmployeeModel("", " ", "", "", "", "", "", "", "", "");
   int pageIndex = 0;
   int all_user = 0;
   int all_employee = 0;
@@ -90,6 +90,7 @@ class _StatsPageState extends State<StatsPage> {
   List<ChartSampleData>? chartData;
   List<PieChartData>? chartDataPie;
   var departmentName = new Map();
+  late List<String> list_category;
   @override
   void dispose() {
     super.dispose();
@@ -97,10 +98,31 @@ class _StatsPageState extends State<StatsPage> {
 
   @override
   void initState() {
-    getDataStats();
+    getCurrentEmployee();
     _tooltipBehavior =
         TooltipBehavior(enable: true, header: '', canShowMarker: false);
     super.initState();
+  }
+  getCurrentEmployee() async {
+    await FirebaseFirestore.instance
+        .collection('employee')
+        .where("id", isEqualTo: user_auth.uid)
+        .get()
+        .then((value) => {
+      setState(() {
+        current_employee.id = value.docs.first['id'];
+        current_employee.name = value.docs.first['name'];
+        current_employee.email = value.docs.first['email'];
+        current_employee.image = value.docs.first['image'];
+        current_employee.password = value.docs.first['password'];
+        current_employee.phone = value.docs.first['phone'];
+        current_employee.department = value.docs.first['department'];
+        current_employee.category = value.docs.first['category'];
+        current_employee.roles = value.docs.first['roles'];
+        current_employee.status = value.docs.first['status'];
+      })
+    });
+    await getDataStats();
   }
   getDataStats() async {
     await FirebaseFirestore.instance
@@ -113,6 +135,7 @@ class _StatsPageState extends State<StatsPage> {
         });
     await FirebaseFirestore.instance
         .collection('employee')
+        .where("department", isEqualTo: current_employee.department)
         .get()
         .then((value) => {
       setState(() {
@@ -121,6 +144,7 @@ class _StatsPageState extends State<StatsPage> {
     });
     await FirebaseFirestore.instance
         .collection('questions')
+        .where("department", isEqualTo: current_employee.department)
         .get()
         .then((value) => {
       setState(() {
@@ -129,13 +153,23 @@ class _StatsPageState extends State<StatsPage> {
     });
     await FirebaseFirestore.instance
         .collection('departments')
+        .where("id", isEqualTo: current_employee.department)
+        .get()
+        .then((value) => {
+        setState(() {
+          list_category = value.docs.first['category'].cast<String>();
+          all_category = list_category.length;
+        })
+    });
+    await FirebaseFirestore.instance
+        .collection('departments')
         .get()
         .then((value) => {
           value.docs.forEach((element) {
             setState(() {
               departmentName[element.id] = element["name"];
-              List<String> list_category = element['category'].cast<String>();
-              all_category += list_category.length;
+              // List<String> list_category = element['category'].cast<String>();
+              // all_category += list_category.length;
             });
           })
     });
@@ -145,14 +179,52 @@ class _StatsPageState extends State<StatsPage> {
 
   getDataColumn(){
     chartData = <ChartSampleData>[];
+
+    int dtl2=0;
+    int ctl2=0;
+    FirebaseFirestore.instance
+        .collection('questions')
+        .where('department', isEqualTo: current_employee.department)
+        .where('category', isEqualTo: "")
+        .get()
+        .then((values) => {
+      setState(() {
+        if(values.docs.isEmpty){
+          dtl2=0;
+          ctl2=0;
+        }
+        else{
+          values.docs.forEach((element) {
+            if(element['status'] == 'Chưa trả lời'){
+              ctl2+=1;
+            }
+            else{
+              dtl2+=1;
+            }
+          });
+        }
+        chartData?.add(
+            ChartSampleData(
+                x: "Còn lại",   //Tên lĩnh vực
+                y: dtl2,        //Đã trả lời
+                yValue: ctl2,   //Chưa trả lời
+                secondSeriesYValue: 72,
+                thirdSeriesYValue: 65)
+        );
+        dtl2=0;
+        ctl2=0;
+      })
+    });
+
     int dtl;
     int ctl;
-    departmentName.forEach((key, value){
+    list_category.forEach((category){
       dtl=0;
       ctl=0;
       FirebaseFirestore.instance
           .collection('questions')
-          .where('department', isEqualTo: key)
+          .where('department', isEqualTo: current_employee.department)
+          .where('category', isEqualTo: category)
           .get()
           .then((values) => {
             setState(() {
@@ -172,8 +244,8 @@ class _StatsPageState extends State<StatsPage> {
               }
               chartData?.add(
                   ChartSampleData(
-                      x: value,               //Tên khoa
-                      y: dtl,      //Đã trả lời
+                      x: category,   //Tên lĩnh vực
+                      y: dtl,        //Đã trả lời
                       yValue: ctl,   //Chưa trả lời
                       secondSeriesYValue: 72,
                       thirdSeriesYValue: 65)
@@ -183,6 +255,7 @@ class _StatsPageState extends State<StatsPage> {
             })
       });
     });
+
   }
   getDataPie() async{
     chartDataPie = [];
@@ -248,7 +321,7 @@ class _StatsPageState extends State<StatsPage> {
       enableAxisAnimation: true,
       plotAreaBorderWidth: 0,
       title: ChartTitle(
-          text: 'Thống kê số câu hỏi các khoa'),
+          text: 'Thống kê số câu hỏi từng lĩnh vực'),
       legend: Legend(
           isVisible: true, overflowMode: LegendItemOverflowMode.wrap),
       primaryXAxis: CategoryAxis(

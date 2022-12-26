@@ -7,7 +7,7 @@ import 'package:myapp/src/resources/about_page/about_university.dart';
 import 'package:myapp/src/resources/about_page/admission_history.dart';
 import 'package:myapp/src/resources/employee/messenger_employee.dart';
 import 'package:myapp/src/resources/login_page.dart';
-import 'package:myapp/src/resources/manager/stats.dart';
+import 'package:myapp/src/resources/manager/stats_manager.dart';
 import 'package:myapp/src/resources/messenger/test.dart';
 import 'package:myapp/src/models/EmployeeModel.dart';
 import 'package:myapp/src/screens/signin_screen.dart';
@@ -120,6 +120,7 @@ class _HomePageState extends State<HomePageManager> {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
+          Padding(padding: EdgeInsets.fromLTRB(0, 5, 0, 0)),
           Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
@@ -160,7 +161,17 @@ class _HomePageState extends State<HomePageManager> {
                   style: TextStyle(fontSize: 16,fontWeight: FontWeight.w500),)
                 ,)
             ],
-          )
+          ),
+          Padding(padding: EdgeInsets.fromLTRB(0, 5, 0, 0)),
+          if(post.file!='file.pdf')
+            ClipRRect(
+              borderRadius: BorderRadius.only(
+                bottomLeft: Radius.circular(14),
+                bottomRight: Radius.circular(14),
+              ),
+              child: Image.network(post.file,
+              ),
+            ),
         ],
       ),
 
@@ -287,7 +298,7 @@ class _HomePageState extends State<HomePageManager> {
                       Navigator.push(
                           context,
                           new MaterialPageRoute(
-                              builder: (BuildContext context) => new StatsPage()));
+                              builder: (BuildContext context) => new StatsManagerPage()));
                     },
                   ),
                   new Divider(

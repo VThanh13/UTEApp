@@ -114,6 +114,7 @@ class _HomePageState extends State<HomePageEmployee> {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
+          Padding(padding: EdgeInsets.fromLTRB(0, 5, 0, 0)),
           Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
@@ -154,7 +155,17 @@ class _HomePageState extends State<HomePageEmployee> {
                   style: TextStyle(fontSize: 16,fontWeight: FontWeight.w500),)
                 ,)
             ],
-          )
+          ),
+          Padding(padding: EdgeInsets.fromLTRB(0, 5, 0, 0)),
+          if(post.file!='file.pdf')
+            ClipRRect(
+              borderRadius: BorderRadius.only(
+                bottomLeft: Radius.circular(14),
+                bottomRight: Radius.circular(14),
+              ),
+              child: Image.network(post.file,
+              ),
+            ),
         ],
       ),
 

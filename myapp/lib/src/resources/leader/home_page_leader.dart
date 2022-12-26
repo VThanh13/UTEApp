@@ -1,5 +1,7 @@
 import 'dart:async';
-
+import 'dart:io';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -9,10 +11,12 @@ import 'package:myapp/icons/app_icons_icons.dart';
 import 'package:myapp/src/resources/about_page/my_file.dart';
 import 'package:myapp/src/resources/about_page/about_university.dart';
 import 'package:myapp/src/resources/about_page/admission_history.dart';
+import 'package:myapp/src/resources/leader/stats_leader.dart';
 import 'package:myapp/src/resources/login_page.dart';
 import 'package:myapp/src/resources/messenger/test.dart';
 import 'package:myapp/src/models/EmployeeModel.dart';
 import 'package:myapp/src/screens/signin_screen.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 import '../../models/NewfeedModel.dart';
 import '../employee/employee_info.dart';
@@ -114,16 +118,15 @@ class _HomePageState extends State<HomePageLeader> {
     });
   }
 
-  _onCreateNewPost() {
+  _onCreateNewPost() async {
     var isvalidcontent = isvalidContent(_infoPostController.text);
     var time = DateTime.now();
     String timestring = DateFormat('dd-MM-yyyy HH:mm:ss').format(time);
-
+    await uploadImage();
     if (isvalidcontent) {
       LoadingDialog.showLoadingDialog(context, "loading...");
       createNewPost(
-          employeeModel.id, _infoPostController.text, timestring, "file.pdf",
-          () {
+          employeeModel.id, _infoPostController.text, timestring, img_url, () {
         LoadingDialog.hideLoadingDialog(context);
         Navigator.push(
             context, MaterialPageRoute(builder: (context) => HomePageLeader()));
@@ -192,6 +195,7 @@ class _HomePageState extends State<HomePageLeader> {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
+          Padding(padding: EdgeInsets.fromLTRB(0, 5, 0, 0)),
           Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
@@ -211,31 +215,56 @@ class _HomePageState extends State<HomePageLeader> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: <Widget>[
-                    Text(post.employee.name,
-                      style: TextStyle(fontSize: 17,fontStyle: FontStyle.italic,fontWeight: FontWeight.w500 ),),
-                    Text(post.time,
-                    style: TextStyle(fontSize: 12,),),
-                    Text(post.employee.departmentName,
-                    style: TextStyle(fontSize: 13),),
-
+                    Text(
+                      post.employee.name,
+                      style: TextStyle(
+                          fontSize: 17,
+                          fontStyle: FontStyle.italic,
+                          fontWeight: FontWeight.w500),
+                    ),
+                    Text(
+                      post.time,
+                      style: TextStyle(
+                        fontSize: 12,
+                      ),
+                    ),
+                    Text(
+                      post.employee.departmentName,
+                      style: TextStyle(fontSize: 13),
+                    ),
                   ],
                 ),
               ),
             ],
           ),
-            Column(
+          Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              Padding(padding: EdgeInsets.symmetric(horizontal: 10),
-              child: Text(post.content, overflow: TextOverflow.visible, maxLines: 50,
-              style: TextStyle(fontSize: 16,fontWeight: FontWeight.w500),)
-                ,)
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 10),
+                child: Text(
+                  post.content,
+                  overflow: TextOverflow.visible,
+                  maxLines: 50,
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                ),
+              )
             ],
-          )
+          ),
+          Padding(padding: EdgeInsets.fromLTRB(0, 5, 0, 0)),
+          if (post.file != 'file.pdf')
+            ClipRRect(
+              borderRadius: BorderRadius.only(
+                bottomLeft: Radius.circular(14),
+                bottomRight: Radius.circular(14),
+              ),
+              child: Image.network(
+                post.file,
+              ),
+            ),
         ],
       ),
-
     );
   }
 
@@ -365,6 +394,20 @@ class _HomePageState extends State<HomePageLeader> {
                     height: 5.0,
                   ),
                   new ListTile(
+                    title: new Text('Thống kê'),
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          new MaterialPageRoute(
+                              builder: (BuildContext context) =>
+                              new StatsLeaderPage()));
+                    },
+                  ),
+                  new Divider(
+                    color: Colors.black,
+                    height: 5.0,
+                  ),
+                  new ListTile(
                     title: new Text('Đăng xuất'),
                     onTap: () async {
                       await FirebaseAuth.instance.signOut();
@@ -425,147 +468,7 @@ class _HomePageState extends State<HomePageLeader> {
                               width: 240,
                               child: ElevatedButton.icon(
                                 onPressed: () {
-                                  showModalBottomSheet(
-                                      isScrollControlled: true,
-                                      shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.only(
-                                              topLeft: Radius.circular(20),
-                                              topRight: Radius.circular(20))),
-                                      context: context,
-                                      builder: (BuildContext context) {
-                                        return Container(
-                                          height: 450,
-                                          child: SingleChildScrollView(
-                                            child: Column(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.start,
-                                              children: <Widget>[
-                                                Padding(
-                                                    padding:
-                                                        EdgeInsets.fromLTRB(
-                                                            0, 10, 0, 20)),
-                                                Text(
-                                                  "Thêm bài đăng mới",
-                                                  textAlign: TextAlign.center,
-                                                  style: TextStyle(
-                                                      fontSize: 20,
-                                                      fontWeight:
-                                                          FontWeight.w500,
-                                                      fontStyle:
-                                                          FontStyle.italic),
-                                                ),
-                                                Container(
-                                                  width: 340,
-                                                  margin: EdgeInsets.fromLTRB(
-                                                      0, 10, 0, 15),
-                                                  child: StreamBuilder(
-                                                    stream: infoPostControll,
-                                                    builder:
-                                                        (context, snapshot) =>
-                                                            TextField(
-                                                      controller:
-                                                          _infoPostController,
-                                                      maxLines: 50,
-                                                      maxLength: 3000,
-                                                      minLines: 10,
-                                                      decoration:
-                                                          InputDecoration(
-                                                              hintMaxLines: 5,
-                                                              helperMaxLines: 5,
-                                                              labelText:
-                                                                  "Nội dung bài đăng",
-                                                              hintText:
-                                                                  'Nhập nội dung bài đăng của bạn',
-                                                              enabledBorder:
-                                                                  OutlineInputBorder(
-                                                                      borderRadius:
-                                                                          BorderRadius.circular(
-                                                                              10),
-                                                                      borderSide:
-                                                                          BorderSide(
-                                                                        color: Colors
-                                                                            .orangeAccent,
-                                                                        width:
-                                                                            1,
-                                                                      )),
-                                                              focusedBorder: OutlineInputBorder(
-                                                                  borderRadius:
-                                                                      BorderRadius
-                                                                          .circular(
-                                                                              10),
-                                                                  borderSide: BorderSide(
-                                                                      color: Colors
-                                                                          .orange,
-                                                                      width:
-                                                                          4))),
-                                                    ),
-                                                  ),
-                                                ),
-                                                Container(
-                                                  padding: EdgeInsets.all(10),
-                                                  child: Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .spaceAround,
-                                                    children: <Widget>[
-                                                      Expanded(
-                                                        child:
-                                                            ElevatedButton.icon(
-                                                          onPressed: () {
-                                                            _onCreateNewPost();
-                                                            print('press save');
-                                                          },
-                                                          label: Text(
-                                                            'Đăng',
-                                                            style: TextStyle(
-                                                                fontSize: 16,
-                                                                color: Colors
-                                                                    .white),
-                                                          ),
-                                                          icon: Icon(
-                                                              Icons.task_alt),
-                                                          style: ElevatedButton
-                                                              .styleFrom(
-                                                                  primary: Colors
-                                                                      .orangeAccent),
-                                                        ),
-                                                      ),
-                                                      Padding(
-                                                          padding:
-                                                              EdgeInsets.all(
-                                                                  10)),
-                                                      Expanded(
-                                                          child: ElevatedButton
-                                                              .icon(
-                                                        onPressed: () => {
-                                                          Navigator.pop(context)
-                                                        },
-                                                        label: Text(
-                                                          'Hủy',
-                                                          style: TextStyle(
-                                                              fontSize: 16,
-                                                              color:
-                                                                  Colors.white),
-                                                        ),
-                                                        icon: Icon(Icons
-                                                            .cancel_presentation),
-                                                        style: ElevatedButton
-                                                            .styleFrom(
-                                                                primary: Colors
-                                                                    .orangeAccent),
-                                                      )),
-                                                      Padding(
-                                                          padding: EdgeInsets
-                                                              .fromLTRB(0, 10,
-                                                                  0, 30)),
-                                                    ],
-                                                  ),
-                                                )
-                                              ],
-                                            ),
-                                          ),
-                                        );
-                                      });
+                                  _modalBottomSheetAddPost();
                                 },
                                 icon: Icon(
                                   Icons.add_card,
@@ -607,5 +510,184 @@ class _HomePageState extends State<HomePageLeader> {
             ),
           );
         });
+  }
+
+  _modalBottomSheetAddPost() {
+    return showModalBottomSheet(
+        isScrollControlled: true,
+        constraints: BoxConstraints.loose(Size(
+            MediaQuery.of(context).size.width,
+            MediaQuery.of(context).size.height * 0.75)),
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(20),
+          topRight: Radius.circular(20),
+        )),
+        context: context,
+        builder: (BuildContext context) {
+          return Container(
+            child: Column(
+              children: <Widget>[
+                Padding(
+                  padding: EdgeInsets.fromLTRB(5, 20, 5, 10),
+                  child: Text(
+                    'Thêm bài đăng mới',
+                    style: TextStyle(
+                        fontSize: 17,
+                        fontWeight: FontWeight.w600,
+                        letterSpacing: 1.0),
+                  ),
+                ),
+                SingleChildScrollView(
+                  physics: BouncingScrollPhysics(),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Container(
+                        height: MediaQuery.of(context).size.height * 0.665,
+                        child: SingleChildScrollView(
+                            child: Container(
+                          height: 600,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: <Widget>[
+                              Padding(
+                                  padding: EdgeInsets.fromLTRB(0, 10, 0, 10)),
+                              Container(
+                                width: 340,
+                                margin: EdgeInsets.fromLTRB(0, 10, 0, 15),
+                                child: StreamBuilder(
+                                  stream: infoPostControll,
+                                  builder: (context, snapshot) => TextField(
+                                    controller: _infoPostController,
+                                    maxLines: 50,
+                                    maxLength: 3000,
+                                    minLines: 10,
+                                    decoration: InputDecoration(
+                                        hintMaxLines: 5,
+                                        helperMaxLines: 5,
+                                        labelText: "Nội dung bài đăng",
+                                        hintText:
+                                            'Nhập nội dung bài đăng của bạn',
+                                        enabledBorder: OutlineInputBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(10),
+                                            borderSide: BorderSide(
+                                              color: Colors.orangeAccent,
+                                              width: 1,
+                                            )),
+                                        focusedBorder: OutlineInputBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(10),
+                                            borderSide: BorderSide(
+                                                color: Colors.orange,
+                                                width: 4))),
+                                  ),
+                                ),
+                              ),
+                              IconButton(
+                                  onPressed: () {
+                                    importImage();
+                                  },
+                                  icon: Icon(Icons.add_photo_alternate_rounded),
+                                  iconSize: 35),
+                              Container(
+                                padding: EdgeInsets.all(10),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceAround,
+                                  children: <Widget>[
+                                    Expanded(
+                                      child: ElevatedButton.icon(
+                                        onPressed: () {
+                                          _onCreateNewPost();
+                                          print('press save');
+                                        },
+                                        label: Text(
+                                          'Đăng',
+                                          style: TextStyle(
+                                              fontSize: 16,
+                                              color: Colors.white),
+                                        ),
+                                        icon: Icon(Icons.task_alt),
+                                        style: ElevatedButton.styleFrom(
+                                            primary: Colors.orangeAccent),
+                                      ),
+                                    ),
+                                    Padding(padding: EdgeInsets.all(10)),
+                                    Expanded(
+                                        child: ElevatedButton.icon(
+                                      onPressed: () => {Navigator.pop(context)},
+                                      label: Text(
+                                        'Hủy',
+                                        style: TextStyle(
+                                            fontSize: 16, color: Colors.white),
+                                      ),
+                                      icon: Icon(Icons.cancel_presentation),
+                                      style: ElevatedButton.styleFrom(
+                                          primary: Colors.orangeAccent),
+                                    )),
+                                    Padding(
+                                        padding:
+                                            EdgeInsets.fromLTRB(0, 10, 0, 30)),
+                                  ],
+                                ),
+                              )
+                            ],
+                          ),
+                        )),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          );
+        });
+  }
+
+  late File file;
+  bool had_file = false;
+  String file_name = "";
+  importImage() async {
+    final _imagePicker = ImagePicker();
+    String image_url;
+    //PickedFile image;
+    //Check Permissions
+    await Permission.photos.request();
+
+    var permissionStatus = await Permission.photos.status;
+
+    if (permissionStatus.isGranted) {
+      //Select Image
+      var image = await _imagePicker.pickImage(source: ImageSource.gallery);
+      if (image == null) return;
+
+      setState(() {
+        file = File(image.path);
+        file_name = image.name;
+        had_file = true;
+      });
+    } else {
+      print('Permission not granted. Try Again with permission access');
+    }
+  }
+
+  String img_url = "file.pdf";
+  uploadImage() async {
+    if (had_file) {
+      File fileForFirebase = File(file.path!);
+      FirebaseStorage storage = FirebaseStorage.instance;
+      Reference ref = storage.ref().child("image_post/" + file_name);
+      UploadTask uploadTask = ref.putFile(fileForFirebase);
+      await uploadTask.whenComplete(() async {
+        var url = await ref.getDownloadURL();
+        img_url = url.toString();
+      }).catchError((onError) {
+        print(onError);
+      });
+      print('image');
+    }
+    else print("null file");
   }
 }

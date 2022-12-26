@@ -404,7 +404,7 @@ class _MessengerPageState extends State<MessengerPageEmployee> {
     return Column(children: questionsList);
   }
   Widget getQuestion() {
-    if (pageIndex == 0) {
+    if (pageIndex == 0 && current_employee.roles!="Manager") {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
@@ -443,27 +443,29 @@ class _MessengerPageState extends State<MessengerPageEmployee> {
     }
   }
   int pageIndex = 0;
-  Widget getFooter() {
-    List<IconData> iconItems = [
-      Icons.message,
-      Icons.question_answer_outlined,
-    ];
-    return AnimatedBottomNavigationBar(
-      activeColor: Colors.blue,
-      splashColor: Colors.grey,
-      inactiveColor: Colors.black.withOpacity(0.5),
-      icons: iconItems,
-      activeIndex: pageIndex,
-      gapLocation: GapLocation.center,
-      notchSmoothness: NotchSmoothness.softEdge,
-      leftCornerRadius: 10,
-      iconSize: 25,
-      rightCornerRadius: 10,
-      onTap: (index) {
-        selectedTab(index);
-      },
-      //other params
-    );
+  getFooter() {
+    if(current_employee.roles!="Manager") {
+      List<IconData> iconItems = [
+        Icons.message,
+        Icons.question_answer_outlined,
+      ];
+      return AnimatedBottomNavigationBar(
+        activeColor: Colors.blue,
+        splashColor: Colors.grey,
+        inactiveColor: Colors.black.withOpacity(0.5),
+        icons: iconItems,
+        activeIndex: pageIndex,
+        gapLocation: GapLocation.center,
+        notchSmoothness: NotchSmoothness.softEdge,
+        leftCornerRadius: 10,
+        iconSize: 25,
+        rightCornerRadius: 10,
+        onTap: (index) {
+          selectedTab(index);
+        },
+        //other params
+      );
+    }
   }
   selectedTab(index) {
     setState(() {

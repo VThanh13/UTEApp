@@ -179,17 +179,18 @@ class _ViewEmployeeByUser extends State<ViewEmployeeByUser> {
   }
 
   late PlatformFile file;
+  bool had_file = false;
   importPdf() async {
     final result = await FilePicker.platform.pickFiles(type: FileType.custom,allowMultiple: false, allowedExtensions: ['jpg', 'jpeg', 'png', 'pdf']);
     if (result == null) return;
-    file = result.files.first as PlatformFile;
     setState((){
-      print(file.name);
+      file = result.files.first as PlatformFile;
+      had_file = true;
     });
   }
   String pdf_url = "file.pdf";
   uploadPdf() async {
-    if(file!=null){
+    if(had_file){
       File fileForFirebase = File(file.path!);
       FirebaseStorage storage = FirebaseStorage.instance;
       Reference ref =

@@ -242,6 +242,7 @@ class _HomePageState extends State<HomePage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
+          Padding(padding: EdgeInsets.fromLTRB(0, 5, 0, 0)),
           Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
@@ -267,15 +268,6 @@ class _HomePageState extends State<HomePage> {
                       style: TextStyle(fontSize: 12,),),
                     Text(post.employee.departmentName,
                       style: TextStyle(fontSize: 13),),
-
-                    // Container(
-                    //   child: Expanded(
-                    //     child: Text(post.content,
-                    //     ),
-                    //   ),
-                    // )
-
-
                   ],
                 ),
               ),
@@ -291,233 +283,251 @@ class _HomePageState extends State<HomePage> {
                 ,)
             ],
           ),
+          Padding(padding: EdgeInsets.fromLTRB(0, 5, 0, 0)),
+          if(post.file!='file.pdf')
+            ClipRRect(
+              child: Image.network(post.file,
+              ),
+            ),
+          Divider(
+            color: Colors.black,
+            height: 5.0,
+          ),
           Container(
-            margin: EdgeInsets.fromLTRB(240, 10, 0, 10),
-            width: 48,
-            decoration: BoxDecoration(
-              color: Colors.pinkAccent,
-              borderRadius: BorderRadius.circular(30),
-            ),
-            child: IconButton(
-              icon: Icon(Icons.send_sharp),
-              iconSize: 30,
-              color: Colors.white70,
-              onPressed: () {
-                showModalBottomSheet(
-                  isScrollControlled: true,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(20),
-                      topRight: Radius.circular(20),
-                    )
-                  ),
-                  context: context,
-                  builder: (BuildContext contetxt){
-                    return StatefulBuilder(builder: (BuildContext context, StateSetter setStateKhoa ){
-                      return Container(
-                        height: 600,
-                        child: SingleChildScrollView(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: <Widget>[
-                              Padding(
-                                  padding: EdgeInsets.fromLTRB(
-                                      0, 10, 0, 20)),
-                              Text(
-                                "Gửi thắc mắc về bài đăng",
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                    fontSize: 15,
-                                    fontWeight: FontWeight.w400),
-                              ),
-                              Container(
-                                margin: EdgeInsets.fromLTRB(0, 10, 0, 15),
-                                width: 340,
-                                padding: EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(12),
-                                  border: Border.all(
-                                    color: Colors.pinkAccent, width: 4,
-                                  )
-                                ),
-                                child: DropdownButtonHideUnderline(
-                                  child: DropdownButton<String>(
-                                    isExpanded: true,
-                                    value: value_doituong,
-                                    hint: new Text(
-                                        "Vui lòng chọn đối tượng"),
-                                    iconSize: 36,
-                                    items: item_doituong.map(buildMenuItem).toList(),
-                                    onChanged: (value){
-                                      setStateKhoa((){
-                                        setState(() {
-                                          this.value_doituong = value;
-                                        });
-                                      });
-                                    },
-                                  ),
-                                ),
-                              ),
-                              Container(
-                                  margin:
-                                  EdgeInsets.fromLTRB(0, 10, 0, 15),
-                                  width: 340,
-                                  child: StreamBuilder(
-                                    stream: informationControl,
-                                    builder: (context, snapshot) =>
-                                        TextField(
-                                          controller:
-                                          _informationController,
-                                          decoration: InputDecoration(
-                                              labelText:
-                                              "Phương thức liên hệ",
-                                              hintText:
-                                              'Nhập Email/SĐT của bạn',
-                                              enabledBorder:
-                                              OutlineInputBorder(
-                                                  borderRadius:
-                                                  BorderRadius
-                                                      .circular(10),
-                                                  borderSide:
-                                                  BorderSide(
-                                                    color: Colors
-                                                        .pinkAccent,
-                                                    width: 1,
-                                                  )),
-                                              focusedBorder:
-                                              OutlineInputBorder(
-                                                  borderRadius:
-                                                  BorderRadius
-                                                      .circular(10),
-                                                  borderSide: BorderSide(
-                                                      color:
-                                                      Colors.pink,
-                                                      width: 4))),
-                                        ),
-                                  )),
-                              Container(
-                                width: 340,
-                                margin:
-                                EdgeInsets.fromLTRB(0, 10, 0, 15),
-                                child: StreamBuilder(
-                                  stream: questionControl,
-                                  builder: (context, snapshot) =>
-                                      TextField(
-                                        controller: _questionController,
-                                        maxLines: 50,
-                                        minLines: 7,
-                                        maxLength: 3000,
-                                        decoration: InputDecoration(
-                                            hintMaxLines: 5,
-                                            helperMaxLines: 5,
-                                            labelText: "Đặt câu hỏi",
-                                            hintText:
-                                            'Nhập câu hỏi của bạn',
-                                            enabledBorder:
-                                            OutlineInputBorder(
-                                                borderRadius:
-                                                BorderRadius
-                                                    .circular(10),
-                                                borderSide: BorderSide(
-                                                  color:
-                                                  Colors.pinkAccent,
-                                                  width: 1,
-                                                )),
-                                            focusedBorder:
-                                            OutlineInputBorder(
-                                                borderRadius:
-                                                BorderRadius
-                                                    .circular(10),
-                                                borderSide: BorderSide(
-                                                    color: Colors.pink,
-                                                    width: 4))),
-                                      ),
-                                ),
-                              ),
-                              IconButton(
-                                  onPressed:() {
-                                    importPdf();
-                                  },
-                                  icon: Icon(
-                                      AppIcons.file_pdf)),
-                              Container(
-                                padding: EdgeInsets.all(10),
-                                child: Row(
-                                  mainAxisAlignment:
-                                  MainAxisAlignment.spaceAround,
-                                  children: <Widget>[
-                                    Expanded(
-                                      child: ElevatedButton.icon(
-
-                                        onPressed: () {
-                                          _onSendQuestionClicked(post);
-                                          print('press save');
-                                        },
-                                        label: Text(
-                                          'Gửi',
-                                          style: TextStyle(
-                                              fontSize: 16,
-                                              color: Colors.white),
-                                        ),
-                                        icon: Icon(Icons.mail_outline_rounded),
-                                        style: ElevatedButton.styleFrom(
-                                            primary: Colors.pinkAccent
-                                        ),
-                                      ),
-                                    ),
-                                    Padding(
-                                        padding: EdgeInsets.all(10)),
-                                    Expanded(
-                                        child: ElevatedButton.icon(
-                                          onPressed: () => {
-                                            Navigator.pop(context)
-                                          },
-                                          label: Text(
-                                            'Thoát',
-                                            style: TextStyle(
-                                                fontSize: 16,
-                                                color: Colors.white),
-                                          ),
-                                          icon: Icon(Icons.cancel_presentation),
-                                          style: ElevatedButton.styleFrom(
-                                              primary: Colors.pinkAccent
-                                          ),
-                                        )),
-                                    Padding(
-                                        padding: EdgeInsets.fromLTRB(
-                                            0, 10, 0, 30)),
-                                  ],
-                                ),
-                              )
-                            ],
-
-                          ),
-                        ),
-                      );
-                    });
-                  }
-                );
-                
-              },
-            ),
-          )
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  // Container(
+                  //   width: 318,
+                    IconButton(
+                      icon: Icon(Icons.mode_comment),
+                      iconSize: 25,
+                      onPressed: () {
+                        _modalBottomSheetAddQuestion(post);
+                      },
+                    ),
+                    Text("Đặt câu hỏi"),
+                  // ),
+                ],
+              )
+          ),
         ],
       ),
 
     );
   }
+  _modalBottomSheetAddQuestion(post){
+    return showModalBottomSheet(
+        isScrollControlled: true,
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(20),
+              topRight: Radius.circular(20),
+            )
+        ),
+        context: context,
+        builder: (BuildContext contetxt){
+          return StatefulBuilder(builder: (BuildContext context, StateSetter setStateKhoa ){
+            return Container(
+              height: 600,
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: <Widget>[
+                    Padding(
+                        padding: EdgeInsets.fromLTRB(
+                            0, 20, 0, 0)),
+                    Text(
+                      "Gửi thắc mắc về bài đăng",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                          fontSize: 17,
+                          fontWeight: FontWeight.w600),
+                    ),
+                    Padding(
+                        padding: EdgeInsets.fromLTRB(
+                            0, 10, 0, 0)),
+                    Container(
+                      margin: EdgeInsets.fromLTRB(0, 10, 0, 15),
+                      width: 340,
+                      padding: EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(
+                            color: Colors.pinkAccent, width: 4,
+                          )
+                      ),
+                      child: DropdownButtonHideUnderline(
+                        child: DropdownButton<String>(
+                          isExpanded: true,
+                          value: value_doituong,
+                          hint: new Text(
+                              "Vui lòng chọn đối tượng"),
+                          iconSize: 36,
+                          items: item_doituong.map(buildMenuItem).toList(),
+                          onChanged: (value){
+                            setStateKhoa((){
+                              setState(() {
+                                this.value_doituong = value;
+                              });
+                            });
+                          },
+                        ),
+                      ),
+                    ),
+                    Container(
+                        margin:
+                        EdgeInsets.fromLTRB(0, 10, 0, 15),
+                        width: 340,
+                        child: StreamBuilder(
+                          stream: informationControl,
+                          builder: (context, snapshot) =>
+                              TextField(
+                                controller:
+                                _informationController,
+                                decoration: InputDecoration(
+                                    labelText:
+                                    "Phương thức liên hệ",
+                                    hintText:
+                                    'Nhập Email/SĐT của bạn',
+                                    enabledBorder:
+                                    OutlineInputBorder(
+                                        borderRadius:
+                                        BorderRadius
+                                            .circular(10),
+                                        borderSide:
+                                        BorderSide(
+                                          color: Colors
+                                              .pinkAccent,
+                                          width: 1,
+                                        )),
+                                    focusedBorder:
+                                    OutlineInputBorder(
+                                        borderRadius:
+                                        BorderRadius
+                                            .circular(10),
+                                        borderSide: BorderSide(
+                                            color:
+                                            Colors.pink,
+                                            width: 4))),
+                              ),
+                        )),
+                    Container(
+                      width: 340,
+                      margin:
+                      EdgeInsets.fromLTRB(0, 10, 0, 15),
+                      child: StreamBuilder(
+                        stream: questionControl,
+                        builder: (context, snapshot) =>
+                            TextField(
+                              controller: _questionController,
+                              maxLines: 50,
+                              minLines: 7,
+                              maxLength: 3000,
+                              decoration: InputDecoration(
+                                  hintMaxLines: 5,
+                                  helperMaxLines: 5,
+                                  labelText: "Đặt câu hỏi",
+                                  hintText:
+                                  'Nhập câu hỏi của bạn',
+                                  enabledBorder:
+                                  OutlineInputBorder(
+                                      borderRadius:
+                                      BorderRadius
+                                          .circular(10),
+                                      borderSide: BorderSide(
+                                        color:
+                                        Colors.pinkAccent,
+                                        width: 1,
+                                      )),
+                                  focusedBorder:
+                                  OutlineInputBorder(
+                                      borderRadius:
+                                      BorderRadius
+                                          .circular(10),
+                                      borderSide: BorderSide(
+                                          color: Colors.pink,
+                                          width: 4))),
+                            ),
+                      ),
+                    ),
+                    IconButton(
+                        onPressed:() {
+                          importPdf();
+                        },
+                        icon: Icon(
+                            AppIcons.file_pdf)),
+                    Container(
+                      padding: EdgeInsets.all(10),
+                      child: Row(
+                        mainAxisAlignment:
+                        MainAxisAlignment.spaceAround,
+                        children: <Widget>[
+                          Expanded(
+                            child: ElevatedButton.icon(
+
+                              onPressed: () {
+                                _onSendQuestionClicked(post);
+                                print('press save');
+                              },
+                              label: Text(
+                                'Gửi',
+                                style: TextStyle(
+                                    fontSize: 16,
+                                    color: Colors.white),
+                              ),
+                              icon: Icon(Icons.mail_outline_rounded),
+                              style: ElevatedButton.styleFrom(
+                                  primary: Colors.pinkAccent
+                              ),
+                            ),
+                          ),
+                          Padding(
+                              padding: EdgeInsets.all(10)),
+                          Expanded(
+                              child: ElevatedButton.icon(
+                                onPressed: () => {
+                                  Navigator.pop(context)
+                                },
+                                label: Text(
+                                  'Thoát',
+                                  style: TextStyle(
+                                      fontSize: 16,
+                                      color: Colors.white),
+                                ),
+                                icon: Icon(Icons.cancel_presentation),
+                                style: ElevatedButton.styleFrom(
+                                    primary: Colors.pinkAccent
+                                ),
+                              )),
+                          Padding(
+                              padding: EdgeInsets.fromLTRB(
+                                  0, 10, 0, 30)),
+                        ],
+                      ),
+                    )
+                  ],
+
+                ),
+              ),
+            );
+          });
+        }
+    );
+  }
   late PlatformFile file;
+  bool had_file = false;
   importPdf() async {
     final result = await FilePicker.platform.pickFiles(type: FileType.custom,allowMultiple: false, allowedExtensions: ['jpg', 'jpeg', 'png', 'pdf']);
     if (result == null) return;
-    file = result.files.first as PlatformFile;
     setState((){
-      print(file.name);
+      file = result.files.first as PlatformFile;
+      had_file = true;
     });
   }
   String pdf_url = "file.pdf";
   uploadPdf() async {
-    if(file!=null){
+    if(had_file){
       File fileForFirebase = File(file.path!);
       FirebaseStorage storage = FirebaseStorage.instance;
       Reference ref =
