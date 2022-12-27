@@ -155,7 +155,6 @@ class _MyInfoState extends State<MyInfo> {
             userModel.password = (e.data() as Map)['pass'];
             userModel.phone = (e.data() as Map)['phone'];
             userModel.status = (e.data() as Map)['status'];
-            print("hello: " + userModel.name);
             return userModel;
           }).toString();
           // TODO: implement build

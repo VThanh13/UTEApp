@@ -179,41 +179,44 @@ class _LoginPageState extends State<LoginPage> {
       authBloc.signIn(_emailController.text, _passController.text,
               () async {
                 var userr = FirebaseAuth.instance.currentUser!;
-                var snapshot = await FirebaseFirestore.instance
+                await FirebaseFirestore.instance
                     .collection('user')
-                    .where('userId', isEqualTo: userr.uid)
-                    .where('status', isEqualTo: "enabled")
-                    .get();
-                if(snapshot.docs!= null && snapshot.docs.isNotEmpty){
-                  LoadingDialog.hideLoadingDialog(context);
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => HomePage()));
-                }
-                snapshot = await FirebaseFirestore.instance
+                    .doc(userr.uid)
+                    .get()
+                    .then((snapshot){
+                  if(snapshot.exists){
+                    LoadingDialog.hideLoadingDialog(context);
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => HomePage()));
+                  }
+                });
+                await FirebaseFirestore.instance
                     .collection('employee')
-                    .where('id', isEqualTo: userr.uid)
-                    .where('status', isEqualTo: "enabled")
-                    .get();
-                if(snapshot.docs!= null && snapshot.docs.isNotEmpty){
-                  if(snapshot.docs.first['roles'] == "Tư vấn viên") {
-                    LoadingDialog.hideLoadingDialog(context);
-                    Navigator.push(context,
-                        MaterialPageRoute(
-                            builder: (context) => HomePageEmployee()));
+                    .doc(userr.uid)
+                    .get()
+                    .then((snapshot){
+                  if(snapshot.exists){
+                    if(snapshot.get('roles') == "Tư vấn viên") {
+                      LoadingDialog.hideLoadingDialog(context);
+                      Navigator.push(context,
+                          MaterialPageRoute(
+                              builder: (context) => HomePageEmployee()));
+                    }
+                    else if(snapshot.get('roles') == "Trưởng nhóm") {
+                      LoadingDialog.hideLoadingDialog(context);
+                      Navigator.push(context,
+                          MaterialPageRoute(
+                              builder: (context) => HomePageLeader()));
+                    }
+                    else if(snapshot.get('roles') == "Manager") {
+                      LoadingDialog.hideLoadingDialog(context);
+                      Navigator.push(context,
+                          MaterialPageRoute(
+                              builder: (context) => HomePageManager()));
+                    }
                   }
-                  else if(snapshot.docs.first['roles'] == "Trưởng nhóm") {
-                    LoadingDialog.hideLoadingDialog(context);
-                    Navigator.push(context,
-                        MaterialPageRoute(
-                            builder: (context) => HomePageLeader()));
-                  }
-                  else if(snapshot.docs.first['roles'] == "Manager") {
-                    LoadingDialog.hideLoadingDialog(context);
-                    Navigator.push(context,
-                        MaterialPageRoute(
-                            builder: (context) => HomePageManager()));
-                  }
-                }
+                });
+
           }, (msg) {
             LoadingDialog.hideLoadingDialog(context);
             MsgDialog.showMsgDialog(context, "Sign-In", msg);

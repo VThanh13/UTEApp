@@ -17,6 +17,7 @@ import '../dialog/loading_dialog.dart';
 import '../dialog/msg_dialog.dart';
 import '../employee/detail_question_employee.dart';
 import '../manager/home_page_manager.dart';
+import 'home_page_leader.dart';
 
 class ManageCategory extends StatefulWidget {
   @override
@@ -467,7 +468,7 @@ class _ManageCategoryState extends State<ManageCategory> {
                 context,
                 new MaterialPageRoute(
                     builder: (BuildContext context) =>
-                    new HomePageManager()));
+                    new HomePageLeader()));
           }
         ),
         title: const Text("Quản lý lĩnh vực trong khoa"),

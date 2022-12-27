@@ -1,5 +1,5 @@
 import 'dart:io';
-
+import 'package:intl/intl.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -23,7 +23,6 @@ import '../dialog/loading_dialog.dart';
 import 'messenger_employee.dart';
 
 class HomePageEmployee extends StatefulWidget {
-
   @override
   _HomePageState createState() => _HomePageState();
 }
@@ -31,29 +30,33 @@ class HomePageEmployee extends StatefulWidget {
 class _HomePageState extends State<HomePageEmployee> {
   FirebaseAuth auth = FirebaseAuth.instance;
   var userr = FirebaseAuth.instance.currentUser!;
-  EmployeeModel employeeModel = new EmployeeModel("", " ", "", "", "", "", "", "", "", "");
+  EmployeeModel employeeModel =
+      new EmployeeModel("", " ", "", "", "", "", "", "", "", "");
   @override
   void dispose() {
     super.dispose();
   }
+
   @override
   void initState() {
     super.initState();
     getListPost();
   }
+
   var departmentName = new Map();
   getDepartmentName() async {
     await FirebaseFirestore.instance
         .collection('departments')
         .get()
         .then((value) => {
-      setState(() {
-        value.docs.forEach((element) {
-          departmentName[element.id] = element["name"];
-        });
-      })
-    });
+              setState(() {
+                value.docs.forEach((element) {
+                  departmentName[element.id] = element["name"];
+                });
+              })
+            });
   }
+
   List<Post> listPost = [];
   getListPost() async {
     await getDepartmentName();
@@ -62,21 +65,20 @@ class _HomePageState extends State<HomePageEmployee> {
         .collection('newfeed')
         .get()
         .then((value) => {
-      value.docs.forEach((element) {
-        NewfeedModel newfeed = new NewfeedModel("", "", "", "", "");
-        newfeed.id = element['id'];
-        newfeed.content = element['content'];
-        newfeed.time = element['time'];
-        newfeed.file = element['file'];
-        newfeed.employeeId = element['employeeId'];
+              value.docs.forEach((element) {
+                NewfeedModel newfeed = new NewfeedModel("", "", "", "", "");
+                newfeed.id = element['id'];
+                newfeed.content = element['content'];
+                newfeed.time = element['time'];
+                newfeed.file = element['file'];
+                newfeed.employeeId = element['employeeId'];
 
-        listNewfeed.add(newfeed);
-      })
-    });
-    print(listNewfeed);
+                listNewfeed.add(newfeed);
+              })
+            });
     listNewfeed.forEach((element) async {
       Employee employee =
-      new Employee("", "", "", "", "", "", "", "", "", "", "");
+          new Employee("", "", "", "", "", "", "", "", "", "", "");
       Post post = new Post(
           element.id, employee, element.content, element.time, element.file);
       await FirebaseFirestore.instance
@@ -84,25 +86,35 @@ class _HomePageState extends State<HomePageEmployee> {
           .where("id", isEqualTo: element.employeeId)
           .get()
           .then((value) => {
-        setState(() {
-          employee.id = value.docs.first['id'];
-          employee.name = value.docs.first['name'];
-          employee.email = value.docs.first['email'];
-          employee.image = value.docs.first['image'];
-          employee.password = value.docs.first['password'];
-          employee.phone = value.docs.first['phone'];
-          employee.departmentId = value.docs.first['department'];
-          employee.departmentName =
-          departmentName[employee.departmentId];
-          employee.category = value.docs.first['category'];
-          employee.roles = value.docs.first['roles'];
-          employee.status = value.docs.first['status'];
-          post.employee = employee;
-          listPost.add(post);
-        })
-      });
+                setState(() {
+                  employee.id = value.docs.first['id'];
+                  employee.name = value.docs.first['name'];
+                  employee.email = value.docs.first['email'];
+                  employee.image = value.docs.first['image'];
+                  employee.password = value.docs.first['password'];
+                  employee.phone = value.docs.first['phone'];
+                  employee.departmentId = value.docs.first['department'];
+                  employee.departmentName =
+                      departmentName[employee.departmentId];
+                  employee.category = value.docs.first['category'];
+                  employee.roles = value.docs.first['roles'];
+                  employee.status = value.docs.first['status'];
+                  post.employee = employee;
+                  listPost.add(post);
+                  sortListPost();
+                })
+              });
     });
   }
+
+  sortListPost() {
+    setState(() {
+      listPost.sort((a, b) => DateFormat("dd-MM-yyyy HH:mm:ss")
+          .parse(b.time)
+          .compareTo(DateFormat("dd-MM-yyyy HH:mm:ss").parse(a.time)));
+    });
+  }
+
   _buildNewfeed(BuildContext context, Post post) {
     return Container(
       margin: EdgeInsets.all(10.0),
@@ -134,13 +146,23 @@ class _HomePageState extends State<HomePageEmployee> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: <Widget>[
-                    Text(post.employee.name,
-                      style: TextStyle(fontSize: 17,fontStyle: FontStyle.italic,fontWeight: FontWeight.w500 ),),
-                    Text(post.time,
-                      style: TextStyle(fontSize: 12,),),
-                    Text(post.employee.departmentName,
-                      style: TextStyle(fontSize: 13),),
-
+                    Text(
+                      post.employee.name,
+                      style: TextStyle(
+                          fontSize: 17,
+                          fontStyle: FontStyle.italic,
+                          fontWeight: FontWeight.w500),
+                    ),
+                    Text(
+                      post.time,
+                      style: TextStyle(
+                        fontSize: 12,
+                      ),
+                    ),
+                    Text(
+                      post.employee.departmentName,
+                      style: TextStyle(fontSize: 13),
+                    ),
                   ],
                 ),
               ),
@@ -150,27 +172,33 @@ class _HomePageState extends State<HomePageEmployee> {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              Padding(padding: EdgeInsets.symmetric(horizontal: 10),
-                child: Text(post.content, overflow: TextOverflow.visible, maxLines: 50,
-                  style: TextStyle(fontSize: 16,fontWeight: FontWeight.w500),)
-                ,)
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 10),
+                child: Text(
+                  post.content,
+                  overflow: TextOverflow.visible,
+                  maxLines: 50,
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                ),
+              )
             ],
           ),
           Padding(padding: EdgeInsets.fromLTRB(0, 5, 0, 0)),
-          if(post.file!='file.pdf')
+          if (post.file != 'file.pdf')
             ClipRRect(
               borderRadius: BorderRadius.only(
                 bottomLeft: Radius.circular(14),
                 bottomRight: Radius.circular(14),
               ),
-              child: Image.network(post.file,
+              child: Image.network(
+                post.file,
               ),
             ),
         ],
       ),
-
     );
   }
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<QuerySnapshot>(
@@ -182,9 +210,7 @@ class _HomePageState extends State<HomePageEmployee> {
           if (!snapshot.hasData) {
             return Center(
               child: Container(
-                  width: 20,
-                  height: 20,
-                  child: CircularProgressIndicator()),
+                  width: 20, height: 20, child: CircularProgressIndicator()),
             );
           }
           snapshot.data!.docs.map((e) {
@@ -200,7 +226,6 @@ class _HomePageState extends State<HomePageEmployee> {
             employeeModel.status = (e.data() as Map)['status'];
 
             return employeeModel;
-
           }).toString();
 
           // TODO: implement build
@@ -230,8 +255,7 @@ class _HomePageState extends State<HomePageEmployee> {
                     accountName: new Text(employeeModel.name!),
                     accountEmail: new Text(employeeModel.email!),
                     currentAccountPicture: new CircleAvatar(
-                      backgroundImage:
-                          new NetworkImage(employeeModel.image!),
+                      backgroundImage: new NetworkImage(employeeModel.image!),
                     ),
                   ),
                   new ListTile(
@@ -240,7 +264,8 @@ class _HomePageState extends State<HomePageEmployee> {
                       Navigator.push(
                           context,
                           new MaterialPageRoute(
-                              builder: (BuildContext context) => new EmployeeInfo()));
+                              builder: (BuildContext context) =>
+                                  new EmployeeInfo()));
                     },
                   ),
                   new Divider(
@@ -302,7 +327,8 @@ class _HomePageState extends State<HomePageEmployee> {
           );
         });
   }
+
   void openPDF(BuildContext context, File file) => Navigator.of(context).push(
-    MaterialPageRoute(builder: (context) => PDFViewerPage(file: file)),
-  );
+        MaterialPageRoute(builder: (context) => PDFViewerPage(file: file)),
+      );
 }

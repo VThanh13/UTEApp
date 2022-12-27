@@ -381,6 +381,7 @@ class _DetailQuestionState extends State<DetailQuestionEmployee> {
 
   _buildAnswers() {
     List<Widget> answerList = [];
+    listAnswer.sort((a, b)=> DateFormat("dd-MM-yyyy HH:mm:ss").parse(a.time).compareTo(DateFormat("dd-MM-yyyy HH:mm:ss").parse(b.time)));
     listAnswer.forEach((Answer answer) {
       answerList.add(GestureDetector(
         child: Row(

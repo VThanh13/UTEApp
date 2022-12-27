@@ -22,14 +22,6 @@ import '../models/NewfeedModel.dart';
 import 'dialog/loading_dialog.dart';
 
 class HomePage extends StatefulWidget {
-  // final String emai = "";
-//
-//   const HomePage({
-//     Key? key,
-//     required this.emaill,
-//
-// }): super(key: key);
-
   @override
   _HomePageState createState() => _HomePageState();
 }
@@ -71,30 +63,11 @@ class Employee {
       this.status);
 }
 
-
 class _HomePageState extends State<HomePage> {
   FirebaseAuth auth = FirebaseAuth.instance;
   var userr = FirebaseAuth.instance.currentUser!;
   String name = "1234";
   UserModel userModel = new UserModel("", " ", "", "", "", "", "");
-
-  Future<String> getUserNameFromUID() async {
-    final snapshot = await FirebaseFirestore.instance
-        .collection('user')
-        .where('userId', isEqualTo: userr.uid)
-        .get();
-    return snapshot.docs.first['name'];
-  }
-
-  // Check if the user is signed in
-  getCurrentUser() async {
-    final snapshot = await FirebaseFirestore.instance
-        .collection('user')
-        .where('userId', isEqualTo: userr.uid)
-        .get();
-    userModel = snapshot.docs.first as UserModel;
-  }
-
 
   @override
   void initState() {
@@ -154,7 +127,7 @@ class _HomePageState extends State<HomePage> {
 
   _onSendQuestionClicked(Post post) async {
     var isvalid =
-    isValid(_informationController.text, _questionController.text);
+        isValid(_informationController.text, _questionController.text);
     var time = DateTime.now();
     String timestring = DateFormat('dd-MM-yyyy HH:mm:ss').format(time);
     await uploadPdf();
@@ -180,7 +153,6 @@ class _HomePageState extends State<HomePage> {
     return 0;
   }
 
-
   List<Post> listPost = [];
   getListPost() async {
     await getDepartmentName();
@@ -189,45 +161,53 @@ class _HomePageState extends State<HomePage> {
         .collection('newfeed')
         .get()
         .then((value) => {
-      value.docs.forEach((element) {
-        NewfeedModel newfeed = new NewfeedModel("", "", "", "", "");
-        newfeed.id = element['id'];
-        newfeed.content = element['content'];
-        newfeed.time = element['time'];
-        newfeed.file = element['file'];
-        newfeed.employeeId = element['employeeId'];
+              value.docs.forEach((element) {
+                NewfeedModel newfeed = new NewfeedModel("", "", "", "", "");
+                newfeed.id = element['id'];
+                newfeed.content = element['content'];
+                newfeed.time = element['time'];
+                newfeed.file = element['file'];
+                newfeed.employeeId = element['employeeId'];
 
-        listNewfeed.add(newfeed);
-      })
-    });
-    print(listNewfeed);
+                listNewfeed.add(newfeed);
+              })
+            });
     listNewfeed.forEach((element) async {
       Employee employee =
-      new Employee("", "", "", "", "", "", "", "", "", "", "");
+          new Employee("", "", "", "", "", "", "", "", "", "", "");
       Post post = new Post(
           element.id, employee, element.content, element.time, element.file);
-      await FirebaseFirestore.instance
+      FirebaseFirestore.instance
           .collection('employee')
           .where("id", isEqualTo: element.employeeId)
           .get()
           .then((value) => {
-        setState(() {
-          employee.id = value.docs.first['id'];
-          employee.name = value.docs.first['name'];
-          employee.email = value.docs.first['email'];
-          employee.image = value.docs.first['image'];
-          employee.password = value.docs.first['password'];
-          employee.phone = value.docs.first['phone'];
-          employee.departmentId = value.docs.first['department'];
-          employee.departmentName =
-          departmentName[employee.departmentId];
-          employee.category = value.docs.first['category'];
-          employee.roles = value.docs.first['roles'];
-          employee.status = value.docs.first['status'];
-          post.employee = employee;
-          listPost.add(post);
-        })
-      });
+                setState(() {
+                  employee.id = value.docs.first['id'];
+                  employee.name = value.docs.first['name'];
+                  employee.email = value.docs.first['email'];
+                  employee.image = value.docs.first['image'];
+                  employee.password = value.docs.first['password'];
+                  employee.phone = value.docs.first['phone'];
+                  employee.departmentId = value.docs.first['department'];
+                  employee.departmentName =
+                      departmentName[employee.departmentId];
+                  employee.category = value.docs.first['category'];
+                  employee.roles = value.docs.first['roles'];
+                  employee.status = value.docs.first['status'];
+                  post.employee = employee;
+                  listPost.add(post);
+                  sortListPost();
+                })
+              });
+    });
+  }
+
+  sortListPost() {
+    setState(() {
+      listPost.sort((a, b) => DateFormat("dd-MM-yyyy HH:mm:ss")
+          .parse(b.time)
+          .compareTo(DateFormat("dd-MM-yyyy HH:mm:ss").parse(a.time)));
     });
   }
 
@@ -262,12 +242,23 @@ class _HomePageState extends State<HomePage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: <Widget>[
-                    Text(post.employee.name,
-                      style: TextStyle(fontSize: 17,fontStyle: FontStyle.italic,fontWeight: FontWeight.w500 ),),
-                    Text(post.time,
-                      style: TextStyle(fontSize: 12,),),
-                    Text(post.employee.departmentName,
-                      style: TextStyle(fontSize: 13),),
+                    Text(
+                      post.employee.name,
+                      style: TextStyle(
+                          fontSize: 17,
+                          fontStyle: FontStyle.italic,
+                          fontWeight: FontWeight.w500),
+                    ),
+                    Text(
+                      post.time,
+                      style: TextStyle(
+                        fontSize: 12,
+                      ),
+                    ),
+                    Text(
+                      post.employee.departmentName,
+                      style: TextStyle(fontSize: 13),
+                    ),
                   ],
                 ),
               ),
@@ -277,16 +268,22 @@ class _HomePageState extends State<HomePage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              Padding(padding: EdgeInsets.symmetric(horizontal: 10),
-                child: Text(post.content, overflow: TextOverflow.visible, maxLines: 50,
-                  style: TextStyle(fontSize: 16,fontWeight: FontWeight.w500),)
-                ,)
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 10),
+                child: Text(
+                  post.content,
+                  overflow: TextOverflow.visible,
+                  maxLines: 50,
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                ),
+              )
             ],
           ),
           Padding(padding: EdgeInsets.fromLTRB(0, 5, 0, 0)),
-          if(post.file!='file.pdf')
+          if (post.file != 'file.pdf')
             ClipRRect(
-              child: Image.network(post.file,
+              child: Image.network(
+                post.file,
               ),
             ),
           Divider(
@@ -295,78 +292,72 @@ class _HomePageState extends State<HomePage> {
           ),
           Container(
               child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  // Container(
-                  //   width: 318,
-                    IconButton(
-                      icon: Icon(Icons.mode_comment),
-                      iconSize: 25,
-                      onPressed: () {
-                        _modalBottomSheetAddQuestion(post);
-                      },
-                    ),
-                    Text("Đặt câu hỏi"),
-                  // ),
-                ],
-              )
-          ),
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              // Container(
+              //   width: 318,
+              IconButton(
+                icon: Icon(Icons.mode_comment),
+                iconSize: 25,
+                onPressed: () {
+                  _modalBottomSheetAddQuestion(post);
+                },
+              ),
+              Text("Đặt câu hỏi"),
+              // ),
+            ],
+          )),
         ],
       ),
-
     );
   }
-  _modalBottomSheetAddQuestion(post){
+
+  _modalBottomSheetAddQuestion(post) {
     return showModalBottomSheet(
         isScrollControlled: true,
         shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(20),
-              topRight: Radius.circular(20),
-            )
-        ),
+          topLeft: Radius.circular(20),
+          topRight: Radius.circular(20),
+        )),
         context: context,
-        builder: (BuildContext contetxt){
-          return StatefulBuilder(builder: (BuildContext context, StateSetter setStateKhoa ){
+        builder: (BuildContext contetxt) {
+          return StatefulBuilder(
+              builder: (BuildContext context, StateSetter setStateKhoa) {
             return Container(
               height: 600,
               child: SingleChildScrollView(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: <Widget>[
-                    Padding(
-                        padding: EdgeInsets.fromLTRB(
-                            0, 20, 0, 0)),
+                    Padding(padding: EdgeInsets.fromLTRB(0, 20, 0, 0)),
                     Text(
                       "Gửi thắc mắc về bài đăng",
                       textAlign: TextAlign.center,
-                      style: TextStyle(
-                          fontSize: 17,
-                          fontWeight: FontWeight.w600),
+                      style:
+                          TextStyle(fontSize: 17, fontWeight: FontWeight.w600),
                     ),
-                    Padding(
-                        padding: EdgeInsets.fromLTRB(
-                            0, 10, 0, 0)),
+                    Padding(padding: EdgeInsets.fromLTRB(0, 10, 0, 0)),
                     Container(
                       margin: EdgeInsets.fromLTRB(0, 10, 0, 15),
                       width: 340,
-                      padding: EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(12),
                           border: Border.all(
-                            color: Colors.pinkAccent, width: 4,
-                          )
-                      ),
+                            color: Colors.pinkAccent,
+                            width: 4,
+                          )),
                       child: DropdownButtonHideUnderline(
                         child: DropdownButton<String>(
                           isExpanded: true,
                           value: value_doituong,
-                          hint: new Text(
-                              "Vui lòng chọn đối tượng"),
+                          hint: new Text("Vui lòng chọn đối tượng"),
                           iconSize: 36,
                           items: item_doituong.map(buildMenuItem).toList(),
-                          onChanged: (value){
-                            setStateKhoa((){
+                          onChanged: (value) {
+                            setStateKhoa(() {
                               setState(() {
                                 this.value_doituong = value;
                               });
@@ -376,96 +367,67 @@ class _HomePageState extends State<HomePage> {
                       ),
                     ),
                     Container(
-                        margin:
-                        EdgeInsets.fromLTRB(0, 10, 0, 15),
+                        margin: EdgeInsets.fromLTRB(0, 10, 0, 15),
                         width: 340,
                         child: StreamBuilder(
                           stream: informationControl,
-                          builder: (context, snapshot) =>
-                              TextField(
-                                controller:
-                                _informationController,
-                                decoration: InputDecoration(
-                                    labelText:
-                                    "Phương thức liên hệ",
-                                    hintText:
-                                    'Nhập Email/SĐT của bạn',
-                                    enabledBorder:
-                                    OutlineInputBorder(
-                                        borderRadius:
-                                        BorderRadius
-                                            .circular(10),
-                                        borderSide:
-                                        BorderSide(
-                                          color: Colors
-                                              .pinkAccent,
-                                          width: 1,
-                                        )),
-                                    focusedBorder:
-                                    OutlineInputBorder(
-                                        borderRadius:
-                                        BorderRadius
-                                            .circular(10),
-                                        borderSide: BorderSide(
-                                            color:
-                                            Colors.pink,
-                                            width: 4))),
-                              ),
+                          builder: (context, snapshot) => TextField(
+                            controller: _informationController,
+                            decoration: InputDecoration(
+                                labelText: "Phương thức liên hệ",
+                                hintText: 'Nhập Email/SĐT của bạn',
+                                enabledBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                    borderSide: BorderSide(
+                                      color: Colors.pinkAccent,
+                                      width: 1,
+                                    )),
+                                focusedBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                    borderSide: BorderSide(
+                                        color: Colors.pink, width: 4))),
+                          ),
                         )),
                     Container(
                       width: 340,
-                      margin:
-                      EdgeInsets.fromLTRB(0, 10, 0, 15),
+                      margin: EdgeInsets.fromLTRB(0, 10, 0, 15),
                       child: StreamBuilder(
                         stream: questionControl,
-                        builder: (context, snapshot) =>
-                            TextField(
-                              controller: _questionController,
-                              maxLines: 50,
-                              minLines: 7,
-                              maxLength: 3000,
-                              decoration: InputDecoration(
-                                  hintMaxLines: 5,
-                                  helperMaxLines: 5,
-                                  labelText: "Đặt câu hỏi",
-                                  hintText:
-                                  'Nhập câu hỏi của bạn',
-                                  enabledBorder:
-                                  OutlineInputBorder(
-                                      borderRadius:
-                                      BorderRadius
-                                          .circular(10),
-                                      borderSide: BorderSide(
-                                        color:
-                                        Colors.pinkAccent,
-                                        width: 1,
-                                      )),
-                                  focusedBorder:
-                                  OutlineInputBorder(
-                                      borderRadius:
-                                      BorderRadius
-                                          .circular(10),
-                                      borderSide: BorderSide(
-                                          color: Colors.pink,
-                                          width: 4))),
-                            ),
+                        builder: (context, snapshot) => TextField(
+                          controller: _questionController,
+                          maxLines: 50,
+                          minLines: 7,
+                          maxLength: 3000,
+                          decoration: InputDecoration(
+                              hintMaxLines: 5,
+                              helperMaxLines: 5,
+                              labelText: "Đặt câu hỏi",
+                              hintText: 'Nhập câu hỏi của bạn',
+                              enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                  borderSide: BorderSide(
+                                    color: Colors.pinkAccent,
+                                    width: 1,
+                                  )),
+                              focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                  borderSide: BorderSide(
+                                      color: Colors.pink, width: 4))),
+                        ),
                       ),
                     ),
                     IconButton(
-                        onPressed:() {
+                        onPressed: () {
                           importPdf();
                         },
-                        icon: Icon(
-                            AppIcons.file_pdf)),
+                        icon: Icon(AppIcons.file_pdf)),
                     Container(
                       padding: EdgeInsets.all(10),
                       child: Row(
-                        mainAxisAlignment:
-                        MainAxisAlignment.spaceAround,
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: <Widget>[
                           Expanded(
                             child: ElevatedButton.icon(
-
                               onPressed: () {
                                 _onSendQuestionClicked(post);
                                 print('press save');
@@ -473,65 +435,58 @@ class _HomePageState extends State<HomePage> {
                               label: Text(
                                 'Gửi',
                                 style: TextStyle(
-                                    fontSize: 16,
-                                    color: Colors.white),
+                                    fontSize: 16, color: Colors.white),
                               ),
                               icon: Icon(Icons.mail_outline_rounded),
                               style: ElevatedButton.styleFrom(
-                                  primary: Colors.pinkAccent
-                              ),
+                                  primary: Colors.pinkAccent),
                             ),
                           ),
-                          Padding(
-                              padding: EdgeInsets.all(10)),
+                          Padding(padding: EdgeInsets.all(10)),
                           Expanded(
                               child: ElevatedButton.icon(
-                                onPressed: () => {
-                                  Navigator.pop(context)
-                                },
-                                label: Text(
-                                  'Thoát',
-                                  style: TextStyle(
-                                      fontSize: 16,
-                                      color: Colors.white),
-                                ),
-                                icon: Icon(Icons.cancel_presentation),
-                                style: ElevatedButton.styleFrom(
-                                    primary: Colors.pinkAccent
-                                ),
-                              )),
-                          Padding(
-                              padding: EdgeInsets.fromLTRB(
-                                  0, 10, 0, 30)),
+                            onPressed: () => {Navigator.pop(context)},
+                            label: Text(
+                              'Thoát',
+                              style:
+                                  TextStyle(fontSize: 16, color: Colors.white),
+                            ),
+                            icon: Icon(Icons.cancel_presentation),
+                            style: ElevatedButton.styleFrom(
+                                primary: Colors.pinkAccent),
+                          )),
+                          Padding(padding: EdgeInsets.fromLTRB(0, 10, 0, 30)),
                         ],
                       ),
                     )
                   ],
-
                 ),
               ),
             );
           });
-        }
-    );
+        });
   }
+
   late PlatformFile file;
   bool had_file = false;
   importPdf() async {
-    final result = await FilePicker.platform.pickFiles(type: FileType.custom,allowMultiple: false, allowedExtensions: ['jpg', 'jpeg', 'png', 'pdf']);
+    final result = await FilePicker.platform.pickFiles(
+        type: FileType.custom,
+        allowMultiple: false,
+        allowedExtensions: ['jpg', 'jpeg', 'png', 'pdf']);
     if (result == null) return;
-    setState((){
+    setState(() {
       file = result.files.first as PlatformFile;
       had_file = true;
     });
   }
+
   String pdf_url = "file.pdf";
   uploadPdf() async {
-    if(had_file){
+    if (had_file) {
       File fileForFirebase = File(file.path!);
       FirebaseStorage storage = FirebaseStorage.instance;
-      Reference ref =
-      storage.ref().child("pdf/"+file.name);
+      Reference ref = storage.ref().child("pdf/" + file.name);
       UploadTask uploadTask = ref.putFile(fileForFirebase);
       await uploadTask.whenComplete(() async {
         var url = await ref.getDownloadURL();
@@ -542,18 +497,20 @@ class _HomePageState extends State<HomePage> {
       print('pdf');
     }
   }
+
   getDepartmentName() async {
     await FirebaseFirestore.instance
         .collection('departments')
         .get()
         .then((value) => {
-      setState(() {
-        value.docs.forEach((element) {
-          departmentName[element.id] = element["name"];
-        });
-      })
-    });
+              setState(() {
+                value.docs.forEach((element) {
+                  departmentName[element.id] = element["name"];
+                });
+              })
+            });
   }
+
   var item_doituong = [
     'Học sinh THPT',
     'Sinh viên',
@@ -585,10 +542,7 @@ class _HomePageState extends State<HomePage> {
       child: Text(
         item,
         style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-      )
-  );
-
-
+      ));
 
   @override
   Widget build(BuildContext context) {
@@ -601,9 +555,7 @@ class _HomePageState extends State<HomePage> {
           if (!snapshot.hasData) {
             return Center(
               child: Container(
-                  width: 20,
-                  height: 20,
-                  child: CircularProgressIndicator()),
+                  width: 20, height: 20, child: CircularProgressIndicator()),
             );
           }
           snapshot.data!.docs.map((e) {
@@ -616,15 +568,12 @@ class _HomePageState extends State<HomePage> {
             userModel.status = (e.data() as Map)['status'];
 
             return userModel;
-
           }).toString();
 
           // TODO: implement build
           return Scaffold(
             appBar: new AppBar(
               backgroundColor: Colors.pinkAccent,
-
-
               title: new Text("UTE APP"),
               actions: <Widget>[
                 IconButton(
@@ -653,17 +602,14 @@ class _HomePageState extends State<HomePage> {
               ],
             ),
             drawer: new Drawer(
-
               child: ListView(
                 children: <Widget>[
                   new UserAccountsDrawerHeader(
-
                     accountName: new Text(userModel.name!),
                     accountEmail: new Text(userModel.email!),
                     arrowColor: Colors.redAccent,
                     currentAccountPicture: new CircleAvatar(
-                      backgroundImage:
-                          new NetworkImage(userModel.image!),
+                      backgroundImage: new NetworkImage(userModel.image!),
                     ),
                   ),
                   new ListTile(

@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:myapp/src/resources/messenger/messenger_page.dart';
 
 import '../../../icons/app_icons_icons.dart';
@@ -326,7 +327,22 @@ class _DetailQuestionState extends State<DetailQuestion> {
   void openPDF(BuildContext context, File file) => Navigator.of(context).push(
     MaterialPageRoute(builder: (context) => PDFViewerPage(file: file)),
   );
+  // sortByTime(String a, String b){
+  //   var time_a = DateTime.parse(a);
+  //   var time_b = DateTime.parse(b);
+  //   int i = DateTime.
+  //   if(time_a<time_b){
+  //     return -1;
+  //   }
+  //   else if(a==b){
+  //     return 0;
+  //   }
+  //   else{
+  //     return 1;
+  //   }
+  // }
   _buildAnswers() {
+    listAnswer.sort((a, b)=> DateFormat("dd-MM-yyyy HH:mm:ss").parse(a.time).compareTo(DateFormat("dd-MM-yyyy HH:mm:ss").parse(b.time)));
     List<Widget> answerList = [];
     listAnswer.forEach((Answer answer) {
       answerList.add(GestureDetector(

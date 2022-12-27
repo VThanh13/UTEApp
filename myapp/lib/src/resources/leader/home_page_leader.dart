@@ -179,8 +179,17 @@ class _HomePageState extends State<HomePageLeader> {
                   employee.status = value.docs.first['status'];
                   post.employee = employee;
                   listPost.add(post);
+                  sortListPost();
                 })
               });
+    });
+  }
+
+  sortListPost() {
+    setState(() {
+      listPost.sort((a, b) => DateFormat("dd-MM-yyyy HH:mm:ss")
+          .parse(b.time)
+          .compareTo(DateFormat("dd-MM-yyyy HH:mm:ss").parse(a.time)));
     });
   }
 
@@ -396,11 +405,12 @@ class _HomePageState extends State<HomePageLeader> {
                   new ListTile(
                     title: new Text('Thống kê'),
                     onTap: () {
+                      print("haha");
                       Navigator.push(
                           context,
                           new MaterialPageRoute(
                               builder: (BuildContext context) =>
-                              new StatsLeaderPage()));
+                                  new StatsLeaderPage()));
                     },
                   ),
                   new Divider(
@@ -687,7 +697,7 @@ class _HomePageState extends State<HomePageLeader> {
         print(onError);
       });
       print('image');
-    }
-    else print("null file");
+    } else
+      print("null file");
   }
 }
