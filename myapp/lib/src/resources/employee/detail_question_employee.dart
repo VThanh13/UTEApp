@@ -715,14 +715,14 @@ class _DetailQuestionState extends State<DetailQuestionEmployee> {
                                                       borderRadius:
                                                       BorderRadius.circular(10),
                                                       borderSide: BorderSide(
-                                                        color: Colors.blueAccent,
+                                                        color: Colors.orangeAccent,
                                                         width: 1,
                                                       )),
                                                   focusedBorder: OutlineInputBorder(
                                                       borderRadius:
                                                       BorderRadius.circular(10),
                                                       borderSide: BorderSide(
-                                                          color: Colors.blue,
+                                                          color: Colors.orange,
                                                           width: 4))),
                                             ),
                                           ),
@@ -734,30 +734,35 @@ class _DetailQuestionState extends State<DetailQuestionEmployee> {
                                             MainAxisAlignment.spaceAround,
                                             children: <Widget>[
                                               Expanded(
-                                                child: ElevatedButton(
+                                                child: ElevatedButton.icon(
                                                   onPressed: () {
                                                     _onSendAnswerClicked();
                                                     print('press save');
                                                   },
-                                                  child: Text(
+                                                  label: Text(
                                                     'Gửi',
                                                     style: TextStyle(
                                                         fontSize: 16,
                                                         color: Colors.white),
                                                   ),
+                                                  icon: Icon(Icons.send),
+                                                  style: ElevatedButton.styleFrom(
+                                                      primary: Colors.orangeAccent),
                                                 ),
                                               ),
                                               Padding(padding: EdgeInsets.all(10)),
                                               Expanded(
-                                                  child: ElevatedButton(
-                                                      onPressed: () =>
-                                                      {Navigator.pop(context)},
-                                                      child: Text(
-                                                        'Thoát',
-                                                        style: TextStyle(
-                                                            fontSize: 16,
-                                                            color: Colors.white),
-                                                      ))),
+                                                  child: ElevatedButton.icon(
+                                                    onPressed: () => {Navigator.pop(context)},
+                                                    label: Text(
+                                                      'Hủy',
+                                                      style: TextStyle(
+                                                          fontSize: 16, color: Colors.white),
+                                                    ),
+                                                    icon: Icon(Icons.cancel_presentation),
+                                                    style: ElevatedButton.styleFrom(
+                                                        primary: Colors.orangeAccent),
+                                                  )),
                                               Padding(
                                                   padding: EdgeInsets.fromLTRB(
                                                       0, 10, 0, 30)),

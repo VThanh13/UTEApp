@@ -116,11 +116,12 @@ class _HomePageState extends State<HomePage> {
       _informationControl.sink.addError("Nhập thông tin liên lạc");
       return false;
     }
-
+    _informationControl.sink.add("");
     if (question == null || question.length == 0) {
       _questionControl.sink.addError("Nhập câu hỏi");
       return false;
     }
+    _questionControl.sink.add("");
 
     return true;
   }
@@ -588,17 +589,6 @@ class _HomePageState extends State<HomePage> {
                       AppIcons.chat,
                       color: Colors.white,
                     )),
-                // IconButton(
-                //     onPressed: () {
-                //       Navigator.push(
-                //           context,
-                //           new MaterialPageRoute(
-                //               builder: (BuildContext context) => TestPage()));
-                //     },
-                //     icon: Icon(
-                //       AppIcons.bell_alt,
-                //       color: Colors.white,
-                //     ))
               ],
             ),
             drawer: new Drawer(
