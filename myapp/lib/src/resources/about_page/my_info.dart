@@ -564,7 +564,7 @@ class _MyInfoState extends State<MyInfo> {
                                         });
                                   },
                                   label: const Text('Đổi mật khẩu'),
-                                icon: Icon(Icons.password_outlined),
+                                icon: Icon(Icons.security_rounded),
                                 style: ElevatedButton.styleFrom(
                                   primary: Colors.pinkAccent
                                 ),

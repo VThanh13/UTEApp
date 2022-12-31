@@ -427,19 +427,28 @@ class _MyInfoState extends State<EmployeeInfo> {
                           Padding(padding: EdgeInsets.all(10)),
                           Expanded(
                               child: ElevatedButton.icon(
-                                  onPressed: () {
-                                    showModalBottomSheet(
-                                        context: context,
-                                        builder: (BuildContext context) {
-                                          return Column(
+                                onPressed: () {
+                                  showModalBottomSheet(
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.only(
+                                            topLeft: Radius.circular(20),
+                                            topRight: Radius.circular(20),
+                                          )),
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return SingleChildScrollView(
+                                          child: Column(
                                             children: <Widget>[
-                                              Padding(padding: EdgeInsets.fromLTRB(0, 10, 0, 10)),
+                                              Padding(
+                                                  padding:
+                                                  EdgeInsets.fromLTRB(
+                                                      0, 10, 0, 15)),
                                               Text(
                                                 "Đổi mật khẩu",
                                                 style: TextStyle(
                                                     fontSize: 15,
                                                     fontWeight:
-                                                        FontWeight.bold),
+                                                    FontWeight.bold),
                                               ),
                                               Container(
                                                 margin: EdgeInsets.fromLTRB(
@@ -449,34 +458,36 @@ class _MyInfoState extends State<EmployeeInfo> {
                                                   stream: passStream,
                                                   builder:
                                                       (context, snapshot) =>
-                                                          TextField(
-                                                    decoration: InputDecoration(
-                                                        labelText: "Mật khẩu",
-                                                        hintText:
+                                                      TextField(
+                                                        decoration:
+                                                        InputDecoration(
+                                                            labelText:
+                                                            "Mật khẩu",
+                                                            hintText:
                                                             'Nhập mật khẩu của bạn',
-                                                        enabledBorder:
+                                                            enabledBorder:
                                                             OutlineInputBorder(
                                                                 borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                            10),
+                                                                BorderRadius.circular(
+                                                                    10),
                                                                 borderSide:
-                                                                    BorderSide(
+                                                                BorderSide(
                                                                   color: Colors.orangeAccent,
-                                                                  width: 1,
+                                                                  width:
+                                                                  1,
                                                                 )),
-                                                        focusedBorder:
-                                                            OutlineInputBorder(
+                                                            focusedBorder: OutlineInputBorder(
                                                                 borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                            10),
+                                                                BorderRadius
+                                                                    .circular(
+                                                                    10),
                                                                 borderSide: BorderSide(
-                                                                    color: Colors
-                                                                        .orange,
-                                                                    width: 4))),
-                                                    controller: _passController,
-                                                  ),
+                                                                    color: Colors.orange,
+                                                                    width:
+                                                                    4))),
+                                                        controller:
+                                                        _passController,
+                                                      ),
                                                 ),
                                               ),
                                               Container(
@@ -487,35 +498,37 @@ class _MyInfoState extends State<EmployeeInfo> {
                                                   stream: passnew1Stream,
                                                   builder:
                                                       (context, snapshot) =>
-                                                          TextField(
-                                                    decoration: InputDecoration(
-                                                        labelText:
+                                                      TextField(
+                                                        decoration:
+                                                        InputDecoration(
+                                                            labelText:
                                                             "Mật khẩu mới",
-                                                        hintText:
+                                                            hintText:
                                                             'Nhập mật khẩu mới của bạn',
-                                                        enabledBorder:
+                                                            enabledBorder:
                                                             OutlineInputBorder(
                                                                 borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                            10),
+                                                                BorderRadius.circular(
+                                                                    10),
                                                                 borderSide:
-                                                                    BorderSide(
+                                                                BorderSide(
                                                                   color: Colors.orangeAccent,
-                                                                  width: 1,
+                                                                  width:
+                                                                  1,
                                                                 )),
-                                                        focusedBorder:
-                                                            OutlineInputBorder(
+                                                            focusedBorder: OutlineInputBorder(
                                                                 borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                            10),
+                                                                BorderRadius
+                                                                    .circular(
+                                                                    10),
                                                                 borderSide: BorderSide(
-                                                                    color: Colors.orange,
-                                                                    width: 4))),
-                                                    controller:
+                                                                    color: Colors
+                                                                        .orange,
+                                                                    width:
+                                                                    4))),
+                                                        controller:
                                                         _passnew1Controller,
-                                                  ),
+                                                      ),
                                                 ),
                                               ),
                                               Container(
@@ -526,44 +539,44 @@ class _MyInfoState extends State<EmployeeInfo> {
                                                   stream: passnew2Stream,
                                                   builder:
                                                       (context, snapshot) =>
-                                                          TextField(
-                                                    decoration: InputDecoration(
-                                                        labelText:
+                                                      TextField(
+                                                        decoration:
+                                                        InputDecoration(
+                                                            labelText:
                                                             "Xác nhận mật khẩu",
-                                                        hintText:
+                                                            hintText:
                                                             'Nhập lại mật khẩu của bạn',
-                                                        enabledBorder:
+                                                            enabledBorder:
                                                             OutlineInputBorder(
                                                                 borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                            10),
+                                                                BorderRadius.circular(
+                                                                    10),
                                                                 borderSide:
-                                                                    BorderSide(
+                                                                BorderSide(
                                                                   color: Colors.orangeAccent,
-                                                                  width: 1,
+                                                                  width:
+                                                                  1,
                                                                 )),
-                                                        focusedBorder:
-                                                            OutlineInputBorder(
+                                                            focusedBorder: OutlineInputBorder(
                                                                 borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                            10),
+                                                                BorderRadius
+                                                                    .circular(
+                                                                    10),
                                                                 borderSide: BorderSide(
-                                                                    color: Colors
-                                                                        .orange,
-                                                                    width: 4))),
-                                                    controller:
+                                                                    color: Colors.orange,
+                                                                    width:
+                                                                    4))),
+                                                        controller:
                                                         _passnew2Controller,
-                                                  ),
+                                                      ),
                                                 ),
                                               ),
                                               Container(
                                                 padding: EdgeInsets.all(10),
                                                 child: Row(
                                                   mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceAround,
+                                                  MainAxisAlignment
+                                                      .spaceAround,
                                                   children: <Widget>[
                                                     Expanded(
                                                       child: ElevatedButton.icon(
@@ -575,47 +588,51 @@ class _MyInfoState extends State<EmployeeInfo> {
                                                           'Lưu',
                                                           style: TextStyle(
                                                               fontSize: 16,
-                                                              color:
-                                                                  Colors.white),
+                                                              color: Colors
+                                                                  .white),
                                                         ),
                                                         icon: Icon(Icons.check),
                                                         style: ElevatedButton.styleFrom(
-                                                          primary: Colors.orangeAccent
+                                                            primary: Colors.orangeAccent
                                                         ),
                                                       ),
                                                     ),
                                                     Padding(
                                                         padding:
-                                                            EdgeInsets.all(10)),
+                                                        EdgeInsets.all(
+                                                            10)),
                                                     Expanded(
                                                         child: ElevatedButton.icon(
-                                                            onPressed: () => {
-                                                                  Navigator.pop(
-                                                                      context)
-                                                                },
-                                                            label: Text(
-                                                              'Thoát',
-                                                              style: TextStyle(
-                                                                  fontSize: 16,
-                                                                  color: Colors
-                                                                      .white),
-                                                            ),
-                                                        icon: Icon(Icons.cancel_rounded),
-                                                        style: ElevatedButton.styleFrom(
-                                                          primary: Colors.orangeAccent
-                                                        ),)),
+                                                          onPressed: () => {
+                                                            Navigator.pop(
+                                                                context)
+                                                          },
+                                                          label: Text(
+                                                            'Thoát',
+                                                            style: TextStyle(
+                                                                fontSize:
+                                                                16,
+                                                                color: Colors
+                                                                    .white),
+                                                          ),
+                                                          icon: Icon(Icons.cancel_outlined),
+                                                          style: ElevatedButton.styleFrom(
+                                                              primary: Colors.orangeAccent
+                                                          ),)),
                                                   ],
                                                 ),
                                               )
                                             ],
-                                          );
-                                        });
-                                  },
-                                  label: const Text('Đổi mật khẩu'),
-                              icon: Icon(Icons.security_rounded),
-                              style: ElevatedButton.styleFrom(
-                                primary: Colors.orangeAccent
-                              ),)),
+                                          ),
+                                        );
+                                      });
+                                },
+                                label: const Text('Đổi mật khẩu'),
+                                icon: Icon(Icons.security_rounded),
+                                style: ElevatedButton.styleFrom(
+                                    primary: Colors.orangeAccent
+                                ),
+                              )),
                         ],
                       ),
                     ),
