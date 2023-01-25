@@ -304,9 +304,9 @@ class _ManageDepartmentState extends State<ManageDepartment> {
                                   Container(
                                     child:Column(
                                       children: [
-                                        Text('Trưởng khoa',
+                                        Text('Trưởng nhóm tư vấn',
                                           style: TextStyle(
-                                              fontSize: 20,
+                                              fontSize: 16,
                                               fontWeight: FontWeight.w400,
                                               letterSpacing: 1.0,
                                           color: Colors.black38),
@@ -394,7 +394,7 @@ class _ManageDepartmentState extends State<ManageDepartment> {
                                       return _modalBottomSheetChangeLeader(leader[department.id]);
                                     },
                                       child: Text(
-                                        "Thay đổi trưởng khoa",
+                                        "Thay đổi trưởng nhóm",
                                         style: TextStyle(
                                             fontSize: 16,
                                             color: Colors.red),
@@ -436,7 +436,7 @@ class _ManageDepartmentState extends State<ManageDepartment> {
               children: <Widget>[
                 Padding(
                   padding: EdgeInsets.fromLTRB(5, 20, 5, 10),
-                  child: Text('Thay đổi trưởng khoa',
+                  child: Text('Thay đổi trưởng nhóm',
                     style: TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.w600,

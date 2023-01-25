@@ -64,14 +64,71 @@ class _MessengerPageState extends State<MessengerPageEmployee> {
               current_employee.status = value.docs.first['status']
             });
     await getQuestionData();
+    await getAnsweredQuestionData();
   }
+  List<QuestionModel> listAnsweredQuestion = [];
+  getAnsweredQuestionData() async {
+    if (current_employee.roles == 'Tư vấn viên') {
+      await FirebaseFirestore.instance
+          .collection('questions')
+          .where('category', isEqualTo: current_employee.category)
+          .where('status', isEqualTo: 'Đã trả lời')
+          .get()
+          .then((value) => {
+        setState(() {
+          value.docs.forEach((element) {
+            QuestionModel questionModel = new QuestionModel(
+                "", "", "", "", "", "", "", "", "", "");
+            questionModel.id = element.id;
+            questionModel.title = element['title'];
+            questionModel.content = element['content'];
+            questionModel.time = element['time'];
+            questionModel.department = element['department'];
+            questionModel.category = element['category'];
+            questionModel.status = element['status'];
+            questionModel.userId = element['userId'];
+            questionModel.information = element['information'];
+            questionModel.file = element['file'];
 
+            listAnsweredQuestion.add(questionModel);
+          });
+        })
+      });
+    } else {
+      await FirebaseFirestore.instance
+          .collection('questions')
+          .where('department', isEqualTo: current_employee.department)
+          .where('status', isEqualTo: 'Đã trả lời')
+          .get()
+          .then((value) => {
+        setState(() {
+          value.docs.forEach((element) {
+            QuestionModel questionModel = new QuestionModel(
+                "", "", "", "", "", "", "", "", "", "");
+            questionModel.id = element.id;
+            questionModel.title = element['title'];
+            questionModel.content = element['content'];
+            questionModel.time = element['time'];
+            questionModel.department = element['department'];
+            questionModel.category = element['category'];
+            questionModel.status = element['status'];
+            questionModel.userId = element['userId'];
+            questionModel.information = element['information'];
+            questionModel.file = element['file'];
+
+            listAnsweredQuestion.add(questionModel);
+          });
+        })
+      });
+    }
+  }
   List<QuestionModel> listQuestion = [];
   getQuestionData() async {
     if (current_employee.roles == 'Tư vấn viên') {
       await FirebaseFirestore.instance
           .collection('questions')
           .where('category', isEqualTo: current_employee.category)
+          .where('status', isEqualTo: 'Chưa trả lời')
           .get()
           .then((value) => {
                 setState(() {
@@ -97,6 +154,7 @@ class _MessengerPageState extends State<MessengerPageEmployee> {
       await FirebaseFirestore.instance
           .collection('questions')
           .where('department', isEqualTo: current_employee.department)
+          .where('status', isEqualTo: 'Chưa trả lời')
           .get()
           .then((value) => {
                 setState(() {
@@ -122,6 +180,9 @@ class _MessengerPageState extends State<MessengerPageEmployee> {
   }
 
   _buildQuestions() {
+    listQuestion.sort((a, b) => DateFormat("dd-MM-yyyy HH:mm:ss")
+        .parse(b.time)
+        .compareTo(DateFormat("dd-MM-yyyy HH:mm:ss").parse(a.time)));
     List<Widget> questionsList = [];
     listQuestion.forEach((QuestionModel question) {
       questionsList.add(GestureDetector(
@@ -336,7 +397,82 @@ class _MessengerPageState extends State<MessengerPageEmployee> {
       })
     });
   }
+  _buildAnsweredQuestions(){
+    listAnsweredQuestion.sort((a, b) => DateFormat("dd-MM-yyyy HH:mm:ss")
+        .parse(b.time)
+        .compareTo(DateFormat("dd-MM-yyyy HH:mm:ss").parse(a.time)));
+    List<Widget> questionsList = [];
+    listAnsweredQuestion.forEach((QuestionModel question) {
+      questionsList.add(GestureDetector(
+        onTap: () {
+          Navigator.push(
+              context,
+              new MaterialPageRoute(
+                  builder: (BuildContext context) =>
+                      DetailQuestionEmployee(question: question)));
+        },
+        child: Container(
+          margin: EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
+          decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(15.0),
+              border: Border.all(
+                width: 1.0,
+                color: Colors.grey,
+              )),
+          child: Row(
+            children: <Widget>[
+              Expanded(
+                  child: Container(
+                    margin: EdgeInsets.all(12.0),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Text(
+                          question.title,
+                          style: TextStyle(
+                            fontSize: 20.0,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        SizedBox(
+                          height: 4.0,
+                        ),
+                        Text(
+                          question.time,
+                          style: TextStyle(
+                            fontSize: 16.0,
+                            fontWeight: FontWeight.w600,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        Text(
+                          question.status,
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w400,
+                            color: question.status == "Chưa trả lời"
+                                ? Colors.redAccent
+                                : Colors.green,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        )
+                      ],
+                    ),
+                  ))
+            ],
+          ),
+        ),
+      ));
+    });
+    return Column(children: questionsList);
+  }
   _buildAllQuestions() {
+    listAllQuestion.sort((a, b) => DateFormat("dd-MM-yyyy HH:mm:ss")
+        .parse(b.time)
+        .compareTo(DateFormat("dd-MM-yyyy HH:mm:ss").parse(a.time)));
     List<Widget> questionsList = [];
     listAllQuestion.forEach((QuestionModel question) {
       questionsList.add(GestureDetector(
@@ -411,10 +547,10 @@ class _MessengerPageState extends State<MessengerPageEmployee> {
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 20.0),
             child: Text(
-              'Câu hỏi của bạn',
+              'Câu hỏi của bạn | Chưa trả lời',
               textAlign: TextAlign.center,
               style: TextStyle(
-                  fontSize: 24.0,
+                  fontSize: 18,
                   fontWeight: FontWeight.w600,
                   letterSpacing: 1.0),
             ),
@@ -422,7 +558,27 @@ class _MessengerPageState extends State<MessengerPageEmployee> {
           _buildQuestions()
         ],
       );
-    } else {
+    }
+    else if (pageIndex == 1 && current_employee.roles!="Manager") {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 20.0),
+            child: Text(
+              'Câu hỏi của bạn | Đã trả lời',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600,
+                  letterSpacing: 1.0),
+            ),
+          ),
+          _buildAnsweredQuestions()
+        ],
+      );
+    }
+    else {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
@@ -432,7 +588,7 @@ class _MessengerPageState extends State<MessengerPageEmployee> {
               'Tất cả câu hỏi',
               textAlign: TextAlign.right,
               style: TextStyle(
-                  fontSize: 24.0,
+                  fontSize: 18,
                   fontWeight: FontWeight.w600,
                   letterSpacing: 1.0),
             ),
@@ -446,7 +602,8 @@ class _MessengerPageState extends State<MessengerPageEmployee> {
   getFooter() {
     if(current_employee.roles!="Manager") {
       List<IconData> iconItems = [
-        Icons.message,
+        Icons.mark_email_unread_sharp,
+        Icons.mark_email_read_sharp,
         Icons.question_answer_outlined,
       ];
       return AnimatedBottomNavigationBar(
@@ -455,7 +612,7 @@ class _MessengerPageState extends State<MessengerPageEmployee> {
         inactiveColor: Colors.black.withOpacity(0.5),
         icons: iconItems,
         activeIndex: pageIndex,
-        gapLocation: GapLocation.center,
+        gapLocation: GapLocation.none,
         notchSmoothness: NotchSmoothness.softEdge,
         leftCornerRadius: 10,
         iconSize: 25,

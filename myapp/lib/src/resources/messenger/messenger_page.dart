@@ -129,6 +129,9 @@ class _MessengerPageState extends State<MessengerPage> {
 
   _buildQuestions(setState) {
     fillListQuestion(setState);
+    listQuestion.sort((a, b) => DateFormat("dd-MM-yyyy HH:mm:ss")
+        .parse(b.time)
+        .compareTo(DateFormat("dd-MM-yyyy HH:mm:ss").parse(a.time)));
 
     List<Widget> questionsList = [];
     listQuestion.forEach((QuestionModel question) {
@@ -225,6 +228,9 @@ class _MessengerPageState extends State<MessengerPage> {
 
   _buildAllQuestions() {
     List<Widget> questionsList = [];
+    listAllQuestion.sort((a, b) => DateFormat("dd-MM-yyyy HH:mm:ss")
+        .parse(b.time)
+        .compareTo(DateFormat("dd-MM-yyyy HH:mm:ss").parse(a.time)));
     listAllQuestion.forEach((QuestionModel question) {
       questionsList.add(GestureDetector(
         onTap: () {
@@ -585,7 +591,7 @@ class _MessengerPageState extends State<MessengerPage> {
               'Câu hỏi của bạn',
               textAlign: TextAlign.center,
               style: TextStyle(
-                  fontSize: 24.0,
+                  fontSize: 18,
                   fontWeight: FontWeight.w600,
                   letterSpacing: 1.0),
             ),
@@ -603,7 +609,7 @@ class _MessengerPageState extends State<MessengerPage> {
               'Tất cả câu hỏi',
               textAlign: TextAlign.right,
               style: TextStyle(
-                  fontSize: 24.0,
+                  fontSize: 18,
                   fontWeight: FontWeight.w600,
                   letterSpacing: 1.0),
             ),

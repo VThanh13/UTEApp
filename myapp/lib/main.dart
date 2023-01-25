@@ -5,9 +5,14 @@ import 'package:myapp/src/blocs/auth_bloc.dart';
 import 'package:myapp/src/resources/admin/login_admin.dart';
 import 'package:myapp/src/resources/home_page.dart';
 import 'package:myapp/src/resources/login_page.dart';
+import 'package:myapp/src/resources/login_page2.dart';
 import 'package:myapp/src/screens/signin_screen.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
+
 void main()  async{
-  WidgetsFlutterBinding.ensureInitialized();
+  WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+  FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
+  // WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   runApp(MyApp(
     new AuthBloc(),
@@ -17,5 +22,6 @@ void main()  async{
 
     )
   ));
+  FlutterNativeSplash.remove();
 }
 
