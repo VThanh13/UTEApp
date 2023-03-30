@@ -6,6 +6,7 @@ import 'package:myapp/src/resources/admin/login_admin.dart';
 import 'package:myapp/src/resources/home_page.dart';
 import 'package:myapp/src/resources/login_page.dart';
 import 'package:myapp/src/resources/login_page2.dart';
+import 'package:myapp/src/resources/login_screen.dart';
 import 'package:myapp/src/screens/signin_screen.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 
@@ -17,7 +18,8 @@ void main()  async{
   runApp(MyApp(
     new AuthBloc(),
     MaterialApp(
-      home: LoginPage(),
+      // home: LoginPage(),
+        home: LoginScreen(),
         //home: LoginAdmin(),
 
     )

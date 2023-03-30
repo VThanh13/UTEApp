@@ -214,102 +214,149 @@ class _HomePageState extends State<HomePage> {
 
   _buildNewfeed(BuildContext context, Post post) {
     return Container(
-      margin: EdgeInsets.all(10.0),
+      margin: EdgeInsets.all(5),
       decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(15.0),
-          border: Border.all(width: 1.0, color: Colors.pinkAccent)),
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(width: 1.0, color: Colors.white24)
+      ),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: <Widget>[
-          Padding(padding: EdgeInsets.fromLTRB(0, 5, 0, 0)),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: <Widget>[
-              Container(
-                padding: EdgeInsets.fromLTRB(20, 0, 10, 0),
-                child: CircleAvatar(
-                  radius: 30,
-                  backgroundColor: Colors.tealAccent,
-                  child: CircleAvatar(
-                    backgroundImage: new NetworkImage(post.employee.image!),
-                    radius: 28,
+      children: [
+        Row(
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(left: 18.0, top: 10),
+              child: Material(
+                elevation: 10,
+                borderRadius: BorderRadius.circular(140),
+                child: Container(
+                  decoration: new BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(140)),
+                  height: 58,
+                  width: 60,
+                  child: Stack(
+                    children: <Widget>[
+                      Container(
+                          height: 78,
+                          width: 74,
+                          margin: const EdgeInsets.only(
+                              left: 0.0, right: 0, top: 0, bottom: 0),
+                          padding: const EdgeInsets.all(0),
+                          decoration: BoxDecoration(
+                              border: Border.all(color: Colors.white, width: 2),
+                              borderRadius: BorderRadius.circular(140)),
+                          child: CircleAvatar(
+                            backgroundImage: NetworkImage(
+                              post.employee.image,
+                            ),
+                          )),
+                    ],
                   ),
                 ),
               ),
-              Container(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: <Widget>[
-                    Text(
-                      post.employee.name,
-                      style: TextStyle(
-                          fontSize: 17,
-                          fontStyle: FontStyle.italic,
-                          fontWeight: FontWeight.w500),
-                    ),
-                    Text(
-                      post.time,
-                      style: TextStyle(
-                        fontSize: 12,
-                      ),
-                    ),
-                    Text(
-                      post.employee.departmentName,
-                      style: TextStyle(fontSize: 13),
-                    ),
-                  ],
+            ),
+            Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Padding(
+                padding: const EdgeInsets.only(left: 15.0, top: 13),
+                child: Text(
+                  post.employee.name,
+                  style: TextStyle(
+                      color: Colors.grey[700],
+                      fontSize: 16,
+                      letterSpacing: 1,
+                      fontWeight: FontWeight.bold),
                 ),
               ),
-            ],
-          ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
               Padding(
-                padding: EdgeInsets.symmetric(horizontal: 10),
+                padding: const EdgeInsets.only(left: 16.0),
                 child: Text(
-                  post.content,
-                  overflow: TextOverflow.visible,
-                  maxLines: 50,
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                  post.time,
+                  style: TextStyle(
+                      color: Colors.grey[500],
+                      fontSize: 13,
+                      letterSpacing: 1,
+                      fontWeight: FontWeight.normal),
                 ),
-              )
-            ],
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 16.0),
+                child: Text(
+                  post.employee.departmentName,
+                  style: TextStyle(
+                      color: Colors.grey[600],
+                      fontSize: 13,
+                      letterSpacing: 1,
+                      fontWeight: FontWeight.normal),
+                ),
+              ),
+            ]),
+          ],
+        ),
+        Padding(
+          padding: const EdgeInsets.only(left: 20, right: 20, top: 20),
+          child: Text(
+            post.content,
+            style: TextStyle(
+                color: Colors.grey[800],
+                fontSize: 15,
+                letterSpacing: 1,
+                fontWeight: FontWeight.normal),
+            textAlign: TextAlign.justify,
           ),
-          Padding(padding: EdgeInsets.fromLTRB(0, 5, 0, 0)),
-          if (post.file != 'file.pdf')
-            ClipRRect(
-              child: Image.network(
-                post.file,
+        ),
+        if (post.file != 'file.pdf')
+          Padding(
+            padding: const EdgeInsets.only(left: 0, right: 0, top: 15),
+            child: Material(
+                borderRadius: BorderRadius.all(Radius.circular(40)),
+                elevation: 6,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.all(
+                    Radius.circular(1),
+                  ),
+                  child: Stack(children: [
+                    Image.network(
+                        post.file),
+                  ]),
+                )),
+          ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            // Padding(
+            //   padding: const EdgeInsets.only(top: 2, left: 28.0),
+            //   child: Row(
+            //     children: [
+            //     ],
+            //   ),
+            // ),
+            Padding(
+              padding: const EdgeInsets.only(top: 18, left: 15),
+              child: Row(
+                children: [
+                  IconButton(
+                    icon: Icon(Icons.mode_comment),
+                    iconSize: 25,
+                    onPressed: () {
+                      _modalBottomSheetAddQuestion(post);
+                    },
+                  ),
+                  Text(
+                    'Đặt câu hỏi',
+                    style: TextStyle(
+                        color: Colors.grey[700],
+                        fontSize: 15,
+                        letterSpacing: 1,
+                        fontWeight: FontWeight.normal),
+                  ),
+                ],
               ),
             ),
-          Divider(
-            color: Colors.black,
-            height: 5.0,
-          ),
-          Container(
-              child: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              // Container(
-              //   width: 318,
-              IconButton(
-                icon: Icon(Icons.mode_comment),
-                iconSize: 25,
-                onPressed: () {
-                  _modalBottomSheetAddQuestion(post);
-                },
-              ),
-              Text("Đặt câu hỏi"),
-              // ),
-            ],
-          )),
-        ],
-      ),
+          ],
+        ),
+      ],
+    ),
     );
   }
 
@@ -543,7 +590,8 @@ class _HomePageState extends State<HomePage> {
       child: Text(
         item,
         style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-      ));
+      )
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -574,7 +622,7 @@ class _HomePageState extends State<HomePage> {
           // TODO: implement build
           return Scaffold(
             appBar: new AppBar(
-              backgroundColor: Colors.pinkAccent,
+              backgroundColor: Colors.blueAccent,
               title: new Text("UTE APP"),
               actions: <Widget>[
                 IconButton(
@@ -644,7 +692,7 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
             body: SafeArea(
-              minimum: const EdgeInsets.all(10),
+              // minimum: const EdgeInsets.all(10),
               child: SingleChildScrollView(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.start,
@@ -653,12 +701,13 @@ class _HomePageState extends State<HomePage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
                         Container(
-                          height: MediaQuery.of(context).size.height * 0.85,
+                          height: MediaQuery.of(context).size.height * 0.9,
                           child: ListView.builder(
                               physics: BouncingScrollPhysics(),
                               itemCount: listPost.length,
                               itemBuilder: (BuildContext context, int index) {
                                 return _buildNewfeed(context, listPost[index]);
+
                               }),
                         )
                       ],

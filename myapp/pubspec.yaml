@@ -50,6 +50,8 @@ dependencies:
   flutter_speed_dial: ^6.2.0
   flutter_native_splash: ^2.2.16
 
+  get: ^4.1.4
+
 
 
   # The following adds the Cupertino Icons font to your application.
@@ -96,6 +98,7 @@ flutter:
     - ic_user.png
     - ute_logo.png
     - logo1.png
+    - assets/images/
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
 
