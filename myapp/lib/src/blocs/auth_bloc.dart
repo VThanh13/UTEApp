@@ -9,11 +9,13 @@ class AuthBloc {
   StreamController _emailController = new StreamController();
   StreamController _passController = new StreamController();
   StreamController _phoneController = new StreamController();
+  StreamController _groupController = new StreamController();
 
   Stream get nameStream => _nameController.stream;
   Stream get emailStream => _emailController.stream;
   Stream get passStream => _passController.stream;
   Stream get phoneStream => _phoneController.stream;
+  Stream get groupStream => _groupController.stream;
 
   bool isValid_Login(String email, String pass){
     if (email == null || email.length == 0) {
@@ -30,7 +32,7 @@ class AuthBloc {
     return true;
   }
 
-  bool isValid(String name, String email, String pass, String phone) {
+  bool isValidSignUp(String name, String email, String password, String phone) {
     if (name == null || name.length == 0) {
       _nameController.sink.addError("Nhập tên");
       return false;
@@ -49,7 +51,7 @@ class AuthBloc {
     }
     _emailController.sink.add("");
 
-    if (pass == null || pass.length < 6) {
+    if (password == null || password.length < 6) {
       _passController.sink.addError("Mật khẩu phải trên 5 ký tự");
       return false;
     }
@@ -58,9 +60,9 @@ class AuthBloc {
     return true;
   }
 
-  void signUp(String email, String pass, String phone, String name,
+  void signUp(String email, String password, String phone, String name, String group,
       Function onSuccess, Function(String) onRegisterError){
-    _fireAuth.signUp(email, pass, name, phone, onSuccess, onRegisterError);
+    _fireAuth.signUp(email, password, name, phone, group, onSuccess, onRegisterError);
   }
 
   void signIn(String email, String pass, Function onSuccess,

@@ -1,20 +1,20 @@
 class AnswerModel{
   String id;
-  String questionId;
+  String room_id;
   String content;
   String time;
-  String userId;
+  String employee_id;
 
   AnswerModel(
-      this.id, this.questionId, this.content, this.time, this.userId);
+      this.id, this.room_id, this.content, this.time, this.employee_id);
 
   factory AnswerModel.fromMap(Map<String, dynamic> json){
     return AnswerModel(
         json['id'],
-        json['questionId'],
+        json['room_id'],
         json['content'],
         json['time'],
-        json['userId'],
+        json['employee_id'],
     );
   }
 

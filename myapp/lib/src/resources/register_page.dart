@@ -174,22 +174,22 @@ class _RegisterPageState extends State<RegisterPage>{
 
   _onSignUpClicked(){
 
-    var isValid = authBloc.isValid(_nameController.text,
-        _emailController.text, _passController.text, _phoneController.text);
-    if (isValid){
-
-      LoadingDialog.showLoadingDialog(context, "loading...");
-      authBloc.signUp(_emailController.text, _passController.text, _phoneController.text,
-          _nameController.text, () {
-        LoadingDialog.hideLoadingDialog(context);
-        Navigator.push(context,
-          MaterialPageRoute(builder: (context) => HomePage()));
-      },(msg){
-        LoadingDialog.hideLoadingDialog(context);
-        MsgDialog.showMsgDialog(context, "Sign-In", msg);
-
-          });
-
-    }
+    // var isValid = authBloc.isValid(_nameController.text,
+    //     _emailController.text, _passController.text, _phoneController.text);
+    // if (isValid){
+    //
+    //   LoadingDialog.showLoadingDialog(context, "loading...");
+    //   authBloc.signUp(_emailController.text, _passController.text, _phoneController.text,
+    //       _nameController.text, () {
+    //     LoadingDialog.hideLoadingDialog(context);
+    //     Navigator.push(context,
+    //       MaterialPageRoute(builder: (context) => HomePage()));
+    //   },(msg){
+    //     LoadingDialog.hideLoadingDialog(context);
+    //     MsgDialog.showMsgDialog(context, "Sign-In", msg);
+    //
+    //       });
+    //
+    // }
   }
 }

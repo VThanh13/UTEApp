@@ -113,7 +113,7 @@ class _MyInfoState extends State<MyInfo> {
   FirebaseAuth auth = FirebaseAuth.instance;
   var userr = FirebaseAuth.instance.currentUser!;
   String name = "1234";
-  UserModel userModel = new UserModel("", " ", "", "", "", "", "");
+  UserModel userModel = new UserModel("", " ", "", "", "", "", "", "");
 
   Future<String> getUserNameFromUID() async {
     final snapshot = await FirebaseFirestore.instance
@@ -152,7 +152,7 @@ class _MyInfoState extends State<MyInfo> {
             userModel.name = (e.data() as Map)['name'];
             userModel.email = (e.data() as Map)['email'];
             userModel.image = (e.data() as Map)['image'];
-            userModel.password = (e.data() as Map)['pass'];
+            userModel.password = (e.data() as Map)['password'];
             userModel.phone = (e.data() as Map)['phone'];
             userModel.status = (e.data() as Map)['status'];
             return userModel;
@@ -171,7 +171,7 @@ class _MyInfoState extends State<MyInfo> {
                   }
               ),
               title: new Text('Thông tin cá nhân'),
-              backgroundColor: Colors.pinkAccent,
+              backgroundColor: Colors.blueAccent,
             ),
             body: SafeArea(
               minimum: const EdgeInsets.only(left: 20, right: 10),
@@ -252,13 +252,13 @@ class _MyInfoState extends State<MyInfo> {
                                 enabledBorder: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(10),
                                     borderSide: BorderSide(
-                                      color: Colors.pinkAccent,
+                                      color: Colors.blueAccent,
                                       width: 1,
                                     )),
                                 focusedBorder: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(10),
                                     borderSide: BorderSide(
-                                        color: Colors.pink, width: 4))),
+                                        color: Colors.blue, width: 4))),
                           ),
                         )),
                     Container(
@@ -278,13 +278,13 @@ class _MyInfoState extends State<MyInfo> {
                                 enabledBorder: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(10),
                                     borderSide: BorderSide(
-                                      color: Colors.pinkAccent,
+                                      color: Colors.blueAccent,
                                       width: 1,
                                     )),
                                 focusedBorder: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(10),
                                     borderSide: BorderSide(
-                                        color: Colors.pink, width: 4))),
+                                        color: Colors.blue, width: 4))),
                           ),
                         )),
                     Container(
@@ -304,13 +304,13 @@ class _MyInfoState extends State<MyInfo> {
                                 enabledBorder: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(10),
                                     borderSide: BorderSide(
-                                      color: Colors.pinkAccent,
+                                      color: Colors.blueAccent,
                                       width: 1,
                                     )),
                                 focusedBorder: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(10),
                                     borderSide: BorderSide(
-                                        color: Colors.pink, width: 4))),
+                                        color: Colors.blue, width: 4))),
                           ),
                         )),
                     Container(
@@ -328,13 +328,13 @@ class _MyInfoState extends State<MyInfo> {
                               enabledBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(10),
                                   borderSide: BorderSide(
-                                    color: Colors.pinkAccent,
+                                    color: Colors.blueAccent,
                                     width: 1,
                                   )),
                               focusedBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(10),
                                   borderSide: BorderSide(
-                                      color: Colors.pink, width: 4))),
+                                      color: Colors.blue, width: 4))),
                         ),
                       ),
                     ),
@@ -356,7 +356,7 @@ class _MyInfoState extends State<MyInfo> {
                               ),
                               icon: Icon(Icons.save_outlined),
                               style: ElevatedButton.styleFrom(
-                                primary: Colors.pinkAccent
+                                primary: Colors.blueAccent
                               ),
                             ),
                           ),
@@ -408,7 +408,7 @@ class _MyInfoState extends State<MyInfo> {
                                                                               10),
                                                                       borderSide:
                                                                           BorderSide(
-                                                                        color: Colors.pinkAccent,
+                                                                        color: Colors.blueAccent,
                                                                         width:
                                                                             1,
                                                                       )),
@@ -418,7 +418,7 @@ class _MyInfoState extends State<MyInfo> {
                                                                           .circular(
                                                                               10),
                                                                   borderSide: BorderSide(
-                                                                      color: Colors.pink,
+                                                                      color: Colors.blue,
                                                                       width:
                                                                           4))),
                                                       controller:
@@ -448,7 +448,7 @@ class _MyInfoState extends State<MyInfo> {
                                                                               10),
                                                                       borderSide:
                                                                           BorderSide(
-                                                                        color: Colors.pinkAccent,
+                                                                        color: Colors.blueAccent,
                                                                         width:
                                                                             1,
                                                                       )),
@@ -459,7 +459,7 @@ class _MyInfoState extends State<MyInfo> {
                                                                               10),
                                                                   borderSide: BorderSide(
                                                                       color: Colors
-                                                                          .pink,
+                                                                          .blue,
                                                                       width:
                                                                           4))),
                                                       controller:
@@ -489,7 +489,7 @@ class _MyInfoState extends State<MyInfo> {
                                                                               10),
                                                                       borderSide:
                                                                           BorderSide(
-                                                                        color: Colors.pinkAccent,
+                                                                        color: Colors.blueAccent,
                                                                         width:
                                                                             1,
                                                                       )),
@@ -499,7 +499,7 @@ class _MyInfoState extends State<MyInfo> {
                                                                           .circular(
                                                                               10),
                                                                   borderSide: BorderSide(
-                                                                      color: Colors.pink,
+                                                                      color: Colors.blue,
                                                                       width:
                                                                           4))),
                                                       controller:
@@ -529,7 +529,7 @@ class _MyInfoState extends State<MyInfo> {
                                                           ),
                                                           icon: Icon(Icons.check),
                                                           style: ElevatedButton.styleFrom(
-                                                            primary: Colors.pinkAccent
+                                                            primary: Colors.blueAccent
                                                           ),
                                                         ),
                                                       ),
@@ -553,7 +553,7 @@ class _MyInfoState extends State<MyInfo> {
                                                               ),
                                                           icon: Icon(Icons.cancel_outlined),
                                                           style: ElevatedButton.styleFrom(
-                                                            primary: Colors.pinkAccent
+                                                            primary: Colors.blueAccent
                                                           ),)),
                                                     ],
                                                   ),
@@ -566,7 +566,7 @@ class _MyInfoState extends State<MyInfo> {
                                   label: const Text('Đổi mật khẩu'),
                                 icon: Icon(Icons.security_rounded),
                                 style: ElevatedButton.styleFrom(
-                                  primary: Colors.pinkAccent
+                                  primary: Colors.blueAccent
                                 ),
                               )),
                         ],
@@ -644,7 +644,7 @@ class _MyInfoState extends State<MyInfo> {
     String id = snapshot.docs.first.id;
     var ref = FirebaseFirestore.instance.collection('user');
 
-    ref.doc(id).update({'pass': pass}).then((value) {
+    ref.doc(id).update({'password': pass}).then((value) {
       onSuccess();
       print("change pass ok");
     }).catchError((err) {

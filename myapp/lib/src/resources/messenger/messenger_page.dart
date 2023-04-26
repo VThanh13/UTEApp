@@ -15,6 +15,7 @@ import 'package:myapp/src/resources/home_page.dart';
 import 'package:myapp/src/resources/messenger/detail_question.dart';
 import 'package:myapp/src/resources/messenger/view_employee_byuser.dart';
 
+import '../../models/ChatRoomModel.dart';
 import '../../models/UserModel.dart';
 import '../dialog/loading_dialog.dart';
 
@@ -32,7 +33,6 @@ class _MessengerPageState extends State<MessengerPage> {
   String? value4;
   var selectedDerpartments;
   String? value2;
-  String? value_doituong;
   String? value_vande;
   var departmentsItems = [];
   var item_doituong = [
@@ -46,15 +46,15 @@ class _MessengerPageState extends State<MessengerPage> {
   int pageIndex = 0;
 
   FirebaseAuth auth = FirebaseAuth.instance;
-  var userr = FirebaseAuth.instance.currentUser!;
-  UserModel userModel = new UserModel("", " ", "", "", "", "", "");
+  var currentUser = FirebaseAuth.instance.currentUser!;
+  UserModel current_user = new UserModel("", " ", "", "", "", "", "", "");
 
   @override
   void initState() {
     super.initState();
+    getCurrentUser();
     getEmployeeData();
     getDepartmentName();
-    getAllQuestion();
   }
 
   @override
@@ -64,7 +64,26 @@ class _MessengerPageState extends State<MessengerPage> {
     _informationControl.close();
     super.dispose();
   }
-
+  getCurrentUser() async {
+    await FirebaseFirestore.instance
+        .collection('user')
+        .where('userId', isEqualTo: currentUser.uid)
+        .get()
+        .then((value) => {
+      setState(() {
+        current_user.id = value.docs.first['userId'];
+        current_user.name = value.docs.first['name'];
+        current_user.email = value.docs.first['email'];
+        current_user.image = value.docs.first['image'];
+        current_user.password = value.docs.first['password'];
+        current_user.phone = value.docs.first['phone'];
+        current_user.group = value.docs.first['group'];
+        current_user.status = value.docs.first['status'];
+      })
+    });
+    await getChatRoomByUser();
+    await getAllChatRoom();
+  }
   Future<List> getDataDropdownProblem(String? value_khoa) async {
     QuerySnapshot snapshot = await FirebaseFirestore.instance
         .collection("departments")
@@ -94,152 +113,45 @@ class _MessengerPageState extends State<MessengerPage> {
               })
             });
   }
-
-  List<QuestionModel> listQuestion = [];
-  Future<List<QuestionModel>> getQuestionData() async {
-    List<QuestionModel> list = [];
-    QuerySnapshot snapshot = await FirebaseFirestore.instance
-        .collection('questions')
-        .where('userId', isEqualTo: userr.uid)
-        .get();
-    snapshot.docs.map((e) {
-      QuestionModel questionModel =
-          new QuestionModel("", "", "", "", "", "", "", "", "", "");
-      questionModel.id = e.reference.id;
-      questionModel.title = (e.data() as Map)['title'];
-      questionModel.content = (e.data() as Map)['content'];
-      questionModel.time = (e.data() as Map)['time'];
-      questionModel.department = (e.data() as Map)['department'];
-      questionModel.category = (e.data() as Map)['category'];
-      questionModel.status = (e.data() as Map)['status'];
-      questionModel.userId = (e.data() as Map)['userId'];
-      questionModel.information = (e.data() as Map)['information'];
-      questionModel.file = (e.data() as Map)['file'];
-      list.add(questionModel);
-    }).toList();
-    return list;
-  }
-
-  fillListQuestion(setState) async {
-    final testlistQuestion = await getQuestionData() as List<QuestionModel>;
-    setState(() {
-      listQuestion = testlistQuestion;
-    });
-  }
-
-  _buildQuestions(setState) {
-    fillListQuestion(setState);
-    listQuestion.sort((a, b) => DateFormat("dd-MM-yyyy HH:mm:ss")
-        .parse(b.time)
-        .compareTo(DateFormat("dd-MM-yyyy HH:mm:ss").parse(a.time)));
-
-    List<Widget> questionsList = [];
-    listQuestion.forEach((QuestionModel question) {
-      questionsList.add(GestureDetector(
-        onTap: () {
-          Navigator.push(
-              context,
-              new MaterialPageRoute(
-                  builder: (BuildContext context) =>
-                      DetailQuestion(question: question)));
-        },
-        child: Container(
-          margin: EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
-          decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(15.0),
-              border: Border.all(
-                width: 1.0,
-                color: Colors.grey,
-              )),
-          child: Row(
-            children: <Widget>[
-              Expanded(
-                  child: Container(
-                margin: EdgeInsets.all(12.0),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Text(
-                      question.title,
-                      style: TextStyle(
-                        fontSize: 20.0,
-                        fontWeight: FontWeight.bold,
-                      ),
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    SizedBox(
-                      height: 4.0,
-                    ),
-                    Text(
-                      question.time,
-                      style: TextStyle(
-                        fontSize: 16.0,
-                        fontWeight: FontWeight.w600,
-                      ),
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    Text(question.status,
-                        style: TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w400,
-                          color: question.status == "Chưa trả lời"
-                              ? Colors.redAccent
-                              : Colors.green,
-                          overflow: TextOverflow.ellipsis,
-                        ))
-                  ],
-                ),
-              ))
-            ],
-          ),
-        ),
-      ));
-    });
-    return Column(children: questionsList);
-  }
-
-  List<QuestionModel> listAllQuestion = [];
-  getAllQuestion() async {
+  List<ChatRoomModel> listPublicChatRoom = [];
+  getAllChatRoom() async {
     await FirebaseFirestore.instance
-        .collection('questions')
+        .collection('chat_room')
+        .where('mode', isEqualTo: 'public')
         .get()
         .then((value) => {
-              setState(() {
-                value.docs.forEach((element) {
-                  QuestionModel questionModel =
-                      new QuestionModel("", "", "", "", "", "", "", "", "", "");
-                  questionModel.id = element.id;
-                  questionModel.title = element['title'];
-                  questionModel.content = element['content'];
-                  questionModel.time = element['time'];
-                  questionModel.department = element['department'];
-                  questionModel.category = element['category'];
-                  questionModel.status = element['status'];
-                  questionModel.userId = element['userId'];
-                  questionModel.information = element['information'];
-                  questionModel.file = element['file'];
-                  listAllQuestion.add(questionModel);
-                });
-              })
-            });
-  }
+      value.docs.forEach((element) {
+        ChatRoomModel chat_room = new ChatRoomModel("", "", "", "", "", "", "", "", "", "");
+        chat_room.id = element['room_id'];
+        chat_room.user_id = element['user_id'];
+        chat_room.time = element['time'];
+        chat_room.title = element['title'];
+        chat_room.department = element['department'];
+        chat_room.category = element['category'];
+        chat_room.information = element['information'];
+        chat_room.group = element['group'];
+        chat_room.mode = element['mode'];
+        chat_room.status = element['status'];
 
-  _buildAllQuestions() {
-    List<Widget> questionsList = [];
-    listAllQuestion.sort((a, b) => DateFormat("dd-MM-yyyy HH:mm:ss")
+        listPublicChatRoom.add(chat_room);
+      })
+    });
+  }
+  _buildAllChatRoom() {
+    listPublicChatRoom.sort((a, b) => DateFormat("dd-MM-yyyy HH:mm:ss")
         .parse(b.time)
         .compareTo(DateFormat("dd-MM-yyyy HH:mm:ss").parse(a.time)));
-    listAllQuestion.forEach((QuestionModel question) {
-      questionsList.add(GestureDetector(
-        onTap: () {
-          Navigator.push(
-              context,
-              new MaterialPageRoute(
-                  builder: (BuildContext context) =>
-                      DetailQuestion(question: question)));
-        },
+
+    List<Widget> chatList = [];
+    listPublicChatRoom.forEach((ChatRoomModel chat_room) {
+      chatList.add(GestureDetector(
+        // onTap: () {
+        //   Navigator.push(
+        //       context,
+        //       new MaterialPageRoute(
+        //           builder: (BuildContext context) =>
+        //               DetailQuestion(question: question)));
+        // },
         child: Container(
           margin: EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
           decoration: BoxDecoration(
@@ -259,7 +171,7 @@ class _MessengerPageState extends State<MessengerPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Text(
-                      question.title,
+                      chat_room.title,
                       style: TextStyle(
                         fontSize: 20.0,
                         fontWeight: FontWeight.bold,
@@ -270,18 +182,18 @@ class _MessengerPageState extends State<MessengerPage> {
                       height: 4.0,
                     ),
                     Text(
-                      question.time,
+                      chat_room.time,
                       style: TextStyle(
                         fontSize: 16.0,
                         fontWeight: FontWeight.w600,
                       ),
                       overflow: TextOverflow.ellipsis,
                     ),
-                    Text(question.status,
+                    Text(chat_room.status,
                         style: TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.w400,
-                          color: question.status == "Chưa trả lời"
+                          color: chat_room.status == "Chưa trả lời"
                               ? Colors.redAccent
                               : Colors.green,
                           overflow: TextOverflow.ellipsis,
@@ -294,7 +206,103 @@ class _MessengerPageState extends State<MessengerPage> {
         ),
       ));
     });
-    return Column(children: questionsList);
+    return Column(children: chatList);
+  }
+
+  List<ChatRoomModel> listChatRoomByUser = [];
+  getChatRoomByUser() async {
+    await FirebaseFirestore.instance
+        .collection('chat_room')
+        .where('user_id', isEqualTo: current_user.id)
+        .get()
+        .then((value) => {
+      value.docs.forEach((element) {
+        ChatRoomModel chat_room = new ChatRoomModel("", "", "", "", "", "", "", "", "", "");
+        chat_room.id = element['room_id'];
+        chat_room.user_id = element['user_id'];
+        chat_room.time = element['time'];
+        chat_room.title = element['title'];
+        chat_room.department = element['department'];
+        chat_room.category = element['category'];
+        chat_room.information = element['information'];
+        chat_room.group = element['group'];
+        chat_room.mode = element['mode'];
+        chat_room.status = element['status'];
+
+        listChatRoomByUser.add(chat_room);
+      })
+    });
+  }
+  _buildChatRoomByUser() {
+    listChatRoomByUser.sort((a, b) => DateFormat("dd-MM-yyyy HH:mm:ss")
+        .parse(b.time)
+        .compareTo(DateFormat("dd-MM-yyyy HH:mm:ss").parse(a.time)));
+
+    List<Widget> chatList = [];
+    listChatRoomByUser.forEach((ChatRoomModel chat_room) {
+      chatList.add(GestureDetector(
+        onTap: () {
+          Navigator.push(
+              context,
+              new MaterialPageRoute(
+                  builder: (BuildContext context) =>
+                      DetailQuestion(chat_room: chat_room)));
+        },
+        child: Container(
+          margin: EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
+          decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(15.0),
+              border: Border.all(
+                width: 1.0,
+                color: Colors.grey,
+              )),
+          child: Row(
+            children: <Widget>[
+              Expanded(
+                  child: Container(
+                    margin: EdgeInsets.all(12.0),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Text(
+                          chat_room.title,
+                          style: TextStyle(
+                            fontSize: 20.0,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        SizedBox(
+                          height: 4.0,
+                        ),
+                        Text(
+                          chat_room.time,
+                          style: TextStyle(
+                            fontSize: 16.0,
+                            fontWeight: FontWeight.w600,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        Text(chat_room.status,
+                            style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w400,
+                              color: chat_room.status == "Chưa trả lời"
+                                  ? Colors.redAccent
+                                  : Colors.green,
+                              overflow: TextOverflow.ellipsis,
+                            ))
+                      ],
+                    ),
+                  ))
+            ],
+          ),
+        ),
+      ));
+    });
+    return Column(children: chatList);
   }
 
   List<EmployeeModel> listEmployee = [];
@@ -331,7 +339,7 @@ class _MessengerPageState extends State<MessengerPage> {
           borderRadius: BorderRadius.circular(15.0),
           border: Border.all(
             width: 1.0,
-            color: Colors.pinkAccent,
+            color: Colors.blueAccent,
           )),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -391,7 +399,7 @@ class _MessengerPageState extends State<MessengerPage> {
                     context,
                     new MaterialPageRoute(
                         builder: (BuildContext context) => ViewEmployeeByUser(
-                            employee: employeeModel, users: userModel)));
+                            employee: employeeModel, users: current_user)));
               },
             ),
           )
@@ -456,32 +464,6 @@ class _MessengerPageState extends State<MessengerPage> {
                         child: CircularProgressIndicator()),
                   );
                 }
-
-                return FutureBuilder<QuerySnapshot>(
-                    future: FirebaseFirestore.instance
-                        .collection("user")
-                        .where("userId", isEqualTo: userr.uid)
-                        .get(),
-                    builder: (context, snapshot) {
-                      if (!snapshot.hasData) {
-                        return Center(
-                          child: Container(
-                              width: 20,
-                              height: 20,
-                              child: CircularProgressIndicator()),
-                        );
-                      }
-                      snapshot.data!.docs.map((e) {
-                        userModel.id = (e.data() as Map)['userId'];
-                        userModel.name = (e.data() as Map)['name'];
-                        userModel.email = (e.data() as Map)['email'];
-                        userModel.image = (e.data() as Map)['image'];
-                        userModel.password = (e.data() as Map)['pass'];
-                        userModel.phone = (e.data() as Map)['phone'];
-                        userModel.status = (e.data() as Map)['status'];
-                        return userModel;
-                      }).toString();
-
                       // TODO: implement build
                       return Scaffold(
                         appBar: new AppBar(
@@ -496,12 +478,12 @@ class _MessengerPageState extends State<MessengerPage> {
                               }
                           ),
                           title: const Text("Tin nhắn"),
-                          backgroundColor: Colors.pinkAccent,
+                          backgroundColor: Colors.blueAccent,
                         ),
                         bottomNavigationBar: getFooter(),
                         floatingActionButton: FloatingActionButton(
                             onPressed: () {
-                              if(userModel.id!="") {
+                              if(current_user.id!="") {
                                 modalBottomSheetQuestion();
                               }
                             },
@@ -509,7 +491,7 @@ class _MessengerPageState extends State<MessengerPage> {
                               Icons.add,
                               size: 25,
                             ),
-                            backgroundColor: Colors.pink
+                            backgroundColor: Colors.blue
                             //params
                             ),
                         floatingActionButtonLocation:
@@ -569,13 +551,13 @@ class _MessengerPageState extends State<MessengerPage> {
                                     )
                                   ],
                                 ),
+
                                 getQuestion(),
                               ],
                             ),
                           ),
                         ),
                       );
-                    });
               });
         });
   }
@@ -596,7 +578,7 @@ class _MessengerPageState extends State<MessengerPage> {
                   letterSpacing: 1.0),
             ),
           ),
-          _buildQuestions(setState)
+          _buildChatRoomByUser()
         ],
       );
     } else {
@@ -607,14 +589,14 @@ class _MessengerPageState extends State<MessengerPage> {
             padding: EdgeInsets.symmetric(horizontal: 20.0),
             child: Text(
               'Tất cả câu hỏi',
-              textAlign: TextAlign.right,
+              textAlign: TextAlign.center,
               style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.w600,
                   letterSpacing: 1.0),
             ),
           ),
-          _buildAllQuestions()
+          _buildAllChatRoom()
         ],
       );
     }
@@ -669,7 +651,7 @@ class _MessengerPageState extends State<MessengerPage> {
                                     decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(12),
                                       border: Border.all(
-                                          color: Colors.pinkAccent, width: 4),
+                                          color: Colors.blueAccent, width: 4),
                                     ),
                                     child: DropdownButtonHideUnderline(
                                       child: DropdownButton(
@@ -701,7 +683,7 @@ class _MessengerPageState extends State<MessengerPage> {
                                     decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(12),
                                       border: Border.all(
-                                          color: Colors.pinkAccent, width: 4),
+                                          color: Colors.blueAccent, width: 4),
                                     ),
                                     child: DropdownButtonHideUnderline(
                                       child: DropdownButton(
@@ -723,35 +705,6 @@ class _MessengerPageState extends State<MessengerPage> {
                                 Container(
                                     margin: EdgeInsets.fromLTRB(0, 10, 0, 15),
                                     width: 340,
-                                    padding: EdgeInsets.symmetric(
-                                        horizontal: 12, vertical: 4),
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(12),
-                                      border: Border.all(
-                                          color: Colors.pinkAccent, width: 4),
-                                    ),
-                                    child: DropdownButtonHideUnderline(
-                                      child: DropdownButton<String>(
-                                        isExpanded: true,
-                                        value: value_doituong,
-                                        hint:
-                                            new Text("Vui lòng chọn đối tượng"),
-                                        iconSize: 36,
-                                        items: item_doituong
-                                            .map(buildMenuItem)
-                                            .toList(),
-                                        onChanged: (value) {
-                                          setStateKhoa(() {
-                                            setState(() {
-                                              this.value_doituong = value;
-                                            });
-                                          });
-                                        },
-                                      ),
-                                    )),
-                                Container(
-                                    margin: EdgeInsets.fromLTRB(0, 10, 0, 15),
-                                    width: 340,
                                     child: StreamBuilder(
                                       stream: informationControl,
                                       builder: (context, snapshot) => TextField(
@@ -763,14 +716,14 @@ class _MessengerPageState extends State<MessengerPage> {
                                                 borderRadius:
                                                     BorderRadius.circular(10),
                                                 borderSide: BorderSide(
-                                                  color: Colors.pinkAccent,
+                                                  color: Colors.blueAccent,
                                                   width: 1,
                                                 )),
                                             focusedBorder: OutlineInputBorder(
                                                 borderRadius:
                                                     BorderRadius.circular(10),
                                                 borderSide: BorderSide(
-                                                    color: Colors.pink,
+                                                    color: Colors.blue,
                                                     width: 4))),
                                       ),
                                     )),
@@ -788,14 +741,14 @@ class _MessengerPageState extends State<MessengerPage> {
                                               borderRadius:
                                                   BorderRadius.circular(10),
                                               borderSide: BorderSide(
-                                                color: Colors.pinkAccent,
+                                                color: Colors.blueAccent,
                                                 width: 1,
                                               )),
                                           focusedBorder: OutlineInputBorder(
                                               borderRadius:
                                                   BorderRadius.circular(10),
                                               borderSide: BorderSide(
-                                                  color: Colors.pink,
+                                                  color: Colors.blue,
                                                   width: 4))),
                                     ),
                                   ),
@@ -819,14 +772,14 @@ class _MessengerPageState extends State<MessengerPage> {
                                               borderRadius:
                                                   BorderRadius.circular(10),
                                               borderSide: BorderSide(
-                                                color: Colors.pinkAccent,
+                                                color: Colors.blueAccent,
                                                 width: 1,
                                               )),
                                           focusedBorder: OutlineInputBorder(
                                               borderRadius:
                                                   BorderRadius.circular(10),
                                               borderSide: BorderSide(
-                                                  color: Colors.pink,
+                                                  color: Colors.blue,
                                                   width: 4))),
                                     ),
                                   ),
@@ -856,7 +809,7 @@ class _MessengerPageState extends State<MessengerPage> {
                                           ),
                                           icon: Icon(Icons.send_rounded),
                                           style: ElevatedButton.styleFrom(
-                                              primary: Colors.pinkAccent),
+                                              primary: Colors.blueAccent),
                                         ),
                                       ),
                                       Padding(padding: EdgeInsets.all(10)),
@@ -872,7 +825,7 @@ class _MessengerPageState extends State<MessengerPage> {
                                         ),
                                         icon: Icon(Icons.cancel_presentation),
                                         style: ElevatedButton.styleFrom(
-                                            primary: Colors.pinkAccent),
+                                            primary: Colors.blueAccent),
                                       )),
                                       Padding(
                                           padding: EdgeInsets.fromLTRB(
@@ -982,56 +935,80 @@ class _MessengerPageState extends State<MessengerPage> {
     await uploadPdf();
     if (isvalid) {
       LoadingDialog.showLoadingDialog(context, "loading...");
-      sendQuestion(
-          userModel.id,
+      createChatRoom(
+          current_user.id,
           _titleController.text,
           timestring,
           "Chưa trả lời",
           _informationController.text,
-          pdf_url,
           value_khoa!,
-          _questionController.text,
           value_vande!,
-          value_doituong!, () {
-        LoadingDialog.hideLoadingDialog(context);
-        Navigator.push(
-            context, MaterialPageRoute(builder: (context) => MessengerPage()));
+          current_user.group,
+          "public", () {
       });
     }
     return 0;
   }
 
-  void sendQuestion(
+  void createChatRoom(
       String userId,
       String title,
       String time,
       String status,
       String information,
-      String file,
       String department,
-      String content,
       String category,
-      String people,
+      String group,
+      String mode,
       Function onSucces) {
-    var ref = FirebaseFirestore.instance.collection('questions');
+    var ref = FirebaseFirestore.instance.collection('chat_room');
     String id = ref.doc().id;
     String departmentId = departmentName.keys
         .firstWhere((k) => departmentName[k] == department, orElse: () => null);
     ref.doc(id).set({
-      'id': id,
-      'userId': userId,
+      'room_id': id,
+      'user_id': userId,
       'title': title,
       'time': time,
       'status': status,
       'information': information,
-      'file': file,
       'department': departmentId,
-      'content': content,
-      'people': people,
+      'group': group,
       'category': category,
+      'mode': mode,
     }).then((value) {
       onSucces();
-      print("add nice");
+      sendQuestion(
+          time,
+          pdf_url,
+          _questionController.text,
+          id, () {
+        LoadingDialog.hideLoadingDialog(context);
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => MessengerPage()));
+      });
+    }).catchError((err) {
+      print(err);
+    });
+  }
+
+  void sendQuestion(
+      String time,
+      String file,
+      String content,
+      String room_id,
+      Function onSucces) {
+    var ref = FirebaseFirestore.instance.collection('questions');
+    String id = ref.doc().id;
+    ref.doc(id).set({
+      'id': id,
+      'time': time,
+      'file': file,
+      'content': content,
+      'room_id': room_id,
+    }).then((value) {
+      onSucces();
+      print("add question");
     }).catchError((err) {
       print(err);
     });

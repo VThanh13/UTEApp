@@ -37,93 +37,93 @@ class _MessengerPageState extends State<MessengerPageLeader> {
 
 
   List<QuestionModel> listQuestion = [];
-  Future<List<QuestionModel>> getQuestionData() async {
-    List<QuestionModel> list = [];
-    QuerySnapshot snapshot = await FirebaseFirestore.instance.collection('questions').where('department', isEqualTo: employeeModel.department).get();
-      snapshot.docs.map((e) {
-        QuestionModel questionModel = new QuestionModel("", "", "", "", "", "", "", "", "", "");
-        questionModel.id = e.reference.id;
-        questionModel.title = (e.data() as Map)['title'];
-        questionModel.content = (e.data() as Map)['content'];
-        questionModel.time = (e.data() as Map)['time'];
-        questionModel.department = (e.data() as Map)['department'];
-        questionModel.category = (e.data() as Map)['category'];
-        questionModel.status = (e.data() as Map)['status'];
-        questionModel.userId = (e.data() as Map)['userId'];
-        questionModel.information = (e.data() as Map)['information'];
-        questionModel.file = (e.data() as Map)['file'];
-        list.add(questionModel);
+  // Future<List<QuestionModel>> getQuestionData() async {
+  //   List<QuestionModel> list = [];
+  //   QuerySnapshot snapshot = await FirebaseFirestore.instance.collection('questions').where('department', isEqualTo: employeeModel.department).get();
+  //     snapshot.docs.map((e) {
+  //       QuestionModel questionModel = new QuestionModel("", "", "", "", "", "", "", "", "", "");
+  //       questionModel.id = e.reference.id;
+  //       questionModel.title = (e.data() as Map)['title'];
+  //       questionModel.content = (e.data() as Map)['content'];
+  //       questionModel.time = (e.data() as Map)['time'];
+  //       questionModel.department = (e.data() as Map)['department'];
+  //       questionModel.category = (e.data() as Map)['category'];
+  //       questionModel.status = (e.data() as Map)['status'];
+  //       questionModel.userId = (e.data() as Map)['userId'];
+  //       questionModel.information = (e.data() as Map)['information'];
+  //       questionModel.file = (e.data() as Map)['file'];
+  //       list.add(questionModel);
+  //
+  //   }).toList();
+  //   return list;
+  // }
 
-    }).toList();
-    return list;
-  }
-
-  fillListQuestion(setState) async{
-    final testlistQuestion = await getQuestionData() as List<QuestionModel>;
-    setState((){
-      listQuestion=testlistQuestion;
-    });
-  }
-  _buildQuestions(setState) {
-    fillListQuestion(setState);
-
-    List<Widget> questionsList = [];
-    listQuestion.forEach((QuestionModel question) {
-      questionsList.add(
-          GestureDetector(
-            onTap: () {
-              Navigator.push(context, new MaterialPageRoute(builder: (BuildContext context) => DetailQuestionEmployee(question: question)));
-            },
-            child: Container(
-              margin: EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
-              decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(15.0),
-                  border: Border.all(
-                    width: 1.0,
-                    color: Colors.grey,
-                  )
-              ),
-              child: Row(
-                children: <Widget>[
-                  Expanded(child: Container(
-                    margin: EdgeInsets.all(12.0),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Text(question.title,
-                          style: TextStyle(
-                            fontSize: 20.0,
-                            fontWeight: FontWeight.bold,
-                          ),
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        SizedBox(height: 4.0,),
-
-                        Text(question.time,
-                          style: TextStyle(
-                            fontSize: 16.0,
-                            fontWeight: FontWeight.w600,
-                          ),
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        Text(question.status,
-                        style: TextStyle(fontSize: 12, fontWeight: FontWeight.w400, color: question.status == "Chưa trả lời"? Colors.redAccent : Colors.green),
-                        overflow: TextOverflow.ellipsis,)
-
-                      ],
-                    ),
-                  ))
-                ],
-              ),
-            ),
-
-          )
-      );
-    });
-    return Column(children: questionsList);
-  }
+  // fillListQuestion(setState) async{
+  //   final testlistQuestion = await getQuestionData() as List<QuestionModel>;
+  //   setState((){
+  //     listQuestion=testlistQuestion;
+  //   });
+  // }
+  // _buildQuestions(setState) {
+  //   //fillListQuestion(setState);
+  //
+  //   List<Widget> questionsList = [];
+  //   listQuestion.forEach((QuestionModel question) {
+  //     questionsList.add(
+  //         GestureDetector(
+  //           onTap: () {
+  //             Navigator.push(context, new MaterialPageRoute(builder: (BuildContext context) => DetailQuestionEmployee(question: question)));
+  //           },
+  //           child: Container(
+  //             margin: EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
+  //             decoration: BoxDecoration(
+  //                 color: Colors.white,
+  //                 borderRadius: BorderRadius.circular(15.0),
+  //                 border: Border.all(
+  //                   width: 1.0,
+  //                   color: Colors.grey,
+  //                 )
+  //             ),
+  //             child: Row(
+  //               children: <Widget>[
+  //                 Expanded(child: Container(
+  //                   margin: EdgeInsets.all(12.0),
+  //                   child: Column(
+  //                     mainAxisAlignment: MainAxisAlignment.center,
+  //                     crossAxisAlignment: CrossAxisAlignment.start,
+  //                     children: <Widget>[
+  //                       Text(question.title,
+  //                         style: TextStyle(
+  //                           fontSize: 20.0,
+  //                           fontWeight: FontWeight.bold,
+  //                         ),
+  //                         overflow: TextOverflow.ellipsis,
+  //                       ),
+  //                       SizedBox(height: 4.0,),
+  //
+  //                       Text(question.time,
+  //                         style: TextStyle(
+  //                           fontSize: 16.0,
+  //                           fontWeight: FontWeight.w600,
+  //                         ),
+  //                         overflow: TextOverflow.ellipsis,
+  //                       ),
+  //                       Text(question.status,
+  //                       style: TextStyle(fontSize: 12, fontWeight: FontWeight.w400, color: question.status == "Chưa trả lời"? Colors.redAccent : Colors.green),
+  //                       overflow: TextOverflow.ellipsis,)
+  //
+  //                     ],
+  //                   ),
+  //                 ))
+  //               ],
+  //             ),
+  //           ),
+  //
+  //         )
+  //     );
+  //   });
+  //   return Column(children: questionsList);
+  // }
 
 
   TextEditingController _informationController = new TextEditingController();
@@ -295,7 +295,7 @@ class _MessengerPageState extends State<MessengerPageLeader> {
                                         ),
                                       ),
                                     ),
-                                    _buildQuestions(setState)
+                                    //_buildQuestions(setState)
                                   ],
                                 )
                               ],

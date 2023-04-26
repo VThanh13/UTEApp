@@ -24,7 +24,7 @@ class _HomePageState extends State<HomePageAdmin> {
   FirebaseAuth auth = FirebaseAuth.instance;
   var userr = FirebaseAuth.instance.currentUser!;
   String name = "1234";
-  UserModel userModel = new UserModel("", " ", "", "", "", "", "");
+  UserModel userModel = new UserModel("", " ", "", "", "", "", "", "");
 
   Future<String> getUserNameFromUID() async {
     final snapshot = await FirebaseFirestore.instance
@@ -87,17 +87,17 @@ class _HomePageState extends State<HomePageAdmin> {
                       AppIcons.chat,
                       color: Colors.white,
                     )),
-                IconButton(
-                    onPressed: () {
-                      Navigator.push(
-                          context,
-                          new MaterialPageRoute(
-                              builder: (BuildContext context) => TestPage()));
-                    },
-                    icon: Icon(
-                      AppIcons.bell_alt,
-                      color: Colors.white,
-                    ))
+                // IconButton(
+                //     onPressed: () {
+                //       Navigator.push(
+                //           context,
+                //           new MaterialPageRoute(
+                //               builder: (BuildContext context) => TestPage()));
+                //     },
+                //     icon: Icon(
+                //       AppIcons.bell_alt,
+                //       color: Colors.white,
+                //     ))
               ],
             ),
             drawer: new Drawer(

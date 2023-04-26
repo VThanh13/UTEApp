@@ -53,7 +53,7 @@ class Answer {
   Answer(this.id, this.questionId, this.content, this.time, this.employee);
 }
 
-UserModel uModel = UserModel("", "", "", "", "", "", "");
+UserModel uModel = UserModel("", "", "", "", "", "", "", "");
 
 class _DetailQuestionState extends State<DetailQuestionEmployee> {
   String? value_khoa;
@@ -140,80 +140,80 @@ class _DetailQuestionState extends State<DetailQuestionEmployee> {
     });
   }
   getQuestion() async {
-    UserModel userModel = new UserModel("", " ", "", "", "", "", "");
-    await FirebaseFirestore.instance
-        .collection('user')
-        .where('userId', isEqualTo: widget.question.userId)
-        .get()
-        .then((value) => {
-      setState(() {
-        userModel.id = value.docs.first['userId'];
-        userModel.name = value.docs.first['name'];
-        userModel.email = value.docs.first['email'];
-        userModel.image = value.docs.first['image'];
-        userModel.password = value.docs.first['pass'];
-        userModel.phone = value.docs.first['phone'];
-        userModel.status = value.docs.first['status'];
-        question = Question(
-          widget.question.id,
-          widget.question.title,
-          widget.question.content,
-          widget.question.time,
-          widget.question.department,
-          widget.question.category,
-          widget.question.status,
-          userModel,
-          widget.question.information,
-          widget.question.file,
-        );
-      })
-    });
-    await getAnswerData();
+    // UserModel userModel = new UserModel("", " ", "", "", "", "", "");
+    // await FirebaseFirestore.instance
+    //     .collection('user')
+    //     .where('userId', isEqualTo: widget.question.userId)
+    //     .get()
+    //     .then((value) => {
+    //   setState(() {
+    //     userModel.id = value.docs.first['userId'];
+    //     userModel.name = value.docs.first['name'];
+    //     userModel.email = value.docs.first['email'];
+    //     userModel.image = value.docs.first['image'];
+    //     userModel.password = value.docs.first['pass'];
+    //     userModel.phone = value.docs.first['phone'];
+    //     userModel.status = value.docs.first['status'];
+    //     question = Question(
+    //       widget.question.id,
+    //       widget.question.title,
+    //       widget.question.content,
+    //       widget.question.time,
+    //       widget.question.department,
+    //       widget.question.category,
+    //       widget.question.status,
+    //       userModel,
+    //       widget.question.information,
+    //       widget.question.file,
+    //     );
+    //   })
+    // });
+    // await getAnswerData();
   }
 
   List<Answer> listAnswer = [];
   getAnswerData() async {
     List<AnswerModel> listans = [];
-    await FirebaseFirestore.instance
-        .collection('answer')
-        .where('questionId', isEqualTo: question.id)
-        .get()
-        .then((value) => {
-              value.docs.forEach((element) {
-                AnswerModel ans = new AnswerModel("", "", "", "", "");
-                ans.userId = element['userId'];
-                ans.id = element['id'];
-                ans.questionId = element['questionId'];
-                ans.content = element['content'];
-                ans.time = element['time'];
-                listans.add(ans);
-              })
-            });
+    // await FirebaseFirestore.instance
+    //     .collection('answer')
+    //     .where('room_id', isEqualTo: widget.chat_room.id)
+    //     .get()
+    //     .then((value) => {
+    //   value.docs.forEach((element) {
+    //     AnswerModel ans = new AnswerModel("", "", "", "", "");
+    //     ans.employee_id = element['employee_id'];
+    //     ans.id = element['id'];
+    //     ans.room_id = element['room_id'];
+    //     ans.content = element['content'];
+    //     ans.time = element['time'];
+    //     listans.add(ans);
+    //   })
+    // });
     listans.forEach((element) async {
       EmployeeModel employeeModel =
-          new EmployeeModel("", "", "", "", "", "", "", "", "", "");
-      Answer ans = Answer(element.id, element.questionId, element.content,
+      new EmployeeModel("", "", "", "", "", "", "", "", "", "");
+      Answer ans = Answer(element.id, element.room_id, element.content,
           element.time, employeeModel);
       await FirebaseFirestore.instance
           .collection('employee')
-          .where('id', isEqualTo: element.userId)
+          .where('id', isEqualTo: element.employee_id)
           .get()
           .then((value) => {
-                setState(() {
-                  employeeModel.id = value.docs.first['id'];
-                  employeeModel.name = value.docs.first['name'];
-                  employeeModel.email = value.docs.first['email'];
-                  employeeModel.image = value.docs.first['image'];
-                  employeeModel.password = value.docs.first['password'];
-                  employeeModel.phone = value.docs.first['phone'];
-                  employeeModel.department = value.docs.first['department'];
-                  employeeModel.category = value.docs.first['category'];
-                  employeeModel.roles = value.docs.first['roles'];
-                  employeeModel.status = value.docs.first['status'];
-                  ans.employee = employeeModel;
-                  listAnswer.add(ans);
-                })
-              });
+        setState(() {
+          employeeModel.id = value.docs.first['id'];
+          employeeModel.name = value.docs.first['name'];
+          employeeModel.email = value.docs.first['email'];
+          employeeModel.image = value.docs.first['image'];
+          employeeModel.password = value.docs.first['password'];
+          employeeModel.phone = value.docs.first['phone'];
+          employeeModel.department = value.docs.first['department'];
+          employeeModel.category = value.docs.first['category'];
+          employeeModel.roles = value.docs.first['roles'];
+          employeeModel.status = value.docs.first['status'];
+          ans.employee = employeeModel;
+          listAnswer.add(ans);
+        })
+      });
     });
   }
 

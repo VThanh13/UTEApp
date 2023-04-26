@@ -65,9 +65,9 @@ class Employee {
 
 class _HomePageState extends State<HomePage> {
   FirebaseAuth auth = FirebaseAuth.instance;
-  var userr = FirebaseAuth.instance.currentUser!;
+  var currentUser = FirebaseAuth.instance.currentUser!;
   String name = "1234";
-  UserModel userModel = new UserModel("", " ", "", "", "", "", "");
+  UserModel current_user = new UserModel("", " ", "", "", "", "", "", "");
 
   @override
   void initState() {
@@ -75,6 +75,24 @@ class _HomePageState extends State<HomePage> {
     getListPost();
   }
 
+  getCurrentUser() async {
+    await FirebaseFirestore.instance
+        .collection('user')
+        .where('userId', isEqualTo: currentUser.uid)
+        .get()
+        .then((value) => {
+      setState(() {
+        current_user.id = value.docs.first['userId'];
+        current_user.name = value.docs.first['name'];
+        current_user.email = value.docs.first['email'];
+        current_user.image = value.docs.first['image'];
+        current_user.password = value.docs.first['password'];
+        current_user.phone = value.docs.first['phone'];
+        current_user.group = value.docs.first['group'];
+        current_user.status = value.docs.first['status'];
+      })
+    });
+  }
   var departmentName = new Map();
 
   void sendQuestion(
@@ -136,7 +154,7 @@ class _HomePageState extends State<HomePage> {
     if (isvalid) {
       LoadingDialog.showLoadingDialog(context, "loading...");
       sendQuestion(
-          userr.uid,
+          currentUser.uid,
           "Thắc mắc bài đăng ngày " + post.time,
           timestring,
           "Chưa trả lời",
@@ -394,7 +412,7 @@ class _HomePageState extends State<HomePage> {
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(12),
                           border: Border.all(
-                            color: Colors.pinkAccent,
+                            color: Colors.blueAccent,
                             width: 4,
                           )),
                       child: DropdownButtonHideUnderline(
@@ -427,13 +445,13 @@ class _HomePageState extends State<HomePage> {
                                 enabledBorder: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(10),
                                     borderSide: BorderSide(
-                                      color: Colors.pinkAccent,
+                                      color: Colors.blueAccent,
                                       width: 1,
                                     )),
                                 focusedBorder: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(10),
                                     borderSide: BorderSide(
-                                        color: Colors.pink, width: 4))),
+                                        color: Colors.blue, width: 4))),
                           ),
                         )),
                     Container(
@@ -454,13 +472,13 @@ class _HomePageState extends State<HomePage> {
                               enabledBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(10),
                                   borderSide: BorderSide(
-                                    color: Colors.pinkAccent,
+                                    color: Colors.blueAccent,
                                     width: 1,
                                   )),
                               focusedBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(10),
                                   borderSide: BorderSide(
-                                      color: Colors.pink, width: 4))),
+                                      color: Colors.blue, width: 4))),
                         ),
                       ),
                     ),
@@ -487,7 +505,7 @@ class _HomePageState extends State<HomePage> {
                               ),
                               icon: Icon(Icons.mail_outline_rounded),
                               style: ElevatedButton.styleFrom(
-                                  primary: Colors.pinkAccent),
+                                  primary: Colors.blueAccent),
                             ),
                           ),
                           Padding(padding: EdgeInsets.all(10)),
@@ -501,7 +519,7 @@ class _HomePageState extends State<HomePage> {
                             ),
                             icon: Icon(Icons.cancel_presentation),
                             style: ElevatedButton.styleFrom(
-                                primary: Colors.pinkAccent),
+                                primary: Colors.blueAccent),
                           )),
                           Padding(padding: EdgeInsets.fromLTRB(0, 10, 0, 30)),
                         ],
@@ -592,13 +610,12 @@ class _HomePageState extends State<HomePage> {
         style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
       )
   );
-
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<QuerySnapshot>(
         future: FirebaseFirestore.instance
             .collection("user")
-            .where("userId", isEqualTo: userr.uid)
+            .where("userId", isEqualTo: currentUser.uid)
             .get(),
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
@@ -607,18 +624,6 @@ class _HomePageState extends State<HomePage> {
                   width: 20, height: 20, child: CircularProgressIndicator()),
             );
           }
-          snapshot.data!.docs.map((e) {
-            userModel.id = (e.data() as Map)['userId'];
-            userModel.name = (e.data() as Map)['name'];
-            userModel.email = (e.data() as Map)['email'];
-            userModel.image = (e.data() as Map)['image'];
-            userModel.password = (e.data() as Map)['pass'];
-            userModel.phone = (e.data() as Map)['phone'];
-            userModel.status = (e.data() as Map)['status'];
-
-            return userModel;
-          }).toString();
-
           // TODO: implement build
           return Scaffold(
             appBar: new AppBar(
@@ -643,11 +648,11 @@ class _HomePageState extends State<HomePage> {
               child: ListView(
                 children: <Widget>[
                   new UserAccountsDrawerHeader(
-                    accountName: new Text(userModel.name!),
-                    accountEmail: new Text(userModel.email!),
+                    accountName: new Text(current_user.name!),
+                    accountEmail: new Text(current_user.email!),
                     arrowColor: Colors.redAccent,
                     currentAccountPicture: new CircleAvatar(
-                      backgroundImage: new NetworkImage(userModel.image!),
+                      backgroundImage: new NetworkImage(current_user.image!),
                     ),
                   ),
                   new ListTile(
