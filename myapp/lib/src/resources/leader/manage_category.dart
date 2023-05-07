@@ -1,48 +1,37 @@
 import 'dart:async';
-import 'package:intl/intl.dart';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:myapp/icons/app_icons_icons.dart';
-import 'package:myapp/src/models/QuestionModel.dart';
-import 'package:myapp/src/resources/home_page.dart';
-import 'package:myapp/src/resources/messenger/detail_question.dart';
 
 import '../../blocs/auth_bloc.dart';
 import '../../models/EmployeeModel.dart';
-import '../../models/UserModel.dart';
-import '../dialog/edit_employee_dialog.dart';
-import '../dialog/loading_dialog.dart';
-import '../dialog/msg_dialog.dart';
-import '../employee/detail_question_employee.dart';
-import '../manager/home_page_manager.dart';
 import 'home_page_leader.dart';
 
 class ManageCategory extends StatefulWidget {
+  const ManageCategory({super.key});
+
   @override
-  _ManageCategoryState createState() => _ManageCategoryState();
+  State<ManageCategory> createState() => _ManageCategoryState();
 }
 
 class _ManageCategoryState extends State<ManageCategory> {
   FirebaseFirestore db = FirebaseFirestore.instance;
   FirebaseAuth auth = FirebaseAuth.instance;
-  var user_auth = FirebaseAuth.instance.currentUser!;
-  AuthBloc authBloc = new AuthBloc();
-  EmployeeModel current_employee =
+  var userAuth = FirebaseAuth.instance.currentUser!;
+  AuthBloc authBloc = AuthBloc();
+  EmployeeModel currentEmployee =
       EmployeeModel("", "", "", "", "", "", "", "", "", "");
-  List<String> list_category = [];
+  List<String> listCategory = [];
 
-  TextEditingController _categoryController = new TextEditingController();
-  StreamController _categoryControl = new StreamController.broadcast();
+  final TextEditingController _categoryController = TextEditingController();
+  final StreamController _categoryControl = StreamController.broadcast();
   Stream get categoryControl => _categoryControl.stream;
 
-  TextEditingController _categoryEditController = new TextEditingController();
-  StreamController _categoryEditControl = new StreamController.broadcast();
+  final TextEditingController _categoryEditController = TextEditingController();
+  final StreamController _categoryEditControl = StreamController.broadcast();
   Stream get categoryEditControl => _categoryEditControl.stream;
 
-
-  String? value_category;
+  String? valueCategory;
   String departmentName = "";
 
   @override
@@ -60,23 +49,24 @@ class _ManageCategoryState extends State<ManageCategory> {
   getCurrentUser() async {
     await FirebaseFirestore.instance
         .collection('employee')
-        .where('id', isEqualTo: user_auth.uid)
+        .where('id', isEqualTo: userAuth.uid)
         .get()
         .then((value) => {
-              current_employee.id = value.docs.first['id'],
-              current_employee.name = value.docs.first['name'],
-              current_employee.email = value.docs.first['email'],
-              current_employee.image = value.docs.first['image'],
-              current_employee.password = value.docs.first['password'],
-              current_employee.phone = value.docs.first['phone'],
-              current_employee.department = value.docs.first['department'],
-              current_employee.category = value.docs.first['category'],
-              current_employee.roles = value.docs.first['roles'],
-              current_employee.status = value.docs.first['status']
+              currentEmployee.id = value.docs.first['id'],
+              currentEmployee.name = value.docs.first['name'],
+              currentEmployee.email = value.docs.first['email'],
+              currentEmployee.image = value.docs.first['image'],
+              currentEmployee.password = value.docs.first['password'],
+              currentEmployee.phone = value.docs.first['phone'],
+              currentEmployee.department = value.docs.first['department'],
+              currentEmployee.category = value.docs.first['category'],
+              currentEmployee.roles = value.docs.first['roles'],
+              currentEmployee.status = value.docs.first['status']
             });
 
-    await getListCategoy();
+    await getListCategory();
   }
+
   _buildCategory(BuildContext context, String category, index) {
     return GestureDetector(
       onTap: () {
@@ -85,23 +75,21 @@ class _ManageCategoryState extends State<ManageCategory> {
       child: Card(
         child: Column(
           children: <Widget>[
-            Padding(padding: EdgeInsets.fromLTRB(5, 5, 5, 5)),
+            const Padding(padding: EdgeInsets.fromLTRB(5, 5, 5, 5)),
             Column(
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-
-                    Container(
-                        padding: EdgeInsets.fromLTRB(10, 20, 10, 20),
-                      child: Expanded(
-                        child: Text(category,
-                            textAlign: TextAlign.left,
-                            style: TextStyle(
-                                fontSize: 15,
-                                fontWeight: FontWeight.w600,
-                                letterSpacing: 1.0))),
-                    ),
-
+                Container(
+                  padding: const EdgeInsets.fromLTRB(10, 20, 10, 20),
+                  child: Expanded(
+                      child: Text(category,
+                          textAlign: TextAlign.left,
+                          style: const TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.w600,
+                              letterSpacing: 1.0))),
+                ),
               ],
             )
           ],
@@ -110,193 +98,192 @@ class _ManageCategoryState extends State<ManageCategory> {
     );
   }
 
-  getListCategoy() async {
-    await FirebaseFirestore.instance.collection('departments')
-        .where('id', isEqualTo: current_employee.department)
+  getListCategory() async {
+    await FirebaseFirestore.instance
+        .collection('departments')
+        .where('id', isEqualTo: currentEmployee.department)
         .get()
         .then((value) => {
-      setState((){
-        list_category = value.docs.first["category"].cast<String>();
-        departmentName = value.docs.first["name"];
-      })
-    });
+              setState(() {
+                listCategory = value.docs.first["category"].cast<String>();
+                departmentName = value.docs.first["name"];
+              })
+            });
   }
+
   _modalBottomSheetEditCategory(String category, index) {
     return showModalBottomSheet(
         isScrollControlled: true,
-        constraints: BoxConstraints.loose(Size(
-            MediaQuery.of(context).size.width,
-            MediaQuery.of(context).size.height * 0.6),
+        constraints: BoxConstraints.loose(
+          Size(MediaQuery.of(context).size.width,
+              MediaQuery.of(context).size.height * 0.6),
         ),
-        shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(20),
-          topRight: Radius.circular(20),
-        ),
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(20),
+            topRight: Radius.circular(20),
+          ),
         ),
         context: context,
         builder: (BuildContext context) {
-            return Container(
-              child: Column(
-                children: <Widget>[
-                  Padding(
-                      padding: EdgeInsets.fromLTRB(5, 20, 5, 10),
-                      child: Text('Chỉnh sửa lĩnh vực',
-                          style: TextStyle(
-                              fontSize: 24,
-                              fontWeight: FontWeight.w600,
-                              letterSpacing: 1.0),
-                      ),
-                  ),
-                  SingleChildScrollView(
-                    physics: BouncingScrollPhysics(),
-                    child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Container(
-                            height: MediaQuery.of(context).size.height * 0.45,
-                            child: SingleChildScrollView(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.start,
+          return Column(
+            children: <Widget>[
+              const Padding(
+                padding: EdgeInsets.fromLTRB(5, 20, 5, 10),
+                child: Text(
+                  'Chỉnh sửa lĩnh vực',
+                  style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.w600,
+                      letterSpacing: 1.0),
+                ),
+              ),
+              SingleChildScrollView(
+                physics: const BouncingScrollPhysics(),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    SizedBox(
+                      height: MediaQuery.of(context).size.height * 0.45,
+                      child: SingleChildScrollView(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: <Widget>[
+                            const Padding(padding: EdgeInsets.fromLTRB(0, 0, 0, 0)),
+                            Container(
+                                margin: const EdgeInsets.fromLTRB(10, 10, 10, 15),
+                                width: 400,
+                                child: StreamBuilder(
+                                  stream: categoryEditControl,
+                                  builder: (context, snapshot) => TextField(
+                                    controller: _categoryEditController
+                                      ..text = category,
+                                    decoration: InputDecoration(
+                                        labelText: "Tên lĩnh vực",
+                                        hintText: 'Nhập Tên lĩnh vực',
+                                        enabledBorder: OutlineInputBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(10),
+                                            borderSide: const BorderSide(
+                                              color: Colors.orangeAccent,
+                                              width: 1,
+                                            )),
+                                        focusedBorder: OutlineInputBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(10),
+                                            borderSide: const BorderSide(
+                                                color: Colors.orange,
+                                                width: 4))),
+                                  ),
+                                )),
+                            Container(
+                              width: 300,
+                              height: 55,
+                              padding: const EdgeInsets.all(0),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceAround,
                                 children: <Widget>[
-                                  Padding(
-                                      padding: EdgeInsets.fromLTRB(0, 0, 0, 0)),
-                                  Container(
-                                      margin:
-                                      EdgeInsets.fromLTRB(
-                                          10, 10, 10, 15),
-                                      width: 400,
-                                      child: StreamBuilder(
-                                        stream: categoryEditControl,
-                                        builder: (context, snapshot) =>TextField(
-                                          controller: _categoryEditController
-                                            ..text = category,
-                                          decoration:
-                                          InputDecoration(
-                                              labelText:
-                                              "Tên lĩnh vực",
-                                              hintText:
-                                              'Nhập Tên lĩnh vực',
-                                              enabledBorder:
-                                              OutlineInputBorder(
-                                                  borderRadius: BorderRadius.circular(10),
-                                                  borderSide: BorderSide(color:Colors.orangeAccent, width:1,)),
-                                              focusedBorder: OutlineInputBorder(
-                                                  borderRadius:
-                                                  BorderRadius.circular(
-                                                      10),
-                                                  borderSide: BorderSide(
-                                                      color: Colors.orange,
-                                                      width:
-                                                      4))),
-                                        ),
-                                      )
-                                  ),
-                                  Container(
-                                    width: 300,
-                                    height: 55,
-                                    padding: EdgeInsets.all(0),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceAround,
-                                      children: <Widget>[
-                                        Expanded(
-                                          child: ElevatedButton.icon(
-                                            style: ButtonStyle(
-                                              shape: MaterialStateProperty.all(
-                                                RoundedRectangleBorder(
-                                                  // Change your radius here
-                                                  borderRadius: BorderRadius.circular(16),
-                                                ),
-                                              ),
-                                                backgroundColor: MaterialStateProperty.all(Colors.orangeAccent)
-                                            ),
-                                            onPressed: () {
-                                              _onChangeCategoryClicked(category, index);
-                                              print('press save');
-                                            },
-                                            label: Text(
-                                              'Lưu',
-                                              style: TextStyle(
-                                                  fontSize: 16,
-                                                  color: Colors.white),
-                                            ),
-                                            icon: Icon(Icons.save_outlined),
-                                          ),
-                                        ),
-                                        Padding(padding: EdgeInsets.all(10)),
-                                        Expanded(
-                                            child: ElevatedButton.icon(
-                                              style: ButtonStyle(
-                                                shape: MaterialStateProperty.all(
-                                                  RoundedRectangleBorder(
-                                                    // Change your radius here
-                                                    borderRadius: BorderRadius.circular(16),
-                                                  ),
-                                                ),
-                                                  backgroundColor: MaterialStateProperty.all(Colors.orangeAccent)
-                                              ),
-                                                onPressed: () =>
-                                                    {Navigator.pop(context)},
-                                                label: Text(
-                                                  'Thoát',
-                                                  style: TextStyle(
-                                                      fontSize: 16,
-                                                      color: Colors.white),
-                                                ),
-                                              icon: Icon(Icons.cancel),
-                                            ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  Padding(padding: EdgeInsets.all(5)),
-                                  Container(
-                                    width: 300,
-                                    height: 45,
-                                    child: ElevatedButton(
+                                  Expanded(
+                                    child: ElevatedButton.icon(
                                       style: ButtonStyle(
-                                        backgroundColor: MaterialStateProperty.all<Color>(Colors.red),
-                                        shape: MaterialStateProperty.all(
-                                          RoundedRectangleBorder(
-                                            // Change your radius here
-                                            borderRadius: BorderRadius.circular(16),
+                                          shape: MaterialStateProperty.all(
+                                            RoundedRectangleBorder(
+                                              // Change your radius here
+                                              borderRadius:
+                                                  BorderRadius.circular(16),
+                                            ),
                                           ),
-                                        ),
-                                      ),
+                                          backgroundColor:
+                                              MaterialStateProperty.all(
+                                                  Colors.orangeAccent)),
                                       onPressed: () {
-                                        _onDeleteCategoryClicked(index);
-                                        print('press cancel account');
+                                        _onChangeCategoryClicked(
+                                            category, index);
                                       },
-                                      child: Text(
-                                        "Xóa",
+                                      label: const Text(
+                                        'Lưu',
                                         style: TextStyle(
                                             fontSize: 16,
                                             color: Colors.white),
                                       ),
+                                      icon: const Icon(Icons.save_outlined),
+                                    ),
+                                  ),
+                                  const Padding(padding: EdgeInsets.all(10)),
+                                  Expanded(
+                                    child: ElevatedButton.icon(
+                                      style: ButtonStyle(
+                                          shape: MaterialStateProperty.all(
+                                            RoundedRectangleBorder(
+                                              // Change your radius here
+                                              borderRadius:
+                                                  BorderRadius.circular(16),
+                                            ),
+                                          ),
+                                          backgroundColor:
+                                              MaterialStateProperty.all(
+                                                  Colors.orangeAccent)),
+                                      onPressed: () =>
+                                          {Navigator.pop(context)},
+                                      label: const Text(
+                                        'Thoát',
+                                        style: TextStyle(
+                                            fontSize: 16,
+                                            color: Colors.white),
+                                      ),
+                                      icon: const Icon(Icons.cancel),
                                     ),
                                   ),
                                 ],
                               ),
                             ),
-                          ),
-                        ],
+                            const Padding(padding: EdgeInsets.all(5)),
+                            SizedBox(
+                              width: 300,
+                              height: 45,
+                              child: ElevatedButton(
+                                style: ButtonStyle(
+                                  backgroundColor:
+                                      MaterialStateProperty.all<Color>(
+                                          Colors.red),
+                                  shape: MaterialStateProperty.all(
+                                    RoundedRectangleBorder(
+                                      // Change your radius here
+                                      borderRadius: BorderRadius.circular(16),
+                                    ),
+                                  ),
+                                ),
+                                onPressed: () {
+                                  _onDeleteCategoryClicked(index);
+                                },
+                                child: const Text(
+                                  "Xóa",
+                                  style: TextStyle(
+                                      fontSize: 16, color: Colors.white),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            );
+            ],
+          );
         });
-
   }
+
   _modalBottomSheetAddCategory() {
     return showModalBottomSheet(
         isScrollControlled: true,
-        constraints: BoxConstraints.loose(Size(
-            MediaQuery.of(context).size.width,
-            MediaQuery.of(context).size.height * 0.6),
+        constraints: BoxConstraints.loose(
+          Size(MediaQuery.of(context).size.width,
+              MediaQuery.of(context).size.height * 0.6),
         ),
-        shape: RoundedRectangleBorder(
+        shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.only(
             topLeft: Radius.circular(20),
             topRight: Radius.circular(20),
@@ -306,171 +293,171 @@ class _ManageCategoryState extends State<ManageCategory> {
         builder: (BuildContext context) {
           return StatefulBuilder(
               builder: (BuildContext context, StateSetter setStateKhoa) {
-                return Container(
+            return Column(
+              children: <Widget>[
+                const Padding(
+                  padding: EdgeInsets.fromLTRB(5, 20, 5, 10),
+                  child: Text(
+                    'Thêm Lĩnh vực',
+                    style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.w600,
+                        letterSpacing: 1.0),
+                  ),
+                ),
+                SingleChildScrollView(
+                  physics: const BouncingScrollPhysics(),
                   child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      Padding(
-                        padding: EdgeInsets.fromLTRB(5, 20, 5, 10),
-                        child: Text('Thêm Lĩnh vực',
-                          style: TextStyle(
-                              fontSize: 24,
-                              fontWeight: FontWeight.w600,
-                              letterSpacing: 1.0),
-                        ),
-                      ),
-                      SingleChildScrollView(
-                        physics: BouncingScrollPhysics(),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Container(
-                              height: MediaQuery.of(context).size.height * 0.5,
-                              child: SingleChildScrollView(
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  children: <Widget>[
-                                    Padding(
-                                        padding: EdgeInsets.fromLTRB(0, 0, 0, 0)),
-                                    Container(
-                                        margin:
-                                        EdgeInsets.fromLTRB(
-                                            10, 10, 10, 15),
-                                        width: 400,
-                                        child: StreamBuilder(
-                                          stream: categoryControl,
-                                          builder: (context, snapshot) =>TextField(
-                                            controller: _categoryController,
-                                            decoration:
-                                            InputDecoration(
-                                                labelText:
-                                                "Tên lĩnh vực",
-                                                hintText:
-                                                'Nhập Tên lĩnh vực',
-                                                enabledBorder:
-                                                OutlineInputBorder(
-                                                    borderRadius: BorderRadius.circular(10),
-                                                    borderSide: BorderSide(color:Colors.orangeAccent, width:1,)),
-                                                focusedBorder: OutlineInputBorder(
-                                                    borderRadius:
-                                                    BorderRadius.circular(
-                                                        10),
-                                                    borderSide: BorderSide(
-                                                        color: Colors.orange,
-                                                        width:
-                                                        4))),
-                                          ),
-                                        )
+                      SizedBox(
+                        height: MediaQuery.of(context).size.height * 0.5,
+                        child: SingleChildScrollView(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: <Widget>[
+                              const Padding(
+                                  padding: EdgeInsets.fromLTRB(0, 0, 0, 0)),
+                              Container(
+                                  margin: const EdgeInsets.fromLTRB(10, 10, 10, 15),
+                                  width: 400,
+                                  child: StreamBuilder(
+                                    stream: categoryControl,
+                                    builder: (context, snapshot) => TextField(
+                                      controller: _categoryController,
+                                      decoration: InputDecoration(
+                                          labelText: "Tên lĩnh vực",
+                                          hintText: 'Nhập Tên lĩnh vực',
+                                          enabledBorder: OutlineInputBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                              borderSide: const BorderSide(
+                                                color: Colors.orangeAccent,
+                                                width: 1,
+                                              )),
+                                          focusedBorder: OutlineInputBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                              borderSide: const BorderSide(
+                                                  color: Colors.orange,
+                                                  width: 4))),
                                     ),
-                                    Container(
-                                      width: 300,
-                                      height: 55,
-                                      padding: EdgeInsets.all(0),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                        MainAxisAlignment.spaceAround,
-                                        children: <Widget>[
-                                          Expanded(
-                                            child: ElevatedButton.icon(
-                                              style: ButtonStyle(
-                                                shape: MaterialStateProperty.all(
-                                                  RoundedRectangleBorder(
-                                                    // Change your radius here
-                                                    borderRadius: BorderRadius.circular(16),
-                                                  ),
-                                                ),
-                                                  backgroundColor: MaterialStateProperty.all(Colors.orangeAccent)
+                                  )),
+                              Container(
+                                width: 300,
+                                height: 55,
+                                padding: const EdgeInsets.all(0),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceAround,
+                                  children: <Widget>[
+                                    Expanded(
+                                      child: ElevatedButton.icon(
+                                        style: ButtonStyle(
+                                            shape: MaterialStateProperty.all(
+                                              RoundedRectangleBorder(
+                                                // Change your radius here
+                                                borderRadius:
+                                                    BorderRadius.circular(16),
                                               ),
-                                              onPressed: () {
-                                                _onAddCategoryClicked();
-                                                print('press save');
-                                              },
-                                              label: Text(
-                                                'Lưu',
-                                                style: TextStyle(
-                                                    fontSize: 16,
-                                                    color: Colors.white),
-                                              ),
-                                              icon: Icon(Icons.add),
                                             ),
-                                          ),
-                                          Padding(padding: EdgeInsets.all(10)),
-                                          Expanded(
-                                            child: ElevatedButton.icon(
-                                              style: ButtonStyle(
-                                                shape: MaterialStateProperty.all(
-                                                  RoundedRectangleBorder(
-                                                    // Change your radius here
-                                                    borderRadius: BorderRadius.circular(16),
-                                                  ),
-                                                ),
-                                                  backgroundColor: MaterialStateProperty.all(Colors.orangeAccent)
-                                              ),
-                                              onPressed: () =>
-                                              {Navigator.pop(context)},
-                                              label: Text(
-                                                'Thoát',
-                                                style: TextStyle(
-                                                    fontSize: 16,
-                                                    color: Colors.white),
-                                              ),
-                                              icon: Icon(Icons.cancel_presentation),
-                                            ),
-                                          ),
-                                        ],
+                                            backgroundColor:
+                                                MaterialStateProperty.all(
+                                                    Colors.orangeAccent)),
+                                        onPressed: () {
+                                          _onAddCategoryClicked();
+                                        },
+                                        label: const Text(
+                                          'Lưu',
+                                          style: TextStyle(
+                                              fontSize: 16,
+                                              color: Colors.white),
+                                        ),
+                                        icon: const Icon(Icons.add),
                                       ),
                                     ),
-                                    Padding(padding: EdgeInsets.all(5)),
+                                    const Padding(padding: EdgeInsets.all(10)),
+                                    Expanded(
+                                      child: ElevatedButton.icon(
+                                        style: ButtonStyle(
+                                            shape: MaterialStateProperty.all(
+                                              RoundedRectangleBorder(
+                                                // Change your radius here
+                                                borderRadius:
+                                                    BorderRadius.circular(16),
+                                              ),
+                                            ),
+                                            backgroundColor:
+                                                MaterialStateProperty.all(
+                                                    Colors.orangeAccent)),
+                                        onPressed: () =>
+                                            {Navigator.pop(context)},
+                                        label: const Text(
+                                          'Thoát',
+                                          style: TextStyle(
+                                              fontSize: 16,
+                                              color: Colors.white),
+                                        ),
+                                        icon: const Icon(Icons.cancel_presentation),
+                                      ),
+                                    ),
                                   ],
                                 ),
                               ),
-                            ),
-                          ],
+                              const Padding(padding: EdgeInsets.all(5)),
+                            ],
+                          ),
                         ),
                       ),
                     ],
                   ),
-                );
-              });
+                ),
+              ],
+            );
+          });
         });
-
   }
-  _onAddCategoryClicked(){
+
+  _onAddCategoryClicked() {
     String category = _categoryController.text;
-    list_category.add(category);
-    if(category != null && category.length != 0){
-      FirebaseFirestore.instance.collection('departments')
-          .doc(current_employee.department)
-          .update({"category": FieldValue.arrayUnion(list_category)});
+    listCategory.add(category);
+    if (category.isNotEmpty) {
+      FirebaseFirestore.instance
+          .collection('departments')
+          .doc(currentEmployee.department)
+          .update({"category": FieldValue.arrayUnion(listCategory)});
     }
   }
-  _onChangeCategoryClicked(category, index){
-    list_category[index] = _categoryEditController.text;
-    FirebaseFirestore.instance.collection('departments')
-        .doc(current_employee.department)
-        .update({"category": FieldValue.arrayUnion(list_category)});
+
+  _onChangeCategoryClicked(category, index) {
+    listCategory[index] = _categoryEditController.text;
+    FirebaseFirestore.instance
+        .collection('departments')
+        .doc(currentEmployee.department)
+        .update({"category": FieldValue.arrayUnion(listCategory)});
   }
-  _onDeleteCategoryClicked(index){
-    list_category.removeAt(index);
-    FirebaseFirestore.instance.collection('departments')
-          .doc(current_employee.department)
-          .update({"category": FieldValue.arrayUnion(list_category)});
+
+  _onDeleteCategoryClicked(index) {
+    listCategory.removeAt(index);
+    FirebaseFirestore.instance
+        .collection('departments')
+        .doc(currentEmployee.department)
+        .update({"category": FieldValue.arrayUnion(listCategory)});
   }
 
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
     return Scaffold(
-      appBar: new AppBar(
+      appBar: AppBar(
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () {
-            Navigator.push(
-                context,
-                new MaterialPageRoute(
-                    builder: (BuildContext context) =>
-                    new HomePageLeader()));
-          }
-        ),
+            icon: const Icon(Icons.arrow_back, color: Colors.white),
+            onPressed: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (BuildContext context) => const HomePageLeader()));
+            }),
         title: const Text("Quản lý lĩnh vực trong khoa"),
         backgroundColor: Colors.orangeAccent,
       ),
@@ -478,23 +465,22 @@ class _ManageCategoryState extends State<ManageCategory> {
           onPressed: () {
             _modalBottomSheetAddCategory();
           },
-          child: Icon(
+          backgroundColor: Colors.orange,
+          child: const Icon(
             Icons.add,
             size: 25,
+          )
+          //params
           ),
-          backgroundColor: Colors.orange
-        //params
-      ),
-      floatingActionButtonLocation:
-      FloatingActionButtonLocation.endFloat,
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       body: SafeArea(
         minimum: const EdgeInsets.only(left: 20, right: 10),
         child: Column(
           children: <Widget>[
             Padding(
-                padding: EdgeInsets.fromLTRB(5, 20, 5, 10),
+                padding: const EdgeInsets.fromLTRB(5, 20, 5, 10),
                 child: Text(departmentName,
-                    style: TextStyle(
+                    style: const TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.w600,
                         letterSpacing: 1.0))),
@@ -502,14 +488,15 @@ class _ManageCategoryState extends State<ManageCategory> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  Container(
+                  SizedBox(
                     height: MediaQuery.of(context).size.height * 0.78,
                     child: ListView.builder(
-                      physics: BouncingScrollPhysics(),
+                      physics: const BouncingScrollPhysics(),
                       //padding: EdgeInsets.only(),
-                      itemCount: list_category.length,
+                      itemCount: listCategory.length,
                       itemBuilder: (BuildContext context, int index) {
-                        return _buildCategory(context, list_category[index], index);
+                        return _buildCategory(
+                            context, listCategory[index], index);
                       },
                     ),
                   ),

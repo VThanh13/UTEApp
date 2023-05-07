@@ -1,32 +1,29 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:myapp/src/resources/register_page.dart';
-import 'package:myapp/src/resources/home_page.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:cupertino_icons/cupertino_icons.dart';
+
 import '../../../utils/color_utils.dart';
-import '../../app.dart';
 import '../../blocs/auth_bloc.dart';
 import '../../reusable_widgets/reusable_widget.dart';
 import '../dialog/loading_dialog.dart';
 import '../dialog/msg_dialog.dart';
-import '../home_page.dart';
 import 'home_page_admin.dart';
 
 class LoginAdmin extends StatefulWidget {
+  const LoginAdmin({super.key});
+
   @override
-  _LoginAdminState createState() => _LoginAdminState();
+  State<LoginAdmin> createState() => _LoginAdminState();
 }
+
 FirebaseAuth auth = FirebaseAuth.instance;
 
 class _LoginAdminState extends State<LoginAdmin> {
-  AuthBloc authBloc = new AuthBloc();
+  AuthBloc authBloc = AuthBloc();
 
-  TextEditingController _emailController = new TextEditingController();
-  TextEditingController _passController = new TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passController = TextEditingController();
 
   @override
   void dispose() {
@@ -41,7 +38,7 @@ class _LoginAdminState extends State<LoginAdmin> {
         body: SafeArea(
             child: Container(
                 //padding: EdgeInsets.fromLTRB(30, 0, 30, 0),
-                constraints: BoxConstraints.expand(),
+                constraints: const BoxConstraints.expand(),
                 // color: Colors.white,
                 width: MediaQuery.of(context).size.width,
                 height: MediaQuery.of(context).size.height,
@@ -53,57 +50,59 @@ class _LoginAdminState extends State<LoginAdmin> {
                 ], begin: Alignment.topCenter, end: Alignment.bottomCenter)),
                 child: SingleChildScrollView(
                     child: Padding(
-                  padding: EdgeInsets.fromLTRB(
-                      20, 10, 20, 50),
+                  padding: const EdgeInsets.fromLTRB(20, 10, 20, 50),
                   child: Column(children: <Widget>[
                     logoWidget("assets/ute_logo.png"),
                     Padding(
-                      padding: EdgeInsets.fromLTRB(0, 20, 0, 20),
+                      padding: const EdgeInsets.fromLTRB(0, 20, 0, 20),
                       child: StreamBuilder(
-                          stream: authBloc.emailStream,
-                          builder: (context, snapshot) => TextField(
-                                controller: _emailController,
-                                style: TextStyle(
-                                    fontSize: 25, color: Colors.white),
-                                decoration: InputDecoration(
-                                    labelText: "Email",
-                                    errorText: snapshot.hasError
-                                        ? snapshot.error.toString()
-                                        : null,
-                                    prefixIcon: Container(
-                                        width: 50,
-                                        child: Icon(Icons.person_outline)),
-                                    border: OutlineInputBorder(
-                                        borderSide: BorderSide(
-                                            color: Colors.white, width: 1),
-                                        borderRadius: BorderRadius.all(
-                                            Radius.circular(6)))),
-                              )),
+                        stream: authBloc.emailStream,
+                        builder: (context, snapshot) => TextField(
+                          controller: _emailController,
+                          style: const TextStyle(
+                              fontSize: 25, color: Colors.white),
+                          decoration: InputDecoration(
+                            labelText: "Email",
+                            errorText: snapshot.hasError
+                                ? snapshot.error.toString()
+                                : null,
+                            prefixIcon: const SizedBox(
+                                width: 50, child: Icon(Icons.person_outline)),
+                            border: const OutlineInputBorder(
+                              borderSide:
+                                  BorderSide(color: Colors.white, width: 1),
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(6),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
                     ),
                     StreamBuilder(
                         stream: authBloc.passStream,
                         builder: (context, snapshot) => TextField(
-                          obscureText: true,
-                          obscuringCharacter: "*",
+                              obscureText: true,
+                              obscuringCharacter: "*",
                               controller: _passController,
                               style:
-                                  TextStyle(fontSize: 25, color: Colors.white),
+                                  const TextStyle(fontSize: 25, color: Colors.white),
                               decoration: InputDecoration(
                                   labelText: "Mật khẩu",
                                   errorText: snapshot.hasError
                                       ? snapshot.error.toString()
                                       : null,
-                                  prefixIcon: Container(
+                                  prefixIcon: const SizedBox(
                                       width: 50,
                                       child: Icon(Icons.lock_outline)),
-                                  border: OutlineInputBorder(
+                                  border: const OutlineInputBorder(
                                       borderSide: BorderSide(
                                           color: Colors.white, width: 1),
                                       borderRadius: BorderRadius.all(
                                           Radius.circular(6)))),
                             )),
                     Padding(
-                      padding: EdgeInsets.fromLTRB(0, 30, 0, 40),
+                      padding: const EdgeInsets.fromLTRB(0, 30, 0, 40),
                       child: SizedBox(
                         width: double.infinity,
                         height: 52,
@@ -112,44 +111,37 @@ class _LoginAdminState extends State<LoginAdmin> {
                           style: ElevatedButton.styleFrom(
                             primary: Colors.lightBlueAccent,
                           ),
-                          child: Text(
+                          child: const Text(
                             "Đăng nhập",
                             style: TextStyle(color: Colors.white, fontSize: 20),
                           ),
                         ),
                       ),
                     ),
-
                   ]),
                 )))));
   }
 
   _onLoginClick() {
-    var isValid = authBloc.isValid_Login(
-        _emailController.text, _passController.text);
+    var isValid =
+        authBloc.isValidLogin(_emailController.text, _passController.text);
     if (isValid) {
       LoadingDialog.showLoadingDialog(context, "loading...");
-      authBloc.signIn(_emailController.text, _passController.text,
-              () async {
-                var userr = FirebaseAuth.instance.currentUser!;
-                var snapshot = await FirebaseFirestore.instance
-                    .collection('admin')
-                    .where('id', isEqualTo: userr.uid)
-                    .get();
-                if(snapshot.docs!= null && snapshot.docs.isNotEmpty){
-                  LoadingDialog.hideLoadingDialog(context);
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => HomePageAdmin()));
-                }
-                else(){
-                  print("Bạn không có quyền truy cập!");
-                  // LoadingDialog.hideLoadingDialog(context);
-                  // MsgDialog.showMsgDialog(context, "Sign-In", "Bạn không có quyền truy cập!");
-                };
-          }, (msg) {
-            LoadingDialog.hideLoadingDialog(context);
-            MsgDialog.showMsgDialog(context, "Sign-In", msg);
-          });
+      authBloc.signIn(_emailController.text, _passController.text, () async {
+        var userR = FirebaseAuth.instance.currentUser!;
+        var snapshot = await FirebaseFirestore.instance
+            .collection('admin')
+            .where('id', isEqualTo: userR.uid)
+            .get();
+        if (snapshot.docs.isNotEmpty) {
+          LoadingDialog.hideLoadingDialog(context);
+          Navigator.push(context,
+              MaterialPageRoute(builder: (context) => HomePageAdmin()));
+        } else{}
+      }, (msg) {
+        LoadingDialog.hideLoadingDialog(context);
+        MsgDialog.showMsgDialog(context, "Sign-In", msg);
+      });
     }
   }
 }

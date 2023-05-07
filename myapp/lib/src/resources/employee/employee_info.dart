@@ -10,35 +10,36 @@ import 'package:permission_handler/permission_handler.dart';
 
 import '../../blocs/auth_bloc.dart';
 import '../../models/EmployeeModel.dart';
-import '../../models/UserModel.dart';
 import '../dialog/loading_dialog.dart';
 import '../home_page.dart';
 import '../manager/home_page_manager.dart';
 import 'home_page_employee.dart';
 
 class EmployeeInfo extends StatefulWidget {
+  const EmployeeInfo({super.key});
+
   @override
-  _MyInfoState createState() => new _MyInfoState();
+  State<EmployeeInfo> createState() => _MyInfoState();
 }
 
 class _MyInfoState extends State<EmployeeInfo> {
-  AuthBloc authBloc = new AuthBloc();
-  var user_auth = FirebaseAuth.instance.currentUser!;
-  TextEditingController _nameController = new TextEditingController();
-  TextEditingController _phoneController = new TextEditingController();
-  TextEditingController _emailController = new TextEditingController();
-  TextEditingController _passwordController = new TextEditingController();
-  TextEditingController _passController = new TextEditingController();
-  TextEditingController _passnew1Controller = new TextEditingController();
-  TextEditingController _passnew2Controller = new TextEditingController();
+  AuthBloc authBloc = AuthBloc();
+  var userAuth = FirebaseAuth.instance.currentUser!;
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _phoneController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _passController = TextEditingController();
+  final TextEditingController _passNew1Controller = TextEditingController();
+  final TextEditingController _passNew2Controller = TextEditingController();
 
-  StreamController _nameControll = new StreamController.broadcast();
-  StreamController _phoneControll = new StreamController.broadcast();
-  StreamController _emailControll = new StreamController.broadcast();
-  StreamController _passwordControll = new StreamController.broadcast();
-  StreamController _passControll = new StreamController.broadcast();
-  StreamController _passnew1Controll = new StreamController.broadcast();
-  StreamController _passnew2Controll = new StreamController.broadcast();
+  final StreamController _nameControll = StreamController.broadcast();
+  final StreamController _phoneControll = StreamController.broadcast();
+  final StreamController _emailControll = StreamController.broadcast();
+  final StreamController _passwordControll = StreamController.broadcast();
+  final StreamController _passControll = StreamController.broadcast();
+  final StreamController _passnew1Controll = StreamController.broadcast();
+  final StreamController _passnew2Controll = StreamController.broadcast();
 
   Stream get emailStream => _emailControll.stream;
   Stream get nameStream => _nameControll.stream;
@@ -49,19 +50,19 @@ class _MyInfoState extends State<EmployeeInfo> {
   Stream get passnew2Stream => _passnew2Controll.stream;
 
   bool isValid(String name, String email, String phone) {
-    if (name == null || name.length == 0) {
+    if (name.isEmpty) {
       _nameControll.sink.addError("Nhập tên");
       return false;
     }
     _nameControll.sink.add("");
 
-    if (email == null || email.length == 0) {
+    if (email.isEmpty) {
       _emailControll.sink.addError("Nhập email");
       return false;
     }
     _emailControll.sink.add("");
 
-    if (phone == null || phone.length == 0) {
+    if (phone.isEmpty) {
       _phoneControll.sink.addError("Nhập số điện thoại");
       return false;
     }
@@ -71,22 +72,22 @@ class _MyInfoState extends State<EmployeeInfo> {
   }
 
   bool isValidChangePass(
-      String pass, String passnew1, String passnew2, String password) {
-    if (pass == null || pass.length == 0) {
+      String pass, String passNew1, String passNew2, String password) {
+    if (pass.isEmpty) {
       _passControll.sink.addError("Nhập password");
       return false;
     }
-    if (passnew1 == null || passnew1.length == 0) {
+    if (passNew1.isEmpty) {
       _passnew1Controll.sink.addError("Nhập mật khẩu mới");
       return false;
     }
 
-    if (passnew2 == null || passnew2.length == 0) {
+    if (passNew2.isEmpty) {
       _passnew2Controll.sink.addError("Xác nhận mật khẩu");
       return false;
     }
 
-    if (passnew1 != passnew2) {
+    if (passNew1 != passNew2) {
       _passnew2Controll.sink.addError("Mật khẩu không trùng khớp");
       return false;
     }
@@ -98,10 +99,10 @@ class _MyInfoState extends State<EmployeeInfo> {
     return true;
   }
 
+  @override
   void dispose() {
     _nameControll.close();
     _emailControll.close();
-
     _phoneControll.close();
     _passwordControll.close();
     _passControll.close();
@@ -111,27 +112,27 @@ class _MyInfoState extends State<EmployeeInfo> {
   }
 
   FirebaseAuth auth = FirebaseAuth.instance;
-  var userr = FirebaseAuth.instance.currentUser!;
-  EmployeeModel current_employee =
-      new EmployeeModel("", "", "", "", "", "", "", "", "", "");
+  var userR = FirebaseAuth.instance.currentUser!;
+  EmployeeModel currentEmployee =
+      EmployeeModel("", "", "", "", "", "", "", "", "", "");
   String departmentName = "";
   getEmployee() async {
     await FirebaseFirestore.instance
         .collection('employee')
-        .where('id', isEqualTo: userr.uid)
+        .where('id', isEqualTo: userR.uid)
         .get()
         .then((value) => {
               //setState((){
-      current_employee.id = value.docs.first['id'],
-      current_employee.name = value.docs.first['name'],
-      current_employee.email = value.docs.first['email'],
-      current_employee.image = value.docs.first['image'],
-      current_employee.password = value.docs.first['password'],
-      current_employee.phone = value.docs.first['phone'],
-      current_employee.department = value.docs.first['department'],
-      current_employee.category = value.docs.first['category'],
-      current_employee.roles = value.docs.first['roles'],
-      current_employee.status = value.docs.first['status']
+              currentEmployee.id = value.docs.first['id'],
+              currentEmployee.name = value.docs.first['name'],
+              currentEmployee.email = value.docs.first['email'],
+              currentEmployee.image = value.docs.first['image'],
+              currentEmployee.password = value.docs.first['password'],
+              currentEmployee.phone = value.docs.first['phone'],
+              currentEmployee.department = value.docs.first['department'],
+              currentEmployee.category = value.docs.first['category'],
+              currentEmployee.roles = value.docs.first['roles'],
+              currentEmployee.status = value.docs.first['status']
               //})
             });
 
@@ -141,7 +142,7 @@ class _MyInfoState extends State<EmployeeInfo> {
   getDepartmentName() async {
     var snapshot = await FirebaseFirestore.instance
         .collection('departments')
-        .where('id', isEqualTo: current_employee.department)
+        .where('id', isEqualTo: currentEmployee.department)
         .get()
         .then((value) => {
               setState(() {
@@ -162,49 +163,50 @@ class _MyInfoState extends State<EmployeeInfo> {
     return FutureBuilder<QuerySnapshot>(
         future: FirebaseFirestore.instance
             .collection("employee")
-            .where("id", isEqualTo: userr.uid)
+            .where("id", isEqualTo: userR.uid)
             .get(),
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
-            return Center(
-              child: Container(
+            return const Center(
+              child: SizedBox(
                   width: 20, height: 20, child: CircularProgressIndicator()),
             );
           }
           snapshot.data!.docs.map((e) {
             //getDepartmentName(setState);
-            return current_employee;
+            return currentEmployee;
           }).toString();
           // TODO: implement build
-          return new Scaffold(
-            appBar: new AppBar(
+          return Scaffold(
+            appBar: AppBar(
               leading: IconButton(
-                  icon: Icon(Icons.arrow_back, color: Colors.white),
+                  icon: const Icon(Icons.arrow_back, color: Colors.white),
                   onPressed: () {
-                    if(current_employee.roles=="Tư vấn viên"){
+                    if (currentEmployee.roles == "Tư vấn viên") {
                       Navigator.push(
                           context,
-                          new MaterialPageRoute(
+                          MaterialPageRoute(
                               builder: (BuildContext context) =>
-                              new HomePageEmployee()));
-                    }
-                    else if(current_employee.roles=="Trưởng nhóm"){
+                                  HomePageEmployee()));
+                    } else if (currentEmployee.roles == "Trưởng nhóm") {
                       Navigator.push(
-                          context,
-                          new MaterialPageRoute(
-                              builder: (BuildContext context) =>
-                              new HomePageLeader()));
-                    }
-                    else if(current_employee.roles=="Manager"){
+                        context,
+                        MaterialPageRoute(
+                          builder: (BuildContext context) =>
+                              const HomePageLeader(),
+                        ),
+                      );
+                    } else if (currentEmployee.roles == "Manager") {
                       Navigator.push(
-                          context,
-                          new MaterialPageRoute(
-                              builder: (BuildContext context) =>
-                              new HomePageManager()));
+                        context,
+                        MaterialPageRoute(
+                          builder: (BuildContext context) =>
+                              const HomePageManager(),
+                        ),
+                      );
                     }
-                  }
-              ),
-              title: new Text('Thông tin cá nhân'),
+                  }),
+              title: const Text('Thông tin cá nhân'),
               backgroundColor: Colors.orangeAccent,
             ),
             body: SafeArea(
@@ -213,23 +215,24 @@ class _MyInfoState extends State<EmployeeInfo> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: <Widget>[
-                    Padding(padding: EdgeInsets.fromLTRB(0, 10, 0, 0)),
+                    const Padding(padding: EdgeInsets.fromLTRB(0, 10, 0, 0)),
                     Container(
-                      margin: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                      margin: const EdgeInsets.fromLTRB(0, 0, 0, 0),
                       height: 150,
                       child: Center(
                         child: Stack(
                           children: [
-                            new CircleAvatar(
+                            CircleAvatar(
                               radius: 52,
                               backgroundColor: Colors.tealAccent,
                               child: CircleAvatar(
                                 backgroundImage:
-                                    new NetworkImage(current_employee.image!),
+                                    NetworkImage(currentEmployee.image!),
                                 radius: 50,
                               ),
                             ),
-                            Padding(padding: EdgeInsets.fromLTRB(0, 0, 0, 0)),
+                            const Padding(
+                                padding: EdgeInsets.fromLTRB(0, 0, 0, 0)),
                             Positioned(
                               bottom: 0,
                               right: 0,
@@ -249,8 +252,9 @@ class _MyInfoState extends State<EmployeeInfo> {
                                   onPressed: () {
                                     uploadImage();
                                   },
-                                  padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
-                                  icon: Icon(
+                                  padding:
+                                      const EdgeInsets.fromLTRB(0, 0, 0, 0),
+                                  icon: const Icon(
                                     Icons.edit,
                                     color: Colors.white,
                                   ),
@@ -261,82 +265,91 @@ class _MyInfoState extends State<EmployeeInfo> {
                         ),
                       ),
                     ),
-                    Padding(padding: EdgeInsets.fromLTRB(0, 0, 0, 20)),
+                    const Padding(padding: EdgeInsets.fromLTRB(0, 0, 0, 20)),
                     Text(
-                      current_employee.roles!,
-                      style: TextStyle(
+                      currentEmployee.roles!,
+                      style: const TextStyle(
                         fontSize: 15,
                         fontWeight: FontWeight.w200,
                       ),
                     ),
                     Text(
-                      current_employee.name!,
-                      style: TextStyle(
+                      currentEmployee.name!,
+                      style: const TextStyle(
                         fontSize: 25,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
-                    Padding(padding: EdgeInsets.fromLTRB(0, 0, 0, 10)),
+                    const Padding(padding: EdgeInsets.fromLTRB(0, 0, 0, 10)),
                     Container(
-                        margin: EdgeInsets.fromLTRB(0, 20, 0, 15),
-                        width: 400,
-                        child: StreamBuilder(
-                          stream: nameStream,
-                          builder: (context, snapshot) => TextField(
-                            controller: _nameController
-                              ..text = current_employee.name!,
-                            onChanged: (text) => {},
-                            decoration: InputDecoration(
-                                labelText: "Tên của bạn",
-                                errorText: snapshot.hasError
-                                    ? snapshot.error.toString()
-                                    : null,
-                                enabledBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(10),
-                                    borderSide: BorderSide(
-                                      color: Colors.orangeAccent,
-                                      width: 1,
-                                    )),
-                                focusedBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(10),
-                                    borderSide: BorderSide(
-                                        color: Colors.orange, width: 4))),
+                      margin: const EdgeInsets.fromLTRB(0, 20, 0, 15),
+                      width: 400,
+                      child: StreamBuilder(
+                        stream: nameStream,
+                        builder: (context, snapshot) => TextField(
+                          controller: _nameController
+                            ..text = currentEmployee.name!,
+                          onChanged: (text) => {},
+                          decoration: InputDecoration(
+                            labelText: "Tên của bạn",
+                            errorText: snapshot.hasError
+                                ? snapshot.error.toString()
+                                : null,
+                            enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10),
+                                borderSide: const BorderSide(
+                                  color: Colors.orangeAccent,
+                                  width: 1,
+                                )),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                              borderSide: const BorderSide(
+                                color: Colors.orange,
+                                width: 4,
+                              ),
+                            ),
                           ),
-                        )),
+                        ),
+                      ),
+                    ),
                     Container(
-                        margin: EdgeInsets.fromLTRB(0, 20, 0, 15),
+                        margin: const EdgeInsets.fromLTRB(0, 20, 0, 15),
                         width: 400,
                         child: StreamBuilder(
                           stream: phoneStream,
                           builder: (context, snapshot) => TextField(
                             controller: _phoneController
-                              ..text = current_employee.phone!,
+                              ..text = currentEmployee.phone!,
                             onChanged: (text) => {},
                             decoration: InputDecoration(
-                                labelText: "SĐT của bạn",
-                                errorText: snapshot.hasError
-                                    ? snapshot.error.toString()
-                                    : null,
-                                enabledBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(10),
-                                    borderSide: BorderSide(
-                                      color: Colors.orangeAccent,
-                                      width: 1,
-                                    )),
-                                focusedBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(10),
-                                    borderSide: BorderSide(
-                                        color: Colors.orange, width: 4))),
+                              labelText: "SĐT của bạn",
+                              errorText: snapshot.hasError
+                                  ? snapshot.error.toString()
+                                  : null,
+                              enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                  borderSide: const BorderSide(
+                                    color: Colors.orangeAccent,
+                                    width: 1,
+                                  )),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10),
+                                borderSide: const BorderSide(
+                                  color: Colors.orange,
+                                  width: 4,
+                                ),
+                              ),
+                            ),
                           ),
                         )),
                     Container(
-                        margin: EdgeInsets.fromLTRB(0, 20, 0, 15),
+                        margin: const EdgeInsets.fromLTRB(0, 20, 0, 15),
                         width: 400,
                         child: StreamBuilder(
                           stream: emailStream,
                           builder: (context, snapshot) => TextField(
                             controller: _emailController
-                              ..text = current_employee.email!,
+                              ..text = currentEmployee.email!,
                             onChanged: (text) => {},
                             decoration: InputDecoration(
                                 labelText: "Email của bạn",
@@ -345,43 +358,45 @@ class _MyInfoState extends State<EmployeeInfo> {
                                     : null,
                                 enabledBorder: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(10),
-                                    borderSide: BorderSide(
+                                    borderSide: const BorderSide(
                                       color: Colors.orangeAccent,
                                       width: 1,
                                     )),
                                 focusedBorder: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(10),
-                                    borderSide: BorderSide(
+                                    borderSide: const BorderSide(
                                         color: Colors.orange, width: 4))),
                           ),
                         )),
                     Container(
-                      margin: EdgeInsets.fromLTRB(0, 20, 0, 15),
+                      margin: const EdgeInsets.fromLTRB(0, 20, 0, 15),
                       width: 400,
                       child: StreamBuilder(
                         stream: passwordStream,
                         builder: (context, snapshot) => TextField(
                           readOnly: true,
                           controller: _passwordController
-                            ..text = current_employee.password!,
+                            ..text = currentEmployee.password!,
                           onChanged: (text) => {},
                           decoration: InputDecoration(
-                              labelText: "Mật khẩu của bạn",
-                              enabledBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                  borderSide: BorderSide(
-                                    color: Colors.orangeAccent,
-                                    width: 1,
-                                  )),
-                              focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                  borderSide: BorderSide(
-                                      color: Colors.orange, width: 4))),
+                            labelText: "Mật khẩu của bạn",
+                            enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10),
+                                borderSide: const BorderSide(
+                                  color: Colors.orangeAccent,
+                                  width: 1,
+                                )),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                              borderSide: const BorderSide(
+                                  color: Colors.orange, width: 4),
+                            ),
+                          ),
                         ),
                       ),
                     ),
                     Container(
-                      margin: EdgeInsets.fromLTRB(0, 20, 0, 15),
+                      margin: const EdgeInsets.fromLTRB(0, 20, 0, 15),
                       width: 400,
                       child: TextField(
                         readOnly: true,
@@ -389,250 +404,243 @@ class _MyInfoState extends State<EmployeeInfo> {
                           ..text = departmentName,
                         onChanged: (text) => {},
                         decoration: InputDecoration(
-                            labelText: "Khoa của bạn",
-                            enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10),
-                                borderSide: BorderSide(
-                                  color: Colors.orangeAccent,
-                                  width: 1,
-                                )),
-                            focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10),
-                                borderSide:
-                                    BorderSide(color: Colors.orange, width: 4))),
+                          labelText: "Khoa của bạn",
+                          enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                              borderSide: const BorderSide(
+                                color: Colors.orangeAccent,
+                                width: 1,
+                              )),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                            borderSide: const BorderSide(
+                              color: Colors.orange,
+                              width: 4,
+                            ),
+                          ),
+                        ),
                       ),
                     ),
                     Container(
-                      padding: EdgeInsets.all(10),
+                      padding: const EdgeInsets.all(10),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: <Widget>[
                           Expanded(
                             child: ElevatedButton.icon(
                               onPressed: () {
-                                print('press save');
                                 _onSaveClicked();
                               },
-                              label: Text(
+                              label: const Text(
                                 'Lưu',
                                 style: TextStyle(
                                     fontSize: 16, color: Colors.white),
                               ),
-                              icon: Icon(Icons.save_outlined),
+                              icon: const Icon(Icons.save_outlined),
                               style: ElevatedButton.styleFrom(
-                                primary: Colors.orangeAccent
-                              ),
+                                  primary: Colors.orangeAccent),
                             ),
                           ),
-                          Padding(padding: EdgeInsets.all(10)),
+                          const Padding(padding: EdgeInsets.all(10)),
                           Expanded(
                               child: ElevatedButton.icon(
-                                onPressed: () {
-                                  showModalBottomSheet(
-                                      shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.only(
-                                            topLeft: Radius.circular(20),
-                                            topRight: Radius.circular(20),
-                                          )),
-                                      context: context,
-                                      builder: (BuildContext context) {
-                                        return SingleChildScrollView(
-                                          child: Column(
-                                            children: <Widget>[
-                                              Padding(
-                                                  padding:
-                                                  EdgeInsets.fromLTRB(
-                                                      0, 10, 0, 15)),
-                                              Text(
-                                                "Đổi mật khẩu",
-                                                style: TextStyle(
-                                                    fontSize: 15,
-                                                    fontWeight:
-                                                    FontWeight.bold),
-                                              ),
-                                              Container(
-                                                margin: EdgeInsets.fromLTRB(
-                                                    15, 10, 15, 15),
-                                                width: 400,
-                                                child: StreamBuilder(
-                                                  stream: passStream,
-                                                  builder:
-                                                      (context, snapshot) =>
-                                                      TextField(
-                                                        decoration:
-                                                        InputDecoration(
-                                                            labelText:
-                                                            "Mật khẩu",
-                                                            hintText:
-                                                            'Nhập mật khẩu của bạn',
-                                                            enabledBorder:
-                                                            OutlineInputBorder(
-                                                                borderRadius:
-                                                                BorderRadius.circular(
-                                                                    10),
-                                                                borderSide:
-                                                                BorderSide(
-                                                                  color: Colors.orangeAccent,
-                                                                  width:
-                                                                  1,
-                                                                )),
-                                                            focusedBorder: OutlineInputBorder(
-                                                                borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                    10),
-                                                                borderSide: BorderSide(
-                                                                    color: Colors.orange,
-                                                                    width:
-                                                                    4))),
-                                                        controller:
-                                                        _passController,
-                                                      ),
-                                                ),
-                                              ),
-                                              Container(
-                                                margin: EdgeInsets.fromLTRB(
-                                                    15, 10, 15, 15),
-                                                width: 400,
-                                                child: StreamBuilder(
-                                                  stream: passnew1Stream,
-                                                  builder:
-                                                      (context, snapshot) =>
-                                                      TextField(
-                                                        decoration:
-                                                        InputDecoration(
-                                                            labelText:
-                                                            "Mật khẩu mới",
-                                                            hintText:
-                                                            'Nhập mật khẩu mới của bạn',
-                                                            enabledBorder:
-                                                            OutlineInputBorder(
-                                                                borderRadius:
-                                                                BorderRadius.circular(
-                                                                    10),
-                                                                borderSide:
-                                                                BorderSide(
-                                                                  color: Colors.orangeAccent,
-                                                                  width:
-                                                                  1,
-                                                                )),
-                                                            focusedBorder: OutlineInputBorder(
-                                                                borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                    10),
-                                                                borderSide: BorderSide(
-                                                                    color: Colors
-                                                                        .orange,
-                                                                    width:
-                                                                    4))),
-                                                        controller:
-                                                        _passnew1Controller,
-                                                      ),
-                                                ),
-                                              ),
-                                              Container(
-                                                margin: EdgeInsets.fromLTRB(
-                                                    15, 10, 15, 15),
-                                                width: 400,
-                                                child: StreamBuilder(
-                                                  stream: passnew2Stream,
-                                                  builder:
-                                                      (context, snapshot) =>
-                                                      TextField(
-                                                        decoration:
-                                                        InputDecoration(
-                                                            labelText:
-                                                            "Xác nhận mật khẩu",
-                                                            hintText:
-                                                            'Nhập lại mật khẩu của bạn',
-                                                            enabledBorder:
-                                                            OutlineInputBorder(
-                                                                borderRadius:
-                                                                BorderRadius.circular(
-                                                                    10),
-                                                                borderSide:
-                                                                BorderSide(
-                                                                  color: Colors.orangeAccent,
-                                                                  width:
-                                                                  1,
-                                                                )),
-                                                            focusedBorder: OutlineInputBorder(
-                                                                borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                    10),
-                                                                borderSide: BorderSide(
-                                                                    color: Colors.orange,
-                                                                    width:
-                                                                    4))),
-                                                        controller:
-                                                        _passnew2Controller,
-                                                      ),
-                                                ),
-                                              ),
-                                              Container(
-                                                padding: EdgeInsets.all(10),
-                                                child: Row(
-                                                  mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceAround,
-                                                  children: <Widget>[
-                                                    Expanded(
-                                                      child: ElevatedButton.icon(
-                                                        onPressed: () {
-                                                          _onChangePassword();
-                                                          print('press save');
-                                                        },
-                                                        label: Text(
-                                                          'Lưu',
-                                                          style: TextStyle(
-                                                              fontSize: 16,
-                                                              color: Colors
-                                                                  .white),
-                                                        ),
-                                                        icon: Icon(Icons.check),
-                                                        style: ElevatedButton.styleFrom(
-                                                            primary: Colors.orangeAccent
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    Padding(
-                                                        padding:
-                                                        EdgeInsets.all(
-                                                            10)),
-                                                    Expanded(
-                                                        child: ElevatedButton.icon(
-                                                          onPressed: () => {
-                                                            Navigator.pop(
-                                                                context)
-                                                          },
-                                                          label: Text(
-                                                            'Thoát',
-                                                            style: TextStyle(
-                                                                fontSize:
-                                                                16,
-                                                                color: Colors
-                                                                    .white),
-                                                          ),
-                                                          icon: Icon(Icons.cancel_outlined),
-                                                          style: ElevatedButton.styleFrom(
-                                                              primary: Colors.orangeAccent
-                                                          ),)),
-                                                  ],
-                                                ),
-                                              )
-                                            ],
+                            onPressed: () {
+                              showModalBottomSheet(
+                                  shape: const RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.only(
+                                      topLeft: Radius.circular(20),
+                                      topRight: Radius.circular(20),
+                                    ),
+                                  ),
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return SingleChildScrollView(
+                                      child: Column(
+                                        children: <Widget>[
+                                          const Padding(
+                                              padding: EdgeInsets.fromLTRB(
+                                                  0, 10, 0, 15)),
+                                          const Text(
+                                            "Đổi mật khẩu",
+                                            style: TextStyle(
+                                                fontSize: 15,
+                                                fontWeight: FontWeight.bold),
                                           ),
-                                        );
-                                      });
-                                },
-                                label: const Text('Đổi mật khẩu'),
-                                icon: Icon(Icons.security_rounded),
-                                style: ElevatedButton.styleFrom(
-                                    primary: Colors.orangeAccent
-                                ),
-                              )),
+                                          Container(
+                                            margin: const EdgeInsets.fromLTRB(
+                                                15, 10, 15, 15),
+                                            width: 400,
+                                            child: StreamBuilder(
+                                              stream: passStream,
+                                              builder: (context, snapshot) =>
+                                                  TextField(
+                                                decoration: InputDecoration(
+                                                  labelText: "Mật khẩu",
+                                                  hintText:
+                                                      'Nhập mật khẩu của bạn',
+                                                  enabledBorder:
+                                                      OutlineInputBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            10),
+                                                    borderSide:
+                                                        const BorderSide(
+                                                      color:
+                                                          Colors.orangeAccent,
+                                                      width: 1,
+                                                    ),
+                                                  ),
+                                                  focusedBorder:
+                                                      OutlineInputBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            10),
+                                                    borderSide:
+                                                        const BorderSide(
+                                                      color: Colors.orange,
+                                                      width: 4,
+                                                    ),
+                                                  ),
+                                                ),
+                                                controller: _passController,
+                                              ),
+                                            ),
+                                          ),
+                                          Container(
+                                            margin: const EdgeInsets.fromLTRB(
+                                                15, 10, 15, 15),
+                                            width: 400,
+                                            child: StreamBuilder(
+                                              stream: passnew1Stream,
+                                              builder: (context, snapshot) =>
+                                                  TextField(
+                                                decoration: InputDecoration(
+                                                    labelText: "Mật khẩu mới",
+                                                    hintText:
+                                                        'Nhập mật khẩu mới của bạn',
+                                                    enabledBorder:
+                                                        OutlineInputBorder(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        10),
+                                                            borderSide:
+                                                                const BorderSide(
+                                                              color: Colors
+                                                                  .orangeAccent,
+                                                              width: 1,
+                                                            )),
+                                                    focusedBorder: OutlineInputBorder(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(10),
+                                                        borderSide:
+                                                            const BorderSide(
+                                                                color: Colors
+                                                                    .orange,
+                                                                width: 4))),
+                                                controller: _passNew1Controller,
+                                              ),
+                                            ),
+                                          ),
+                                          Container(
+                                            margin: const EdgeInsets.fromLTRB(
+                                                15, 10, 15, 15),
+                                            width: 400,
+                                            child: StreamBuilder(
+                                              stream: passnew2Stream,
+                                              builder: (context, snapshot) =>
+                                                  TextField(
+                                                decoration: InputDecoration(
+                                                  labelText:
+                                                      "Xác nhận mật khẩu",
+                                                  hintText:
+                                                      'Nhập lại mật khẩu của bạn',
+                                                  enabledBorder:
+                                                      OutlineInputBorder(
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(10),
+                                                          borderSide:
+                                                              const BorderSide(
+                                                            color: Colors
+                                                                .orangeAccent,
+                                                            width: 1,
+                                                          )),
+                                                  focusedBorder:
+                                                      OutlineInputBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            10),
+                                                    borderSide:
+                                                        const BorderSide(
+                                                      color: Colors.orange,
+                                                      width: 4,
+                                                    ),
+                                                  ),
+                                                ),
+                                                controller: _passNew2Controller,
+                                              ),
+                                            ),
+                                          ),
+                                          Container(
+                                            padding: const EdgeInsets.all(10),
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.spaceAround,
+                                              children: <Widget>[
+                                                Expanded(
+                                                  child: ElevatedButton.icon(
+                                                    onPressed: () {
+                                                      _onChangePassword();
+                                                    },
+                                                    label: const Text(
+                                                      'Lưu',
+                                                      style: TextStyle(
+                                                          fontSize: 16,
+                                                          color: Colors.white),
+                                                    ),
+                                                    icon: const Icon(Icons.check),
+                                                    style: ElevatedButton
+                                                        .styleFrom(
+                                                            primary: Colors
+                                                                .orangeAccent),
+                                                  ),
+                                                ),
+                                                const Padding(
+                                                    padding:
+                                                        EdgeInsets.all(10)),
+                                                Expanded(
+                                                    child: ElevatedButton.icon(
+                                                  onPressed: () =>
+                                                      {Navigator.pop(context)},
+                                                  label: const Text(
+                                                    'Thoát',
+                                                    style: TextStyle(
+                                                        fontSize: 16,
+                                                        color: Colors.white),
+                                                  ),
+                                                  icon: const Icon(
+                                                      Icons.cancel_outlined),
+                                                  style:
+                                                      ElevatedButton.styleFrom(
+                                                          primary: Colors
+                                                              .orangeAccent),
+                                                ),
+                                                ),
+                                              ],
+                                            ),
+                                          )
+                                        ],
+                                      ),
+                                    );
+                                  });
+                            },
+                            label: const Text('Đổi mật khẩu'),
+                            icon: const Icon(Icons.security_rounded),
+                            style: ElevatedButton.styleFrom(
+                                primary: Colors.orangeAccent),
+                          )),
                         ],
                       ),
                     ),
@@ -663,17 +671,17 @@ class _MyInfoState extends State<EmployeeInfo> {
   _onChangePassword() {
     var isvalid = isValidChangePass(
         _passController.text,
-        _passnew1Controller.text,
-        _passnew2Controller.text,
+        _passNew1Controller.text,
+        _passNew2Controller.text,
         _passwordController.text);
 
     if (isvalid) {
       LoadingDialog.showLoadingDialog(context, "loading...");
-      userr.updatePassword(_passnew2Controller.text);
-      changePassword(_passnew2Controller.text, () {
+      userR.updatePassword(_passNew2Controller.text);
+      changePassword(_passNew2Controller.text, () {
         LoadingDialog.hideLoadingDialog(context);
         Navigator.push(
-            context, MaterialPageRoute(builder: (context) => HomePage()));
+            context, MaterialPageRoute(builder: (context) =>  HomePage()));
       });
     }
   }
@@ -681,16 +689,14 @@ class _MyInfoState extends State<EmployeeInfo> {
   void changePassword(String pass, Function onSuccess) async {
     QuerySnapshot snapshot = await FirebaseFirestore.instance
         .collection('employee')
-        .where('id', isEqualTo: userr.uid)
+        .where('id', isEqualTo: userR.uid)
         .get();
     String id = snapshot.docs.first.id;
     var ref = FirebaseFirestore.instance.collection('employee');
 
     ref.doc(id).update({'password': pass}).then((value) {
       onSuccess();
-      print("change pass ok");
     }).catchError((err) {
-      print("err");
     });
   }
 
@@ -698,24 +704,23 @@ class _MyInfoState extends State<EmployeeInfo> {
       String email, String name, String phone, Function onSuccess) async {
     QuerySnapshot snapshot = await FirebaseFirestore.instance
         .collection('employee')
-        .where('id', isEqualTo: userr.uid)
+        .where('id', isEqualTo: userR.uid)
         .get();
     String id = snapshot.docs.first.id;
     var user = {"email": email, "name": name, "phone": phone};
 
     var ref = FirebaseFirestore.instance.collection('employee');
 
-    ref.doc(id)
+    ref
+        .doc(id)
         .update({'email': email, 'name': name, 'phone': phone}).then((value) {
       onSuccess();
-      print("add user");
     }).catchError((err) {
       //TODO
-      print("err");
     });
   }
+
   uploadImage() async {
-    final _firebaseStorage = FirebaseStorage.instance;
     final _imagePicker = ImagePicker();
     String image_url;
     //PickedFile image;
@@ -731,43 +736,31 @@ class _MyInfoState extends State<EmployeeInfo> {
       if (image != null) {
         var file = File(image.path);
         FirebaseStorage storage = FirebaseStorage.instance;
-        Reference ref =
-        storage.ref().child("avatar/"+image.name);
+        Reference ref = storage.ref().child("avatar/" + image.name);
         UploadTask uploadTask = ref.putFile(file);
         await uploadTask.whenComplete(() async {
           var url = await ref.getDownloadURL();
           image_url = url.toString();
-          updateAvatar(user_auth.uid, image_url, () {
+          updateAvatar(userAuth.uid, image_url, () {
             LoadingDialog.hideLoadingDialog(context);
             Navigator.push(context,
-                MaterialPageRoute(builder: (context) => EmployeeInfo()));
+                MaterialPageRoute(builder: (context) => const EmployeeInfo()));
           });
         }).catchError((onError) {
-          print(onError);
         });
-        print('Avatar');
       } else {
-        print('No Image Path Received');
       }
     } else {
-      print('Permission not granted. Try Again with permission access');
     }
   }
 
-  updateAvatar(id, image_url, Function onSuccess) async {
+  updateAvatar(id, imageUrl, Function onSuccess) async {
     var ref = FirebaseFirestore.instance.collection('employee');
 
-    ref.doc(id).update({
-      'image': image_url
-    }).then((value) {
+    ref.doc(id).update({'image': imageUrl}).then((value) {
       onSuccess();
-      print("update successful");
-    }).catchError((err){
+    }).catchError((err) {
       //TODO
-      print("err");
-      print(err);
     });
   }
 }
-
-

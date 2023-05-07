@@ -1,15 +1,14 @@
 import 'dart:async';
-
 import 'package:myapp/src/fire_base/fire_base_auth.dart';
 
 class AuthBloc {
-  var _fireAuth = FireAuth();
+  final _fireAuth = FireAuth();
 
-  StreamController _nameController = new StreamController();
-  StreamController _emailController = new StreamController();
-  StreamController _passController = new StreamController();
-  StreamController _phoneController = new StreamController();
-  StreamController _groupController = new StreamController();
+  final StreamController _nameController = StreamController();
+  final StreamController _emailController = StreamController();
+  final StreamController _passController = StreamController();
+  final StreamController _phoneController = StreamController();
+  final StreamController _groupController = StreamController();
 
   Stream get nameStream => _nameController.stream;
   Stream get emailStream => _emailController.stream;
@@ -17,13 +16,13 @@ class AuthBloc {
   Stream get phoneStream => _phoneController.stream;
   Stream get groupStream => _groupController.stream;
 
-  bool isValid_Login(String email, String pass){
-    if (email == null || email.length == 0) {
+  bool isValidLogin(String email, String pass){
+    if (email.isEmpty) {
       _emailController.sink.addError("Nhập email");
       return false;
     }
     _emailController.sink.add("");
-    if (pass == null || pass.length < 6) {
+    if (pass.length < 6) {
       _passController.sink.addError("Mật khẩu phải trên 5 ký tự");
       return false;
     }
@@ -33,25 +32,25 @@ class AuthBloc {
   }
 
   bool isValidSignUp(String name, String email, String password, String phone) {
-    if (name == null || name.length == 0) {
+    if (name.isEmpty) {
       _nameController.sink.addError("Nhập tên");
       return false;
     }
     _nameController.sink.add("");
 
-    if (phone == null || phone.length == 0) {
+    if (phone.isEmpty) {
       _phoneController.sink.addError("Nhập số điện thoại");
       return false;
     }
     _phoneController.sink.add("");
 
-    if (email == null || email.length == 0) {
+    if (email.isEmpty) {
       _emailController.sink.addError("Nhập email");
       return false;
     }
     _emailController.sink.add("");
 
-    if (password == null || password.length < 6) {
+    if (password.length < 6) {
       _passController.sink.addError("Mật khẩu phải trên 5 ký tự");
       return false;
     }

@@ -1,39 +1,30 @@
-
-
 import 'dart:async';
-import 'package:intl/intl.dart';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:myapp/icons/app_icons_icons.dart';
 import 'package:myapp/src/models/QuestionModel.dart';
-import 'package:myapp/src/resources/home_page.dart';
-import 'package:myapp/src/resources/messenger/detail_question.dart';
 
 import '../../models/EmployeeModel.dart';
-import '../../models/UserModel.dart';
-import '../dialog/loading_dialog.dart';
-import '../employee/detail_question_employee.dart';
 
 class MessengerPageLeader extends StatefulWidget {
+  const MessengerPageLeader({super.key});
+
   @override
-  _MessengerPageState createState() => _MessengerPageState();
+  State<MessengerPageLeader> createState() => _MessengerPageState();
 }
 
 class _MessengerPageState extends State<MessengerPageLeader> {
-  CollectionReference derpart =
+  CollectionReference derPart =
       FirebaseFirestore.instance.collection('departments');
   FirebaseFirestore db = FirebaseFirestore.instance;
 
-  String? value_khoa;
+  String? valueKhoa;
   var selectedDerpartments;
   var departmentsItems = [];
-  List<dynamic> listt = [];
 
   FirebaseAuth auth = FirebaseAuth.instance;
-  var userr = FirebaseAuth.instance.currentUser!;
-  EmployeeModel employeeModel = new EmployeeModel("", " ", "", "", "", "", "", "", "", "");
+  var userR = FirebaseAuth.instance.currentUser!;
+  EmployeeModel employeeModel = EmployeeModel("", " ", "", "", "", "", "", "", "", "");
 
 
   List<QuestionModel> listQuestion = [];
@@ -125,31 +116,25 @@ class _MessengerPageState extends State<MessengerPageLeader> {
   //   return Column(children: questionsList);
   // }
 
-
-  TextEditingController _informationController = new TextEditingController();
-  TextEditingController _titleController = new TextEditingController();
-  TextEditingController _questionController = new TextEditingController();
-
-  StreamController _informationControl = new StreamController();
-  StreamController _titleControl = new StreamController();
-  StreamController _questionControl = new StreamController();
+  final StreamController _informationControl = StreamController();
+  final StreamController _titleControl = StreamController();
+  final StreamController _questionControl = StreamController();
   
   Stream get informationControl => _informationControl.stream;
   Stream get titleControl => _titleControl.stream;
   Stream get questionControl => _questionControl.stream;
   
   bool isValid(String information, String title, String question){
-    if(information == null || information.length == 0){
+    if(information.isEmpty){
       _informationControl.sink.addError("Nhập thông tin liên lạc");
       return false;
     }
 
-    
-    if(title == null || title.length == 0){
+    if(title.isEmpty){
       _titleControl.sink.addError("Nhập tiêu đề");
       return false;
     }
-    if(question == null || question.length == 0){
+    if(question.isEmpty){
       _questionControl.sink.addError("Nhập câu hỏi");
       return false;
     }
@@ -157,6 +142,7 @@ class _MessengerPageState extends State<MessengerPageLeader> {
     return true;
   }
 
+  @override
   void dispose(){
     _questionControl.close();
     _titleControl.close();
@@ -170,8 +156,8 @@ class _MessengerPageState extends State<MessengerPageLeader> {
         future: FirebaseFirestore.instance.collection("departments").get(),
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
-            return Center(
-              child: Container(
+            return const Center(
+              child: SizedBox(
                   width: 20, height: 20, child: CircularProgressIndicator()),
             );
           }
@@ -185,12 +171,12 @@ class _MessengerPageState extends State<MessengerPageLeader> {
           return FutureBuilder<QuerySnapshot>(
               future: FirebaseFirestore.instance
                   .collection("departments")
-                  .where("name", isEqualTo: value_khoa)
+                  .where("name", isEqualTo: valueKhoa)
                   .get(),
               builder: (context, snapshot) {
                 if (!snapshot.hasData) {
-                  return Center(
-                    child: Container(
+                  return const Center(
+                    child: SizedBox(
                         width: 20,
                         height: 20,
                         child: CircularProgressIndicator()),
@@ -200,12 +186,12 @@ class _MessengerPageState extends State<MessengerPageLeader> {
                 return FutureBuilder<QuerySnapshot>(
                     future: FirebaseFirestore.instance
                         .collection("employee")
-                        .where("id", isEqualTo: userr.uid)
+                        .where("id", isEqualTo: userR.uid)
                         .get(),
                     builder: (context, snapshot) {
                       if (!snapshot.hasData) {
-                        return Center(
-                          child: Container(
+                        return const Center(
+                          child: SizedBox(
                               width: 20,
                               height: 20,
                               child: CircularProgressIndicator()),
@@ -228,7 +214,7 @@ class _MessengerPageState extends State<MessengerPageLeader> {
 
                       // TODO: implement build
                       return Scaffold(
-                        appBar: new AppBar(
+                        appBar: AppBar(
                           title: const Text("Tin nhắn"),
                         ),
                         body: SafeArea(
@@ -237,22 +223,20 @@ class _MessengerPageState extends State<MessengerPageLeader> {
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: <Widget>[
-
                                 Padding(
-                                  padding: EdgeInsets.fromLTRB(0, 10, 0, 20),
+                                  padding: const EdgeInsets.fromLTRB(0, 10, 0, 20),
                                   child: SizedBox(
                                     width: double.infinity,
                                     height: 70,
                                     child: ElevatedButton(
                                       onPressed: () {
-
                                       },
                                       style: ElevatedButton.styleFrom(
                                           primary: Colors.white70,
                                           shape: RoundedRectangleBorder(
                                               borderRadius:
                                                   BorderRadius.circular(12))),
-                                      child: Text(
+                                      child: const Text(
                                             "Trả lời câu hỏi",
                                         style: TextStyle(
                                             color: Colors.black54,
@@ -261,30 +245,28 @@ class _MessengerPageState extends State<MessengerPageLeader> {
                                     ),
                                   ),
                                 ),
-
-                                Padding(
+                                const Padding(
                                   padding: EdgeInsets.fromLTRB(0, 0, 0, 5),
-
                                 ),
 
                                 StreamBuilder<QuerySnapshot>(
-                                    stream: derpart.snapshots(),
+                                    stream: derPart.snapshots(),
                                     builder: (context, snapshot) {
                                       if (!snapshot.hasError) {
-                                        Text("Loading");
+                                        const Text("Loading");
                                       } else {
-                                        derpart.get().then(
+                                        derPart.get().then(
                                             (QuerySnapshot querySnapshot) {
-                                          querySnapshot.docs.forEach((doc) {
+                                          for (var doc in querySnapshot.docs) {
                                             print(doc["departments"]);
-                                          });
+                                          }
                                         });
                                       }
-                                      return Text("");
+                                      return const Text("");
                                     }),
                                 Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: <Widget>[
+                                  children: const <Widget>[
                                     Padding(padding: EdgeInsets.symmetric(horizontal: 20.0),
                                       child: Text(
                                         'Câu hỏi của bạn',
@@ -316,16 +298,16 @@ class _MessengerPageState extends State<MessengerPageLeader> {
       value: item,
       child: Text(
         item,
-        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
       ));
-  DropdownMenuItem<dynamic> buildMenuItemm(dynamic item) => DropdownMenuItem(
+  DropdownMenuItem<dynamic> buildMenuItemM(dynamic item) => DropdownMenuItem(
       value: item,
       child: Text(
         item,
-        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
       ));
-  List<DropdownMenuItem<dynamic>> renderr(List<dynamic> list) {
-    return list.map(buildMenuItemm).toList();
+  List<DropdownMenuItem<dynamic>> renderR(List<dynamic> list) {
+    return list.map(buildMenuItemM).toList();
   }
 
 }

@@ -1,17 +1,19 @@
 import 'package:flutter/material.dart';
 
 class MyFile extends StatefulWidget{
+  const MyFile({super.key});
+
   @override
-  _MyFileState createState() => new _MyFileState();
+  State<MyFile> createState() => _MyFileState();
 }
 
 class _MyFileState extends State<MyFile>{
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
-    return new Scaffold(
-      appBar: new  AppBar(
-        title: new Text('Hồ sơ của bạn '),
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Hồ sơ của bạn '),
       ),
     );
   }

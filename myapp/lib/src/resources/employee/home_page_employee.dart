@@ -4,34 +4,28 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:myapp/icons/app_icons_icons.dart';
-import 'package:myapp/src/resources/about_page/my_file.dart';
-import 'package:myapp/src/resources/about_page/my_info.dart';
 import 'package:myapp/src/resources/about_page/about_university.dart';
-import 'package:myapp/src/resources/about_page/admission_history.dart';
 import 'package:myapp/src/resources/login_page.dart';
-import 'package:myapp/src/resources/messenger/messenger_page.dart';
-import 'package:myapp/src/resources/messenger/test.dart';
 import 'package:myapp/src/models/EmployeeModel.dart';
-import 'package:myapp/src/screens/signin_screen.dart';
 
-import '../../models/EmployeeModel.dart';
 import '../../models/NewfeedModel.dart';
 import '../home_page.dart';
 import '../pdf_viewer.dart';
 import 'employee_info.dart';
-import '../dialog/loading_dialog.dart';
 import 'messenger_employee.dart';
 
 class HomePageEmployee extends StatefulWidget {
+  const HomePageEmployee({super.key});
+
   @override
-  _HomePageState createState() => _HomePageState();
+  State<HomePageEmployee> createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePageEmployee> {
   FirebaseAuth auth = FirebaseAuth.instance;
-  var userr = FirebaseAuth.instance.currentUser!;
+  var userR = FirebaseAuth.instance.currentUser!;
   EmployeeModel employeeModel =
-      new EmployeeModel("", " ", "", "", "", "", "", "", "", "");
+      EmployeeModel("", " ", "", "", "", "", "", "", "", "");
   @override
   void dispose() {
     super.dispose();
@@ -43,16 +37,16 @@ class _HomePageState extends State<HomePageEmployee> {
     getListPost();
   }
 
-  var departmentName = new Map();
+  var departmentName = {};
   getDepartmentName() async {
     await FirebaseFirestore.instance
         .collection('departments')
         .get()
         .then((value) => {
               setState(() {
-                value.docs.forEach((element) {
+                for (var element in value.docs) {
                   departmentName[element.id] = element["name"];
-                });
+                }
               })
             });
   }
@@ -60,26 +54,25 @@ class _HomePageState extends State<HomePageEmployee> {
   List<Post> listPost = [];
   getListPost() async {
     await getDepartmentName();
-    List<NewfeedModel> listNewfeed = [];
+    List<NewfeedModel> listNewFeed = [];
     await FirebaseFirestore.instance
         .collection('newfeed')
         .get()
         .then((value) => {
               value.docs.forEach((element) {
-                NewfeedModel newfeed = new NewfeedModel("", "", "", "", "");
-                newfeed.id = element['id'];
-                newfeed.content = element['content'];
-                newfeed.time = element['time'];
-                newfeed.file = element['file'];
-                newfeed.employeeId = element['employeeId'];
+                NewfeedModel newFeed = NewfeedModel("", "", "", "", "");
+                newFeed.id = element['id'];
+                newFeed.content = element['content'];
+                newFeed.time = element['time'];
+                newFeed.file = element['file'];
+                newFeed.employeeId = element['employeeId'];
 
-                listNewfeed.add(newfeed);
+                listNewFeed.add(newFeed);
               })
             });
-    listNewfeed.forEach((element) async {
-      Employee employee =
-          new Employee("", "", "", "", "", "", "", "", "", "", "");
-      Post post = new Post(
+    listNewFeed.forEach((element) async {
+      Employee employee = Employee("", "", "", "", "", "", "", "", "", "", "");
+      Post post = Post(
           element.id, employee, element.content, element.time, element.file);
       await FirebaseFirestore.instance
           .collection('employee')
@@ -115,9 +108,9 @@ class _HomePageState extends State<HomePageEmployee> {
     });
   }
 
-  _buildNewfeed(BuildContext context, Post post) {
+  _buildNewFeed(BuildContext context, Post post) {
     return Container(
-      margin: EdgeInsets.all(10.0),
+      margin: const EdgeInsets.all(10.0),
       decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(15.0),
@@ -126,45 +119,43 @@ class _HomePageState extends State<HomePageEmployee> {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
-          Padding(padding: EdgeInsets.fromLTRB(0, 5, 0, 0)),
+          const Padding(padding: EdgeInsets.fromLTRB(0, 5, 0, 0)),
           Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
               Container(
-                padding: EdgeInsets.fromLTRB(20, 0, 10, 0),
+                padding: const EdgeInsets.fromLTRB(20, 0, 10, 0),
                 child: CircleAvatar(
                   radius: 30,
                   backgroundColor: Colors.tealAccent,
                   child: CircleAvatar(
-                    backgroundImage: new NetworkImage(post.employee.image!),
+                    backgroundImage: NetworkImage(post.employee.image!),
                     radius: 28,
                   ),
                 ),
               ),
-              Container(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: <Widget>[
-                    Text(
-                      post.employee.name,
-                      style: TextStyle(
-                          fontSize: 17,
-                          fontStyle: FontStyle.italic,
-                          fontWeight: FontWeight.w500),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: <Widget>[
+                  Text(
+                    post.employee.name,
+                    style: const TextStyle(
+                        fontSize: 17,
+                        fontStyle: FontStyle.italic,
+                        fontWeight: FontWeight.w500),
+                  ),
+                  Text(
+                    post.time,
+                    style: const TextStyle(
+                      fontSize: 12,
                     ),
-                    Text(
-                      post.time,
-                      style: TextStyle(
-                        fontSize: 12,
-                      ),
-                    ),
-                    Text(
-                      post.employee.departmentName,
-                      style: TextStyle(fontSize: 13),
-                    ),
-                  ],
-                ),
+                  ),
+                  Text(
+                    post.employee.departmentName,
+                    style: const TextStyle(fontSize: 13),
+                  ),
+                ],
               ),
             ],
           ),
@@ -173,20 +164,21 @@ class _HomePageState extends State<HomePageEmployee> {
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               Padding(
-                padding: EdgeInsets.symmetric(horizontal: 10),
+                padding: const EdgeInsets.symmetric(horizontal: 10),
                 child: Text(
                   post.content,
                   overflow: TextOverflow.visible,
                   maxLines: 50,
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                  style: const TextStyle(
+                      fontSize: 16, fontWeight: FontWeight.w500),
                 ),
               )
             ],
           ),
-          Padding(padding: EdgeInsets.fromLTRB(0, 5, 0, 0)),
+          const Padding(padding: EdgeInsets.fromLTRB(0, 5, 0, 0)),
           if (post.file != 'file.pdf')
             ClipRRect(
-              borderRadius: BorderRadius.only(
+              borderRadius: const BorderRadius.only(
                 bottomLeft: Radius.circular(14),
                 bottomRight: Radius.circular(14),
               ),
@@ -204,13 +196,16 @@ class _HomePageState extends State<HomePageEmployee> {
     return FutureBuilder<QuerySnapshot>(
         future: FirebaseFirestore.instance
             .collection("employee")
-            .where("id", isEqualTo: userr.uid)
+            .where("id", isEqualTo: userR.uid)
             .get(),
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
-            return Center(
-              child: Container(
-                  width: 20, height: 20, child: CircularProgressIndicator()),
+            return const Center(
+              child: SizedBox(
+                width: 20,
+                height: 20,
+                child: CircularProgressIndicator(),
+              ),
             );
           }
           snapshot.data!.docs.map((e) {
@@ -230,71 +225,77 @@ class _HomePageState extends State<HomePageEmployee> {
 
           // TODO: implement build
           return Scaffold(
-            appBar: new AppBar(
-              title: new Text("UTE APP"),
+            appBar: AppBar(
+              title: const Text("UTE APP"),
               backgroundColor: Colors.orangeAccent,
               actions: <Widget>[
                 IconButton(
                     onPressed: () {
                       Navigator.push(
-                          context,
-                          new MaterialPageRoute(
-                              builder: (BuildContext context) =>
-                                  MessengerPageEmployee()));
+                        context,
+                        MaterialPageRoute(
+                          builder: (BuildContext context) =>
+                              MessengerPageEmployee(),
+                        ),
+                      );
                     },
-                    icon: Icon(
+                    icon: const Icon(
                       AppIcons.chat,
                       color: Colors.white,
                     )),
               ],
             ),
-            drawer: new Drawer(
+            drawer: Drawer(
               child: ListView(
                 children: <Widget>[
-                  new UserAccountsDrawerHeader(
-                    accountName: new Text(employeeModel.name!),
-                    accountEmail: new Text(employeeModel.email!),
-                    currentAccountPicture: new CircleAvatar(
-                      backgroundImage: new NetworkImage(employeeModel.image!),
+                  UserAccountsDrawerHeader(
+                    accountName: Text(employeeModel.name!),
+                    accountEmail: Text(employeeModel.email!),
+                    currentAccountPicture: CircleAvatar(
+                      backgroundImage: NetworkImage(employeeModel.image!),
                     ),
                   ),
-                  new ListTile(
-                    title: new Text('Thông tin cá nhân'),
+                  ListTile(
+                    title: const Text('Thông tin cá nhân'),
                     onTap: () {
                       Navigator.push(
-                          context,
-                          new MaterialPageRoute(
-                              builder: (BuildContext context) =>
-                                  new EmployeeInfo()));
+                        context,
+                        MaterialPageRoute(
+                          builder: (BuildContext context) =>
+                              const EmployeeInfo(),
+                        ),
+                      );
                     },
                   ),
-                  new Divider(
+                  const Divider(
                     color: Colors.black,
                     height: 5.0,
                   ),
-                  new ListTile(
-                    title: new Text('Giới thiệu về trường'),
+                  ListTile(
+                    title: const Text('Giới thiệu về trường'),
                     onTap: () {
                       Navigator.push(
-                          context,
-                          new MaterialPageRoute(
-                              builder: (BuildContext context) =>
-                                  new AboutUniversity()));
+                        context,
+                        MaterialPageRoute(
+                          builder: (BuildContext context) => AboutUniversity(),
+                        ),
+                      );
                     },
                   ),
-                  new Divider(
+                  const Divider(
                     color: Colors.black,
                     height: 5.0,
                   ),
-                  new ListTile(
-                    title: new Text('Đăng xuất'),
+                  ListTile(
+                    title: const Text('Đăng xuất'),
                     onTap: () async {
                       await FirebaseAuth.instance.signOut();
                       Navigator.push(
-                          context,
-                          new MaterialPageRoute(
-                              builder: (BuildContext context) =>
-                                  new LoginPage()));
+                        context,
+                        MaterialPageRoute(
+                          builder: (BuildContext context) => const LoginPage(),
+                        ),
+                      );
                     },
                   ),
                 ],
@@ -309,13 +310,13 @@ class _HomePageState extends State<HomePageEmployee> {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
-                        Container(
+                        SizedBox(
                           height: MediaQuery.of(context).size.height * 0.85,
                           child: ListView.builder(
-                              physics: BouncingScrollPhysics(),
+                              physics: const BouncingScrollPhysics(),
                               itemCount: listPost.length,
                               itemBuilder: (BuildContext context, int index) {
-                                return _buildNewfeed(context, listPost[index]);
+                                return _buildNewFeed(context, listPost[index]);
                               }),
                         )
                       ],

@@ -8,32 +8,28 @@ import 'package:myapp/src/resources/about_page/about_university.dart';
 import 'package:myapp/src/resources/about_page/admission_history.dart';
 import 'package:myapp/src/resources/login_page.dart';
 import 'package:myapp/src/resources/messenger/messenger_page.dart';
-import 'package:myapp/src/resources/messenger/test.dart';
 import 'package:myapp/src/models/UserModel.dart';
-import 'package:myapp/src/screens/signin_screen.dart';
-
-import '../dialog/loading_dialog.dart';
 
 class HomePageAdmin extends StatefulWidget {
+  const HomePageAdmin({super.key});
 
   @override
-  _HomePageState createState() => _HomePageState();
+  State<HomePageAdmin> createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePageAdmin> {
   FirebaseAuth auth = FirebaseAuth.instance;
-  var userr = FirebaseAuth.instance.currentUser!;
+  var userR = FirebaseAuth.instance.currentUser!;
   String name = "1234";
-  UserModel userModel = new UserModel("", " ", "", "", "", "", "", "");
+  UserModel userModel = UserModel("", " ", "", "", "", "", "", "");
 
   Future<String> getUserNameFromUID() async {
     final snapshot = await FirebaseFirestore.instance
         .collection('user')
-        .where('userId', isEqualTo: userr.uid)
+        .where('userId', isEqualTo: userR.uid)
         .get();
     return snapshot.docs.first['name'];
   }
-
 
   @override
   void initState() {
@@ -46,15 +42,13 @@ class _HomePageState extends State<HomePageAdmin> {
     return FutureBuilder<QuerySnapshot>(
         future: FirebaseFirestore.instance
             .collection("user")
-            .where("userId", isEqualTo: userr.uid)
+            .where("userId", isEqualTo: userR.uid)
             .get(),
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
-            return Center(
-              child: Container(
-                  width: 20,
-                  height: 20,
-                  child: CircularProgressIndicator()),
+            return const Center(
+              child: SizedBox(
+                  width: 20, height: 20, child: CircularProgressIndicator()),
             );
           }
           snapshot.data!.docs.map((e) {
@@ -67,26 +61,28 @@ class _HomePageState extends State<HomePageAdmin> {
             userModel.status = (e.data() as Map)['status'];
 
             return userModel;
-
           }).toString();
 
           // TODO: implement build
           return Scaffold(
-            appBar: new AppBar(
-              title: new Text("UTE APP"),
+            appBar: AppBar(
+              title: const Text("UTE APP"),
               actions: <Widget>[
                 IconButton(
-                    onPressed: () {
-                      Navigator.push(
-                          context,
-                          new MaterialPageRoute(
-                              builder: (BuildContext context) =>
-                                  MessengerPage()));
-                    },
-                    icon: Icon(
-                      AppIcons.chat,
-                      color: Colors.white,
-                    )),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (BuildContext context) =>
+                            const MessengerPage(),
+                      ),
+                    );
+                  },
+                  icon: const Icon(
+                    AppIcons.chat,
+                    color: Colors.white,
+                  ),
+                ),
                 // IconButton(
                 //     onPressed: () {
                 //       Navigator.push(
@@ -100,79 +96,85 @@ class _HomePageState extends State<HomePageAdmin> {
                 //     ))
               ],
             ),
-            drawer: new Drawer(
+            drawer: Drawer(
               child: ListView(
                 children: <Widget>[
-                  new UserAccountsDrawerHeader(
-                    accountName: new Text(userModel.name!),
-                    accountEmail: new Text(userModel.email!),
-                    currentAccountPicture: new CircleAvatar(
-                      backgroundImage:
-                          new NetworkImage(userModel.image!),
+                  UserAccountsDrawerHeader(
+                    accountName: Text(userModel.name!),
+                    accountEmail: Text(userModel.email!),
+                    currentAccountPicture: CircleAvatar(
+                      backgroundImage: NetworkImage(userModel.image!),
                     ),
                   ),
-                  new ListTile(
-                    title: new Text('Thông tin cá nhân'),
+                  ListTile(
+                    title: const Text('Thông tin cá nhân'),
                     onTap: () {
                       Navigator.push(
-                          context,
-                          new MaterialPageRoute(
-                              builder: (BuildContext context) => new MyInfo()));
+                        context,
+                        MaterialPageRoute(
+                          builder: (BuildContext context) => const MyInfo(),
+                        ),
+                      );
                     },
                   ),
-                  new Divider(
+                  const Divider(
                     color: Colors.black,
                     height: 5.0,
                   ),
-                  new ListTile(
-                    title: new Text('Giới thiệu về trường'),
+                  ListTile(
+                    title: const Text('Giới thiệu về trường'),
                     onTap: () {
                       Navigator.push(
-                          context,
-                          new MaterialPageRoute(
-                              builder: (BuildContext context) =>
-                                  new AboutUniversity()));
+                        context,
+                        MaterialPageRoute(
+                          builder: (BuildContext context) => AboutUniversity(),
+                        ),
+                      );
                     },
                   ),
-                  new Divider(
+                  const Divider(
                     color: Colors.black,
                     height: 5.0,
                   ),
-                  new ListTile(
-                    title: new Text('Lịch sử tuyển sinh'),
+                  ListTile(
+                    title: const Text('Lịch sử tuyển sinh'),
                     onTap: () {
                       Navigator.push(
-                          context,
-                          new MaterialPageRoute(
-                              builder: (BuildContext context) =>
-                                  new AdmissionHistory()));
+                        context,
+                        MaterialPageRoute(
+                          builder: (BuildContext context) => AdmissionHistory(),
+                        ),
+                      );
                     },
                   ),
-                  new Divider(
+                  const Divider(
                     color: Colors.black,
                     height: 5.0,
                   ),
-                  new ListTile(
-                    title: new Text('Hồ sơ của bạn'),
+                  ListTile(
+                    title: const Text('Hồ sơ của bạn'),
                     onTap: () {
                       Navigator.push(
-                          context,
-                          new MaterialPageRoute(
-                              builder: (BuildContext context) => new MyFile()));
+                        context,
+                        MaterialPageRoute(
+                          builder: (BuildContext context) => MyFile(),
+                        ),
+                      );
                     },
                   ),
-                  new Divider(
+                  const Divider(
                     color: Colors.black,
                     height: 5.0,
                   ),
-                  new ListTile(
-                    title: new Text('Đăng xuất'),
+                  ListTile(
+                    title: const Text('Đăng xuất'),
                     onTap: () {
                       Navigator.push(
-                          context,
-                          new MaterialPageRoute(
-                              builder: (BuildContext context) =>
-                                  new LoginPage()));
+                        context,
+                        MaterialPageRoute(
+                          builder: (BuildContext context) => const LoginPage(),
+                        ),
+                      );
                     },
                   ),
                 ],

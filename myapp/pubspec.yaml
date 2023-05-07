@@ -50,6 +50,7 @@ dependencies:
   flutter_speed_dial: ^6.2.0
   flutter_native_splash: ^2.2.16
 
+
   get: ^4.1.4
 
 

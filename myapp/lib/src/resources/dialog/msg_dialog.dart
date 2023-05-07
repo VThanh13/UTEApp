@@ -8,7 +8,7 @@ class MsgDialog {
         title: Text(title),
         content: Text(msg),
         actions: [
-          new ElevatedButton(
+          ElevatedButton(
             child: Text("OK"),
             onPressed: () {
               Navigator.of(context).pop(MsgDialog);

@@ -6,8 +6,10 @@ import 'package:myapp/src/models/EmployeeModel.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
 class StatsLeaderPage extends StatefulWidget {
+  const StatsLeaderPage({super.key});
+
   @override
-  _StatsPageState createState() => _StatsPageState();
+  State<StatsLeaderPage> createState() => _StatsPageState();
 }
 class ChartSampleData {
   /// Holds the datapoint values like x, y, etc.,
@@ -78,19 +80,19 @@ class PieChartData {
 
 class _StatsPageState extends State<StatsLeaderPage> {
   FirebaseAuth auth = FirebaseAuth.instance;
-  var user_auth = FirebaseAuth.instance.currentUser!;
-  EmployeeModel current_employee =
-  new EmployeeModel("", " ", "", "", "", "", "", "", "", "");
+  var userAuth = FirebaseAuth.instance.currentUser!;
+  EmployeeModel currentEmployee =
+  EmployeeModel("", " ", "", "", "", "", "", "", "", "");
   int pageIndex = 0;
-  int all_user = 0;
-  int all_employee = 0;
-  int all_question = 0;
-  int all_category = 0;
+  int allUser = 0;
+  int allEmployee = 0;
+  int allQuestion = 0;
+  int allCategory = 0;
   TooltipBehavior? _tooltipBehavior;
   List<ChartSampleData>? chartData;
   List<PieChartData>? chartDataPie;
-  var departmentName = new Map();
-  late List<String> list_category;
+  var departmentName = {};
+  late List<String> listCategory;
   @override
   void dispose() {
     super.dispose();
@@ -106,20 +108,20 @@ class _StatsPageState extends State<StatsLeaderPage> {
   getCurrentEmployee() async {
     await FirebaseFirestore.instance
         .collection('employee')
-        .where("id", isEqualTo: user_auth.uid)
+        .where("id", isEqualTo: userAuth.uid)
         .get()
         .then((value) => {
       setState(() {
-        current_employee.id = value.docs.first['id'];
-        current_employee.name = value.docs.first['name'];
-        current_employee.email = value.docs.first['email'];
-        current_employee.image = value.docs.first['image'];
-        current_employee.password = value.docs.first['password'];
-        current_employee.phone = value.docs.first['phone'];
-        current_employee.department = value.docs.first['department'];
-        current_employee.category = value.docs.first['category'];
-        current_employee.roles = value.docs.first['roles'];
-        current_employee.status = value.docs.first['status'];
+        currentEmployee.id = value.docs.first['id'];
+        currentEmployee.name = value.docs.first['name'];
+        currentEmployee.email = value.docs.first['email'];
+        currentEmployee.image = value.docs.first['image'];
+        currentEmployee.password = value.docs.first['password'];
+        currentEmployee.phone = value.docs.first['phone'];
+        currentEmployee.department = value.docs.first['department'];
+        currentEmployee.category = value.docs.first['category'];
+        currentEmployee.roles = value.docs.first['roles'];
+        currentEmployee.status = value.docs.first['status'];
       })
     });
     await getDataStats();
@@ -130,35 +132,35 @@ class _StatsPageState extends State<StatsLeaderPage> {
         .get()
         .then((value) => {
           setState(() {
-            all_user = value.size;
+            allUser = value.size;
           })
         });
     await FirebaseFirestore.instance
         .collection('employee')
-        .where("department", isEqualTo: current_employee.department)
+        .where("department", isEqualTo: currentEmployee.department)
         .get()
         .then((value) => {
       setState(() {
-        all_employee = value.size;
+        allEmployee = value.size;
       })
     });
     await FirebaseFirestore.instance
         .collection('questions')
-        .where("department", isEqualTo: current_employee.department)
+        .where("department", isEqualTo: currentEmployee.department)
         .get()
         .then((value) => {
       setState(() {
-        all_question = value.size;
+        allQuestion = value.size;
       })
     });
     await FirebaseFirestore.instance
         .collection('departments')
-        .where("id", isEqualTo: current_employee.department)
+        .where("id", isEqualTo: currentEmployee.department)
         .get()
         .then((value) => {
         setState(() {
-          list_category = value.docs.first['category'].cast<String>();
-          all_category = list_category.length;
+          listCategory = value.docs.first['category'].cast<String>();
+          allCategory = listCategory.length;
         })
     });
     await FirebaseFirestore.instance
@@ -184,7 +186,7 @@ class _StatsPageState extends State<StatsLeaderPage> {
     int ctl2=0;
     FirebaseFirestore.instance
         .collection('questions')
-        .where('department', isEqualTo: current_employee.department)
+        .where('department', isEqualTo: currentEmployee.department)
         .where('category', isEqualTo: "")
         .get()
         .then((values) => {
@@ -194,14 +196,14 @@ class _StatsPageState extends State<StatsLeaderPage> {
           ctl2=0;
         }
         else{
-          values.docs.forEach((element) {
+          for (var element in values.docs) {
             if(element['status'] == 'Chưa trả lời'){
               ctl2+=1;
             }
             else{
               dtl2+=1;
             }
-          });
+          }
         }
         chartData?.add(
             ChartSampleData(
@@ -218,12 +220,12 @@ class _StatsPageState extends State<StatsLeaderPage> {
 
     int dtl;
     int ctl;
-    list_category.forEach((category){
+    for (var category in listCategory) {
       dtl=0;
       ctl=0;
       FirebaseFirestore.instance
           .collection('questions')
-          .where('department', isEqualTo: current_employee.department)
+          .where('department', isEqualTo: currentEmployee.department)
           .where('category', isEqualTo: category)
           .get()
           .then((values) => {
@@ -233,14 +235,14 @@ class _StatsPageState extends State<StatsLeaderPage> {
                 ctl=0;
               }
               else{
-                values.docs.forEach((element) {
+                for (var element in values.docs) {
                   if(element['status'] == 'Chưa trả lời'){
                     ctl+=1;
                   }
                   else{
                     dtl+=1;
                   }
-                });
+                }
               }
               chartData?.add(
                   ChartSampleData(
@@ -254,7 +256,7 @@ class _StatsPageState extends State<StatsLeaderPage> {
               ctl=0;
             })
       });
-    });
+    }
 
   }
   getDataPie() async{
@@ -354,9 +356,9 @@ class _StatsPageState extends State<StatsLeaderPage> {
 
   Widget getStats(){
     var size = MediaQuery.of(context).size;
-    if (all_user == 0 || all_question == 0 || all_employee == 0 || all_category == 0 || departmentName.isEmpty) {
-      return Center(
-        child: Container(
+    if (allUser == 0 || allQuestion == 0 || allEmployee == 0 || allCategory == 0 || departmentName.isEmpty) {
+      return const Center(
+        child: SizedBox(
             width: 20,
             height: 20,
             child: CircularProgressIndicator()),
@@ -391,9 +393,9 @@ class _StatsPageState extends State<StatsLeaderPage> {
                     Container(
                       width: 40,
                       height: 40,
-                      decoration: BoxDecoration(
+                      decoration: const BoxDecoration(
                           shape: BoxShape.circle, color: Colors.blue),
-                      child: Center(
+                      child: const Center(
                           child: Icon(
                             Icons.person,
                             color: Colors.white,
@@ -402,19 +404,19 @@ class _StatsPageState extends State<StatsLeaderPage> {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
+                        const Text(
                           "User",
                           style: TextStyle(
                               fontWeight: FontWeight.w500,
                               fontSize: 13,
                               color: Color(0xff67727d)),
                         ),
-                        SizedBox(
+                        const SizedBox(
                           height: 8,
                         ),
                         Text(
-                          all_user.toString(),
-                          style: TextStyle(
+                          allUser.toString(),
+                          style: const TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 20,
                           ),
@@ -449,9 +451,9 @@ class _StatsPageState extends State<StatsLeaderPage> {
                     Container(
                       width: 40,
                       height: 40,
-                      decoration: BoxDecoration(
+                      decoration: const BoxDecoration(
                           shape: BoxShape.circle, color: Colors.blue),
-                      child: Center(
+                      child: const Center(
                           child: Icon(
                             Icons.question_answer_outlined,
                             color: Colors.white,
@@ -460,19 +462,19 @@ class _StatsPageState extends State<StatsLeaderPage> {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
+                        const Text(
                           "Tư vấn viên",
                           style: TextStyle(
                               fontWeight: FontWeight.w500,
                               fontSize: 13,
                               color: Color(0xff67727d)),
                         ),
-                        SizedBox(
+                        const SizedBox(
                           height: 8,
                         ),
                         Text(
-                          all_employee.toString(),
-                          style: TextStyle(
+                          allEmployee.toString(),
+                          style: const TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 20,
                           ),
@@ -485,7 +487,7 @@ class _StatsPageState extends State<StatsLeaderPage> {
             ),
           ],
         ),
-        SizedBox(
+        const SizedBox(
           height: 30,
         ),
         Wrap(
@@ -515,9 +517,9 @@ class _StatsPageState extends State<StatsLeaderPage> {
                     Container(
                       width: 40,
                       height: 40,
-                      decoration: BoxDecoration(
+                      decoration: const BoxDecoration(
                           shape: BoxShape.circle, color: Colors.blue),
-                      child: Center(
+                      child: const Center(
                           child: Icon(
                             Icons.question_mark,
                             color: Colors.white,
@@ -526,19 +528,19 @@ class _StatsPageState extends State<StatsLeaderPage> {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
+                        const Text(
                           "Câu hỏi",
                           style: TextStyle(
                               fontWeight: FontWeight.w500,
                               fontSize: 13,
                               color: Color(0xff67727d)),
                         ),
-                        SizedBox(
+                        const SizedBox(
                           height: 8,
                         ),
                         Text(
-                          all_question.toString(),
-                          style: TextStyle(
+                          allQuestion.toString(),
+                          style: const TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 20,
                           ),
@@ -573,9 +575,9 @@ class _StatsPageState extends State<StatsLeaderPage> {
                     Container(
                       width: 40,
                       height: 40,
-                      decoration: BoxDecoration(
+                      decoration: const BoxDecoration(
                           shape: BoxShape.circle, color: Colors.blue),
-                      child: Center(
+                      child: const Center(
                           child: Icon(
                             Icons.category,
                             color: Colors.white,
@@ -584,19 +586,19 @@ class _StatsPageState extends State<StatsLeaderPage> {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
+                        const Text(
                           "Lĩnh vực",
                           style: TextStyle(
                               fontWeight: FontWeight.w500,
                               fontSize: 13,
                               color: Color(0xff67727d)),
                         ),
-                        SizedBox(
+                        const SizedBox(
                           height: 8,
                         ),
                         Text(
-                          all_category.toString(),
-                          style: TextStyle(
+                          allCategory.toString(),
+                          style: const TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 20,
                           ),
@@ -636,7 +638,7 @@ class _StatsPageState extends State<StatsLeaderPage> {
                 children: [
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
+                    children: const [
                       Text(
                         "Thống kê",
                         style: TextStyle(
@@ -654,7 +656,7 @@ class _StatsPageState extends State<StatsLeaderPage> {
               ),
             ),
           ),
-          SizedBox(
+          const SizedBox(
             height: 30,
           ),
           getChart(),
@@ -697,18 +699,18 @@ class _StatsPageState extends State<StatsLeaderPage> {
   Widget build(BuildContext context) {
     // TODO: implement build
     return Scaffold(
-        backgroundColor: Color(0xCBCBD5DE),
+        backgroundColor: const Color(0xCBCBD5DE),
         bottomNavigationBar: getFooter(),
         body: getBody(),
         floatingActionButton: FloatingActionButton(
             onPressed: () {
               //selectedTab(4);
             },
-            child: Icon(
+            backgroundColor: Colors.pink,
+            child: const Icon(
               Icons.add,
               size: 25,
-            ),
-            backgroundColor: Colors.pink
+            )
             //params
             ),
         floatingActionButtonLocation:

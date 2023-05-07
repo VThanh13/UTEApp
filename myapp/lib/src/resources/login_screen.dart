@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import '../blocs/auth_bloc.dart';
 import 'dialog/loading_dialog.dart';
 import 'dialog/msg_dialog.dart';
@@ -13,49 +12,46 @@ import 'signup_screen.dart';
 import 'package:myapp/src/widgets/inputTextWidget.dart';
 
 class LoginScreen extends StatefulWidget {
-  LoginScreen() : super();
+  const LoginScreen({super.key});
 
   @override
-  _SearchScreenState createState() => _SearchScreenState();
+  State<LoginScreen> createState() => _SearchScreenState();
 }
 
 class _SearchScreenState extends State<LoginScreen> {
   final TextEditingController _pwdController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
 
-  AuthBloc authBloc = new AuthBloc();
+  AuthBloc authBloc = AuthBloc();
 
   //final snackBar = SnackBar(content: Text('email ou mot de passe incorrect'));
   final _formKey = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
-    final double r = (175 / 360); //  rapport for web test(304 / 540);
+    const double r = (175 / 360); //  rapport for web test(304 / 540);
     final coverHeight = screenWidth * r;
-    bool _pinned = false;
-    bool _snap = false;
-    bool _floating = false;
+    bool pinned = false;
+    bool snap = false;
+    bool floating = false;
 
     final widgetList = [
       Row(
-        children: [
-          SizedBox(
-            width: 28,
-          ),
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: const [
           Text(
-            'Welcome',
+            'Welcome to UTE App',
             style: TextStyle(
               fontFamily: 'Segoe UI',
-              fontSize: 40,
+              fontSize: 30,
               fontWeight: FontWeight.bold,
-              color: const Color(0xff000000),
-
+              color: Color(0xff000000),
             ),
             textAlign: TextAlign.left,
           ),
         ],
       ),
-      SizedBox(
+      const SizedBox(
         height: 12.0,
       ),
       Form(
@@ -68,7 +64,7 @@ class _SearchScreenState extends State<LoginScreen> {
                   icon: Icons.email,
                   obscureText: false,
                   keyboardType: TextInputType.emailAddress),
-              SizedBox(
+              const SizedBox(
                 height: 12.0,
               ),
               InputTextWidget(
@@ -89,22 +85,22 @@ class _SearchScreenState extends State<LoginScreen> {
                           "Forgot Password?",
                           style: TextStyle(
                               fontSize: 15,
-                              fontWeight: FontWeight.bold,
+                              fontWeight: FontWeight.w500,
+                              fontStyle: FontStyle.italic,
                               color: Colors.grey[700]),
                         ),
                       ),
                     )),
               ),
-              SizedBox(
-                height: 15.0,
+              const SizedBox(
+                height: 10.0,
               ),
-              Container(
+              SizedBox(
                 height: 55.0,
                 child: ElevatedButton(
                   onPressed: () async {
                     if (_formKey.currentState!.validate()) {
                       _onLoginClick();
-                      print("I ove tunisia");
                     }
                     //Get.to(ChoiceScreen());
                   },
@@ -112,27 +108,21 @@ class _SearchScreenState extends State<LoginScreen> {
                     primary: Colors.white,
                     elevation: 0.0,
                     minimumSize: Size(screenWidth, 150),
-                    padding: EdgeInsets.symmetric(horizontal: 30),
+                    padding: const EdgeInsets.symmetric(horizontal: 25),
                     shape: const RoundedRectangleBorder(
                       borderRadius: BorderRadius.all(Radius.circular(0)),
                     ),
                   ),
                   child: Ink(
                     decoration: BoxDecoration(
-                        boxShadow: <BoxShadow>[
-                          BoxShadow(
-                              color: Colors.blue,
-                              offset: const Offset(1.1, 1.1),
-                              blurRadius: 10.0),
-                        ],
                         color: Colors.blue, // Color(0xffF05945),
                         borderRadius: BorderRadius.circular(12.0)),
                     child: Container(
                       alignment: Alignment.center,
-                      child: Text(
+                      child: const Text(
                         "Sign In",
                         textAlign: TextAlign.center,
-                        style: TextStyle(color: Colors.white, fontSize: 25),
+                        style: TextStyle(color: Colors.white, fontSize: 22),
                       ),
                     ),
                   ),
@@ -140,40 +130,42 @@ class _SearchScreenState extends State<LoginScreen> {
               ),
             ],
           )),
-      SizedBox(
+      const SizedBox(
         height: 15.0,
       ),
       Wrap(
         children: [
           Padding(
-            padding: const EdgeInsets.only(left: 30.0, right: 10.0, top: 15.0),
+            padding: const EdgeInsets.only(left: 30.0, right: 10.0, top: 5.0),
             child: Container(
               decoration: BoxDecoration(
-                  boxShadow: <BoxShadow>[
+                  boxShadow: const <BoxShadow>[
                     BoxShadow(
                         color: Colors.grey, //Color(0xfff05945),
-                        offset: const Offset(0, 0),
-                        blurRadius: 5.0),
+                        offset: Offset(0, 0),
+                        blurRadius: 3.0),
                   ],
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(12.0)),
               width: (screenWidth / 2) - 40,
-              height: 55,
+              height: 50,
               child: Material(
                 borderRadius: BorderRadius.circular(12.0),
                 child: InkWell(
                   onTap: () {
-                    print("facebook tapped");
                   },
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Row(
                       children: [
                         Image.asset("assets/images/fb.png", fit: BoxFit.cover),
-                        SizedBox(
+                        const SizedBox(
                           width: 7.0,
                         ),
-                        Text("Sign in with\nFacebook")
+                        const Text("Sign in with\nFacebook",
+                        style: TextStyle(
+                          fontSize: 12
+                        ),)
                       ],
                     ),
                   ),
@@ -182,24 +174,23 @@ class _SearchScreenState extends State<LoginScreen> {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.only(left: 10.0, right: 30.0, top: 15.0),
+            padding: const EdgeInsets.only(left: 10.0, right: 30.0, top: 5.0),
             child: Container(
               decoration: BoxDecoration(
-                  boxShadow: <BoxShadow>[
+                  boxShadow: const <BoxShadow>[
                     BoxShadow(
                         color: Colors.grey, //Color(0xfff05945),
-                        offset: const Offset(0, 0),
-                        blurRadius: 5.0),
+                        offset: Offset(0, 0),
+                        blurRadius: 3.0),
                   ],
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(12.0)),
               width: (screenWidth / 2) - 40,
-              height: 55,
+              height: 50,
               child: Material(
                 borderRadius: BorderRadius.circular(12.0),
                 child: InkWell(
                   onTap: () {
-                    print("Google tapped");
                   },
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
@@ -207,10 +198,13 @@ class _SearchScreenState extends State<LoginScreen> {
                       children: [
                         Image.asset("assets/images/google.png",
                             fit: BoxFit.cover),
-                        SizedBox(
+                        const SizedBox(
                           width: 7.0,
                         ),
-                        Text("Sign in with\nGoogle")
+                        const Text("Sign in with\nGoogle",
+                        style: TextStyle(
+                          fontSize: 12
+                        ),),
                       ],
                     ),
                   ),
@@ -220,158 +214,151 @@ class _SearchScreenState extends State<LoginScreen> {
           ),
         ],
       ),
-      SizedBox(
+      const SizedBox(
         height: 15.0,
       ),
     ];
-    return Scaffold(
-      extendBodyBehindAppBar: true,
-      appBar: AppBar(
-        // leading: Icon(Icons.arrow_back),
-        backgroundColor: Colors.transparent,
-        elevation: 0.0,
-      ),
-      body: CustomScrollView(
-        slivers: <Widget>[
-          SliverAppBar(
-            pinned: _pinned,
-            snap: _snap,
-            floating: _floating,
-            expandedHeight: coverHeight - 25, //304,
-            backgroundColor: Color(0xFFdccdb4),
-            flexibleSpace: FlexibleSpaceBar(
-              centerTitle: true,
-              background:
-              Image.asset("assets/images/cover.jpg", fit: BoxFit.cover),
-            ),
-          ),
-          SliverToBoxAdapter(
-            child: Container(
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.only(
-
-                  ),
-                  gradient: LinearGradient(
-                      colors: <Color>[Color(0xFFdccdb4), Color(0xFFd8c3ab)])
-
+    return GestureDetector(
+      onTap: () {WidgetsBinding.instance.focusManager.primaryFocus?.unfocus();},
+      child: Scaffold(
+        extendBodyBehindAppBar: true,
+        appBar: AppBar(
+          // leading: Icon(Icons.arrow_back),
+          backgroundColor: Colors.transparent,
+          elevation: 0.0,
+        ),
+        body: CustomScrollView(
+          slivers: <Widget>[
+            SliverAppBar(
+              pinned: pinned,
+              snap: snap,
+              floating: floating,
+              expandedHeight: coverHeight - 25, //304,
+              backgroundColor: const Color(0xFFdccdb4),
+              flexibleSpace: FlexibleSpaceBar(
+                centerTitle: true,
+                background:
+                Image.asset("assets/images/cover.jpg", fit: BoxFit.cover),
               ),
-              width: screenWidth,
-              height: 25,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: <Widget>[
-                  Container(
-                    width: screenWidth,
-                    height: 25,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-
-                      borderRadius: BorderRadius.only(
-                        topLeft: const Radius.circular(30.0),
-                        topRight: const Radius.circular(30.0),
+            ),
+            SliverToBoxAdapter(
+              child: Container(
+                decoration: const BoxDecoration(
+                    borderRadius: BorderRadius.only(),
+                    gradient: LinearGradient(
+                        colors: <Color>[Color(0xFFdccdb4), Color(0xFFd8c3ab)])),
+                width: screenWidth,
+                height: 25,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: <Widget>[
+                    Container(
+                      width: screenWidth,
+                      height: 25,
+                      decoration: const BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(30.0),
+                          topRight: Radius.circular(30.0),
+                        ),
+                      ),
+                    )
+                  ],
+                ),
+              ),
+            ),
+            SliverList(
+                delegate:
+                SliverChildBuilderDelegate((BuildContext context, int index) {
+                  return widgetList[index];
+                }, childCount: widgetList.length))
+          ],
+        ),
+        bottomNavigationBar: Stack(
+          children: [
+            Container(
+              height: 45.0,
+              color: Colors.white,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text(
+                    "Don't have an account?  ",
+                    style: TextStyle(
+                        color: Colors.grey[600], fontWeight: FontWeight.bold),
+                  ),
+                  Material(
+                    child: InkWell(
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const SignUpScreen()));
+                      },
+                      child: Text(
+                        "Sign Up",
+                        style: TextStyle(
+                          color: Colors.blue[800],
+                          fontWeight: FontWeight.bold,
+                          fontStyle: FontStyle.italic,
+                          fontSize: 17,
+                        ),
                       ),
                     ),
-                  )
+                  ),
                 ],
-              ),
+              )
             ),
-          ),
-          SliverList(
-              delegate:
-              SliverChildBuilderDelegate((BuildContext context, int index) {
-                return widgetList[index];
-              }, childCount: widgetList.length))
-        ],
-      ),
-      bottomNavigationBar: Stack(
-        children: [
-          new Container(
-            height: 50.0,
-            color: Colors.white,
-            child: Center(
-                child: Wrap(
-                  children: [
-                    Text(
-                      "Don't have an account?  ",
-                      style: TextStyle(
-                          color: Colors.grey[600], fontWeight: FontWeight.bold),
-                    ),
-                    Material(
-                        child: InkWell(
-                          onTap: () {
-                            print("sign up tapped");
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        SignUpScreen()));
-                          },
-                          child: Text(
-                            "Sign Up",
-                            style: TextStyle(
-                              color: Colors.blue[800],
-                              fontWeight: FontWeight.bold,
-                              fontSize: 15,
-                            ),
-                          ),
-                        )),
-                  ],
-                )),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
+
   _onLoginClick() {
-    var isValid = authBloc.isValid_Login(
-        _emailController.text, _pwdController.text);
+    var isValid =
+        authBloc.isValidLogin(_emailController.text, _pwdController.text);
     if (isValid) {
       LoadingDialog.showLoadingDialog(context, "loading...");
-      authBloc.signIn(_emailController.text, _pwdController.text,
-              () async {
-            var userr = FirebaseAuth.instance.currentUser!;
-            await FirebaseFirestore.instance
-                .collection('user')
-                .doc(userr.uid)
-                .get()
-                .then((snapshot){
-              if(snapshot.exists){
-                LoadingDialog.hideLoadingDialog(context);
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => HomePage()));
-              }
-            });
-            await FirebaseFirestore.instance
-                .collection('employee')
-                .doc(userr.uid)
-                .get()
-                .then((snapshot){
-              if(snapshot.exists){
-                if(snapshot.get('roles') == "Tư vấn viên") {
-                  LoadingDialog.hideLoadingDialog(context);
-                  Navigator.push(context,
-                      MaterialPageRoute(
-                          builder: (context) => HomePageEmployee()));
-                }
-                else if(snapshot.get('roles') == "Trưởng nhóm") {
-                  LoadingDialog.hideLoadingDialog(context);
-                  Navigator.push(context,
-                      MaterialPageRoute(
-                          builder: (context) => HomePageLeader()));
-                }
-                else if(snapshot.get('roles') == "Manager") {
-                  LoadingDialog.hideLoadingDialog(context);
-                  Navigator.push(context,
-                      MaterialPageRoute(
-                          builder: (context) => HomePageManager()));
-                }
-              }
-            });
-
-          }, (msg) {
+      authBloc.signIn(_emailController.text, _pwdController.text, () async {
+        var userr = FirebaseAuth.instance.currentUser!;
+        await FirebaseFirestore.instance
+            .collection('user')
+            .doc(userr.uid)
+            .get()
+            .then((snapshot) {
+          if (snapshot.exists) {
             LoadingDialog.hideLoadingDialog(context);
-            MsgDialog.showMsgDialog(context, "Sign-In", msg);
-          });
+            Navigator.push(
+                context, MaterialPageRoute(builder: (context) => HomePage()));
+          }
+        });
+        await FirebaseFirestore.instance
+            .collection('employee')
+            .doc(userr.uid)
+            .get()
+            .then((snapshot) {
+          if (snapshot.exists) {
+            if (snapshot.get('roles') == "Tư vấn viên") {
+              LoadingDialog.hideLoadingDialog(context);
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => const HomePageEmployee()));
+            } else if (snapshot.get('roles') == "Trưởng nhóm") {
+              LoadingDialog.hideLoadingDialog(context);
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => const HomePageLeader()));
+            } else if (snapshot.get('roles') == "Manager") {
+              LoadingDialog.hideLoadingDialog(context);
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => const HomePageManager()));
+            }
+          }
+        });
+      }, (msg) {
+        LoadingDialog.hideLoadingDialog(context);
+        MsgDialog.showMsgDialog(context, "Sign-In", msg);
+      });
     }
   }
 }

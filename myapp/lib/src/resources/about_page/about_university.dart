@@ -1,45 +1,46 @@
 import 'package:flutter/material.dart';
 
 class AboutUniversity extends StatefulWidget{
+  const AboutUniversity({super.key});
+
   @override
-  _AboutUniversityState createState() => new _AboutUniversityState();
+  State<AboutUniversity> createState() => _AboutUniversityState();
 }
 
 class _AboutUniversityState extends State<AboutUniversity>{
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
-    return new Scaffold(
-      appBar: new  AppBar(
-        title: new Text('Giới thiệu về trường'),
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Giới thiệu về trường'),
         backgroundColor: Colors.blueAccent,
       ),
       body: Container(
-        padding: EdgeInsets.fromLTRB(30, 0, 30, 0),
-        constraints: BoxConstraints.expand(),
+        padding: const EdgeInsets.fromLTRB(30, 0, 30, 0),
+        constraints: const BoxConstraints.expand(),
         color: Colors.white,
-
         child: SingleChildScrollView(
           child: Column(
             children: <Widget>[
-            SizedBox(
+            const SizedBox(
             height: 140,
           ),
           Image.asset('logo_page.png'),
-          Padding(padding: EdgeInsets.fromLTRB(0, 20, 20, 6),
+          const Padding(padding: EdgeInsets.fromLTRB(0, 20, 20, 6),
           ),
-              Text("Trường đại học Sư phạm Kỹ thuật Thành phố Hồ Chí Minh"
+              const Text("Trường đại học Sư phạm Kỹ thuật Thành phố Hồ Chí Minh"
                   "\nHCMC University of Technology and Education",
                 style: TextStyle(fontSize: 20, color: Colors.black, fontWeight: FontWeight.bold),
                 textAlign: TextAlign.center,
               ),
-              Padding(padding: EdgeInsets.fromLTRB(0, 30, 0, 0),
+              const Padding(padding: EdgeInsets.fromLTRB(0, 30, 0, 0),
                 child: Text(
                   "VÀI NÉT VỀ LỊCH SỬ",
                   style: TextStyle(fontSize: 18, color: Colors.blueAccent),
                 ),
               ),
-              Padding(padding: EdgeInsets.fromLTRB(0, 30, 0, 40),
+              const Padding(padding: EdgeInsets.fromLTRB(0, 30, 0, 40),
               child: Text(
                 "    Trường đại học Sư phạm Kỹ thuật Tp. Hồ Chí Minh được hình thành và phát triển trên cơ sở Ban Cao đẳng Sư phạm Kỹ thuật - thành lập ngày 05.10.1962. Ngày 21.9.1972, Trường được đổi tên thành Trung tâm Cao đẳng Sư phạm Kỹ thuật Nguyễn Trường Tộ Thủ Đức và được nâng cấp thành Trường đại học Giáo dục Thủ Đức vào năm 1974."
                     "\n    Ngày 27.10.1976, Thủ tướng Chính phủ đã ký quyết định thành lập Trường đại học Sư phạm Kỹ thuật Thủ Đức trên cơ sở Trường đại học Giáo dục Thủ Đức. Năm 1984, Trường đại học Sư phạm Kỹ thuật Thủ Đức hợp nhất với Trường trung học Công nghiệp Thủ Đức và đổi tên thành Trường đại học Sư phạm Kỹ thuật Tp. Hồ Chí Minh. Năm 1991, Trường đại học Sư phạm Kỹ thuật Tp. Hồ Chí Minh sát nhập thêm Trường Sư phạm Kỹ thuật 5 và phát triển cho đến ngày nay."
@@ -47,16 +48,15 @@ class _AboutUniversityState extends State<AboutUniversity>{
                     "",
                 style: TextStyle(fontSize: 16, color: Colors.black),
                 textAlign: TextAlign.justify,
-
               ),
               ),
-              Padding(padding: EdgeInsets.fromLTRB(0, 30, 0, 0),
+              const Padding(padding: EdgeInsets.fromLTRB(0, 30, 0, 0),
                 child: Text(
                   "CHỨC NĂNG, NHIỆM VỤ",
                   style: TextStyle(fontSize: 18, color: Colors.blueAccent),
                 ),
               ),
-              Padding(padding: EdgeInsets.fromLTRB(0, 30, 0, 40),
+              const Padding(padding: EdgeInsets.fromLTRB(0, 30, 0, 40),
                 child: Text(
                   "    Đào tạo và bồi dưỡng giáo viên kỹ thuật cho các trường đại học, cao đẳng, trung cấp chuyên nghiệp và dạy nghề, các trường phổ thông trung học."
                       "\n    Đào tạo đội ngũ kỹ sư công nghệ và bồi dưỡng nguồn nhân lực lao động kỹ thuật thích ứng với thị trường lao động."
@@ -67,13 +67,13 @@ class _AboutUniversityState extends State<AboutUniversity>{
 
                 ),
               ),
-              Padding(padding: EdgeInsets.fromLTRB(0, 30, 0, 0),
+              const Padding(padding: EdgeInsets.fromLTRB(0, 30, 0, 0),
                 child: Text(
                   "CHÍNH SÁCH CHẤT LƯỢNG",
                   style: TextStyle(fontSize: 18, color: Colors.blueAccent),
                 ),
               ),
-              Padding(padding: EdgeInsets.fromLTRB(0, 30, 0, 40),
+              const Padding(padding: EdgeInsets.fromLTRB(0, 30, 0, 40),
                 child: Text(
                   "    Không ngừng nâng cao chất lượng dạy, học, nghiên cứu khoa học nhằm cung cấp cho người học những điều kiện tốt nhất để phát triển toàn diện các năng lực, đáp ứng nhu cầu phát triển kinh tế, xã hội của đất nước và hội nhập quốc tế",
                style: TextStyle(fontSize: 16, color: Colors.black),
@@ -81,13 +81,13 @@ class _AboutUniversityState extends State<AboutUniversity>{
 
                 ),
               ),
-              Padding(padding: EdgeInsets.fromLTRB(0, 30, 0, 0),
+              const Padding(padding: EdgeInsets.fromLTRB(0, 30, 0, 0),
                 child: Text(
                   "THÀNH TÍCH CỦA TRƯỜNG",
                   style: TextStyle(fontSize: 18, color: Colors.blueAccent),
                 ),
               ),
-              Padding(padding: EdgeInsets.fromLTRB(0, 30, 0, 40),
+              const Padding(padding: EdgeInsets.fromLTRB(0, 30, 0, 40),
                 child: Text(
                   "    Nhà trường được Chủ tịch nước tặng thưởng Huân chương Độc lập hạng ba (năm 2007), Huân chương Lao động hạng Nhất (năm 2001), Huân chương Lao động hạng Nhì (năm 1996), Huân chương Lao động hạng Ba (năm 1985)."
                       "\n    Đảng bộ trường được công nhận là “Đảng bộ Trong sạch - Vững mạnh - Xuất sắc” 13 năm liền (1995-2008)."
@@ -99,13 +99,13 @@ class _AboutUniversityState extends State<AboutUniversity>{
 
                 ),
               ),
-              Padding(padding: EdgeInsets.fromLTRB(0, 30, 0, 0),
+              const Padding(padding: EdgeInsets.fromLTRB(0, 30, 0, 0),
                 child: Text(
                   "ĐỊNH HƯỚNG PHÁT TRIỂN CỦA TRƯỜNG",
                   style: TextStyle(fontSize: 18, color: Colors.blueAccent),
                 ),
               ),
-              Padding(padding: EdgeInsets.fromLTRB(0, 30, 0, 40),
+              const Padding(padding: EdgeInsets.fromLTRB(0, 30, 0, 40),
                 child: Text(
                   "    Phấn đấu trở thành một trong tốp 10 trường đại học hàng đầu của Việt Nam theo các tiêu chí kiểm định chất lượng trường đại học, trên một số mặt ngang tầm với những trường có uy tín của các nước trong khu vực; Trở thành một trường đa lĩnh vực; Sinh viên tốt nghiệp có việc làm phù hợp và phát huy được năng lực của mình một cách tối đa để cống hiến cho xã hội. Chương trình đào tạo có tính thích ứng cao, bằng cấp của Trường được công nhận một cách rộng rãi trong khu vực và thế giới. Tạo được ảnh hưởng tích cực đến đời sống tinh thần và vật chất của xã hội, đặc biệt là Thành phố Hồ Chí Minh và khu vực phía Nam.",
                   style: TextStyle(fontSize: 16, color: Colors.black),

@@ -1,25 +1,23 @@
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:myapp/src/resources/messenger/messenger_page.dart';
 
 import '../../../icons/app_icons_icons.dart';
 import '../../models/AnswerModel.dart';
 import '../../models/ChatRoomModel.dart';
 import '../../models/EmployeeModel.dart';
-import '../../models/QuestionModel.dart';
 import '../../models/UserModel.dart';
 import '../pdf_viewer.dart';
 
 class DetailQuestion extends StatefulWidget {
-  _DetailQuestionState createState() => _DetailQuestionState();
+  @override
+  State<DetailQuestion> createState() => _DetailQuestionState();
 
-  final ChatRoomModel chat_room;
+  final ChatRoomModel chatRoom;
 
-  DetailQuestion({required this.chat_room});
+  const DetailQuestion({super.key, required this.chatRoom});
 }
 
 class Answer {
@@ -34,13 +32,13 @@ class Answer {
 
 class Question {
   String id;
-  String room_id;
+  String roomId;
   String content;
   String time;
   UserModel user;
   String file;
 
-  Question(this.id, this.room_id, this.content, this.time, this.user, this.file);
+  Question(this.id, this.roomId, this.content, this.time, this.user, this.file);
 }
 
 class Message{
@@ -50,7 +48,7 @@ class Message{
   Message(this.type, this.id);
 }
 
-UserModel uModel = new UserModel("", " ", "", "", "", "", "", "");
+UserModel uModel = UserModel("", " ", "", "", "", "", "", "");
 
 class _DetailQuestionState extends State<DetailQuestion> {
   @override
@@ -65,14 +63,14 @@ class _DetailQuestionState extends State<DetailQuestion> {
   }
 
   FirebaseAuth auth = FirebaseAuth.instance;
-  var userr = FirebaseAuth.instance.currentUser!;
+  var userR = FirebaseAuth.instance.currentUser!;
   EmployeeModel employeeModel =
-  new EmployeeModel("", " ", "", "", "", "", "", "", "", "");
+  EmployeeModel("", " ", "", "", "", "", "", "", "", "");
 
   final List<Question> listQuestion = [];
   final List<Answer> listAnswer = [];
   final List<Message> listMessage = [];
-  var departmentName = new Map();
+  var departmentName = {};
   getDepartmentName() async {
     await FirebaseFirestore.instance
         .collection('departments')
@@ -88,10 +86,10 @@ class _DetailQuestionState extends State<DetailQuestion> {
     await getAnswerData();
   }
   getQuestionData() async {
-    UserModel userModel = new UserModel("", " ", "", "", "", "", "", "");
+    UserModel userModel = UserModel("", " ", "", "", "", "", "", "");
     await FirebaseFirestore.instance
         .collection('user')
-        .where('userId', isEqualTo: widget.chat_room.user_id)
+        .where('userId', isEqualTo: widget.chatRoom.user_id)
         .get()
         .then((value) => {
       setState(() {
@@ -107,18 +105,18 @@ class _DetailQuestionState extends State<DetailQuestion> {
     });
     await FirebaseFirestore.instance
         .collection('questions')
-        .where('room_id', isEqualTo: widget.chat_room.id)
+        .where('room_id', isEqualTo: widget.chatRoom.id)
         .get()
         .then((value) => {
       value.docs.forEach((element) {
-        Question question = new Question("", "", "", "", userModel, "");
+        Question question = Question("", "", "", "", userModel, "");
         question.id = element['id'];
-        question.room_id = element['room_id'];
+        question.roomId = element['room_id'];
         question.content = element['content'];
         question.time = element['time'];
         question.file = element['file'];
         listQuestion.add(question);
-        Message message = new Message('question', question.id);
+        Message message = Message('question', question.id);
         listMessage.add(message);
       })
     });
@@ -126,25 +124,25 @@ class _DetailQuestionState extends State<DetailQuestion> {
   }
 
   getAnswerData() async {
-    List<AnswerModel> listans = [];
+    List<AnswerModel> listAns = [];
     await FirebaseFirestore.instance
         .collection('answer')
-        .where('room_id', isEqualTo: widget.chat_room.id)
+        .where('room_id', isEqualTo: widget.chatRoom.id)
         .get()
         .then((value) => {
               value.docs.forEach((element) {
-                AnswerModel ans = new AnswerModel("", "", "", "", "");
+                AnswerModel ans = AnswerModel("", "", "", "", "");
                 ans.employee_id = element['employee_id'];
                 ans.id = element['id'];
                 ans.room_id = element['room_id'];
                 ans.content = element['content'];
                 ans.time = element['time'];
-                listans.add(ans);
+                listAns.add(ans);
               })
             });
-    listans.forEach((element) async {
+    listAns.forEach((element) async {
       EmployeeModel employeeModel =
-          new EmployeeModel("", "", "", "", "", "", "", "", "", "");
+          EmployeeModel("", "", "", "", "", "", "", "", "", "");
       Answer ans = Answer(element.id, element.room_id, element.content,
           element.time, employeeModel);
       await FirebaseFirestore.instance
@@ -165,7 +163,7 @@ class _DetailQuestionState extends State<DetailQuestion> {
                   employeeModel.status = value.docs.first['status'];
                   ans.employee = employeeModel;
                   listAnswer.add(ans);
-                  Message message = new Message('answer', ans.id);
+                  Message message = Message('answer', ans.id);
                   listMessage.add(message);
                 })
               });
@@ -181,7 +179,7 @@ class _DetailQuestionState extends State<DetailQuestion> {
           backgroundColor: Colors.tealAccent,
           child: CircleAvatar(
             backgroundImage:
-            new NetworkImage(question.user.image!),
+            NetworkImage(question.user.image!),
             radius: 20,
           ),
         ),
@@ -191,11 +189,11 @@ class _DetailQuestionState extends State<DetailQuestion> {
           //mainAxisSize: MainAxisSize.min,
 
           children: <Widget>[
-            Container(
+            SizedBox(
               width:
               MediaQuery.of(context).size.width - 75,
               child: Card(
-                margin: EdgeInsets.all(5),
+                margin: const EdgeInsets.all(5),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),
                 ),
@@ -213,7 +211,7 @@ class _DetailQuestionState extends State<DetailQuestion> {
                       MainAxisAlignment.start,
                       crossAxisAlignment:
                       CrossAxisAlignment.start,
-                      children: <Widget>[],
+                      children: const <Widget>[],
                     ),
                     Column(
                       mainAxisAlignment:
@@ -221,12 +219,12 @@ class _DetailQuestionState extends State<DetailQuestion> {
                       crossAxisAlignment:
                       CrossAxisAlignment.start,
                       children: <Widget>[
-                        Padding(
+                        const Padding(
                             padding: EdgeInsets.fromLTRB(
                                 5, 5, 5, 5)),
                         Text(
                           '   ' + question.user.name,
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontSize: 15,
                             fontStyle: FontStyle.italic,
                             fontWeight: FontWeight.w600,
@@ -236,7 +234,7 @@ class _DetailQuestionState extends State<DetailQuestion> {
                           '   Lúc ' + question.time,
                           overflow: TextOverflow.visible,
                           maxLines: 3,
-                          style: TextStyle(
+                          style: const TextStyle(
                               fontSize: 15,
                               fontStyle: FontStyle.italic,
                               fontWeight: FontWeight.w600,
@@ -245,11 +243,11 @@ class _DetailQuestionState extends State<DetailQuestion> {
                         ),
                       ],
                     ),
-                    Padding(
+                    const Padding(
                         padding: EdgeInsets.fromLTRB(
                             5, 5, 5, 5)),
                     Container(
-                        padding: EdgeInsets.fromLTRB(
+                        padding: const EdgeInsets.fromLTRB(
                             10, 0, 5, 5),
                         child: Row(
                           crossAxisAlignment:
@@ -263,7 +261,7 @@ class _DetailQuestionState extends State<DetailQuestion> {
                                 overflow:
                                 TextOverflow.visible,
                                 maxLines: 20,
-                                style: TextStyle(
+                                style: const TextStyle(
                                     fontSize: 15,
                                     fontWeight:
                                     FontWeight.w400),
@@ -285,9 +283,9 @@ class _DetailQuestionState extends State<DetailQuestion> {
                                       final file = await PDFApi.loadNetwork(url);
                                       openPDF(context, file);
                                     },
-                                    icon: Icon(AppIcons.file_pdf,
+                                    icon: const Icon(AppIcons.file_pdf,
                                         color: Color(0xED0565B2)),),
-                                  Text("File PDF đính kèm",
+                                  const Text("File PDF đính kèm",
                                     overflow:
                                     TextOverflow.visible,
                                     style: TextStyle(
@@ -317,20 +315,22 @@ class _DetailQuestionState extends State<DetailQuestion> {
     );
   }
   Widget _buildQuestion() {
-    if (listMessage.isEmpty || departmentName.isEmpty) {mentName.length.toString());
-      return Center(
-        child: Container(
+    dynamic mentName;
+    if (listMessage.isEmpty || departmentName.isEmpty) {
+      mentName.length.toString();
+      return const Center(
+        child: SizedBox(
             width: 20,
             height: 20,
             child: CircularProgressIndicator()),
       );
     }
     List<Widget> questionList = [];
-    listQuestion.forEach((Question question) {
+    for (var question in listQuestion) {
       questionList.add(GestureDetector(
           child: _buildQues(question)
       ));
-    });
+    }
     return Column(children: questionList);
 
     // return Row(
@@ -507,7 +507,7 @@ class _DetailQuestionState extends State<DetailQuestion> {
   _buildAnswers() {
     listAnswer.sort((a, b)=> DateFormat("dd-MM-yyyy HH:mm:ss").parse(a.time).compareTo(DateFormat("dd-MM-yyyy HH:mm:ss").parse(b.time)));
     List<Widget> answerList = [];
-    listAnswer.forEach((Answer answer) {
+    for (var answer in listAnswer) {
       answerList.add(GestureDetector(
         child: Row(
           mainAxisAlignment: MainAxisAlignment.start,
@@ -517,13 +517,12 @@ class _DetailQuestionState extends State<DetailQuestion> {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.start,
               //mainAxisSize: MainAxisSize.min,
-
               children: <Widget>[
-                Container(
+                SizedBox(
                   //width: MediaQuery.of(context).size.width -75,
                   width: 285,
                   child: Card(
-                    margin: EdgeInsets.all(5),
+                    margin: const EdgeInsets.all(5),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),
                     ),
@@ -537,16 +536,16 @@ class _DetailQuestionState extends State<DetailQuestion> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[],
+                          children: const <Widget>[],
                         ),
                         Column(
                           mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
-                            Padding(padding: EdgeInsets.fromLTRB(5, 5, 5, 5)),
+                            const Padding(padding: EdgeInsets.fromLTRB(5, 5, 5, 5)),
                             Text(
                               '   ' + answer.employee.name,
-                              style: TextStyle(
+                              style: const TextStyle(
                                 fontSize: 15,
                                 fontStyle: FontStyle.italic,
                                 fontWeight: FontWeight.w600,
@@ -556,7 +555,7 @@ class _DetailQuestionState extends State<DetailQuestion> {
                               '   Lúc ' + answer.time,
                               overflow: TextOverflow.visible,
                               maxLines: 3,
-                              style: TextStyle(
+                              style: const TextStyle(
                                   fontSize: 15,
                                   fontStyle: FontStyle.italic,
                                   fontWeight: FontWeight.w600,
@@ -564,9 +563,9 @@ class _DetailQuestionState extends State<DetailQuestion> {
                             ),
                           ],
                         ),
-                        Padding(padding: EdgeInsets.fromLTRB(5, 5, 5, 5)),
+                        const Padding(padding: EdgeInsets.fromLTRB(5, 5, 5, 5)),
                         Container(
-                            padding: EdgeInsets.fromLTRB(10, 0, 5, 5),
+                            padding: const EdgeInsets.fromLTRB(10, 0, 5, 5),
                             child: Row(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               mainAxisAlignment: MainAxisAlignment.start,
@@ -576,7 +575,7 @@ class _DetailQuestionState extends State<DetailQuestion> {
                                     answer.content,
                                     overflow: TextOverflow.visible,
                                     maxLines: 20,
-                                    style: TextStyle(
+                                    style: const TextStyle(
                                         fontSize: 15,
                                         fontWeight: FontWeight.w400),
                                   ),
@@ -593,14 +592,14 @@ class _DetailQuestionState extends State<DetailQuestion> {
               radius: 22,
               backgroundColor: Colors.tealAccent,
               child: CircleAvatar(
-                backgroundImage: new NetworkImage(answer.employee.image!),
+                backgroundImage: NetworkImage(answer.employee.image!),
                 radius: 20,
               ),
             ),
           ],
         ),
       ));
-    });
+    }
     return Column(children: answerList);
   }
 
@@ -608,7 +607,7 @@ class _DetailQuestionState extends State<DetailQuestion> {
   Widget build(BuildContext context) {
     // TODO: implement build
     return Scaffold(
-      appBar: new AppBar(
+      appBar: AppBar(
         title: const Text("Chi tiết câu hỏi"),
         backgroundColor: Colors.blueAccent,
       ),
@@ -626,9 +625,9 @@ class _DetailQuestionState extends State<DetailQuestion> {
                 mainAxisAlignment: MainAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
-                  Padding(padding: EdgeInsets.fromLTRB(0, 10, 0, 10)),
+                  const Padding(padding: EdgeInsets.fromLTRB(0, 10, 0, 10)),
                   _buildQuestion(),
-                  Padding(padding: EdgeInsets.fromLTRB(0, 10, 0, 10)),
+                  const Padding(padding: EdgeInsets.fromLTRB(0, 10, 0, 10)),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[_buildAnswers()],

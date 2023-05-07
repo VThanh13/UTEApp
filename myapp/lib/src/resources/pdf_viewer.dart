@@ -9,12 +9,12 @@ import 'package:path_provider/path_provider.dart';
 class PDFViewerPage extends StatefulWidget {
   final File file;
 
-  const PDFViewerPage({
+  const PDFViewerPage({super.key,
     required this.file,
   }) ;
 
   @override
-  _PDFViewerPageState createState() => _PDFViewerPageState();
+  State<PDFViewerPage> createState() => _PDFViewerPageState();
 }
 
 class _PDFViewerPageState extends State<PDFViewerPage> {
@@ -31,25 +31,25 @@ class _PDFViewerPageState extends State<PDFViewerPage> {
   }
   @override
   Widget build(BuildContext context) {
-    final name = 'PDF File';
+    const name = 'PDF File';
     final text = '${indexPage + 1} of $pages';
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(name),
+        title: const Text(name),
         backgroundColor: Colors.tealAccent,
         actions: pages >= 2
             ? [
           Center(child: Text(text)),
           IconButton(
-            icon: Icon(Icons.chevron_left, size: 32),
+            icon: const Icon(Icons.chevron_left, size: 32),
             onPressed: () {
               final page = indexPage == 0 ? pages : indexPage - 1;
               controller.setPage(page);
             },
           ),
           IconButton(
-            icon: Icon(Icons.chevron_right, size: 32),
+            icon: const Icon(Icons.chevron_right, size: 32),
             onPressed: () {
               final page = indexPage == pages - 1 ? 0 : indexPage + 1;
               controller.setPage(page);

@@ -4,50 +4,49 @@ import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.da
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:intl/intl.dart';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:myapp/icons/app_icons_icons.dart';
 import 'package:myapp/src/models/EmployeeModel.dart';
-import 'package:myapp/src/models/QuestionModel.dart';
 import 'package:myapp/src/resources/home_page.dart';
 import 'package:myapp/src/resources/messenger/detail_question.dart';
 import 'package:myapp/src/resources/messenger/view_employee_byuser.dart';
-
 import '../../models/ChatRoomModel.dart';
 import '../../models/UserModel.dart';
 import '../dialog/loading_dialog.dart';
 
 class MessengerPage extends StatefulWidget {
+  const MessengerPage({super.key});
+
   @override
-  _MessengerPageState createState() => _MessengerPageState();
+  State<MessengerPage> createState() => _MessengerPageState();
 }
 
 class _MessengerPageState extends State<MessengerPage> {
-  CollectionReference derpart =
+  CollectionReference derPart =
       FirebaseFirestore.instance.collection('departments');
   FirebaseFirestore db = FirebaseFirestore.instance;
   String? value;
-  String? value_khoa;
+  String? valueKhoa;
   String? value4;
   var selectedDerpartments;
   String? value2;
-  String? value_vande;
+  String? valueVanDe;
   var departmentsItems = [];
-  var item_doituong = [
+  var itemDoiTuong = [
     'Học sinh THPT',
     'Sinh viên',
     'Phụ huynh',
     'Cựu sinh viên',
     'Khác'
   ];
-  List<dynamic> listt = [];
+  List<dynamic> listT = [];
   int pageIndex = 0;
 
   FirebaseAuth auth = FirebaseAuth.instance;
   var currentUser = FirebaseAuth.instance.currentUser!;
-  UserModel current_user = new UserModel("", " ", "", "", "", "", "", "");
+  UserModel currentUserR = UserModel("", " ", "", "", "", "", "", "");
 
   @override
   void initState() {
@@ -64,26 +63,28 @@ class _MessengerPageState extends State<MessengerPage> {
     _informationControl.close();
     super.dispose();
   }
+
   getCurrentUser() async {
     await FirebaseFirestore.instance
         .collection('user')
         .where('userId', isEqualTo: currentUser.uid)
         .get()
         .then((value) => {
-      setState(() {
-        current_user.id = value.docs.first['userId'];
-        current_user.name = value.docs.first['name'];
-        current_user.email = value.docs.first['email'];
-        current_user.image = value.docs.first['image'];
-        current_user.password = value.docs.first['password'];
-        current_user.phone = value.docs.first['phone'];
-        current_user.group = value.docs.first['group'];
-        current_user.status = value.docs.first['status'];
-      })
-    });
+              setState(() {
+                currentUserR.id = value.docs.first['userId'];
+                currentUserR.name = value.docs.first['name'];
+                currentUserR.email = value.docs.first['email'];
+                currentUserR.image = value.docs.first['image'];
+                currentUserR.password = value.docs.first['password'];
+                currentUserR.phone = value.docs.first['phone'];
+                currentUserR.group = value.docs.first['group'];
+                currentUserR.status = value.docs.first['status'];
+              })
+            });
     await getChatRoomByUser();
     await getAllChatRoom();
   }
+
   Future<List> getDataDropdownProblem(String? value_khoa) async {
     QuerySnapshot snapshot = await FirebaseFirestore.instance
         .collection("departments")
@@ -99,20 +100,21 @@ class _MessengerPageState extends State<MessengerPage> {
   }
 
   List<String> listDepartment = [];
-  var departmentName = new Map();
+  var departmentName = {};
   getDepartmentName() async {
     await FirebaseFirestore.instance
         .collection('departments')
         .get()
         .then((value) => {
               setState(() {
-                value.docs.forEach((element) {
+                for (var element in value.docs) {
                   departmentName[element.id] = element["name"];
                   listDepartment.add(element['name']);
-                });
+                }
               })
             });
   }
+
   List<ChatRoomModel> listPublicChatRoom = [];
   getAllChatRoom() async {
     await FirebaseFirestore.instance
@@ -120,30 +122,32 @@ class _MessengerPageState extends State<MessengerPage> {
         .where('mode', isEqualTo: 'public')
         .get()
         .then((value) => {
-      value.docs.forEach((element) {
-        ChatRoomModel chat_room = new ChatRoomModel("", "", "", "", "", "", "", "", "", "");
-        chat_room.id = element['room_id'];
-        chat_room.user_id = element['user_id'];
-        chat_room.time = element['time'];
-        chat_room.title = element['title'];
-        chat_room.department = element['department'];
-        chat_room.category = element['category'];
-        chat_room.information = element['information'];
-        chat_room.group = element['group'];
-        chat_room.mode = element['mode'];
-        chat_room.status = element['status'];
+              value.docs.forEach((element) {
+                ChatRoomModel chatRoom =
+                    ChatRoomModel("", "", "", "", "", "", "", "", "", "");
+                chatRoom.id = element['room_id'];
+                chatRoom.user_id = element['user_id'];
+                chatRoom.time = element['time'];
+                chatRoom.title = element['title'];
+                chatRoom.department = element['department'];
+                chatRoom.category = element['category'];
+                chatRoom.information = element['information'];
+                chatRoom.group = element['group'];
+                chatRoom.mode = element['mode'];
+                chatRoom.status = element['status'];
 
-        listPublicChatRoom.add(chat_room);
-      })
-    });
+                listPublicChatRoom.add(chatRoom);
+              })
+            });
   }
+
   _buildAllChatRoom() {
     listPublicChatRoom.sort((a, b) => DateFormat("dd-MM-yyyy HH:mm:ss")
         .parse(b.time)
         .compareTo(DateFormat("dd-MM-yyyy HH:mm:ss").parse(a.time)));
 
     List<Widget> chatList = [];
-    listPublicChatRoom.forEach((ChatRoomModel chat_room) {
+    listPublicChatRoom.forEach((ChatRoomModel chatRoom) {
       chatList.add(GestureDetector(
         // onTap: () {
         //   Navigator.push(
@@ -153,7 +157,7 @@ class _MessengerPageState extends State<MessengerPage> {
         //               DetailQuestion(question: question)));
         // },
         child: Container(
-          margin: EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
+          margin: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
           decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(15.0),
@@ -165,35 +169,35 @@ class _MessengerPageState extends State<MessengerPage> {
             children: <Widget>[
               Expanded(
                   child: Container(
-                margin: EdgeInsets.all(12.0),
+                margin: const EdgeInsets.all(12.0),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Text(
-                      chat_room.title,
-                      style: TextStyle(
+                      chatRoom.title,
+                      style: const TextStyle(
                         fontSize: 20.0,
                         fontWeight: FontWeight.bold,
                       ),
                       overflow: TextOverflow.ellipsis,
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 4.0,
                     ),
                     Text(
-                      chat_room.time,
-                      style: TextStyle(
+                      chatRoom.time,
+                      style: const TextStyle(
                         fontSize: 16.0,
                         fontWeight: FontWeight.w600,
                       ),
                       overflow: TextOverflow.ellipsis,
                     ),
-                    Text(chat_room.status,
+                    Text(chatRoom.status,
                         style: TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.w400,
-                          color: chat_room.status == "Chưa trả lời"
+                          color: chatRoom.status == "Chưa trả lời"
                               ? Colors.redAccent
                               : Colors.green,
                           overflow: TextOverflow.ellipsis,
@@ -213,43 +217,45 @@ class _MessengerPageState extends State<MessengerPage> {
   getChatRoomByUser() async {
     await FirebaseFirestore.instance
         .collection('chat_room')
-        .where('user_id', isEqualTo: current_user.id)
+        .where('user_id', isEqualTo: currentUserR.id)
         .get()
         .then((value) => {
-      value.docs.forEach((element) {
-        ChatRoomModel chat_room = new ChatRoomModel("", "", "", "", "", "", "", "", "", "");
-        chat_room.id = element['room_id'];
-        chat_room.user_id = element['user_id'];
-        chat_room.time = element['time'];
-        chat_room.title = element['title'];
-        chat_room.department = element['department'];
-        chat_room.category = element['category'];
-        chat_room.information = element['information'];
-        chat_room.group = element['group'];
-        chat_room.mode = element['mode'];
-        chat_room.status = element['status'];
+              value.docs.forEach((element) {
+                ChatRoomModel chatRoom =
+                    ChatRoomModel("", "", "", "", "", "", "", "", "", "");
+                chatRoom.id = element['room_id'];
+                chatRoom.user_id = element['user_id'];
+                chatRoom.time = element['time'];
+                chatRoom.title = element['title'];
+                chatRoom.department = element['department'];
+                chatRoom.category = element['category'];
+                chatRoom.information = element['information'];
+                chatRoom.group = element['group'];
+                chatRoom.mode = element['mode'];
+                chatRoom.status = element['status'];
 
-        listChatRoomByUser.add(chat_room);
-      })
-    });
+                listChatRoomByUser.add(chatRoom);
+              })
+            });
   }
+
   _buildChatRoomByUser() {
     listChatRoomByUser.sort((a, b) => DateFormat("dd-MM-yyyy HH:mm:ss")
         .parse(b.time)
         .compareTo(DateFormat("dd-MM-yyyy HH:mm:ss").parse(a.time)));
 
     List<Widget> chatList = [];
-    listChatRoomByUser.forEach((ChatRoomModel chat_room) {
+    listChatRoomByUser.forEach((ChatRoomModel chatRoom) {
       chatList.add(GestureDetector(
         onTap: () {
           Navigator.push(
               context,
-              new MaterialPageRoute(
+              MaterialPageRoute(
                   builder: (BuildContext context) =>
-                      DetailQuestion(chat_room: chat_room)));
+                      DetailQuestion(chatRoom: chatRoom)));
         },
         child: Container(
-          margin: EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
+          margin: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
           decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(15.0),
@@ -261,42 +267,42 @@ class _MessengerPageState extends State<MessengerPage> {
             children: <Widget>[
               Expanded(
                   child: Container(
-                    margin: EdgeInsets.all(12.0),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Text(
-                          chat_room.title,
-                          style: TextStyle(
-                            fontSize: 20.0,
-                            fontWeight: FontWeight.bold,
-                          ),
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        SizedBox(
-                          height: 4.0,
-                        ),
-                        Text(
-                          chat_room.time,
-                          style: TextStyle(
-                            fontSize: 16.0,
-                            fontWeight: FontWeight.w600,
-                          ),
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        Text(chat_room.status,
-                            style: TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w400,
-                              color: chat_room.status == "Chưa trả lời"
-                                  ? Colors.redAccent
-                                  : Colors.green,
-                              overflow: TextOverflow.ellipsis,
-                            ))
-                      ],
+                margin: const  EdgeInsets.all(12.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Text(
+                      chatRoom.title,
+                      style: const TextStyle(
+                        fontSize: 20.0,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      overflow: TextOverflow.ellipsis,
                     ),
-                  ))
+                    const SizedBox(
+                      height: 4.0,
+                    ),
+                    Text(
+                      chatRoom.time,
+                      style: const TextStyle(
+                        fontSize: 16.0,
+                        fontWeight: FontWeight.w600,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    Text(chatRoom.status,
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w400,
+                          color: chatRoom.status == "Chưa trả lời"
+                              ? Colors.redAccent
+                              : Colors.green,
+                          overflow: TextOverflow.ellipsis,
+                        ))
+                  ],
+                ),
+              ))
             ],
           ),
         ),
@@ -313,7 +319,7 @@ class _MessengerPageState extends State<MessengerPage> {
         .then((value) => {
               value.docs.forEach((element) {
                 EmployeeModel eModel =
-                    new EmployeeModel("", " ", "", "", "", "", "", "", "", "");
+                    EmployeeModel("", " ", "", "", "", "", "", "", "", "");
                 eModel.id = element['id'];
                 eModel.name = element['name'];
                 eModel.email = element['email'];
@@ -332,7 +338,7 @@ class _MessengerPageState extends State<MessengerPage> {
 
   _buildEmployee(BuildContext context, EmployeeModel employeeModel) {
     return Container(
-      margin: EdgeInsets.all(10.0),
+      margin: const EdgeInsets.all(10.0),
       width: 320,
       decoration: BoxDecoration(
           color: Colors.white,
@@ -345,26 +351,26 @@ class _MessengerPageState extends State<MessengerPage> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
           Container(
-            padding: EdgeInsets.fromLTRB(20, 0, 10, 0),
+            padding: const EdgeInsets.fromLTRB(20, 0, 10, 0),
             child: CircleAvatar(
               radius: 30,
               backgroundColor: Colors.tealAccent,
               child: CircleAvatar(
-                backgroundImage: new NetworkImage(employeeModel.image!),
+                backgroundImage: NetworkImage(employeeModel.image!),
                 radius: 28,
               ),
             ),
           ),
           Expanded(
               child: Container(
-            margin: EdgeInsets.all(12.0),
+            margin: const EdgeInsets.all(12.0),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Text(
                   employeeModel.name,
-                  style: TextStyle(
+                  style: const TextStyle(
                       fontSize: 18,
                       fontStyle: FontStyle.italic,
                       fontWeight: FontWeight.w500),
@@ -372,34 +378,36 @@ class _MessengerPageState extends State<MessengerPage> {
                 ),
                 Text(
                   employeeModel.roles,
-                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.w400),
+                  style: const TextStyle(
+                      fontSize: 15, fontWeight: FontWeight.w400),
                   overflow: TextOverflow.ellipsis,
                 ),
                 Text(
                   departmentName[employeeModel.department],
-                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.w400),
+                  style: const TextStyle(
+                      fontSize: 15, fontWeight: FontWeight.w400),
                   overflow: TextOverflow.ellipsis,
                 ),
               ],
             ),
           )),
           Container(
-            margin: EdgeInsets.only(right: 10),
+            margin: const EdgeInsets.only(right: 10),
             width: 48,
             decoration: BoxDecoration(
               color: Colors.deepOrange,
               borderRadius: BorderRadius.circular(30),
             ),
             child: IconButton(
-              icon: Icon(AppIcons.user),
+              icon: const Icon(AppIcons.user),
               iconSize: 30,
               color: Colors.white70,
               onPressed: () {
                 Navigator.push(
                     context,
-                    new MaterialPageRoute(
+                    MaterialPageRoute(
                         builder: (BuildContext context) => ViewEmployeeByUser(
-                            employee: employeeModel, users: current_user)));
+                            employee: employeeModel, users: currentUserR)));
               },
             ),
           )
@@ -408,29 +416,29 @@ class _MessengerPageState extends State<MessengerPage> {
     );
   }
 
-  TextEditingController _informationController = new TextEditingController();
-  TextEditingController _titleController = new TextEditingController();
-  TextEditingController _questionController = new TextEditingController();
+  final TextEditingController _informationController = TextEditingController();
+  final TextEditingController _titleController = TextEditingController();
+  final TextEditingController _questionController = TextEditingController();
 
-  StreamController _informationControl = new StreamController.broadcast();
-  StreamController _titleControl = new StreamController.broadcast();
-  StreamController _questionControl = new StreamController.broadcast();
+  final StreamController _informationControl = StreamController.broadcast();
+  final StreamController _titleControl = StreamController.broadcast();
+  final StreamController _questionControl = StreamController.broadcast();
 
   Stream get informationControl => _informationControl.stream;
   Stream get titleControl => _titleControl.stream;
   Stream get questionControl => _questionControl.stream;
 
   bool isValid(String information, String title, String question) {
-    if (information == null || information.length == 0) {
+    if (information.isEmpty) {
       _informationControl.sink.addError("Nhập thông tin liên lạc");
       return false;
     }
 
-    if (title == null || title.length == 0) {
+    if (title.isEmpty) {
       _titleControl.sink.addError("Nhập tiêu đề");
       return false;
     }
-    if (question == null || question.length == 0) {
+    if (question.isEmpty) {
       _questionControl.sink.addError("Nhập câu hỏi");
       return false;
     }
@@ -444,8 +452,8 @@ class _MessengerPageState extends State<MessengerPage> {
         future: FirebaseFirestore.instance.collection("departments").get(),
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
-            return Center(
-              child: Container(
+            return const Center(
+              child: SizedBox(
                   width: 20, height: 20, child: CircularProgressIndicator()),
             );
           }
@@ -453,111 +461,108 @@ class _MessengerPageState extends State<MessengerPage> {
           return FutureBuilder<QuerySnapshot>(
               future: FirebaseFirestore.instance
                   .collection("departments")
-                  .where("name", isEqualTo: value_khoa)
+                  .where("name", isEqualTo: valueKhoa)
                   .get(),
               builder: (context, snapshot) {
                 if (!snapshot.hasData) {
-                  return Center(
-                    child: Container(
+                  return const Center(
+                    child: SizedBox(
                         width: 20,
                         height: 20,
                         child: CircularProgressIndicator()),
                   );
                 }
-                      // TODO: implement build
-                      return Scaffold(
-                        appBar: new AppBar(
-                          leading: IconButton(
-                              icon: Icon(Icons.arrow_back, color: Colors.white),
-                              onPressed: () {
-                                Navigator.push(
-                                    context,
-                                    new MaterialPageRoute(
-                                        builder: (BuildContext context) =>
-                                        new HomePage()));
-                              }
+                // TODO: implement build
+                return Scaffold(
+                  appBar: AppBar(
+                    leading: IconButton(
+                        icon: const Icon(Icons.arrow_back, color: Colors.white),
+                        onPressed: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (BuildContext context) =>
+                                       HomePage()));
+                        }),
+                    title: const Text("Tin nhắn"),
+                    backgroundColor: Colors.blueAccent,
+                  ),
+                  bottomNavigationBar: getFooter(),
+                  floatingActionButton: FloatingActionButton(
+                      onPressed: () {
+                        if (currentUserR.id != "") {
+                          modalBottomSheetQuestion();
+                        }
+                      },
+                      backgroundColor: Colors.blue,
+                      child: const Icon(
+                        Icons.add,
+                        size: 25,
+                      )
+                      //params
+                      ),
+                  floatingActionButtonLocation:
+                      FloatingActionButtonLocation.centerDocked,
+                  body: SafeArea(
+                    minimum: const EdgeInsets.only(left: 20, right: 10),
+                    child: SingleChildScrollView(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: <Widget>[
+                          const Padding(
+                            padding: EdgeInsets.fromLTRB(0, 0, 0, 5),
                           ),
-                          title: const Text("Tin nhắn"),
-                          backgroundColor: Colors.blueAccent,
-                        ),
-                        bottomNavigationBar: getFooter(),
-                        floatingActionButton: FloatingActionButton(
-                            onPressed: () {
-                              if(current_user.id!="") {
-                                modalBottomSheetQuestion();
-                              }
-                            },
-                            child: Icon(
-                              Icons.add,
-                              size: 25,
-                            ),
-                            backgroundColor: Colors.blue
-                            //params
-                            ),
-                        floatingActionButtonLocation:
-                            FloatingActionButtonLocation.centerDocked,
-                        body: SafeArea(
-                          minimum: const EdgeInsets.only(left: 20, right: 10),
-                          child: SingleChildScrollView(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: <Widget>[
-                                Padding(
-                                  padding: EdgeInsets.fromLTRB(0, 0, 0, 5),
+                          StreamBuilder<QuerySnapshot>(
+                              stream: derPart.snapshots(),
+                              builder: (context, snapshot) {
+                                if (!snapshot.hasError) {
+                                  const Text("Loading");
+                                } else {
+                                  derPart
+                                      .get()
+                                      .then((QuerySnapshot querySnapshot) {
+                                    querySnapshot.docs.forEach((doc) {
+                                    });
+                                  });
+                                }
+                                return const Text("");
+                              }),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              const Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 20.0),
+                                child: Text(
+                                  'Đội ngũ tư vấn viên',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                      fontSize: 24,
+                                      fontWeight: FontWeight.w600,
+                                      letterSpacing: 1.0),
                                 ),
-                                StreamBuilder<QuerySnapshot>(
-                                    stream: derpart.snapshots(),
-                                    builder: (context, snapshot) {
-                                      if (!snapshot.hasError) {
-                                        Text("Loading");
-                                      } else {
-                                        derpart.get().then(
-                                            (QuerySnapshot querySnapshot) {
-                                          querySnapshot.docs.forEach((doc) {
-                                            print(doc["departments"]);
-                                          });
-                                        });
-                                      }
-                                      return Text("");
+                              ),
+                              SizedBox(
+                                height: 120.0,
+                                child: ListView.builder(
+                                    physics: const BouncingScrollPhysics(),
+                                    padding: const EdgeInsets.only(left: 10.0),
+                                    scrollDirection: Axis.horizontal,
+                                    itemCount: listEmployee.length,
+                                    itemBuilder:
+                                        (BuildContext context, int index) {
+                                      // EmployeeModel employeeModel = listEmployee[index];
+                                      return _buildEmployee(
+                                          context, listEmployee[index]);
                                     }),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: <Widget>[
-                                    Padding(
-                                      padding: EdgeInsets.symmetric(
-                                          horizontal: 20.0),
-                                      child: Text(
-                                        'Đội ngũ tư vấn viên',
-                                        textAlign: TextAlign.center,
-                                        style: TextStyle(
-                                            fontSize: 24,
-                                            fontWeight: FontWeight.w600,
-                                            letterSpacing: 1.0),
-                                      ),
-                                    ),
-                                    Container(
-                                      height: 120.0,
-                                      child: ListView.builder(
-                                          physics: BouncingScrollPhysics(),
-                                          padding: EdgeInsets.only(left: 10.0),
-                                          scrollDirection: Axis.horizontal,
-                                          itemCount: listEmployee.length,
-                                          itemBuilder: (BuildContext context,
-                                              int index) {
-                                            // EmployeeModel employeeModel = listEmployee[index];
-                                            return _buildEmployee(
-                                                context, listEmployee[index]);
-                                          }),
-                                    )
-                                  ],
-                                ),
-
-                                getQuestion(),
-                              ],
-                            ),
+                              )
+                            ],
                           ),
-                        ),
-                      );
+                          getQuestion(),
+                        ],
+                      ),
+                    ),
+                  ),
+                );
               });
         });
   }
@@ -567,7 +572,7 @@ class _MessengerPageState extends State<MessengerPage> {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          Padding(
+          const Padding(
             padding: EdgeInsets.symmetric(horizontal: 20.0),
             child: Text(
               'Câu hỏi của bạn',
@@ -585,7 +590,7 @@ class _MessengerPageState extends State<MessengerPage> {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          Padding(
+          const Padding(
             padding: EdgeInsets.symmetric(horizontal: 20.0),
             child: Text(
               'Tất cả câu hỏi',
@@ -608,7 +613,7 @@ class _MessengerPageState extends State<MessengerPage> {
         constraints: BoxConstraints.loose(Size(
             MediaQuery.of(context).size.width,
             MediaQuery.of(context).size.height * 0.75)),
-        shape: RoundedRectangleBorder(
+        shape: const RoundedRectangleBorder(
             borderRadius: BorderRadius.only(
           topLeft: Radius.circular(20),
           topRight: Radius.circular(20),
@@ -617,238 +622,237 @@ class _MessengerPageState extends State<MessengerPage> {
         builder: (BuildContext context) {
           return StatefulBuilder(
               builder: (BuildContext context, StateSetter setStateKhoa) {
-            return Container(
-              child: Column(
-                children: <Widget>[
-                  Padding(
-                    padding: EdgeInsets.fromLTRB(5, 20, 5, 10),
-                    child: Text(
-                      'Đặt câu hỏi',
-                      style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.w600,
-                          letterSpacing: 1.0),
-                    ),
+            return Column(
+              children: <Widget>[
+                const Padding(
+                  padding: EdgeInsets.fromLTRB(5, 20, 5, 10),
+                  child: Text(
+                    'Đặt câu hỏi',
+                    style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.w600,
+                        letterSpacing: 1.0),
                   ),
-                  SingleChildScrollView(
-                    physics: BouncingScrollPhysics(),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Container(
-                          height: MediaQuery.of(context).size.height * 0.65,
-                          child: SingleChildScrollView(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: <Widget>[
-                                Padding(
-                                    padding: EdgeInsets.fromLTRB(0, 10, 0, 10)),
-                                Container(
-                                    margin: EdgeInsets.fromLTRB(0, 10, 0, 15),
-                                    width: 340,
-                                    padding: EdgeInsets.symmetric(
-                                        horizontal: 12, vertical: 4),
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(12),
-                                      border: Border.all(
-                                          color: Colors.blueAccent, width: 4),
-                                    ),
-                                    child: DropdownButtonHideUnderline(
-                                      child: DropdownButton(
-                                        isExpanded: true,
-                                        value: value_khoa,
-                                        hint: new Text(
-                                            "Vui lòng chọn đơn vị để hỏi"),
-                                        iconSize: 36,
-                                        items: render(listDepartment),
-                                        onChanged: (value) async {
-                                          final List<dynamic> list_problem =
-                                              await getDataDropdownProblem(
-                                                  value) as List;
-                                          setStateKhoa(() {
-                                            setState(() {
-                                              this.value_vande = null;
-                                              this.value_khoa = value;
-                                              this.listt = list_problem;
-                                            });
+                ),
+                SingleChildScrollView(
+                  physics: const BouncingScrollPhysics(),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      SizedBox(
+                        height: MediaQuery.of(context).size.height * 0.65,
+                        child: SingleChildScrollView(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: <Widget>[
+                              const Padding(
+                                  padding: EdgeInsets.fromLTRB(0, 10, 0, 10)),
+                              Container(
+                                  margin: const EdgeInsets.fromLTRB(0, 10, 0, 15),
+                                  width: 340,
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 12, vertical: 4),
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(12),
+                                    border: Border.all(
+                                        color: Colors.blueAccent, width: 4),
+                                  ),
+                                  child: DropdownButtonHideUnderline(
+                                    child: DropdownButton(
+                                      isExpanded: true,
+                                      value: valueKhoa,
+                                      hint: const Text(
+                                          "Vui lòng chọn đơn vị để hỏi"),
+                                      iconSize: 36,
+                                      items: render(listDepartment),
+                                      onChanged: (value) async {
+                                        final List<dynamic> listProblem =
+                                            await getDataDropdownProblem(
+                                                value);
+                                        setStateKhoa(() {
+                                          setState(() {
+                                            valueVanDe = null;
+                                            valueKhoa = value;
+                                            listT = listProblem;
                                           });
-                                        },
-                                      ),
-                                    )),
-                                Container(
-                                    margin: EdgeInsets.fromLTRB(0, 10, 0, 15),
-                                    width: 340,
-                                    padding: EdgeInsets.symmetric(
-                                        horizontal: 12, vertical: 4),
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(12),
-                                      border: Border.all(
-                                          color: Colors.blueAccent, width: 4),
+                                        });
+                                      },
                                     ),
-                                    child: DropdownButtonHideUnderline(
-                                      child: DropdownButton(
-                                        isExpanded: true,
-                                        value: value_vande,
-                                        hint: new Text(
-                                            "Vui lòng chọn vấn đề để hỏi"),
-                                        iconSize: 36,
-                                        items: renderr(listt),
-                                        onChanged: (value) {
-                                          setStateKhoa(() {
-                                            setState(() {
-                                              this.value_vande = value;
-                                            });
+                                  )),
+                              Container(
+                                  margin: const EdgeInsets.fromLTRB(0, 10, 0, 15),
+                                  width: 340,
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 12, vertical: 4),
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(12),
+                                    border: Border.all(
+                                        color: Colors.blueAccent, width: 4),
+                                  ),
+                                  child: DropdownButtonHideUnderline(
+                                    child: DropdownButton(
+                                      isExpanded: true,
+                                      value: valueVanDe,
+                                      hint: const Text(
+                                          "Vui lòng chọn vấn đề để hỏi"),
+                                      iconSize: 36,
+                                      items: renderR(listT),
+                                      onChanged: (value) {
+                                        setStateKhoa(() {
+                                          setState(() {
+                                            valueVanDe = value;
                                           });
-                                        },
-                                      ),
-                                    )),
-                                Container(
-                                    margin: EdgeInsets.fromLTRB(0, 10, 0, 15),
-                                    width: 340,
-                                    child: StreamBuilder(
-                                      stream: informationControl,
-                                      builder: (context, snapshot) => TextField(
-                                        controller: _informationController,
-                                        decoration: InputDecoration(
-                                            labelText: "Phương thức liên hệ",
-                                            hintText: 'Nhập Email/SĐT của bạn',
-                                            enabledBorder: OutlineInputBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(10),
-                                                borderSide: BorderSide(
-                                                  color: Colors.blueAccent,
-                                                  width: 1,
-                                                )),
-                                            focusedBorder: OutlineInputBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(10),
-                                                borderSide: BorderSide(
-                                                    color: Colors.blue,
-                                                    width: 4))),
-                                      ),
-                                    )),
-                                Container(
-                                  margin: EdgeInsets.fromLTRB(0, 10, 0, 15),
+                                        });
+                                      },
+                                    ),
+                                  )),
+                              Container(
+                                  margin: const EdgeInsets.fromLTRB(0, 10, 0, 15),
                                   width: 340,
                                   child: StreamBuilder(
-                                    stream: titleControl,
+                                    stream: informationControl,
                                     builder: (context, snapshot) => TextField(
-                                      controller: _titleController,
+                                      controller: _informationController,
                                       decoration: InputDecoration(
-                                          labelText: "Tiêu đề",
-                                          hintText: 'Nhập Tiêu đề',
+                                          labelText: "Phương thức liên hệ",
+                                          hintText: 'Nhập Email/SĐT của bạn',
                                           enabledBorder: OutlineInputBorder(
                                               borderRadius:
                                                   BorderRadius.circular(10),
-                                              borderSide: BorderSide(
+                                              borderSide: const BorderSide(
                                                 color: Colors.blueAccent,
                                                 width: 1,
                                               )),
                                           focusedBorder: OutlineInputBorder(
                                               borderRadius:
                                                   BorderRadius.circular(10),
-                                              borderSide: BorderSide(
+                                              borderSide: const BorderSide(
                                                   color: Colors.blue,
                                                   width: 4))),
                                     ),
+                                  )),
+                              Container(
+                                margin: const EdgeInsets.fromLTRB(0, 10, 0, 15),
+                                width: 340,
+                                child: StreamBuilder(
+                                  stream: titleControl,
+                                  builder: (context, snapshot) => TextField(
+                                    controller: _titleController,
+                                    decoration: InputDecoration(
+                                        labelText: "Tiêu đề",
+                                        hintText: 'Nhập Tiêu đề',
+                                        enabledBorder: OutlineInputBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(10),
+                                            borderSide: const BorderSide(
+                                              color: Colors.blueAccent,
+                                              width: 1,
+                                            )),
+                                        focusedBorder: OutlineInputBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(10),
+                                            borderSide: const BorderSide(
+                                                color: Colors.blue,
+                                                width: 4))),
                                   ),
                                 ),
-                                Container(
-                                  width: 340,
-                                  margin: EdgeInsets.fromLTRB(0, 10, 0, 15),
-                                  child: StreamBuilder(
-                                    stream: questionControl,
-                                    builder: (context, snapshot) => TextField(
-                                      controller: _questionController,
-                                      maxLines: 50,
-                                      minLines: 10,
-                                      maxLength: 3000,
-                                      decoration: InputDecoration(
-                                          hintMaxLines: 5,
-                                          helperMaxLines: 5,
-                                          labelText: "Đặt câu hỏi",
-                                          hintText: 'Nhập câu hỏi của bạn',
-                                          enabledBorder: OutlineInputBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(10),
-                                              borderSide: BorderSide(
-                                                color: Colors.blueAccent,
-                                                width: 1,
-                                              )),
-                                          focusedBorder: OutlineInputBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(10),
-                                              borderSide: BorderSide(
-                                                  color: Colors.blue,
-                                                  width: 4))),
-                                    ),
-                                  ),
-                                ),
-                                IconButton(
-                                    onPressed: () {
-                                      importPdf();
-                                    },
-                                    icon: Icon(AppIcons.file_pdf)),
-                                Container(
-                                  padding: EdgeInsets.all(10),
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceAround,
-                                    children: <Widget>[
-                                      Expanded(
-                                        child: ElevatedButton.icon(
-                                          onPressed: () {
-                                            _onSendQuestionClicked();
-                                            print('press save');
-                                          },
-                                          label: Text(
-                                            'Gửi',
-                                            style: TextStyle(
-                                                fontSize: 16,
-                                                color: Colors.white),
-                                          ),
-                                          icon: Icon(Icons.send_rounded),
-                                          style: ElevatedButton.styleFrom(
-                                              primary: Colors.blueAccent),
+                              ),
+                              Container(
+                                width: 340,
+                                margin: const EdgeInsets.fromLTRB(0, 10, 0, 15),
+                                child: StreamBuilder(
+                                  stream: questionControl,
+                                  builder: (context, snapshot) => TextField(
+                                    controller: _questionController,
+                                    maxLines: 50,
+                                    minLines: 10,
+                                    maxLength: 3000,
+                                    decoration: InputDecoration(
+                                        hintMaxLines: 5,
+                                        helperMaxLines: 5,
+                                        labelText: "Đặt câu hỏi",
+                                        hintText: 'Nhập câu hỏi của bạn',
+                                        enabledBorder: OutlineInputBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(10),
+                                            borderSide: const BorderSide(
+                                              color: Colors.blueAccent,
+                                              width: 1,
+                                            ),
                                         ),
-                                      ),
-                                      Padding(padding: EdgeInsets.all(10)),
-                                      Expanded(
-                                          child: ElevatedButton.icon(
-                                        onPressed: () =>
-                                            {Navigator.pop(context)},
-                                        label: Text(
-                                          'Thoát',
+                                        focusedBorder: OutlineInputBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(10),
+                                            borderSide: const BorderSide(
+                                                color: Colors.blue,
+                                                width: 4))),
+                                  ),
+                                ),
+                              ),
+                              IconButton(
+                                  onPressed: () {
+                                    importPdf();
+                                  },
+                                  icon: const Icon(AppIcons.file_pdf)),
+                              Container(
+                                padding: const EdgeInsets.all(10),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceAround,
+                                  children: <Widget>[
+                                    Expanded(
+                                      child: ElevatedButton.icon(
+                                        onPressed: () {
+                                          _onSendQuestionClicked();
+                                          print('press save');
+                                        },
+                                        label: const Text(
+                                          'Gửi',
                                           style: TextStyle(
                                               fontSize: 16,
                                               color: Colors.white),
                                         ),
-                                        icon: Icon(Icons.cancel_presentation),
+                                        icon: const Icon(Icons.send_rounded),
                                         style: ElevatedButton.styleFrom(
                                             primary: Colors.blueAccent),
-                                      )),
-                                      Padding(
-                                          padding: EdgeInsets.fromLTRB(
-                                              0, 10, 0, 30)),
-                                    ],
-                                  ),
-                                )
-                              ],
-                            ),
+                                      ),
+                                    ),
+                                    const Padding(padding: EdgeInsets.all(10)),
+                                    Expanded(
+                                        child: ElevatedButton.icon(
+                                      onPressed: () =>
+                                          {Navigator.pop(context)},
+                                      label: const Text(
+                                        'Thoát',
+                                        style: TextStyle(
+                                            fontSize: 16,
+                                            color: Colors.white),
+                                      ),
+                                      icon: const Icon(Icons.cancel_presentation),
+                                      style: ElevatedButton.styleFrom(
+                                          primary: Colors.blueAccent),
+                                    )),
+                                    const Padding(
+                                        padding: EdgeInsets.fromLTRB(
+                                            0, 10, 0, 30)),
+                                  ],
+                                ),
+                              )
+                            ],
                           ),
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
-                ],
-              ),
+                ),
+              ],
             );
           });
         });
   }
 
   late PlatformFile file;
-  bool had_file = false;
+  bool hadFile = false;
   importPdf() async {
     final result = await FilePicker.platform.pickFiles(
         type: FileType.custom,
@@ -856,25 +860,23 @@ class _MessengerPageState extends State<MessengerPage> {
         allowedExtensions: ['jpg', 'jpeg', 'png', 'pdf']);
     if (result == null) return;
     setState(() {
-      file = result.files.first as PlatformFile;
-      had_file = true;
+      file = result.files.first;
+      hadFile = true;
     });
   }
 
-  String pdf_url = "file.pdf";
+  String pdfUrl = "file.pdf";
   uploadPdf() async {
-    if (had_file) {
+    if (hadFile) {
       File fileForFirebase = File(file.path!);
       FirebaseStorage storage = FirebaseStorage.instance;
       Reference ref = storage.ref().child("pdf/" + file.name);
       UploadTask uploadTask = ref.putFile(fileForFirebase);
       await uploadTask.whenComplete(() async {
         var url = await ref.getDownloadURL();
-        pdf_url = url.toString();
+        pdfUrl = url.toString();
       }).catchError((onError) {
-        print(onError);
       });
-      print('pdf');
     }
   }
 
@@ -915,37 +917,37 @@ class _MessengerPageState extends State<MessengerPage> {
       value: item,
       child: Text(
         item,
-        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
       ));
-  DropdownMenuItem<dynamic> buildMenuItemm(dynamic item) => DropdownMenuItem(
+  DropdownMenuItem<dynamic> buildMenuItemM(dynamic item) => DropdownMenuItem(
       value: item,
       child: Text(
         item,
-        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
       ));
-  List<DropdownMenuItem<dynamic>> renderr(List<dynamic> list) {
-    return list.map(buildMenuItemm).toList();
+  List<DropdownMenuItem<dynamic>> renderR(List<dynamic> list) {
+    return list.map(buildMenuItemM).toList();
   }
 
   _onSendQuestionClicked() async {
     var isvalid = isValid(_informationController.text, _questionController.text,
         _titleController.text);
     var time = DateTime.now();
-    String timestring = DateFormat('dd-MM-yyyy HH:mm:ss').format(time);
+    String timeString = DateFormat('dd-MM-yyyy HH:mm:ss').format(time);
     await uploadPdf();
     if (isvalid) {
       LoadingDialog.showLoadingDialog(context, "loading...");
       createChatRoom(
-          current_user.id,
+          currentUserR.id,
           _titleController.text,
-          timestring,
+          timeString,
           "Chưa trả lời",
           _informationController.text,
-          value_khoa!,
-          value_vande!,
-          current_user.group,
-          "public", () {
-      });
+          valueKhoa!,
+          valueVanDe!,
+          currentUserR.group,
+          "public",
+          () {});
     }
     return 0;
   }
@@ -978,25 +980,16 @@ class _MessengerPageState extends State<MessengerPage> {
       'mode': mode,
     }).then((value) {
       onSucces();
-      sendQuestion(
-          time,
-          pdf_url,
-          _questionController.text,
-          id, () {
+      sendQuestion(time, pdfUrl, _questionController.text, id, () {
         LoadingDialog.hideLoadingDialog(context);
         Navigator.push(
-            context, MaterialPageRoute(builder: (context) => MessengerPage()));
+            context, MaterialPageRoute(builder: (context) => const MessengerPage()));
       });
     }).catchError((err) {
-      print(err);
     });
   }
 
-  void sendQuestion(
-      String time,
-      String file,
-      String content,
-      String room_id,
+  void sendQuestion(String time, String file, String content, String roomId,
       Function onSucces) {
     var ref = FirebaseFirestore.instance.collection('questions');
     String id = ref.doc().id;
@@ -1005,12 +998,10 @@ class _MessengerPageState extends State<MessengerPage> {
       'time': time,
       'file': file,
       'content': content,
-      'room_id': room_id,
+      'room_id': roomId,
     }).then((value) {
       onSucces();
-      print("add question");
     }).catchError((err) {
-      print(err);
     });
   }
 }

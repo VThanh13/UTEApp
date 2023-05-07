@@ -3,27 +3,25 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:intl/intl.dart';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:myapp/icons/app_icons_icons.dart';
-import 'package:myapp/src/resources/about_page/my_file.dart';
 import 'package:myapp/src/resources/about_page/my_info.dart';
 import 'package:myapp/src/resources/about_page/about_university.dart';
-import 'package:myapp/src/resources/about_page/admission_history.dart';
 import 'package:myapp/src/resources/login_page.dart';
+import 'package:myapp/src/resources/login_screen.dart';
 import 'package:myapp/src/resources/messenger/messenger_page.dart';
-import 'package:myapp/src/resources/messenger/test.dart';
 import 'package:myapp/src/models/UserModel.dart';
-import 'package:myapp/src/screens/signin_screen.dart';
 
 import '../models/NewfeedModel.dart';
 import 'dialog/loading_dialog.dart';
 
 class HomePage extends StatefulWidget {
+  const HomePage({super.key});
+
   @override
-  _HomePageState createState() => _HomePageState();
+  State<HomePage> createState() => _HomePageState();
 }
 
 class Post {
@@ -81,18 +79,19 @@ class _HomePageState extends State<HomePage> {
         .where('userId', isEqualTo: currentUser.uid)
         .get()
         .then((value) => {
-      setState(() {
-        current_user.id = value.docs.first['userId'];
-        current_user.name = value.docs.first['name'];
-        current_user.email = value.docs.first['email'];
-        current_user.image = value.docs.first['image'];
-        current_user.password = value.docs.first['password'];
-        current_user.phone = value.docs.first['phone'];
-        current_user.group = value.docs.first['group'];
-        current_user.status = value.docs.first['status'];
-      })
-    });
+              setState(() {
+                current_user.id = value.docs.first['userId'];
+                current_user.name = value.docs.first['name'];
+                current_user.email = value.docs.first['email'];
+                current_user.image = value.docs.first['image'];
+                current_user.password = value.docs.first['password'];
+                current_user.phone = value.docs.first['phone'];
+                current_user.group = value.docs.first['group'];
+                current_user.status = value.docs.first['status'];
+              })
+            });
   }
+
   var departmentName = new Map();
 
   void sendQuestion(
@@ -236,145 +235,144 @@ class _HomePageState extends State<HomePage> {
       decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(10),
-          border: Border.all(width: 1.0, color: Colors.white24)
-      ),
+          border: Border.all(width: 1.0, color: Colors.white24)),
       child: Column(
-      children: [
-        Row(
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(left: 18.0, top: 10),
-              child: Material(
-                elevation: 10,
-                borderRadius: BorderRadius.circular(140),
-                child: Container(
-                  decoration: new BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(140)),
-                  height: 58,
-                  width: 60,
-                  child: Stack(
-                    children: <Widget>[
-                      Container(
-                          height: 78,
-                          width: 74,
-                          margin: const EdgeInsets.only(
-                              left: 0.0, right: 0, top: 0, bottom: 0),
-                          padding: const EdgeInsets.all(0),
-                          decoration: BoxDecoration(
-                              border: Border.all(color: Colors.white, width: 2),
-                              borderRadius: BorderRadius.circular(140)),
-                          child: CircleAvatar(
-                            backgroundImage: NetworkImage(
-                              post.employee.image,
-                            ),
-                          )),
-                    ],
+        children: [
+          Row(
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(left: 18.0, top: 10),
+                child: Material(
+                  elevation: 10,
+                  borderRadius: BorderRadius.circular(140),
+                  child: Container(
+                    decoration: new BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(140)),
+                    height: 58,
+                    width: 60,
+                    child: Stack(
+                      children: <Widget>[
+                        Container(
+                            height: 78,
+                            width: 74,
+                            margin: const EdgeInsets.only(
+                                left: 0.0, right: 0, top: 0, bottom: 0),
+                            padding: const EdgeInsets.all(0),
+                            decoration: BoxDecoration(
+                                border:
+                                    Border.all(color: Colors.white, width: 2),
+                                borderRadius: BorderRadius.circular(140)),
+                            child: CircleAvatar(
+                              backgroundImage: NetworkImage(
+                                post.employee.image,
+                              ),
+                            )),
+                      ],
+                    ),
                   ),
                 ),
               ),
-            ),
-            Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Padding(
-                padding: const EdgeInsets.only(left: 15.0, top: 13),
-                child: Text(
-                  post.employee.name,
-                  style: TextStyle(
-                      color: Colors.grey[700],
-                      fontSize: 16,
-                      letterSpacing: 1,
-                      fontWeight: FontWeight.bold),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(left: 16.0),
-                child: Text(
-                  post.time,
-                  style: TextStyle(
-                      color: Colors.grey[500],
-                      fontSize: 13,
-                      letterSpacing: 1,
-                      fontWeight: FontWeight.normal),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(left: 16.0),
-                child: Text(
-                  post.employee.departmentName,
-                  style: TextStyle(
-                      color: Colors.grey[600],
-                      fontSize: 13,
-                      letterSpacing: 1,
-                      fontWeight: FontWeight.normal),
-                ),
-              ),
-            ]),
-          ],
-        ),
-        Padding(
-          padding: const EdgeInsets.only(left: 20, right: 20, top: 20),
-          child: Text(
-            post.content,
-            style: TextStyle(
-                color: Colors.grey[800],
-                fontSize: 15,
-                letterSpacing: 1,
-                fontWeight: FontWeight.normal),
-            textAlign: TextAlign.justify,
-          ),
-        ),
-        if (post.file != 'file.pdf')
-          Padding(
-            padding: const EdgeInsets.only(left: 0, right: 0, top: 15),
-            child: Material(
-                borderRadius: BorderRadius.all(Radius.circular(40)),
-                elevation: 6,
-                child: ClipRRect(
-                  borderRadius: BorderRadius.all(
-                    Radius.circular(1),
-                  ),
-                  child: Stack(children: [
-                    Image.network(
-                        post.file),
-                  ]),
-                )),
-          ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            // Padding(
-            //   padding: const EdgeInsets.only(top: 2, left: 28.0),
-            //   child: Row(
-            //     children: [
-            //     ],
-            //   ),
-            // ),
-            Padding(
-              padding: const EdgeInsets.only(top: 18, left: 15),
-              child: Row(
-                children: [
-                  IconButton(
-                    icon: Icon(Icons.mode_comment),
-                    iconSize: 25,
-                    onPressed: () {
-                      _modalBottomSheetAddQuestion(post);
-                    },
-                  ),
-                  Text(
-                    'Đặt câu hỏi',
+              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                Padding(
+                  padding: const EdgeInsets.only(left: 15.0, top: 13),
+                  child: Text(
+                    post.employee.name,
                     style: TextStyle(
                         color: Colors.grey[700],
-                        fontSize: 15,
+                        fontSize: 16,
+                        letterSpacing: 1,
+                        fontWeight: FontWeight.bold),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 16.0),
+                  child: Text(
+                    post.time,
+                    style: TextStyle(
+                        color: Colors.grey[500],
+                        fontSize: 13,
                         letterSpacing: 1,
                         fontWeight: FontWeight.normal),
                   ),
-                ],
-              ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 16.0),
+                  child: Text(
+                    post.employee.departmentName,
+                    style: TextStyle(
+                        color: Colors.grey[600],
+                        fontSize: 13,
+                        letterSpacing: 1,
+                        fontWeight: FontWeight.normal),
+                  ),
+                ),
+              ]),
+            ],
+          ),
+          Padding(
+            padding: const EdgeInsets.only(left: 20, right: 20, top: 20),
+            child: Text(
+              post.content,
+              style: TextStyle(
+                  color: Colors.grey[800],
+                  fontSize: 15,
+                  letterSpacing: 1,
+                  fontWeight: FontWeight.normal),
+              textAlign: TextAlign.justify,
             ),
-          ],
-        ),
-      ],
-    ),
+          ),
+          if (post.file != 'file.pdf')
+            Padding(
+              padding: const EdgeInsets.only(left: 0, right: 0, top: 15),
+              child: Material(
+                  borderRadius: BorderRadius.all(Radius.circular(40)),
+                  elevation: 6,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(1),
+                    ),
+                    child: Stack(children: [
+                      Image.network(post.file),
+                    ]),
+                  )),
+            ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              // Padding(
+              //   padding: const EdgeInsets.only(top: 2, left: 28.0),
+              //   child: Row(
+              //     children: [
+              //     ],
+              //   ),
+              // ),
+              Padding(
+                padding: const EdgeInsets.only(top: 18, left: 15),
+                child: Row(
+                  children: [
+                    IconButton(
+                      icon: Icon(Icons.mode_comment),
+                      iconSize: 25,
+                      onPressed: () {
+                        _modalBottomSheetAddQuestion(post);
+                      },
+                    ),
+                    Text(
+                      'Đặt câu hỏi',
+                      style: TextStyle(
+                          color: Colors.grey[700],
+                          fontSize: 15,
+                          letterSpacing: 1,
+                          fontWeight: FontWeight.normal),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
     );
   }
 
@@ -419,7 +417,7 @@ class _HomePageState extends State<HomePage> {
                         child: DropdownButton<String>(
                           isExpanded: true,
                           value: value_doituong,
-                          hint: new Text("Vui lòng chọn đối tượng"),
+                          hint: const Text("Vui lòng chin đối tượng"),
                           iconSize: 36,
                           items: item_doituong.map(buildMenuItem).toList(),
                           onChanged: (value) {
@@ -433,7 +431,7 @@ class _HomePageState extends State<HomePage> {
                       ),
                     ),
                     Container(
-                        margin: EdgeInsets.fromLTRB(0, 10, 0, 15),
+                        margin: const EdgeInsets.fromLTRB(0, 10, 0, 15),
                         width: 340,
                         child: StreamBuilder(
                           stream: informationControl,
@@ -444,19 +442,19 @@ class _HomePageState extends State<HomePage> {
                                 hintText: 'Nhập Email/SĐT của bạn',
                                 enabledBorder: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(10),
-                                    borderSide: BorderSide(
+                                    borderSide: const BorderSide(
                                       color: Colors.blueAccent,
                                       width: 1,
                                     )),
                                 focusedBorder: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(10),
-                                    borderSide: BorderSide(
+                                    borderSide: const BorderSide(
                                         color: Colors.blue, width: 4))),
                           ),
                         )),
                     Container(
                       width: 340,
-                      margin: EdgeInsets.fromLTRB(0, 10, 0, 15),
+                      margin: const EdgeInsets.fromLTRB(0, 10, 0, 15),
                       child: StreamBuilder(
                         stream: questionControl,
                         builder: (context, snapshot) => TextField(
@@ -471,13 +469,13 @@ class _HomePageState extends State<HomePage> {
                               hintText: 'Nhập câu hỏi của bạn',
                               enabledBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(10),
-                                  borderSide: BorderSide(
+                                  borderSide: const BorderSide(
                                     color: Colors.blueAccent,
                                     width: 1,
                                   )),
                               focusedBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(10),
-                                  borderSide: BorderSide(
+                                  borderSide: const BorderSide(
                                       color: Colors.blue, width: 4))),
                         ),
                       ),
@@ -486,9 +484,9 @@ class _HomePageState extends State<HomePage> {
                         onPressed: () {
                           importPdf();
                         },
-                        icon: Icon(AppIcons.file_pdf)),
+                        icon: const Icon(AppIcons.file_pdf)),
                     Container(
-                      padding: EdgeInsets.all(10),
+                      padding: const EdgeInsets.all(10),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: <Widget>[
@@ -498,30 +496,31 @@ class _HomePageState extends State<HomePage> {
                                 _onSendQuestionClicked(post);
                                 print('press save');
                               },
-                              label: Text(
+                              label: const Text(
                                 'Gửi',
                                 style: TextStyle(
                                     fontSize: 16, color: Colors.white),
                               ),
-                              icon: Icon(Icons.mail_outline_rounded),
+                              icon: const Icon(Icons.mail_outline_rounded),
                               style: ElevatedButton.styleFrom(
                                   primary: Colors.blueAccent),
                             ),
                           ),
-                          Padding(padding: EdgeInsets.all(10)),
+                          const Padding(padding: EdgeInsets.all(10)),
                           Expanded(
                               child: ElevatedButton.icon(
                             onPressed: () => {Navigator.pop(context)},
-                            label: Text(
+                            label: const Text(
                               'Thoát',
                               style:
                                   TextStyle(fontSize: 16, color: Colors.white),
                             ),
-                            icon: Icon(Icons.cancel_presentation),
+                            icon: const Icon(Icons.cancel_presentation),
                             style: ElevatedButton.styleFrom(
                                 primary: Colors.blueAccent),
                           )),
-                          Padding(padding: EdgeInsets.fromLTRB(0, 10, 0, 30)),
+                          const Padding(
+                              padding: EdgeInsets.fromLTRB(0, 10, 0, 30)),
                         ],
                       ),
                     )
@@ -587,18 +586,18 @@ class _HomePageState extends State<HomePage> {
 
   String? value_doituong;
 
-  TextEditingController _informationController = new TextEditingController();
-  TextEditingController _questionController = new TextEditingController();
+  final TextEditingController _informationController = TextEditingController();
+  final TextEditingController _questionController = TextEditingController();
 
-  StreamController _informationControl = new StreamController.broadcast();
-  StreamController _questionControl = new StreamController.broadcast();
+  final StreamController _informationControl = StreamController.broadcast();
+  final StreamController _questionControl = StreamController.broadcast();
 
   Stream get informationControl => _informationControl.stream;
   Stream get questionControl => _questionControl.stream;
 
+  @override
   void dispose() {
     _questionControl.close();
-
     _informationControl.close();
     super.dispose();
   }
@@ -607,9 +606,8 @@ class _HomePageState extends State<HomePage> {
       value: item,
       child: Text(
         item,
-        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-      )
-  );
+        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+      ));
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<QuerySnapshot>(
@@ -619,80 +617,259 @@ class _HomePageState extends State<HomePage> {
             .get(),
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
-            return Center(
-              child: Container(
+            return const Center(
+              child: SizedBox(
                   width: 20, height: 20, child: CircularProgressIndicator()),
             );
           }
           // TODO: implement build
           return Scaffold(
-            appBar: new AppBar(
+            appBar: AppBar(
               backgroundColor: Colors.blueAccent,
-              title: new Text("UTE APP"),
+              title: const Text("UTE APP"),
               actions: <Widget>[
                 IconButton(
                     onPressed: () {
                       Navigator.push(
                           context,
-                          new MaterialPageRoute(
+                          MaterialPageRoute(
                               builder: (BuildContext context) =>
-                                  MessengerPage()));
+                                  const MessengerPage()));
                     },
-                    icon: Icon(
+                    icon: const Icon(
                       AppIcons.chat,
                       color: Colors.white,
                     )),
               ],
             ),
-            drawer: new Drawer(
+            drawer: Drawer(
               child: ListView(
                 children: <Widget>[
-                  new UserAccountsDrawerHeader(
-                    accountName: new Text(current_user.name!),
-                    accountEmail: new Text(current_user.email!),
+                  UserAccountsDrawerHeader(
+                    accountName: Text(current_user.name!),
+                    accountEmail: Text(current_user.email!),
                     arrowColor: Colors.redAccent,
-                    currentAccountPicture: new CircleAvatar(
-                      backgroundImage: new NetworkImage(current_user.image!),
+                    currentAccountPicture: CircleAvatar(
+                      backgroundImage: NetworkImage(current_user.image!),
                     ),
                   ),
-                  new ListTile(
-                    title: new Text('Thông tin cá nhân'),
-                    onTap: () {
-                      Navigator.push(
-                          context,
-                          new MaterialPageRoute(
-                              builder: (BuildContext context) => new MyInfo()));
+                  InkWell(
+                    onTap: (){
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => const MyInfo()));
                     },
+                    child: SizedBox(
+                      height: 56,
+                      width: double.infinity,
+                      child: Container(
+                        margin: const EdgeInsets.only(top: 16),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: <Widget>[
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: <Widget>[
+                                Container(
+                                  margin: const EdgeInsets.only(
+                                    left: 13,
+                                  ),
+                                  child: Row(
+                                    children: <Widget>[
+                                      const SizedBox(
+                                        height: 17.14,
+                                        width: 20,
+                                        child: FittedBox(
+                                          fit: BoxFit.fitWidth,
+                                          child: Icon(
+                                            Icons.person,
+                                            color: Color(0xff757575),
+                                          ),
+                                        ),
+                                      ),
+                                      Container(
+                                        height: 22,
+                                        margin: const EdgeInsets.only(left: 20),
+                                        child: const Text(
+                                          'Personal Information',
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w400,
+                                            fontStyle: FontStyle.normal,
+                                            fontFamily: 'Plus_Jakarta_Sans',
+                                            color: Color(0xff000000),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                const SizedBox(
+                                  width: 6,
+                                  height: 10,
+                                  child: FittedBox(
+                                    fit: BoxFit.fitHeight,
+                                    child: Icon(
+                                      Icons.arrow_forward_ios,
+                                      color: Color(0xffB4B4B4),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const Divider(
+                              height: 0,
+                              color: Color(0xffAAAAAA),
+                              indent: 0,
+                              thickness: 1,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
                   ),
-                  new Divider(
-                    color: Colors.black,
-                    height: 5.0,
-                  ),
-                  new ListTile(
-                    title: new Text('Giới thiệu về trường'),
-                    onTap: () {
-                      Navigator.push(
-                          context,
-                          new MaterialPageRoute(
-                              builder: (BuildContext context) =>
-                                  new AboutUniversity()));
+                  InkWell(
+                    onTap: (){
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => const AboutUniversity()));
                     },
+                    child: SizedBox(
+                      height: 56,
+                      width: double.infinity,
+                      child: Container(
+                        margin: const EdgeInsets.only(top: 16),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: <Widget>[
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: <Widget>[
+                                Container(
+                                  margin: const EdgeInsets.only(
+                                    left: 13,
+                                  ),
+                                  child: Row(
+                                    children: <Widget>[
+                                      const SizedBox(
+                                        height: 17.14,
+                                        width: 20,
+                                        child: FittedBox(
+                                          fit: BoxFit.fitWidth,
+                                          child: Icon(
+                                            Icons.school,
+                                            color: Color(0xff757575),
+                                          ),
+                                        ),
+                                      ),
+                                      Container(
+                                        height: 22,
+                                        margin: const EdgeInsets.only(left: 20),
+                                        child: const Text(
+                                          'About UTE',
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w400,
+                                            fontStyle: FontStyle.normal,
+                                            fontFamily: 'Plus_Jakarta_Sans',
+                                            color: Color(0xff000000),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                const SizedBox(
+                                  width: 6,
+                                  height: 10,
+                                  child: FittedBox(
+                                    fit: BoxFit.fitHeight,
+                                    child: Icon(
+                                      Icons.arrow_forward_ios,
+                                      color: Color(0xffB4B4B4),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const Divider(
+                              height: 0,
+                              color: Color(0xffAAAAAA),
+                              indent: 0,
+                              thickness: 1,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
                   ),
-                  new Divider(
-                    color: Colors.black,
-                    height: 5.0,
-                  ),
-                  new ListTile(
-                    title: new Text('Đăng xuất'),
-                    onTap: () async {
-                      await FirebaseAuth.instance.signOut();
-                      Navigator.push(
-                          context,
-                          new MaterialPageRoute(
-                              builder: (BuildContext context) =>
-                                  new LoginPage()));
+                  InkWell(
+                    onTap: (){
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => const LoginScreen()));
+
                     },
-                  ),
+                    child: SizedBox(
+                      height: 56,
+                      width: double.infinity,
+                      child: Container(
+                        margin: const EdgeInsets.only(top: 16),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: <Widget>[
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: <Widget>[
+                                Container(
+                                  margin: const EdgeInsets.only(left: 13,),
+                                  child: Row(
+                                    children: <Widget>[
+                                      const SizedBox(
+                                        height: 17.14,
+                                        width: 20,
+                                        child: FittedBox(
+                                          fit: BoxFit.fitWidth,
+                                          child: Icon(Icons.logout,
+                                            color: Color(0xff757575),
+                                          ),
+                                        ),
+                                      ),
+                                      Container(
+                                        height: 22,
+                                        margin: const EdgeInsets.only(left: 20),
+                                        child:  const Text(
+                                          'Log out',
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w400,
+                                            fontStyle: FontStyle.normal,
+                                            fontFamily: 'Plus_Jakarta_Sans',
+                                            color: Color(0xff000000),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                const SizedBox(
+                                  width: 6,
+                                  height: 10,
+                                  child: FittedBox(
+                                    fit: BoxFit.fitHeight,
+                                    child: Icon(Icons.arrow_forward_ios,
+                                      color: Color(0xffB4B4B4),
+                                    ),
+                                  ),
+                                ),
+
+                              ],
+                            ),
+                            const Divider(
+                              height: 0,
+                              color: Color(0xffAAAAAA),
+                              indent: 0,
+                              thickness: 1,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  )
                 ],
               ),
             ),
@@ -705,14 +882,13 @@ class _HomePageState extends State<HomePage> {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
-                        Container(
+                        SizedBox(
                           height: MediaQuery.of(context).size.height * 0.9,
                           child: ListView.builder(
-                              physics: BouncingScrollPhysics(),
+                              physics: const BouncingScrollPhysics(),
                               itemCount: listPost.length,
                               itemBuilder: (BuildContext context, int index) {
                                 return _buildNewfeed(context, listPost[index]);
-
                               }),
                         )
                       ],

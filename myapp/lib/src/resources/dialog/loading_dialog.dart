@@ -5,20 +5,20 @@ class LoadingDialog {
     showDialog(
       context: context,
       barrierDismissible: false,
-      builder: (context) => new Dialog(
+      builder: (context) => Dialog(
         backgroundColor: Colors.transparent,
         child: Container(
-          color: Color(0xffffffff),
+          color: const Color(0xffffffff),
           height: 100,
-          child: new Column(
+          child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              new CircularProgressIndicator(),
+              const CircularProgressIndicator(),
               Padding(
                 padding: const EdgeInsets.fromLTRB(0, 10, 0, 0),
-                child: new Text(
+                child: Text(
                   msg,
-                  style: TextStyle(fontSize: 18),
+                  style: const TextStyle(fontSize: 18),
                 ),
               ),
             ],
