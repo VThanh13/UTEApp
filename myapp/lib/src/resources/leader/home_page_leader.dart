@@ -16,6 +16,7 @@ import '../../models/NewfeedModel.dart';
 import '../employee/employee_info.dart';
 import '../dialog/loading_dialog.dart';
 import '../employee/messenger_employee.dart';
+import '../login_screen.dart';
 import 'manage_category.dart';
 import 'manage_employee.dart';
 
@@ -313,7 +314,7 @@ class _HomePageState extends State<HomePageLeader> {
           return Scaffold(
             appBar: AppBar(
               title: const Text("UTE APP"),
-              backgroundColor: Colors.orangeAccent,
+              backgroundColor: Colors.blueAccent,
               actions: <Widget>[
                 IconButton(
                   onPressed: () {
@@ -340,73 +341,369 @@ class _HomePageState extends State<HomePageLeader> {
                       backgroundImage: NetworkImage(employeeModel.image!),
                     ),
                   ),
-                  ListTile(
-                    title: const Text('Thông tin cá nhân'),
-                    onTap: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (BuildContext context) =>
-                                  EmployeeInfo()));
+                  InkWell(
+                    onTap: (){
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => const EmployeeInfo()));
                     },
-                  ),
-                  const Divider(
-                    color: Colors.black,
-                    height: 5.0,
-                  ),
-                  ListTile(
-                    title: const Text('Quản lý Tư vấn viên'),
-                    onTap: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (BuildContext context) =>
-                                  ManageEmployee()));
-                    },
-                  ),
-                  const Divider(
-                    color: Colors.black,
-                    height: 5.0,
-                  ),
-                  ListTile(
-                    title: const Text('Quản lý Lĩnh vực'),
-                    onTap: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (BuildContext context) =>
-                                  ManageCategory()));
-                    },
-                  ),
-                  const Divider(
-                    color: Colors.black,
-                    height: 5.0,
-                  ),
-                  ListTile(
-                    title: const Text('Thống kê'),
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (BuildContext context) => StatsLeaderPage(),
+                    child: SizedBox(
+                      height: 56,
+                      width: double.infinity,
+                      child: Container(
+                        margin: const EdgeInsets.only(top: 16),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: <Widget>[
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: <Widget>[
+                                Container(
+                                  margin: const EdgeInsets.only(
+                                    left: 13,
+                                  ),
+                                  child: Row(
+                                    children: <Widget>[
+                                      const SizedBox(
+                                        height: 17.14,
+                                        width: 20,
+                                        child: FittedBox(
+                                          fit: BoxFit.fitWidth,
+                                          child: Icon(
+                                            Icons.person,
+                                            color: Color(0xff757575),
+                                          ),
+                                        ),
+                                      ),
+                                      Container(
+                                        height: 22,
+                                        margin: const EdgeInsets.only(left: 20),
+                                        child: const Text(
+                                          'Personal Information',
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w400,
+                                            fontStyle: FontStyle.normal,
+                                            fontFamily: 'Plus_Jakarta_Sans',
+                                            color: Color(0xff000000),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                const SizedBox(
+                                  width: 6,
+                                  height: 10,
+                                  child: FittedBox(
+                                    fit: BoxFit.fitHeight,
+                                    child: Icon(
+                                      Icons.arrow_forward_ios,
+                                      color: Color(0xffB4B4B4),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const Divider(
+                              height: 0,
+                              color: Color(0xffAAAAAA),
+                              indent: 0,
+                              thickness: 1,
+                            ),
+                          ],
                         ),
-                      );
-                    },
+                      ),
+                    ),
                   ),
-                  const Divider(
-                    color: Colors.black,
-                    height: 5.0,
-                  ),
-                  ListTile(
-                    title: const Text('Đăng xuất'),
-                    onTap: () async {
-                      await FirebaseAuth.instance.signOut();
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (BuildContext context) =>
-                                  const LoginPage()));
+                  InkWell(
+                    onTap: (){
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => const ManageEmployee()));
                     },
+                    child: SizedBox(
+                      height: 56,
+                      width: double.infinity,
+                      child: Container(
+                        margin: const EdgeInsets.only(top: 16),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: <Widget>[
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: <Widget>[
+                                Container(
+                                  margin: const EdgeInsets.only(
+                                    left: 13,
+                                  ),
+                                  child: Row(
+                                    children: <Widget>[
+                                      const SizedBox(
+                                        height: 17.14,
+                                        width: 20,
+                                        child: FittedBox(
+                                          fit: BoxFit.fitWidth,
+                                          child: Icon(
+                                            Icons.group,
+                                            color: Color(0xff757575),
+                                          ),
+                                        ),
+                                      ),
+                                      Container(
+                                        height: 22,
+                                        margin: const EdgeInsets.only(left: 20),
+                                        child: const Text(
+                                          'Manage employee',
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w400,
+                                            fontStyle: FontStyle.normal,
+                                            fontFamily: 'Plus_Jakarta_Sans',
+                                            color: Color(0xff000000),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                const SizedBox(
+                                  width: 6,
+                                  height: 10,
+                                  child: FittedBox(
+                                    fit: BoxFit.fitHeight,
+                                    child: Icon(
+                                      Icons.arrow_forward_ios,
+                                      color: Color(0xffB4B4B4),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const Divider(
+                              height: 0,
+                              color: Color(0xffAAAAAA),
+                              indent: 0,
+                              thickness: 1,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                  InkWell(
+                    onTap: (){
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => const ManageCategory()));
+                    },
+                    child: SizedBox(
+                      height: 56,
+                      width: double.infinity,
+                      child: Container(
+                        margin: const EdgeInsets.only(top: 16),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: <Widget>[
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: <Widget>[
+                                Container(
+                                  margin: const EdgeInsets.only(
+                                    left: 13,
+                                  ),
+                                  child: Row(
+                                    children: <Widget>[
+                                      const SizedBox(
+                                        height: 17.14,
+                                        width: 20,
+                                        child: FittedBox(
+                                          fit: BoxFit.fitWidth,
+                                          child: Icon(
+                                            Icons.category,
+                                            color: Color(0xff757575),
+                                          ),
+                                        ),
+                                      ),
+                                      Container(
+                                        height: 22,
+                                        margin: const EdgeInsets.only(left: 20),
+                                        child: const Text(
+                                          'Manage category',
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w400,
+                                            fontStyle: FontStyle.normal,
+                                            fontFamily: 'Plus_Jakarta_Sans',
+                                            color: Color(0xff000000),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                const SizedBox(
+                                  width: 6,
+                                  height: 10,
+                                  child: FittedBox(
+                                    fit: BoxFit.fitHeight,
+                                    child: Icon(
+                                      Icons.arrow_forward_ios,
+                                      color: Color(0xffB4B4B4),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const Divider(
+                              height: 0,
+                              color: Color(0xffAAAAAA),
+                              indent: 0,
+                              thickness: 1,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                  InkWell(
+                    onTap: (){
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => const StatsLeaderPage()));
+                    },
+                    child: SizedBox(
+                      height: 56,
+                      width: double.infinity,
+                      child: Container(
+                        margin: const EdgeInsets.only(top: 16),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: <Widget>[
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: <Widget>[
+                                Container(
+                                  margin: const EdgeInsets.only(
+                                    left: 13,
+                                  ),
+                                  child: Row(
+                                    children: <Widget>[
+                                      const SizedBox(
+                                        height: 17.14,
+                                        width: 20,
+                                        child: FittedBox(
+                                          fit: BoxFit.fitWidth,
+                                          child: Icon(
+                                            Icons.add_chart,
+                                            color: Color(0xff757575),
+                                          ),
+                                        ),
+                                      ),
+                                      Container(
+                                        height: 22,
+                                        margin: const EdgeInsets.only(left: 20),
+                                        child: const Text(
+                                          'Statistical',
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w400,
+                                            fontStyle: FontStyle.normal,
+                                            fontFamily: 'Plus_Jakarta_Sans',
+                                            color: Color(0xff000000),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                const SizedBox(
+                                  width: 6,
+                                  height: 10,
+                                  child: FittedBox(
+                                    fit: BoxFit.fitHeight,
+                                    child: Icon(
+                                      Icons.arrow_forward_ios,
+                                      color: Color(0xffB4B4B4),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const Divider(
+                              height: 0,
+                              color: Color(0xffAAAAAA),
+                              indent: 0,
+                              thickness: 1,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+
+                  InkWell(
+                    onTap: (){
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => const LoginScreen()));
+
+                    },
+                    child: SizedBox(
+                      height: 56,
+                      width: double.infinity,
+                      child: Container(
+                        margin: const EdgeInsets.only(top: 16),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: <Widget>[
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: <Widget>[
+                                Container(
+                                  margin: const EdgeInsets.only(left: 13,),
+                                  child: Row(
+                                    children: <Widget>[
+                                      const SizedBox(
+                                        height: 17.14,
+                                        width: 20,
+                                        child: FittedBox(
+                                          fit: BoxFit.fitWidth,
+                                          child: Icon(Icons.logout,
+                                            color: Color(0xff757575),
+                                          ),
+                                        ),
+                                      ),
+                                      Container(
+                                        height: 22,
+                                        margin: const EdgeInsets.only(left: 20),
+                                        child:  const Text(
+                                          'Log out',
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w400,
+                                            fontStyle: FontStyle.normal,
+                                            fontFamily: 'Plus_Jakarta_Sans',
+                                            color: Color(0xff000000),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                const SizedBox(
+                                  width: 6,
+                                  height: 10,
+                                  child: FittedBox(
+                                    fit: BoxFit.fitHeight,
+                                    child: Icon(Icons.arrow_forward_ios,
+                                      color: Color(0xffB4B4B4),
+                                    ),
+                                  ),
+                                ),
+
+                              ],
+                            ),
+                            const Divider(
+                              height: 0,
+                              color: Color(0xffAAAAAA),
+                              indent: 0,
+                              thickness: 1,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
                   ),
                 ],
               ),

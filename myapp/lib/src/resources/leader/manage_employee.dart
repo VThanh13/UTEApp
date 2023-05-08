@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_switch/flutter_switch.dart';
 
 import '../../blocs/auth_bloc.dart';
 import '../../models/EmployeeModel.dart';
@@ -24,6 +25,8 @@ class _ManageEmployeeState extends State<ManageEmployee> {
   EmployeeModel currentEmployee =
       EmployeeModel("", "", "", "", "", "", "", "", "", "");
   List<String> listCategory = [];
+
+  bool status = false;
 
   final StreamController _categoryControll = StreamController.broadcast();
   Stream get categoryStream => _categoryControll.stream;
@@ -114,44 +117,59 @@ class _ManageEmployeeState extends State<ManageEmployee> {
   _buildEmployee(BuildContext context, EmployeeModel employee) {
     return GestureDetector(
       onTap: () {
-        return _modalBottomSheetEditEmployee(employee);
+        _modalBottomSheetEditEmployee(employee);
       },
       child: Card(
         child: Row(
           children: <Widget>[
-            const Padding(padding: EdgeInsets.fromLTRB(10, 5, 5, 5)),
+            const Padding(padding: EdgeInsets.fromLTRB(10, 15, 5, 15)),
             CircleAvatar(
-              radius: 25,
+              radius: 28,
               backgroundColor: Colors.tealAccent,
               child: CircleAvatar(
                 backgroundImage: NetworkImage(employee.image!),
-                radius: 23,
+                radius: 26,
               ),
             ),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
+            Expanded(
+                child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Column(
+                  //mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Container(
+                        padding: const EdgeInsets.fromLTRB(10, 15, 0, 5),
+                        child: Text(employee.name,
+                            textAlign: TextAlign.left,
+                            style: const TextStyle(
+                              fontSize: 17,
+                              fontWeight: FontWeight.w600,
+                            ))),
+                    Container(
+                        padding: const EdgeInsets.fromLTRB(10, 0, 0, 20),
+                        child: Text(
+                          employee.status == "enabled" ? "Active" : "Inactive",
+                          style: TextStyle(
+                              color: employee.status == "enabled"
+                                  ? Colors.green
+                                  : Colors.red,
+                              fontSize: 14,
+                              fontStyle: FontStyle.italic),
+                          textAlign: TextAlign.left,
+                        )),
+                  ],
+                ),
                 Container(
-                    padding: const EdgeInsets.fromLTRB(20, 20, 0, 10),
-                    child: Text(employee.name,
-                        textAlign: TextAlign.left,
-                        style: const TextStyle(
-                            fontSize: 15,
-                            fontWeight: FontWeight.w600,
-                            letterSpacing: 1.0))),
-                Container(
-                    padding: const EdgeInsets.fromLTRB(20, 5, 0, 20),
-                    child: Text(
-                      employee.status == "enabled" ? "Active" : "Inactive",
-                      style: TextStyle(
-                          color: employee.status == "enabled"
-                              ? Colors.green
-                              : Colors.red),
-                      textAlign: TextAlign.left,
-                    ))
+                  margin: const EdgeInsets.only(right: 10),
+                  child: const Icon(
+                    Icons.edit_note,
+                    size: 30,
+                  ),
+                )
               ],
-            )
+            ))
           ],
         ),
       ),
@@ -171,7 +189,6 @@ class _ManageEmployeeState extends State<ManageEmployee> {
   }
 
   _modalBottomSheetEditEmployee(EmployeeModel employee) {
-    bool isSwitched = employee.status == "enabled" ? true : false;
     valueCategory = employee.category;
     return showModalBottomSheet(
         isScrollControlled: true,
@@ -192,13 +209,13 @@ class _ManageEmployeeState extends State<ManageEmployee> {
             return Column(
               children: <Widget>[
                 const Padding(
-                  padding: EdgeInsets.fromLTRB(5, 20, 5, 10),
+                  padding: EdgeInsets.fromLTRB(5, 20, 5, 5),
                   child: Text(
-                    'Thông tin Tư vấn viên',
+                    'Employee Information',
                     style: TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.w600,
-                        letterSpacing: 1.0),
+                      fontSize: 18,
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
                 ),
                 SingleChildScrollView(
@@ -214,7 +231,7 @@ class _ManageEmployeeState extends State<ManageEmployee> {
                             children: <Widget>[
                               Container(
                                 margin: const EdgeInsets.fromLTRB(0, 0, 0, 0),
-                                height: 150,
+                                height: 110,
                                 child: Center(
                                   child: Stack(
                                     children: [
@@ -231,15 +248,6 @@ class _ManageEmployeeState extends State<ManageEmployee> {
                                   ),
                                 ),
                               ),
-                              const Padding(
-                                  padding: EdgeInsets.fromLTRB(0, 0, 0, 0)),
-                              Text(
-                                employee.roles!,
-                                style: const TextStyle(
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.w200,
-                                ),
-                              ),
                               Text(
                                 employee.name!,
                                 style: const TextStyle(
@@ -247,103 +255,114 @@ class _ManageEmployeeState extends State<ManageEmployee> {
                                   fontWeight: FontWeight.w600,
                                 ),
                               ),
-                              const Padding(
-                                  padding: EdgeInsets.fromLTRB(0, 0, 0, 0)),
+                              Text(
+                                employee.roles!,
+                                style: const TextStyle(
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w200,
+                                ),
+                              ),
                               Container(
-                                  margin:
-                                      const EdgeInsets.fromLTRB(10, 10, 10, 15),
-                                  width: 400,
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 12, vertical: 4),
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(12),
-                                    border: Border.all(
-                                        color: Colors.orangeAccent, width: 4),
-                                  ),
-                                  child: DropdownButtonHideUnderline(
-                                    child: DropdownButton(
-                                      isExpanded: true,
-                                      value: valueCategory,
-                                      hint: const Text(
-                                          "Vui lòng chọn lĩnh vực phụ trách"),
-                                      iconSize: 36,
-                                      items: listCategory.map((option) {
-                                        return DropdownMenuItem(
-                                          value: option,
-                                          child: Text("$option"),
-                                        );
-                                      }).toList(),
-                                      onChanged: (selectedCategory) {
-                                        setStateKhoa(() {
-                                          setState(() {
-                                            valueCategory = selectedCategory;
-                                          });
-                                        });
-                                      },
-                                    ),
-                                  )),
-                              Container(
-                                width: 300,
-                                height: 55,
-                                padding: const EdgeInsets.all(0),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceAround,
-                                  children: <Widget>[
-                                    Expanded(
-                                      child: ElevatedButton.icon(
-                                        style: ButtonStyle(
-                                            shape: MaterialStateProperty.all(
-                                              RoundedRectangleBorder(
-                                                // Change your radius here
-                                                borderRadius:
-                                                    BorderRadius.circular(16),
-                                              ),
-                                            ),
-                                            backgroundColor:
-                                                MaterialStateProperty.all(
-                                                    Colors.orangeAccent)),
-                                        onPressed: () {
-                                          _onChangeCategoryClicked(
-                                              employee.id, valueCategory);
-                                        },
-                                        label: const Text(
-                                          'Lưu',
-                                          style: TextStyle(
-                                              fontSize: 16,
-                                              color: Colors.white),
-                                        ),
-                                        icon: const Icon(Icons.save_outlined),
+                                height: 180,
+                                margin: const EdgeInsets.fromLTRB(10, 0, 10, 0),
+                                padding: const EdgeInsets.all(10),
+                                width: double.infinity,
+                                decoration: BoxDecoration(
+                                    borderRadius: const BorderRadius.all(
+                                        Radius.circular(10)),
+                                    color: Colors.grey[200]),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    const Text(
+                                      'Change category',
+                                      style: TextStyle(
+                                        color: Colors.black,
+                                        fontStyle: FontStyle.italic,
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w500,
                                       ),
                                     ),
-                                    const Padding(padding: EdgeInsets.all(10)),
-                                    Expanded(
-                                      child: ElevatedButton.icon(
-                                        style: ButtonStyle(
-                                            shape: MaterialStateProperty.all(
-                                              RoundedRectangleBorder(
-                                                // Change your radius here
-                                                borderRadius:
-                                                    BorderRadius.circular(16),
-                                              ),
-                                            ),
-                                            backgroundColor:
-                                                MaterialStateProperty.all(
-                                                    Colors.orangeAccent)),
-                                        onPressed: () =>
-                                            {Navigator.pop(context)},
-                                        label: const Text(
-                                          'Thoát',
-                                          style: TextStyle(
-                                              fontSize: 16,
-                                              color: Colors.white),
+                                    Container(
+                                        margin: const EdgeInsets.fromLTRB(
+                                            10, 10, 10, 15),
+                                        width: 400,
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 12, vertical: 4),
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(12),
+                                          border: Border.all(
+                                              color: Colors.blueAccent,
+                                              width: 4),
                                         ),
-                                        icon: const Icon(Icons.cancel),
+                                        child: DropdownButtonHideUnderline(
+                                          child: DropdownButton(
+                                            isExpanded: true,
+                                            value: valueCategory,
+                                            hint: const Text(
+                                                "Please choose category"),
+                                            iconSize: 36,
+                                            items: listCategory.map((option) {
+                                              return DropdownMenuItem(
+                                                value: option,
+                                                child: Text("$option"),
+                                              );
+                                            }).toList(),
+                                            onChanged: (selectedCategory) {
+                                              setStateKhoa(() {
+                                                setState(() {
+                                                  valueCategory =
+                                                      selectedCategory;
+                                                });
+                                              });
+                                            },
+                                          ),
+                                        )),
+                                    Container(
+                                      height: 50,
+                                      padding: const EdgeInsets.fromLTRB(
+                                          40, 0, 40, 0),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceAround,
+                                        children: <Widget>[
+                                          Expanded(
+                                            child: ElevatedButton.icon(
+                                              style: ButtonStyle(
+                                                  shape:
+                                                      MaterialStateProperty.all(
+                                                    RoundedRectangleBorder(
+                                                      // Change your radius here
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              13),
+                                                    ),
+                                                  ),
+                                                  backgroundColor:
+                                                      MaterialStateProperty.all(
+                                                          Colors.blueAccent)),
+                                              onPressed: () {
+                                                _onChangeCategoryClicked(
+                                                    employee.id, valueCategory);
+                                              },
+                                              label: const Text(
+                                                'Save',
+                                                style: TextStyle(
+                                                    fontSize: 16,
+                                                    color: Colors.white),
+                                              ),
+                                              icon: const Icon(
+                                                  Icons.save_outlined),
+                                            ),
+                                          ),
+                                        ],
                                       ),
                                     ),
                                   ],
                                 ),
                               ),
+
                               const Padding(padding: EdgeInsets.all(5)),
                               // Container(
                               //   width: 300,
@@ -370,224 +389,148 @@ class _ManageEmployeeState extends State<ManageEmployee> {
                               //     ),
                               //   ),
                               // ),
-                              const Divider(
-                                color: Colors.black,
-                                height: 5.0,
-                              ),
-                              const Padding(
-                                  padding: EdgeInsets.fromLTRB(0, 10, 0, 10)),
-                              GestureDetector(
-                                onTap: () {
-                                  return _modalBottomSheetResetPassword(
-                                      employee);
-                                },
-                                child: const Text(
-                                  "Reset Mật Khẩu",
-                                  style: TextStyle(
-                                      fontSize: 16, color: Colors.red),
-                                ),
-                              ),
-                              const Padding(
-                                  padding: EdgeInsets.fromLTRB(0, 10, 0, 10)),
-                              const Divider(
-                                color: Colors.black,
-                                height: 5.0,
-                              ),
-                              const Padding(
-                                  padding: EdgeInsets.fromLTRB(0, 10, 0, 10)),
-                              GestureDetector(
-                                onTap: () {
-                                  return _onCancelAccountClicked(
-                                      employee.id, employee.status);
-                                },
-                                child: Text(
-                                  employee.status == "enabled"
-                                      ? "Vô hiệu hóa tài khoản"
-                                      : "Kích hoạt tài khoản",
-                                  style: const TextStyle(
-                                      fontSize: 16, color: Colors.red),
-                                ),
-                              ),
-                              const Padding(
-                                  padding: EdgeInsets.fromLTRB(0, 10, 0, 10)),
-                              // Row(
-                              //   children:[
-                              //     Padding(
-                              //     padding: EdgeInsets.only(left: 30),
-                              //       child: Text('Trạng thái tài khoản',
-                              //       style: TextStyle(
-                              //       fontSize: 16,
-                              //       color: Colors.black,
-                              //           fontWeight: FontWeight.w600)),
-                              //     ),
-                              //     Padding(
-                              //     padding: EdgeInsets.only(left: 90),
-                              //     child: Column(
-                              //       mainAxisAlignment: MainAxisAlignment.center,
-                              //       children:[ Transform.scale(
-                              //         scale: 1,
-                              //         child: Switch(
-                              //           onChanged: (value) {
-                              //             setState(() {
-                              //               isSwitched = value;
-                              //             });
-                              //           },
-                              //           value: isSwitched,
-                              //           activeColor: Colors.blue,
-                              //           activeTrackColor: Colors.grey,
-                              //           inactiveThumbColor: Colors.red,
-                              //           inactiveTrackColor: Colors.grey,
-                              //           )
-                              //         ),
-                              //     ]),
-                              //     ),
-                              // ],
-                              // ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            );
-          });
-        });
-  }
-
-  _modalBottomSheetResetPassword(employee) {
-    return showModalBottomSheet(
-        isScrollControlled: true,
-        constraints: BoxConstraints.loose(
-          Size(MediaQuery.of(context).size.width,
-              MediaQuery.of(context).size.height * 0.75),
-        ),
-        shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(20),
-            topRight: Radius.circular(20),
-          ),
-        ),
-        context: context,
-        builder: (BuildContext context) {
-          return StatefulBuilder(
-              builder: (BuildContext context, StateSetter setStateKhoa) {
-            return Column(
-              children: <Widget>[
-                const Padding(
-                  padding: EdgeInsets.fromLTRB(5, 20, 5, 10),
-                  child: Text(
-                    'Reset Password',
-                    style: TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.w600,
-                        letterSpacing: 1.0),
-                  ),
-                ),
-                SingleChildScrollView(
-                  physics: const BouncingScrollPhysics(),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      SizedBox(
-                        height: MediaQuery.of(context).size.height * 0.65,
-                        child: SingleChildScrollView(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: <Widget>[
-                              const Padding(
-                                  padding: EdgeInsets.fromLTRB(0, 0, 0, 0)),
                               Container(
-                                  margin:
-                                      const EdgeInsets.fromLTRB(10, 10, 10, 15),
-                                  width: 400,
-                                  child: StreamBuilder(
-                                    stream: newPasswordControl,
-                                    builder: (context, snapshot) => TextField(
-                                      controller: _newPasswordController,
-                                      decoration: InputDecoration(
-                                          labelText: "Password",
-                                          hintText: 'Nhập password',
-                                          enabledBorder: OutlineInputBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(10),
-                                              borderSide: const BorderSide(
-                                                color: Colors.orangeAccent,
-                                                width: 1,
-                                              )),
-                                          focusedBorder: OutlineInputBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(10),
-                                              borderSide: const BorderSide(
-                                                  color: Colors.orange,
-                                                  width: 4))),
-                                    ),
-                                  )),
-                              Container(
-                                width: 300,
-                                height: 55,
-                                padding: const EdgeInsets.all(0),
+                                height: 110,
+                                width: double.infinity,
+                                margin: const EdgeInsets.fromLTRB(10, 0, 10, 0),
+                                padding: const EdgeInsets.all(10),
+                                decoration: BoxDecoration(
+                                    color: Colors.grey[200],
+                                    borderRadius: const BorderRadius.all(
+                                        Radius.circular(10))),
                                 child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   mainAxisAlignment:
-                                      MainAxisAlignment.spaceAround,
-                                  children: <Widget>[
-                                    Expanded(
-                                      child: ElevatedButton.icon(
-                                        style: ButtonStyle(
-                                          shape: MaterialStateProperty.all(
-                                            RoundedRectangleBorder(
-                                              // Change your radius here
-                                              borderRadius:
-                                                  BorderRadius.circular(16),
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    SizedBox(
+                                      width: 250,
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: const [
+                                          Text(
+                                            'Change status account',
+                                            style: TextStyle(
+                                              color: Colors.black,
+                                              fontStyle: FontStyle.italic,
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w500,
                                             ),
                                           ),
-                                          backgroundColor:
-                                              MaterialStateProperty.all(
-                                                  Colors.orangeAccent),
-                                        ),
-                                        onPressed: () {
-                                          _onChangePasswordClicked(employee);
-                                        },
-                                        label: const Text(
-                                          'Lưu',
-                                          style: TextStyle(
-                                              fontSize: 16,
-                                              color: Colors.white),
-                                        ),
-                                        icon: const Icon(Icons.add),
+                                          Padding(
+                                              padding: EdgeInsets.only(top: 5)),
+                                          Expanded(
+                                              child: Text(
+                                            'You can change status for your partner account.'
+                                            'If status is Active, your partner can use app for work.'
+                                            'If status is Inactive, your partner can\'t login App.'
+                                            'You can change between Active and Inactive!',
+                                            style: TextStyle(
+                                              fontSize: 12,
+                                            ),
+                                          )),
+                                        ],
                                       ),
                                     ),
-                                    const Padding(padding: EdgeInsets.all(10)),
-                                    Expanded(
-                                      child: ElevatedButton.icon(
-                                        style: ButtonStyle(
-                                          shape: MaterialStateProperty.all(
-                                            RoundedRectangleBorder(
-                                              // Change your radius here
-                                              borderRadius:
-                                                  BorderRadius.circular(16),
+                                    SizedBox(
+                                      width: 50,
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          FlutterSwitch(
+                                              value:
+                                                  employee.status == 'enabled'
+                                                      ? status = true
+                                                      : false,
+                                              onToggle: (val) {
+                                                setState(() {
+                                                  _onCancelAccountClicked(
+                                                      employee.id,
+                                                      employee.status);
+                                                });
+                                              }),
+                                          Text(
+                                            employee.status == 'enabled'
+                                                ? 'Active'
+                                                : 'Inactive',
+                                            style: TextStyle(
+                                              fontStyle: FontStyle.italic,
+                                              color:
+                                                  employee.status == "enabled"
+                                                      ? Colors.blue
+                                                      : Colors.red,
                                             ),
                                           ),
-                                          backgroundColor:
-                                              MaterialStateProperty.all(
-                                                  Colors.orangeAccent),
-                                        ),
-                                        onPressed: () =>
-                                            {Navigator.pop(context)},
-                                        label: const Text(
-                                          'Thoát',
-                                          style: TextStyle(
-                                              fontSize: 16,
-                                              color: Colors.white),
-                                        ),
-                                        icon: const Icon(Icons.cancel),
+                                        ],
                                       ),
+                                    )
+                                  ],
+                                ),
+                              ),
+                              Container(
+                                height: 110,
+                                width: double.infinity,
+                                margin: const EdgeInsets.fromLTRB(10, 0, 10, 0),
+                                padding: const EdgeInsets.all(10),
+                                decoration: BoxDecoration(
+                                    color: Colors.grey[200],
+                                    borderRadius: const BorderRadius.all(
+                                        Radius.circular(10))),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    const Text(
+                                      'Reset password',
+                                      style: TextStyle(
+                                        color: Colors.black,
+                                        fontStyle: FontStyle.italic,
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                    const Padding(
+                                        padding: EdgeInsets.only(top: 5)),
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Expanded(child: StreamBuilder(
+                                          stream: newPasswordControl,
+                                          builder: (context, snapshot) =>
+                                              TextField(
+                                                controller: _newPasswordController,
+                                                decoration: InputDecoration(
+                                                  labelText: "Password",
+                                                  hintText: 'Insert password',
+                                                  enabledBorder: OutlineInputBorder(
+                                                      borderRadius:
+                                                      BorderRadius.circular(10),
+                                                      borderSide: const BorderSide(
+                                                        color: Colors.blueAccent,
+                                                        width: 1,
+                                                      )),
+                                                ),
+                                              ),
+                                        ),),
+                                        const Padding(padding: EdgeInsets.only(left: 10)),
+                                        InkWell(
+                                          onTap: _onChangePasswordClicked(employee),
+                                          child: const Icon(Icons.check_circle_outline,
+                                          size: 30,
+                                          color: Colors.blue,),
+                                        )
+                                      ],
                                     ),
                                   ],
                                 ),
                               ),
-                              const Padding(padding: EdgeInsets.all(5)),
+                              const Padding(
+                                  padding: EdgeInsets.fromLTRB(0, 0, 0, 10)),
+                              const Divider(
+                                color: Colors.black,
+                                height: 5.0,
+                              ),
                             ],
                           ),
                         ),
@@ -664,11 +607,10 @@ class _ManageEmployeeState extends State<ManageEmployee> {
                 const Padding(
                   padding: EdgeInsets.fromLTRB(5, 20, 5, 10),
                   child: Text(
-                    'Thêm Tư vấn viên',
+                    'Add new partner',
                     style: TextStyle(
                         fontSize: 24,
-                        fontWeight: FontWeight.w600,
-                        letterSpacing: 1.0),
+                        fontWeight: FontWeight.w600,),
                   ),
                 ),
                 SingleChildScrollView(
@@ -682,25 +624,23 @@ class _ManageEmployeeState extends State<ManageEmployee> {
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: <Widget>[
-                              const Padding(
-                                  padding: EdgeInsets.fromLTRB(0, 0, 0, 0)),
                               Container(
                                 margin:
-                                    const EdgeInsets.fromLTRB(10, 10, 10, 15),
-                                width: 400,
+                                    const EdgeInsets.fromLTRB(15, 10, 15, 10),
+                                width: double.infinity,
                                 padding: const EdgeInsets.symmetric(
                                     horizontal: 12, vertical: 4),
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(12),
                                   border: Border.all(
-                                      color: Colors.orangeAccent, width: 4),
+                                      color: Colors.blueAccent, width: 3),
                                 ),
                                 child: DropdownButtonHideUnderline(
                                   child: DropdownButton(
                                     isExpanded: true,
                                     value: valueCategory,
                                     hint: const Text(
-                                        "Vui lòng chọn lĩnh vực phụ trách"),
+                                        "Please choose category"),
                                     iconSize: 36,
                                     items: listCategory.map((option) {
                                       return DropdownMenuItem(
@@ -720,106 +660,106 @@ class _ManageEmployeeState extends State<ManageEmployee> {
                               ),
                               Container(
                                   margin:
-                                      const EdgeInsets.fromLTRB(10, 10, 10, 15),
-                                  width: 400,
+                                      const EdgeInsets.fromLTRB(15, 10, 15, 10),
+                                  width: double.infinity,
                                   child: StreamBuilder(
                                     stream: emailControl,
                                     builder: (context, snapshot) => TextField(
                                       controller: _emailController,
                                       decoration: InputDecoration(
                                           labelText: "Email",
-                                          hintText: 'Nhập Email',
+                                          hintText: 'Insert Email',
                                           enabledBorder: OutlineInputBorder(
                                               borderRadius:
                                                   BorderRadius.circular(10),
                                               borderSide: const BorderSide(
-                                                color: Colors.orangeAccent,
+                                                color: Colors.blueAccent,
                                                 width: 1,
                                               )),
                                           focusedBorder: OutlineInputBorder(
                                               borderRadius:
                                                   BorderRadius.circular(10),
                                               borderSide: const BorderSide(
-                                                  color: Colors.orange,
-                                                  width: 4))),
+                                                  color: Colors.blue,
+                                                  width: 3))),
                                     ),
                                   )),
                               Container(
                                   margin:
-                                      const EdgeInsets.fromLTRB(10, 10, 10, 15),
-                                  width: 400,
+                                      const EdgeInsets.fromLTRB(15, 10, 15, 10),
+                                  width: double.infinity,
                                   child: StreamBuilder(
                                     stream: nameControl,
                                     builder: (context, snapshot) => TextField(
                                       controller: _nameController,
                                       decoration: InputDecoration(
-                                          labelText: "Tên",
-                                          hintText: 'Nhập tên',
+                                          labelText: "Name",
+                                          hintText: 'Insert name',
                                           enabledBorder: OutlineInputBorder(
                                               borderRadius:
                                                   BorderRadius.circular(10),
                                               borderSide: const BorderSide(
-                                                color: Colors.orangeAccent,
+                                                color: Colors.blueAccent,
                                                 width: 1,
                                               )),
                                           focusedBorder: OutlineInputBorder(
                                               borderRadius:
                                                   BorderRadius.circular(10),
                                               borderSide: const BorderSide(
-                                                  color: Colors.orange,
-                                                  width: 4))),
+                                                  color: Colors.blue,
+                                                  width: 3))),
                                     ),
                                   )),
                               Container(
                                   margin:
-                                      const EdgeInsets.fromLTRB(10, 10, 10, 15),
-                                  width: 400,
+                                      const EdgeInsets.fromLTRB(15, 10, 15, 10),
+                                  width: double.infinity,
                                   child: StreamBuilder(
                                     stream: phoneControl,
                                     builder: (context, snapshot) => TextField(
                                       controller: _phoneController,
                                       decoration: InputDecoration(
-                                          labelText: "Số điện thoại",
-                                          hintText: 'Nhập số điện thoại',
+                                          labelText: "Phone number",
+                                          hintText: 'Insert phone number',
                                           enabledBorder: OutlineInputBorder(
                                               borderRadius:
                                                   BorderRadius.circular(10),
                                               borderSide: const BorderSide(
-                                                color: Colors.orangeAccent,
+                                                color: Colors.blueAccent,
                                                 width: 1,
                                               )),
                                           focusedBorder: OutlineInputBorder(
                                               borderRadius:
                                                   BorderRadius.circular(10),
                                               borderSide: const BorderSide(
-                                                  color: Colors.orange,
-                                                  width: 4))),
+                                                  color: Colors.blue,
+                                                  width: 3))),
                                     ),
                                   )),
                               Container(
                                   margin:
-                                      const EdgeInsets.fromLTRB(10, 10, 10, 15),
-                                  width: 400,
+                                      const EdgeInsets.fromLTRB(15, 10, 15, 10),
+                                  width: double.infinity,
                                   child: StreamBuilder(
                                     stream: passwordControl,
                                     builder: (context, snapshot) => TextField(
                                       controller: _passwordController,
                                       decoration: InputDecoration(
                                           labelText: "Password",
-                                          hintText: 'Nhập password',
+                                          hintText: 'Insert password',
                                           enabledBorder: OutlineInputBorder(
                                               borderRadius:
                                                   BorderRadius.circular(10),
                                               borderSide: const BorderSide(
-                                                color: Colors.orangeAccent,
+                                                color: Colors.blueAccent,
                                                 width: 1,
                                               )),
                                           focusedBorder: OutlineInputBorder(
                                               borderRadius:
                                                   BorderRadius.circular(10),
                                               borderSide: const BorderSide(
-                                                  color: Colors.orange,
-                                                  width: 4))),
+                                                  color: Colors.blue,
+                                                  width: 3))),
                                     ),
                                   )),
                               Container(
@@ -842,13 +782,13 @@ class _ManageEmployeeState extends State<ManageEmployee> {
                                           ),
                                           backgroundColor:
                                               MaterialStateProperty.all(
-                                                  Colors.orangeAccent),
+                                                  Colors.blueAccent),
                                         ),
                                         onPressed: () {
                                           _onAddEmployeeClicked();
                                         },
                                         label: const Text(
-                                          'Lưu',
+                                          'Save',
                                           style: TextStyle(
                                               fontSize: 16,
                                               color: Colors.white),
@@ -869,12 +809,12 @@ class _ManageEmployeeState extends State<ManageEmployee> {
                                           ),
                                           backgroundColor:
                                               MaterialStateProperty.all(
-                                                  Colors.orangeAccent),
+                                                  Colors.blueAccent),
                                         ),
                                         onPressed: () =>
                                             {Navigator.pop(context)},
                                         label: const Text(
-                                          'Thoát',
+                                          'Cancel',
                                           style: TextStyle(
                                               fontSize: 16,
                                               color: Colors.white),
@@ -1000,16 +940,17 @@ class _ManageEmployeeState extends State<ManageEmployee> {
               Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (BuildContext context) => const HomePageLeader()));
+                      builder: (BuildContext context) =>
+                          const HomePageLeader()));
             }),
-        title: const Text("Quản lý Tư vấn viên"),
-        backgroundColor: Colors.orangeAccent,
+        title: const Text("Manage employee"),
+        backgroundColor: Colors.blueAccent,
       ),
       floatingActionButton: FloatingActionButton(
           onPressed: () {
             _modalBottomSheetAddEmployee();
           },
-          backgroundColor: Colors.orange,
+          backgroundColor: Colors.blue,
           child: const Icon(
             Icons.add,
             size: 25,
@@ -1018,18 +959,19 @@ class _ManageEmployeeState extends State<ManageEmployee> {
           ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       body: SafeArea(
-        minimum: const EdgeInsets.only(left: 20, right: 10),
+        minimum: const EdgeInsets.only(left: 20, right: 10, top: 5),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             const Padding(
               padding: EdgeInsets.fromLTRB(5, 10, 5, 10),
               child: Text(
-                'Tư vấn viên',
+                'Your team partner',
                 style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.w600,
-                  letterSpacing: 1.0,
-                ),
+                    fontSize: 22,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.grey,
+                    fontStyle: FontStyle.italic),
               ),
             ),
             SingleChildScrollView(

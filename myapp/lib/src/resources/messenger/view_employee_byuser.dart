@@ -214,18 +214,22 @@ class _ViewEmployeeByUser extends State<ViewEmployeeByUser> {
               children: <Widget>[
                 Stack(
                   children: <Widget>[
+                    SizedBox(
+                      height: 300,
+                      width: double.infinity,
+                    ),
                     Container(
-                      height: 350,
+                      height: 200,
                       width: double.infinity,
                       decoration: const BoxDecoration(
                           borderRadius: BorderRadius.only(bottomLeft: Radius.circular(30),
                               bottomRight: Radius.circular(30))
                       ),
-                      child: ClipRRect(
-                        borderRadius: const BorderRadius.only(bottomRight: Radius.circular(30),
+                      child: const ClipRRect(
+                        borderRadius: BorderRadius.only(bottomRight: Radius.circular(30),
                             bottomLeft: Radius.circular(30)),
                         child: Image(
-                          image: NetworkImage(widget.employee.image!),
+                          image: AssetImage("assets/images/cover.jpg"),
                           fit: BoxFit.cover,
                         ),
                       ),
@@ -242,6 +246,21 @@ class _ViewEmployeeByUser extends State<ViewEmployeeByUser> {
                         },
                       ),
                     ),
+                    Center(
+                      child: Container(
+                        height: 140,
+                        width: 140,
+                        margin: const EdgeInsets.only(top: 150),
+                        child: CircleAvatar(
+                          radius: 42,
+                          backgroundColor: Colors.white,
+                          child: CircleAvatar(
+                            backgroundImage: NetworkImage(widget.employee.image!,),
+                            radius: 66,
+                          ),
+                        ),
+                      ),
+                    )
                   ],
                 ),
                 Container(
@@ -465,7 +484,7 @@ class _ViewEmployeeByUser extends State<ViewEmployeeByUser> {
                     ],
                   ),
                 ),
-                const Padding(padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
+                const Padding(padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
                   child: Divider(
                     color: Colors.grey,
                   ),
@@ -473,7 +492,7 @@ class _ViewEmployeeByUser extends State<ViewEmployeeByUser> {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    const Padding(padding: EdgeInsets.only(left: 15, bottom: 5),
+                    const Padding(padding: EdgeInsets.only(left: 15, bottom: 5,  top: 10),
                       child:  Text('Contact Info',
                         style: TextStyle(
                             fontSize: 18,
