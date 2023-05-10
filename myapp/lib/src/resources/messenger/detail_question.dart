@@ -116,8 +116,8 @@ class _DetailQuestionState extends State<DetailQuestion> {
         question.time = element['time'];
         question.file = element['file'];
         listQuestion.add(question);
-        Message message = Message('question', question.id);
-        listMessage.add(message);
+        // Message message = Message('question', question.id);
+        // listMessage.add(message);
       })
     });
     print("so cau hoi: "+listQuestion.length.toString());
@@ -163,8 +163,8 @@ class _DetailQuestionState extends State<DetailQuestion> {
                   employeeModel.status = value.docs.first['status'];
                   ans.employee = employeeModel;
                   listAnswer.add(ans);
-                  Message message = Message('answer', ans.id);
-                  listMessage.add(message);
+                  // Message message = Message('answer', ans.id);
+                  // listMessage.add(message);
                 })
               });
     });
@@ -315,23 +315,26 @@ class _DetailQuestionState extends State<DetailQuestion> {
     );
   }
   Widget _buildQuestion() {
-    dynamic mentName;
-    if (listMessage.isEmpty || departmentName.isEmpty) {
-      mentName.length.toString();
-      return const Center(
-        child: SizedBox(
-            width: 20,
-            height: 20,
-            child: CircularProgressIndicator()),
-      );
+    // print("line 318"+listQuestion.toString());
+    if (listQuestion.isNotEmpty && departmentName.isNotEmpty) {
+      // print(listQuestion);
+      // print(departmentName);
+      List<Widget> questionList = [];
+      for (var question in listQuestion) {
+        questionList.add(GestureDetector(
+            child: _buildQues(question)
+        ));
+      }
+      return Column(children: questionList);
     }
-    List<Widget> questionList = [];
-    for (var question in listQuestion) {
-      questionList.add(GestureDetector(
-          child: _buildQues(question)
-      ));
-    }
-    return Column(children: questionList);
+    return const Center(
+      child: SizedBox(
+          width: 20,
+          height: 20,
+          child: CircularProgressIndicator()),
+    );
+    // print(listQuestion.isEmpty || departmentName.isEmpty);
+
 
     // return Row(
     //   mainAxisAlignment: MainAxisAlignment.start,
@@ -627,6 +630,7 @@ class _DetailQuestionState extends State<DetailQuestion> {
                 children: <Widget>[
                   const Padding(padding: EdgeInsets.fromLTRB(0, 10, 0, 10)),
                   _buildQuestion(),
+                  // _print(),
                   const Padding(padding: EdgeInsets.fromLTRB(0, 10, 0, 10)),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -640,5 +644,8 @@ class _DetailQuestionState extends State<DetailQuestion> {
         ),
       ),
     );
+  }
+  _print(){
+    print("assssss");
   }
 }
