@@ -636,7 +636,6 @@ class _MyInfoState extends State<MyInfo> with SingleTickerProviderStateMixin{
   }
 
   uploadImage() async {
-    final _firebaseStorage = FirebaseStorage.instance;
     final _imagePicker = ImagePicker();
     String image_url;
     //PickedFile image;
