@@ -49,6 +49,9 @@ dependencies:
   flutter_pdfview: ^1.2.1
   flutter_speed_dial: ^6.2.0
   flutter_native_splash: ^2.2.16
+  custom_switch: any
+  flutter_switch: any
+  shared_preferences: ^2.0.6
 
 
   get: ^4.1.4

@@ -210,12 +210,12 @@ class _MyInfoState extends State<MyInfo> with SingleTickerProviderStateMixin{
                                   bottom: 0,
                                   right: 0,
                                   child: Container(
-                                    height: 35,
-                                    width: 35,
+                                    height: 30,
+                                    width: 30,
                                     decoration: BoxDecoration(
                                       shape: BoxShape.circle,
                                       border: Border.all(
-                                        width: 4,
+                                        width: 2,
                                         color: Theme.of(context)
                                             .scaffoldBackgroundColor,
                                       ),
@@ -636,7 +636,6 @@ class _MyInfoState extends State<MyInfo> with SingleTickerProviderStateMixin{
   }
 
   uploadImage() async {
-    final _firebaseStorage = FirebaseStorage.instance;
     final _imagePicker = ImagePicker();
     String image_url;
     //PickedFile image;

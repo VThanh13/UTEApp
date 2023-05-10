@@ -9,10 +9,10 @@ import 'package:flutter/material.dart';
 import 'package:myapp/icons/app_icons_icons.dart';
 import 'package:myapp/src/resources/about_page/my_info.dart';
 import 'package:myapp/src/resources/about_page/about_university.dart';
-import 'package:myapp/src/resources/login_page.dart';
 import 'package:myapp/src/resources/login_screen.dart';
 import 'package:myapp/src/resources/messenger/messenger_page.dart';
 import 'package:myapp/src/models/UserModel.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../models/NewfeedModel.dart';
 import 'dialog/loading_dialog.dart';
@@ -65,13 +65,15 @@ class _HomePageState extends State<HomePage> {
   FirebaseAuth auth = FirebaseAuth.instance;
   var currentUser = FirebaseAuth.instance.currentUser!;
   String name = "1234";
-  UserModel current_user = new UserModel("", " ", "", "", "", "", "", "");
+  UserModel current_user = UserModel("", " ", "", "", "", "", "", "");
 
   @override
   void initState() {
     super.initState();
     getListPost();
   }
+
+
 
   getCurrentUser() async {
     await FirebaseFirestore.instance
@@ -88,11 +90,25 @@ class _HomePageState extends State<HomePage> {
                 current_user.phone = value.docs.first['phone'];
                 current_user.group = value.docs.first['group'];
                 current_user.status = value.docs.first['status'];
-              })
+              }),
             });
   }
 
-  var departmentName = new Map();
+  cacheCurrentUser() async{
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString("id", current_user.id);
+    await prefs.setString("name", current_user.name);
+    await prefs.setString("email", current_user.email);
+    await prefs.setString("image", current_user.image);
+    await prefs.setString("password", current_user.password);
+    await prefs.setString("phone", current_user.phone);
+    await prefs.setString("group", current_user.group);
+    await prefs.setString("status", current_user.status);
+    print('duoi la id');
+    print(current_user.id);
+  }
+
+  var departmentName = {};
 
   void sendQuestion(
       String userId,
@@ -180,7 +196,7 @@ class _HomePageState extends State<HomePage> {
         .get()
         .then((value) => {
               value.docs.forEach((element) {
-                NewfeedModel newfeed = new NewfeedModel("", "", "", "", "");
+                NewfeedModel newfeed = NewfeedModel("", "", "", "", "");
                 newfeed.id = element['id'];
                 newfeed.content = element['content'];
                 newfeed.time = element['time'];
@@ -192,8 +208,8 @@ class _HomePageState extends State<HomePage> {
             });
     listNewfeed.forEach((element) async {
       Employee employee =
-          new Employee("", "", "", "", "", "", "", "", "", "", "");
-      Post post = new Post(
+          Employee("", "", "", "", "", "", "", "", "", "", "");
+      Post post = Post(
           element.id, employee, element.content, element.time, element.file);
       FirebaseFirestore.instance
           .collection('employee')
@@ -231,7 +247,7 @@ class _HomePageState extends State<HomePage> {
 
   _buildNewfeed(BuildContext context, Post post) {
     return Container(
-      margin: EdgeInsets.all(5),
+      margin: const EdgeInsets.all(5),
       decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(10),
@@ -246,7 +262,7 @@ class _HomePageState extends State<HomePage> {
                   elevation: 10,
                   borderRadius: BorderRadius.circular(140),
                   child: Container(
-                    decoration: new BoxDecoration(
+                    decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(140)),
                     height: 58,
@@ -326,10 +342,10 @@ class _HomePageState extends State<HomePage> {
             Padding(
               padding: const EdgeInsets.only(left: 0, right: 0, top: 15),
               child: Material(
-                  borderRadius: BorderRadius.all(Radius.circular(40)),
+                  borderRadius: const BorderRadius.all(Radius.circular(40)),
                   elevation: 6,
                   child: ClipRRect(
-                    borderRadius: BorderRadius.all(
+                    borderRadius: const BorderRadius.all(
                       Radius.circular(1),
                     ),
                     child: Stack(children: [
@@ -352,7 +368,7 @@ class _HomePageState extends State<HomePage> {
                 child: Row(
                   children: [
                     IconButton(
-                      icon: Icon(Icons.mode_comment),
+                      icon: const Icon(Icons.mode_comment),
                       iconSize: 25,
                       onPressed: () {
                         _modalBottomSheetAddQuestion(post);
@@ -379,7 +395,7 @@ class _HomePageState extends State<HomePage> {
   _modalBottomSheetAddQuestion(post) {
     return showModalBottomSheet(
         isScrollControlled: true,
-        shape: RoundedRectangleBorder(
+        shape: const RoundedRectangleBorder(
             borderRadius: BorderRadius.only(
           topLeft: Radius.circular(20),
           topRight: Radius.circular(20),
@@ -388,25 +404,25 @@ class _HomePageState extends State<HomePage> {
         builder: (BuildContext contetxt) {
           return StatefulBuilder(
               builder: (BuildContext context, StateSetter setStateKhoa) {
-            return Container(
+            return SizedBox(
               height: 600,
               child: SingleChildScrollView(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: <Widget>[
-                    Padding(padding: EdgeInsets.fromLTRB(0, 20, 0, 0)),
-                    Text(
+                    const Padding(padding: EdgeInsets.fromLTRB(0, 20, 0, 0)),
+                    const Text(
                       "Gửi thắc mắc về bài đăng",
                       textAlign: TextAlign.center,
                       style:
                           TextStyle(fontSize: 17, fontWeight: FontWeight.w600),
                     ),
-                    Padding(padding: EdgeInsets.fromLTRB(0, 10, 0, 0)),
+                    const Padding(padding: EdgeInsets.fromLTRB(0, 10, 0, 0)),
                     Container(
-                      margin: EdgeInsets.fromLTRB(0, 10, 0, 15),
+                      margin: const EdgeInsets.fromLTRB(0, 10, 0, 15),
                       width: 340,
                       padding:
-                          EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                          const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(12),
                           border: Border.all(
@@ -423,7 +439,7 @@ class _HomePageState extends State<HomePage> {
                           onChanged: (value) {
                             setStateKhoa(() {
                               setState(() {
-                                this.value_doituong = value;
+                                value_doituong = value;
                               });
                             });
                           },
@@ -646,7 +662,7 @@ class _HomePageState extends State<HomePage> {
               child: ListView(
                 children: <Widget>[
                   UserAccountsDrawerHeader(
-                    accountName: Text(current_user.name!),
+                    accountName: Text(current_user.name!= null ? current_user.name : 'abc'),
                     accountEmail: Text(current_user.email!),
                     arrowColor: Colors.redAccent,
                     currentAccountPicture: CircleAvatar(

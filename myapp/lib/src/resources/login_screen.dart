@@ -10,6 +10,8 @@ import 'leader/home_page_leader.dart';
 import 'manager/home_page_manager.dart';
 import 'signup_screen.dart';
 import 'package:myapp/src/widgets/inputTextWidget.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -316,6 +318,7 @@ class _SearchScreenState extends State<LoginScreen> {
     );
   }
 
+
   _onLoginClick() {
     var isValid =
         authBloc.isValidLogin(_emailController.text, _pwdController.text);
@@ -327,28 +330,41 @@ class _SearchScreenState extends State<LoginScreen> {
             .collection('user')
             .doc(userr.uid)
             .get()
-            .then((snapshot) {
+            .then((snapshot) async {
           if (snapshot.exists) {
+
+            SharedPreferences prefs = await SharedPreferences.getInstance();
+            await prefs.setString("group", snapshot.get('group'));
+
             LoadingDialog.hideLoadingDialog(context);
             Navigator.push(
-                context, MaterialPageRoute(builder: (context) => HomePage()));
+                context, MaterialPageRoute(builder: (context) => const HomePage()));
           }
         });
         await FirebaseFirestore.instance
             .collection('employee')
             .doc(userr.uid)
             .get()
-            .then((snapshot) {
+            .then((snapshot) async {
           if (snapshot.exists) {
+
             if (snapshot.get('roles') == "Tư vấn viên") {
+              SharedPreferences prefs = await SharedPreferences.getInstance();
+              await prefs.setString("ttv", snapshot.get('roles'));
               LoadingDialog.hideLoadingDialog(context);
               Navigator.push(context,
                   MaterialPageRoute(builder: (context) => const HomePageEmployee()));
             } else if (snapshot.get('roles') == "Trưởng nhóm") {
+              SharedPreferences prefs = await SharedPreferences.getInstance();
+              await prefs.setString("tn", snapshot.get('roles'));
+              print('id ne ${userr.uid}');
+              await prefs.setString("id", userr.uid);
               LoadingDialog.hideLoadingDialog(context);
               Navigator.push(context,
                   MaterialPageRoute(builder: (context) => const HomePageLeader()));
             } else if (snapshot.get('roles') == "Manager") {
+              SharedPreferences prefs = await SharedPreferences.getInstance();
+              await prefs.setString("mng", snapshot.get('roles'));
               LoadingDialog.hideLoadingDialog(context);
               Navigator.push(context,
                   MaterialPageRoute(builder: (context) => const HomePageManager()));

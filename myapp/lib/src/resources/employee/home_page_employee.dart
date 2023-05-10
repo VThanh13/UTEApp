@@ -10,6 +10,7 @@ import 'package:myapp/src/models/EmployeeModel.dart';
 
 import '../../models/NewfeedModel.dart';
 import '../home_page.dart';
+import '../login_screen.dart';
 import '../pdf_viewer.dart';
 import 'employee_info.dart';
 import 'messenger_employee.dart';
@@ -227,7 +228,7 @@ class _HomePageState extends State<HomePageEmployee> {
           return Scaffold(
             appBar: AppBar(
               title: const Text("UTE APP"),
-              backgroundColor: Colors.orangeAccent,
+              backgroundColor: Colors.blueAccent,
               actions: <Widget>[
                 IconButton(
                     onPressed: () {
@@ -255,49 +256,224 @@ class _HomePageState extends State<HomePageEmployee> {
                       backgroundImage: NetworkImage(employeeModel.image!),
                     ),
                   ),
-                  ListTile(
-                    title: const Text('Thông tin cá nhân'),
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (BuildContext context) =>
-                              const EmployeeInfo(),
-                        ),
-                      );
+                  InkWell(
+                    onTap: (){
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => const EmployeeInfo()));
                     },
-                  ),
-                  const Divider(
-                    color: Colors.black,
-                    height: 5.0,
-                  ),
-                  ListTile(
-                    title: const Text('Giới thiệu về trường'),
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (BuildContext context) => AboutUniversity(),
+                    child: SizedBox(
+                      height: 56,
+                      width: double.infinity,
+                      child: Container(
+                        margin: const EdgeInsets.only(top: 16),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: <Widget>[
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: <Widget>[
+                                Container(
+                                  margin: const EdgeInsets.only(
+                                    left: 13,
+                                  ),
+                                  child: Row(
+                                    children: <Widget>[
+                                      const SizedBox(
+                                        height: 17.14,
+                                        width: 20,
+                                        child: FittedBox(
+                                          fit: BoxFit.fitWidth,
+                                          child: Icon(
+                                            Icons.person,
+                                            color: Color(0xff757575),
+                                          ),
+                                        ),
+                                      ),
+                                      Container(
+                                        height: 22,
+                                        margin: const EdgeInsets.only(left: 20),
+                                        child: const Text(
+                                          'Personal Information',
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w400,
+                                            fontStyle: FontStyle.normal,
+                                            fontFamily: 'Plus_Jakarta_Sans',
+                                            color: Color(0xff000000),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                const SizedBox(
+                                  width: 6,
+                                  height: 10,
+                                  child: FittedBox(
+                                    fit: BoxFit.fitHeight,
+                                    child: Icon(
+                                      Icons.arrow_forward_ios,
+                                      color: Color(0xffB4B4B4),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const Divider(
+                              height: 0,
+                              color: Color(0xffAAAAAA),
+                              indent: 0,
+                              thickness: 1,
+                            ),
+                          ],
                         ),
-                      );
+                      ),
+                    ),
+                  ),
+                  InkWell(
+                    onTap: (){
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => const AboutUniversity()));
                     },
-                  ),
-                  const Divider(
-                    color: Colors.black,
-                    height: 5.0,
-                  ),
-                  ListTile(
-                    title: const Text('Đăng xuất'),
-                    onTap: () async {
-                      await FirebaseAuth.instance.signOut();
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (BuildContext context) => const LoginPage(),
+                    child: SizedBox(
+                      height: 56,
+                      width: double.infinity,
+                      child: Container(
+                        margin: const EdgeInsets.only(top: 16),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: <Widget>[
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: <Widget>[
+                                Container(
+                                  margin: const EdgeInsets.only(
+                                    left: 13,
+                                  ),
+                                  child: Row(
+                                    children: <Widget>[
+                                      const SizedBox(
+                                        height: 17.14,
+                                        width: 20,
+                                        child: FittedBox(
+                                          fit: BoxFit.fitWidth,
+                                          child: Icon(
+                                            Icons.school,
+                                            color: Color(0xff757575),
+                                          ),
+                                        ),
+                                      ),
+                                      Container(
+                                        height: 22,
+                                        margin: const EdgeInsets.only(left: 20),
+                                        child: const Text(
+                                          'About UTE',
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w400,
+                                            fontStyle: FontStyle.normal,
+                                            fontFamily: 'Plus_Jakarta_Sans',
+                                            color: Color(0xff000000),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                const SizedBox(
+                                  width: 6,
+                                  height: 10,
+                                  child: FittedBox(
+                                    fit: BoxFit.fitHeight,
+                                    child: Icon(
+                                      Icons.arrow_forward_ios,
+                                      color: Color(0xffB4B4B4),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const Divider(
+                              height: 0,
+                              color: Color(0xffAAAAAA),
+                              indent: 0,
+                              thickness: 1,
+                            ),
+                          ],
                         ),
-                      );
-                    },
+                      ),
+                    ),
                   ),
+                  InkWell(
+                    onTap: (){
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => const LoginScreen()));
+
+                    },
+                    child: SizedBox(
+                      height: 56,
+                      width: double.infinity,
+                      child: Container(
+                        margin: const EdgeInsets.only(top: 16),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: <Widget>[
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: <Widget>[
+                                Container(
+                                  margin: const EdgeInsets.only(left: 13,),
+                                  child: Row(
+                                    children: <Widget>[
+                                      const SizedBox(
+                                        height: 17.14,
+                                        width: 20,
+                                        child: FittedBox(
+                                          fit: BoxFit.fitWidth,
+                                          child: Icon(Icons.logout,
+                                            color: Color(0xff757575),
+                                          ),
+                                        ),
+                                      ),
+                                      Container(
+                                        height: 22,
+                                        margin: const EdgeInsets.only(left: 20),
+                                        child:  const Text(
+                                          'Log out',
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w400,
+                                            fontStyle: FontStyle.normal,
+                                            fontFamily: 'Plus_Jakarta_Sans',
+                                            color: Color(0xff000000),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                const SizedBox(
+                                  width: 6,
+                                  height: 10,
+                                  child: FittedBox(
+                                    fit: BoxFit.fitHeight,
+                                    child: Icon(Icons.arrow_forward_ios,
+                                      color: Color(0xffB4B4B4),
+                                    ),
+                                  ),
+                                ),
+
+                              ],
+                            ),
+                            const Divider(
+                              height: 0,
+                              color: Color(0xffAAAAAA),
+                              indent: 0,
+                              thickness: 1,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+
                 ],
               ),
             ),
