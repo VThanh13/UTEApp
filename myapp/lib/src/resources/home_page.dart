@@ -81,17 +81,17 @@ class _HomePageState extends State<HomePage> {
         .where('userId', isEqualTo: currentUser.uid)
         .get()
         .then((value) => {
-              setState(() {
-                current_user.id = value.docs.first['userId'];
-                current_user.name = value.docs.first['name'];
-                current_user.email = value.docs.first['email'];
-                current_user.image = value.docs.first['image'];
-                current_user.password = value.docs.first['password'];
-                current_user.phone = value.docs.first['phone'];
-                current_user.group = value.docs.first['group'];
-                current_user.status = value.docs.first['status'];
-              }),
-            });
+      setState(() {
+        current_user.id = value.docs.first['userId'];
+        current_user.name = value.docs.first['name'];
+        current_user.email = value.docs.first['email'];
+        current_user.image = value.docs.first['image'];
+        current_user.password = value.docs.first['password'];
+        current_user.phone = value.docs.first['phone'];
+        current_user.group = value.docs.first['group'];
+        current_user.status = value.docs.first['status'];
+      }),
+    });
   }
 
   cacheCurrentUser() async{
@@ -161,7 +161,7 @@ class _HomePageState extends State<HomePage> {
 
   _onSendQuestionClicked(Post post) async {
     var isvalid =
-        isValid(_informationController.text, _questionController.text);
+    isValid(_informationController.text, _questionController.text);
     var time = DateTime.now();
     String timestring = DateFormat('dd-MM-yyyy HH:mm:ss').format(time);
     await uploadPdf();
@@ -195,20 +195,20 @@ class _HomePageState extends State<HomePage> {
         .collection('newfeed')
         .get()
         .then((value) => {
-              value.docs.forEach((element) {
-                NewfeedModel newfeed = NewfeedModel("", "", "", "", "");
-                newfeed.id = element['id'];
-                newfeed.content = element['content'];
-                newfeed.time = element['time'];
-                newfeed.file = element['file'];
-                newfeed.employeeId = element['employeeId'];
+      value.docs.forEach((element) {
+        NewfeedModel newfeed = NewfeedModel("", "", "", "", "");
+        newfeed.id = element['id'];
+        newfeed.content = element['content'];
+        newfeed.time = element['time'];
+        newfeed.file = element['file'];
+        newfeed.employeeId = element['employeeId'];
 
-                listNewfeed.add(newfeed);
-              })
-            });
+        listNewfeed.add(newfeed);
+      })
+    });
     listNewfeed.forEach((element) async {
       Employee employee =
-          Employee("", "", "", "", "", "", "", "", "", "", "");
+      Employee("", "", "", "", "", "", "", "", "", "", "");
       Post post = Post(
           element.id, employee, element.content, element.time, element.file);
       FirebaseFirestore.instance
@@ -216,24 +216,24 @@ class _HomePageState extends State<HomePage> {
           .where("id", isEqualTo: element.employeeId)
           .get()
           .then((value) => {
-                setState(() {
-                  employee.id = value.docs.first['id'];
-                  employee.name = value.docs.first['name'];
-                  employee.email = value.docs.first['email'];
-                  employee.image = value.docs.first['image'];
-                  employee.password = value.docs.first['password'];
-                  employee.phone = value.docs.first['phone'];
-                  employee.departmentId = value.docs.first['department'];
-                  employee.departmentName =
-                      departmentName[employee.departmentId];
-                  employee.category = value.docs.first['category'];
-                  employee.roles = value.docs.first['roles'];
-                  employee.status = value.docs.first['status'];
-                  post.employee = employee;
-                  listPost.add(post);
-                  sortListPost();
-                })
-              });
+        setState(() {
+          employee.id = value.docs.first['id'];
+          employee.name = value.docs.first['name'];
+          employee.email = value.docs.first['email'];
+          employee.image = value.docs.first['image'];
+          employee.password = value.docs.first['password'];
+          employee.phone = value.docs.first['phone'];
+          employee.departmentId = value.docs.first['department'];
+          employee.departmentName =
+          departmentName[employee.departmentId];
+          employee.category = value.docs.first['category'];
+          employee.roles = value.docs.first['roles'];
+          employee.status = value.docs.first['status'];
+          post.employee = employee;
+          listPost.add(post);
+          sortListPost();
+        })
+      });
     });
   }
 
@@ -277,7 +277,7 @@ class _HomePageState extends State<HomePage> {
                             padding: const EdgeInsets.all(0),
                             decoration: BoxDecoration(
                                 border:
-                                    Border.all(color: Colors.white, width: 2),
+                                Border.all(color: Colors.white, width: 2),
                                 borderRadius: BorderRadius.circular(140)),
                             child: CircleAvatar(
                               backgroundImage: NetworkImage(
@@ -397,154 +397,154 @@ class _HomePageState extends State<HomePage> {
         isScrollControlled: true,
         shape: const RoundedRectangleBorder(
             borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(20),
-          topRight: Radius.circular(20),
-        )),
+              topLeft: Radius.circular(20),
+              topRight: Radius.circular(20),
+            )),
         context: context,
         builder: (BuildContext contetxt) {
           return StatefulBuilder(
               builder: (BuildContext context, StateSetter setStateKhoa) {
-            return SizedBox(
-              height: 600,
-              child: SingleChildScrollView(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: <Widget>[
-                    const Padding(padding: EdgeInsets.fromLTRB(0, 20, 0, 0)),
-                    const Text(
-                      "Gửi thắc mắc về bài đăng",
-                      textAlign: TextAlign.center,
-                      style:
+                return SizedBox(
+                  height: 600,
+                  child: SingleChildScrollView(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: <Widget>[
+                        const Padding(padding: EdgeInsets.fromLTRB(0, 20, 0, 0)),
+                        const Text(
+                          "Gửi thắc mắc về bài đăng",
+                          textAlign: TextAlign.center,
+                          style:
                           TextStyle(fontSize: 17, fontWeight: FontWeight.w600),
-                    ),
-                    const Padding(padding: EdgeInsets.fromLTRB(0, 10, 0, 0)),
-                    Container(
-                      margin: const EdgeInsets.fromLTRB(0, 10, 0, 15),
-                      width: 340,
-                      padding:
+                        ),
+                        const Padding(padding: EdgeInsets.fromLTRB(0, 10, 0, 0)),
+                        Container(
+                          margin: const EdgeInsets.fromLTRB(0, 10, 0, 15),
+                          width: 340,
+                          padding:
                           const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(
-                            color: Colors.blueAccent,
-                            width: 4,
-                          )),
-                      child: DropdownButtonHideUnderline(
-                        child: DropdownButton<String>(
-                          isExpanded: true,
-                          value: value_doituong,
-                          hint: const Text("Vui lòng chin đối tượng"),
-                          iconSize: 36,
-                          items: item_doituong.map(buildMenuItem).toList(),
-                          onChanged: (value) {
-                            setStateKhoa(() {
-                              setState(() {
-                                value_doituong = value;
-                              });
-                            });
-                          },
-                        ),
-                      ),
-                    ),
-                    Container(
-                        margin: const EdgeInsets.fromLTRB(0, 10, 0, 15),
-                        width: 340,
-                        child: StreamBuilder(
-                          stream: informationControl,
-                          builder: (context, snapshot) => TextField(
-                            controller: _informationController,
-                            decoration: InputDecoration(
-                                labelText: "Phương thức liên hệ",
-                                hintText: 'Nhập Email/SĐT của bạn',
-                                enabledBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(10),
-                                    borderSide: const BorderSide(
-                                      color: Colors.blueAccent,
-                                      width: 1,
-                                    )),
-                                focusedBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(10),
-                                    borderSide: const BorderSide(
-                                        color: Colors.blue, width: 4))),
-                          ),
-                        )),
-                    Container(
-                      width: 340,
-                      margin: const EdgeInsets.fromLTRB(0, 10, 0, 15),
-                      child: StreamBuilder(
-                        stream: questionControl,
-                        builder: (context, snapshot) => TextField(
-                          controller: _questionController,
-                          maxLines: 50,
-                          minLines: 7,
-                          maxLength: 3000,
-                          decoration: InputDecoration(
-                              hintMaxLines: 5,
-                              helperMaxLines: 5,
-                              labelText: "Đặt câu hỏi",
-                              hintText: 'Nhập câu hỏi của bạn',
-                              enabledBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                  borderSide: const BorderSide(
-                                    color: Colors.blueAccent,
-                                    width: 1,
-                                  )),
-                              focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                  borderSide: const BorderSide(
-                                      color: Colors.blue, width: 4))),
-                        ),
-                      ),
-                    ),
-                    IconButton(
-                        onPressed: () {
-                          importPdf();
-                        },
-                        icon: const Icon(AppIcons.file_pdf)),
-                    Container(
-                      padding: const EdgeInsets.all(10),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: <Widget>[
-                          Expanded(
-                            child: ElevatedButton.icon(
-                              onPressed: () {
-                                _onSendQuestionClicked(post);
-                                print('press save');
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(
+                                color: Colors.blueAccent,
+                                width: 4,
+                              )),
+                          child: DropdownButtonHideUnderline(
+                            child: DropdownButton<String>(
+                              isExpanded: true,
+                              value: value_doituong,
+                              hint: const Text("Vui lòng chin đối tượng"),
+                              iconSize: 36,
+                              items: item_doituong.map(buildMenuItem).toList(),
+                              onChanged: (value) {
+                                setStateKhoa(() {
+                                  setState(() {
+                                    value_doituong = value;
+                                  });
+                                });
                               },
-                              label: const Text(
-                                'Gửi',
-                                style: TextStyle(
-                                    fontSize: 16, color: Colors.white),
-                              ),
-                              icon: const Icon(Icons.mail_outline_rounded),
-                              style: ElevatedButton.styleFrom(
-                                  primary: Colors.blueAccent),
                             ),
                           ),
-                          const Padding(padding: EdgeInsets.all(10)),
-                          Expanded(
-                              child: ElevatedButton.icon(
-                            onPressed: () => {Navigator.pop(context)},
-                            label: const Text(
-                              'Thoát',
-                              style:
-                                  TextStyle(fontSize: 16, color: Colors.white),
+                        ),
+                        Container(
+                            margin: const EdgeInsets.fromLTRB(0, 10, 0, 15),
+                            width: 340,
+                            child: StreamBuilder(
+                              stream: informationControl,
+                              builder: (context, snapshot) => TextField(
+                                controller: _informationController,
+                                decoration: InputDecoration(
+                                    labelText: "Phương thức liên hệ",
+                                    hintText: 'Nhập Email/SĐT của bạn',
+                                    enabledBorder: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(10),
+                                        borderSide: const BorderSide(
+                                          color: Colors.blueAccent,
+                                          width: 1,
+                                        )),
+                                    focusedBorder: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(10),
+                                        borderSide: const BorderSide(
+                                            color: Colors.blue, width: 4))),
+                              ),
+                            )),
+                        Container(
+                          width: 340,
+                          margin: const EdgeInsets.fromLTRB(0, 10, 0, 15),
+                          child: StreamBuilder(
+                            stream: questionControl,
+                            builder: (context, snapshot) => TextField(
+                              controller: _questionController,
+                              maxLines: 50,
+                              minLines: 7,
+                              maxLength: 3000,
+                              decoration: InputDecoration(
+                                  hintMaxLines: 5,
+                                  helperMaxLines: 5,
+                                  labelText: "Đặt câu hỏi",
+                                  hintText: 'Nhập câu hỏi của bạn',
+                                  enabledBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(10),
+                                      borderSide: const BorderSide(
+                                        color: Colors.blueAccent,
+                                        width: 1,
+                                      )),
+                                  focusedBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(10),
+                                      borderSide: const BorderSide(
+                                          color: Colors.blue, width: 4))),
                             ),
-                            icon: const Icon(Icons.cancel_presentation),
-                            style: ElevatedButton.styleFrom(
-                                primary: Colors.blueAccent),
-                          )),
-                          const Padding(
-                              padding: EdgeInsets.fromLTRB(0, 10, 0, 30)),
-                        ],
-                      ),
-                    )
-                  ],
-                ),
-              ),
-            );
-          });
+                          ),
+                        ),
+                        IconButton(
+                            onPressed: () {
+                              importPdf();
+                            },
+                            icon: const Icon(AppIcons.file_pdf)),
+                        Container(
+                          padding: const EdgeInsets.all(10),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: <Widget>[
+                              Expanded(
+                                child: ElevatedButton.icon(
+                                  onPressed: () {
+                                    _onSendQuestionClicked(post);
+                                    print('press save');
+                                  },
+                                  label: const Text(
+                                    'Gửi',
+                                    style: TextStyle(
+                                        fontSize: 16, color: Colors.white),
+                                  ),
+                                  icon: const Icon(Icons.mail_outline_rounded),
+                                  style: ElevatedButton.styleFrom(
+                                      primary: Colors.blueAccent),
+                                ),
+                              ),
+                              const Padding(padding: EdgeInsets.all(10)),
+                              Expanded(
+                                  child: ElevatedButton.icon(
+                                    onPressed: () => {Navigator.pop(context)},
+                                    label: const Text(
+                                      'Thoát',
+                                      style:
+                                      TextStyle(fontSize: 16, color: Colors.white),
+                                    ),
+                                    icon: const Icon(Icons.cancel_presentation),
+                                    style: ElevatedButton.styleFrom(
+                                        primary: Colors.blueAccent),
+                                  )),
+                              const Padding(
+                                  padding: EdgeInsets.fromLTRB(0, 10, 0, 30)),
+                            ],
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                );
+              });
         });
   }
 
@@ -584,12 +584,12 @@ class _HomePageState extends State<HomePage> {
         .collection('departments')
         .get()
         .then((value) => {
-              setState(() {
-                value.docs.forEach((element) {
-                  departmentName[element.id] = element["name"];
-                });
-              })
-            });
+      setState(() {
+        value.docs.forEach((element) {
+          departmentName[element.id] = element["name"];
+        });
+      })
+    });
   }
 
   var item_doituong = [
@@ -650,7 +650,7 @@ class _HomePageState extends State<HomePage> {
                           context,
                           MaterialPageRoute(
                               builder: (BuildContext context) =>
-                                  const MessengerPage()));
+                              const MessengerPage()));
                     },
                     icon: const Icon(
                       AppIcons.chat,

@@ -70,6 +70,8 @@ class _HomePageState extends State<HomePageLeader> {
   EmployeeModel employeeModel =
       EmployeeModel("", " ", "", "", "", "", "", "", "", "");
   var departmentName = {};
+
+  Post? get post => null;
   @override
   void dispose() {
     _infoPostControll.close();
@@ -80,6 +82,7 @@ class _HomePageState extends State<HomePageLeader> {
   void initState() {
     super.initState();
     getListPost();
+    reload();
   }
 
   final TextEditingController _infoPostController = TextEditingController();
@@ -187,27 +190,24 @@ class _HomePageState extends State<HomePageLeader> {
 
   _buildNewFeed(BuildContext context, Post post) {
     return Container(
-      margin: const EdgeInsets.all(10.0),
-      decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(15.0),
-          border: Border.all(width: 1.0, color: Colors.pinkAccent)),
+      margin: const EdgeInsets.only(top: 10),
+      color: Colors.white,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
-          const Padding(padding: EdgeInsets.fromLTRB(0, 5, 0, 0)),
+          const Padding(padding: EdgeInsets.fromLTRB(0, 10, 0, 0)),
           Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
               Container(
-                padding: const EdgeInsets.fromLTRB(20, 0, 10, 0),
+                padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
                 child: CircleAvatar(
-                  radius: 30,
+                  radius: 24,
                   backgroundColor: Colors.tealAccent,
                   child: CircleAvatar(
                     backgroundImage: NetworkImage(post.employee.image!),
-                    radius: 28,
+                    radius: 22,
                   ),
                 ),
               ),
@@ -218,19 +218,22 @@ class _HomePageState extends State<HomePageLeader> {
                   Text(
                     post.employee.name,
                     style: const TextStyle(
-                        fontSize: 17,
+                        fontSize: 15,
                         fontStyle: FontStyle.italic,
                         fontWeight: FontWeight.w500),
                   ),
+                  const SizedBox(height: 3,),
                   Text(
                     post.time,
-                    style: const TextStyle(
-                      fontSize: 12,
+                    style: TextStyle(
+                      fontSize: 9,
+                      color: Colors.grey[400],
                     ),
                   ),
                   Text(
                     post.employee.departmentName,
-                    style: const TextStyle(fontSize: 13),
+                    style: TextStyle(fontSize: 11,
+                    color: Colors.grey[500]),
                   ),
                 ],
               ),
@@ -241,28 +244,32 @@ class _HomePageState extends State<HomePageLeader> {
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10),
+                padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
                 child: Text(
                   post.content,
                   overflow: TextOverflow.visible,
                   maxLines: 50,
                   style: const TextStyle(
-                      fontSize: 16, fontWeight: FontWeight.w500),
+                      fontSize: 16, fontWeight: FontWeight.w400),
                 ),
               )
             ],
           ),
           const Padding(padding: EdgeInsets.fromLTRB(0, 5, 0, 0)),
           if (post.file != 'file.pdf')
-            ClipRRect(
-              borderRadius: const BorderRadius.only(
-                bottomLeft: Radius.circular(14),
-                bottomRight: Radius.circular(14),
-              ),
-              child: Image.network(
-                post.file,
+            SizedBox(
+              height: 330,
+              width: double.infinity,
+              child: FittedBox(
+                fit: BoxFit.cover,
+                child: ClipRRect(
+                  child: Image.network(
+                    post.file,
+                  ),
+                ),
               ),
             ),
+          const SizedBox(height: 10,)
         ],
       ),
     );
@@ -279,6 +286,15 @@ class _HomePageState extends State<HomePageLeader> {
                 }
               })
             });
+  }
+  bool isLoading = false;
+  Future<void> reload() async{
+    setState(() {
+      isLoading = true;
+    });
+
+    await getListPost();
+    isLoading = false;
   }
 
   @override
@@ -312,6 +328,7 @@ class _HomePageState extends State<HomePageLeader> {
 
           // TODO: implement build
           return Scaffold(
+            backgroundColor: Colors.grey[300],
             appBar: AppBar(
               title: const Text("UTE APP"),
               backgroundColor: Colors.blueAccent,
@@ -709,88 +726,151 @@ class _HomePageState extends State<HomePageLeader> {
               ),
             ),
             body: SafeArea(
-              minimum: const EdgeInsets.only(left: 10, right: 10),
               child: SingleChildScrollView(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: <Widget>[
-                    const Padding(
-                      padding: EdgeInsets.fromLTRB(0, 0, 0, 20),
-                    ),
                     Container(
-                      height: 100,
+                      height: 90,
                       decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(5),
-                          border: Border.all(color: Colors.black54)),
+                          ),
                       child: SizedBox(
                         width: double.infinity,
                         height: 80,
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: <Widget>[
-                            Padding(
-                              padding: const EdgeInsets.fromLTRB(20, 0, 10, 0),
-                              child: SizedBox(
-                                height: 80,
-                                child: Center(
-                                  child: Stack(
-                                    children: [
-                                      CircleAvatar(
-                                        radius: 32,
-                                        backgroundColor: Colors.tealAccent,
-                                        child: CircleAvatar(
-                                          backgroundImage: NetworkImage(
-                                              employeeModel.image),
-                                          radius: 30,
-                                        ),
+                            Container(
+                              height: 80,
+                              margin: const EdgeInsets.fromLTRB(10, 0, 0, 15),
+                              child: Center(
+                                child: Stack(
+                                  children: [
+                                    CircleAvatar(
+                                      radius: 28,
+                                      backgroundColor: Colors.tealAccent,
+                                      child: CircleAvatar(
+                                        backgroundImage: NetworkImage(
+                                            employeeModel.image),
+                                        radius: 26,
                                       ),
-                                    ],
-                                  ),
+                                    ),
+                                  ],
                                 ),
                               ),
                             ),
-                            SizedBox(
-                              height: 70,
-                              width: 240,
-                              child: ElevatedButton.icon(
-                                onPressed: () {
-                                  _modalBottomSheetAddPost();
-                                },
-                                icon: const Icon(
-                                  Icons.add_card,
-                                  color: Colors.black87,
+                            InkWell(
+                              onTap: _modalBottomSheetAddPost,
+                              child: SizedBox(
+                                height: 90,
+                                width: 270,
+                                child: Column(
+                                  children: [
+                                    SizedBox(
+                                      height: 50,
+                                      child: Row(
+                                        crossAxisAlignment: CrossAxisAlignment.end,
+                                        children: const [
+                                          Padding(padding: EdgeInsets.only(left: 5),
+                                          child: Icon(Icons.newspaper_outlined),),
+                                          Padding(padding: EdgeInsets.only(bottom: 3, left: 5),
+                                          child: Text('Create new post',
+                                          style: TextStyle(
+                                            fontStyle: FontStyle.italic,
+                                            fontSize: 14
+                                          ),
+                                          ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    Container(
+                                      margin: const EdgeInsets.fromLTRB(0, 10, 0, 0),
+                                      child: const Divider(
+                                        height: 0,
+                                        color: Color(0xffAAAAAA),
+                                        indent: 0,
+                                        thickness: 1,
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      height: 30,
+                                      width: 200,
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                        children: [
+                                          Row(
+                                            children: const [
+                                              Padding(padding: EdgeInsets.fromLTRB(1, 1, 1, 1),
+                                                child: Icon(Icons.image,
+                                                color: Colors.blueAccent,),),
+                                              Padding(padding: EdgeInsets.fromLTRB(0, 1, 1, 1),
+                                              child: Text('Photo',
+                                              style: TextStyle(fontSize: 12),),)
+                                            ],
+                                          ),
+                                          Row(
+                                            children: const [
+                                              Padding(padding: EdgeInsets.fromLTRB(1, 1, 1, 1),
+                                                child: Icon(Icons.picture_as_pdf_rounded,
+                                                color: Colors.redAccent,),),
+                                              Padding(padding: EdgeInsets.fromLTRB(0, 1, 1, 1),
+                                                child: Text('File',
+                                                style: TextStyle(
+                                                  fontSize: 12
+                                                ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                    )
+                                  ],
                                 ),
-                                label: const Text(
-                                  "Thêm bài đăng mới",
-                                  style: TextStyle(
-                                      fontSize: 17,
-                                      color: Colors.black87,
-                                      fontStyle: FontStyle.italic),
-                                  textAlign: TextAlign.start,
-                                ),
-                                style: ElevatedButton.styleFrom(
-                                    primary: Colors.white70),
                               ),
                             ),
                           ],
                         ),
                       ),
                     ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        SizedBox(
-                          height: MediaQuery.of(context).size.height * 0.65,
-                          child: ListView.builder(
-                              physics: const BouncingScrollPhysics(),
-                              itemCount: listPost.length,
-                              itemBuilder: (BuildContext context, int index) {
-                                return _buildNewFeed(context, listPost[index]);
-                              }),
-                        )
-                      ],
-                    )
+                    Visibility(
+                      visible: isLoading,
+                      replacement: RefreshIndicator(
+                      onRefresh: reload,
+                      child: Visibility(
+                        visible: listPost.isNotEmpty,
+                        replacement: const Center(
+                          child: Padding(
+                            padding: EdgeInsets.only(top: 200),
+                            child: Text('No post found!', style: TextStyle(
+                              fontSize: 20,
+                              color: Colors.grey
+                            ),),
+                          )
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            SizedBox(
+                              height: MediaQuery.of(context).size.height * 0.75,
+                              child: ListView.builder(
+                                  physics: const BouncingScrollPhysics(),
+                                  itemCount: listPost.length,
+                                  itemBuilder: (BuildContext context, int index) {
+                                    return _buildNewFeed(context, listPost[index]);
+                                  }),
+                            )
+                          ],
+                        ),
+                      ),
+                    ), child: const Center(
+                      child: Padding(padding: EdgeInsets.only(top: 200),
+                      child: CircularProgressIndicator(),)
+                    ),)
+
                   ],
                 ),
               ),

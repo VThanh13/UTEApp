@@ -114,6 +114,8 @@ class _MyAppState extends State<MyApp>{
       debugShowCheckedModeBanner: false,
     );
   }
+  // adb kill-server
+  // adb start-server
 
 }
 
