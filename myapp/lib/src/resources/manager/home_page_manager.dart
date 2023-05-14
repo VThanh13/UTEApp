@@ -5,13 +5,14 @@ import 'package:flutter/material.dart';
 import 'package:myapp/icons/app_icons_icons.dart';
 import 'package:myapp/src/resources/about_page/about_university.dart';
 import 'package:myapp/src/resources/employee/messenger_employee.dart';
-import 'package:myapp/src/resources/login_page.dart';
 import 'package:myapp/src/resources/manager/stats_manager.dart';
 import 'package:myapp/src/models/EmployeeModel.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../models/NewfeedModel.dart';
 import '../employee/employee_info.dart';
 import '../home_page.dart';
+import '../login_screen.dart';
 import 'manage_department.dart';
 
 class HomePageManager extends StatefulWidget {
@@ -334,12 +335,14 @@ class _HomePageState extends State<HomePageManager> {
                   ListTile(
                     title: const Text('Đăng xuất'),
                     onTap: () async {
+                      SharedPreferences prefs = await SharedPreferences.getInstance();
+                      await prefs.setString("id", "");
                       await FirebaseAuth.instance.signOut();
                       Navigator.push(
                           context,
                           MaterialPageRoute(
                               builder: (BuildContext context) =>
-                                  const LoginPage()));
+                                  const LoginScreen()));
                     },
                   ),
                 ],

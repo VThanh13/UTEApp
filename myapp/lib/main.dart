@@ -44,59 +44,44 @@ class _MyAppState extends State<MyApp>{
     User? user = FirebaseAuth.instance.currentUser;
     var currentUser = FirebaseAuth.instance.currentUser!;
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    // String? group = prefs.getString("group");
-    // String? roleEmp = prefs.getString("ttv") ;
-    // String? roleTL = prefs.getString("tn") ;
-    // String? roleMN = prefs.getString("mng") ;
+    String? roles = prefs.getString("roles");
     String? id = prefs.getString("id");
-    String check ='';
-    String check2 ='';
-    // await FirebaseFirestore.instance
-    //     .collection('user')
-    //     .where('userId', isEqualTo: currentUser.uid)
-    //     .get().then((value) =>{
-    //   check = value.docs.first['group']
-    // });
 
-    FirebaseFirestore.instance
-        .collection('employee')
-        .where('id', isEqualTo: id)
-        .get().then((value) =>{
-      setState((){
-        check2 = value.docs.first['roles'];
-      })
-    });
-    // print(check2);
-    // print(roleMN);
-    // print(roleTL);
-    // print(roleEmp);
-
-    if(user != null){
-      // if(check2 == "Trưởng nhóm"){
-      //     setState(() {
-      //       currentPage = const HomePageLeader();
-      //     });
-      //   }
-      print('day la id $id');
-      print("day la check2 $check2");
-      setState(() {
-        currentPage = const HomePageLeader();
+    if(id != null  && id != ""){
+      await FirebaseFirestore.instance
+          .collection('user')
+          .doc(currentUser.uid)
+          .get()
+          .then((snapshot) async {
+        if (snapshot.exists) {
+          setState(() {
+            currentPage = const HomePage();
+          });
+        }
       });
-      // if(check2 == "Tư vấn viên"){
-      //   setState(() {
-      //     currentPage = const HomePageEmployee();
-      //   });
-      // }else if(check2 == "Trưởng nhóm"){
-      //   setState(() {
-      //     currentPage = const HomePageLeader();
-      //   });
-      // } else if(check2 == "Manager" ){
-      //   setState(() {
-      //     currentPage = const HomePageManager();
-      //   });
-      // }else{
-      //   currentPage = const HomePage();
-      // }
+
+      await FirebaseFirestore.instance
+          .collection('employee')
+          .doc(currentUser.uid)
+          .get()
+          .then((snapshot) async {
+        if (snapshot.exists) {
+
+          if (snapshot.get('roles') == "Tư vấn viên") {
+            setState(() {
+              currentPage = const HomePageEmployee();
+            });
+          } else if (snapshot.get('roles') == "Trưởng nhóm") {
+            setState(() {
+              currentPage = const HomePageLeader();
+            });
+          } else if (snapshot.get('roles') == "Manager") {
+            setState(() {
+              currentPage = const HomePageManager();
+            });
+          }
+        }
+      });
     }
   }
 

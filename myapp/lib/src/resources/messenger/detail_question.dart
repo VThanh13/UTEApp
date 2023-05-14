@@ -116,20 +116,21 @@ class _DetailQuestionState extends State<DetailQuestion> {
         question.time = element['time'];
         question.file = element['file'];
         listQuestion.add(question);
-        // Message message = Message('question', question.id);
-        // listMessage.add(message);
+        Message message = Message('question', question.id);
+        listMessage.add(message);
       })
     });
-    print("so cau hoi: "+listQuestion.length.toString());
   }
 
   getAnswerData() async {
     List<AnswerModel> listAns = [];
+    List temp = [widget.chatRoom.id, ""];
     await FirebaseFirestore.instance
         .collection('answer')
-        .where('room_id', isEqualTo: widget.chatRoom.id)
+        .where('room_id', isEqualTo: "")
         .get()
         .then((value) => {
+          setState(() {
               value.docs.forEach((element) {
                 AnswerModel ans = AnswerModel("", "", "", "", "");
                 ans.employee_id = element['employee_id'];
@@ -137,9 +138,12 @@ class _DetailQuestionState extends State<DetailQuestion> {
                 ans.room_id = element['room_id'];
                 ans.content = element['content'];
                 ans.time = element['time'];
+
                 listAns.add(ans);
-              })
-            });
+              });
+          })
+        });
+    print(listAns.toList());
     listAns.forEach((element) async {
       EmployeeModel employeeModel =
           EmployeeModel("", "", "", "", "", "", "", "", "", "");
@@ -163,8 +167,8 @@ class _DetailQuestionState extends State<DetailQuestion> {
                   employeeModel.status = value.docs.first['status'];
                   ans.employee = employeeModel;
                   listAnswer.add(ans);
-                  // Message message = Message('answer', ans.id);
-                  // listMessage.add(message);
+                  Message message = Message('answer', ans.id);
+                  listMessage.add(message);
                 })
               });
     });
@@ -315,26 +319,21 @@ class _DetailQuestionState extends State<DetailQuestion> {
     );
   }
   Widget _buildQuestion() {
-    // print("line 318"+listQuestion.toString());
-    if (listQuestion.isNotEmpty && departmentName.isNotEmpty) {
-      // print(listQuestion);
-      // print(departmentName);
-      List<Widget> questionList = [];
-      for (var question in listQuestion) {
-        questionList.add(GestureDetector(
-            child: _buildQues(question)
-        ));
-      }
-      return Column(children: questionList);
+    if (listMessage.isEmpty || departmentName.isEmpty) {
+      return const Center(
+        child: SizedBox(
+            width: 20,
+            height: 20,
+            child: CircularProgressIndicator()),
+      );
     }
-    return const Center(
-      child: SizedBox(
-          width: 20,
-          height: 20,
-          child: CircularProgressIndicator()),
-    );
-    // print(listQuestion.isEmpty || departmentName.isEmpty);
-
+    List<Widget> questionList = [];
+    for (var question in listQuestion) {
+      questionList.add(GestureDetector(
+          child: _buildQues(question)
+      ));
+    }
+    return Column(children: questionList);
 
     // return Row(
     //   mainAxisAlignment: MainAxisAlignment.start,

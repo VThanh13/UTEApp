@@ -6,9 +6,11 @@ import 'package:myapp/src/resources/about_page/my_file.dart';
 import 'package:myapp/src/resources/about_page/my_info.dart';
 import 'package:myapp/src/resources/about_page/about_university.dart';
 import 'package:myapp/src/resources/about_page/admission_history.dart';
-import 'package:myapp/src/resources/login_page.dart';
 import 'package:myapp/src/resources/messenger/messenger_page.dart';
 import 'package:myapp/src/models/UserModel.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import '../login_screen.dart';
 
 class HomePageAdmin extends StatefulWidget {
   const HomePageAdmin({super.key});
@@ -168,11 +170,14 @@ class _HomePageState extends State<HomePageAdmin> {
                   ),
                   ListTile(
                     title: const Text('Đăng xuất'),
-                    onTap: () {
+                    onTap: () async {
+                      SharedPreferences prefs = await SharedPreferences.getInstance();
+                      await prefs.setString("id", "");
+                      await FirebaseAuth.instance.signOut();
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (BuildContext context) => const LoginPage(),
+                          builder: (BuildContext context) => const LoginScreen(),
                         ),
                       );
                     },
