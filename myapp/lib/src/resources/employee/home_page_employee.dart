@@ -5,8 +5,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:myapp/icons/app_icons_icons.dart';
 import 'package:myapp/src/resources/about_page/about_university.dart';
-import 'package:myapp/src/resources/login_page.dart';
 import 'package:myapp/src/models/EmployeeModel.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../models/NewfeedModel.dart';
 import '../home_page.dart';
@@ -403,7 +403,10 @@ class _HomePageState extends State<HomePageEmployee> {
                     ),
                   ),
                   InkWell(
-                    onTap: (){
+                    onTap: () async {
+                      SharedPreferences prefs = await SharedPreferences.getInstance();
+                      await prefs.setString("id", "");
+                      await FirebaseAuth.instance.signOut();
                       Navigator.push(context, MaterialPageRoute(builder: (context) => const LoginScreen()));
 
                     },

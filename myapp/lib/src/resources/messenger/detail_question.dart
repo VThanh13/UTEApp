@@ -120,16 +120,17 @@ class _DetailQuestionState extends State<DetailQuestion> {
         listMessage.add(message);
       })
     });
-    print("so cau hoi: "+listQuestion.length.toString());
   }
 
   getAnswerData() async {
     List<AnswerModel> listAns = [];
+    List temp = [widget.chatRoom.id, ""];
     await FirebaseFirestore.instance
         .collection('answer')
-        .where('room_id', isEqualTo: widget.chatRoom.id)
+        .where('room_id', isEqualTo: "")
         .get()
         .then((value) => {
+          setState(() {
               value.docs.forEach((element) {
                 AnswerModel ans = AnswerModel("", "", "", "", "");
                 ans.employee_id = element['employee_id'];
@@ -137,9 +138,12 @@ class _DetailQuestionState extends State<DetailQuestion> {
                 ans.room_id = element['room_id'];
                 ans.content = element['content'];
                 ans.time = element['time'];
+
                 listAns.add(ans);
-              })
-            });
+              });
+          })
+        });
+    print(listAns.toList());
     listAns.forEach((element) async {
       EmployeeModel employeeModel =
           EmployeeModel("", "", "", "", "", "", "", "", "", "");
@@ -315,9 +319,7 @@ class _DetailQuestionState extends State<DetailQuestion> {
     );
   }
   Widget _buildQuestion() {
-    dynamic mentName;
     if (listMessage.isEmpty || departmentName.isEmpty) {
-      mentName.length.toString();
       return const Center(
         child: SizedBox(
             width: 20,
@@ -627,6 +629,7 @@ class _DetailQuestionState extends State<DetailQuestion> {
                 children: <Widget>[
                   const Padding(padding: EdgeInsets.fromLTRB(0, 10, 0, 10)),
                   _buildQuestion(),
+                  // _print(),
                   const Padding(padding: EdgeInsets.fromLTRB(0, 10, 0, 10)),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -640,5 +643,8 @@ class _DetailQuestionState extends State<DetailQuestion> {
         ),
       ),
     );
+  }
+  _print(){
+    print("assssss");
   }
 }

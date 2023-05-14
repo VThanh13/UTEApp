@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:myapp/src/blocs/auth_bloc.dart';
-import 'package:myapp/src/resources/login_page.dart';
 class MyApp extends InheritedWidget {
   final AuthBloc authBloc;
   final Widget child;

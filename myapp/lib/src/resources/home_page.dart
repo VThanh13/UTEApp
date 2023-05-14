@@ -64,16 +64,15 @@ class Employee {
 class _HomePageState extends State<HomePage> {
   FirebaseAuth auth = FirebaseAuth.instance;
   var currentUser = FirebaseAuth.instance.currentUser!;
-  String name = "1234";
+  // String name = "1234";
   UserModel current_user = UserModel("", " ", "", "", "", "", "", "");
 
   @override
   void initState() {
     super.initState();
+    getCurrentUser();
     getListPost();
   }
-
-
 
   getCurrentUser() async {
     await FirebaseFirestore.instance
@@ -816,7 +815,10 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ),
                   InkWell(
-                    onTap: (){
+                    onTap: () async {
+                      SharedPreferences prefs = await SharedPreferences.getInstance();
+                      await prefs.setString("id", "");
+                      await FirebaseAuth.instance.signOut();
                       Navigator.push(context, MaterialPageRoute(builder: (context) => const LoginScreen()));
 
                     },

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -25,6 +27,26 @@ class _SearchScreenState extends State<LoginScreen> {
   final TextEditingController _emailController = TextEditingController();
 
   AuthBloc authBloc = AuthBloc();
+
+  Future<bool> _onWillPop() async {
+    return (await showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Thoát ứng dụng'),
+        content: const Text('Bạn có chắc chắn muốn thoát ứng dụng không?'),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: const Text('Hủy'),
+          ),
+          TextButton(
+            onPressed: () => exit(0),
+            child: const Text('Thoát'),
+          ),
+        ],
+      ),
+    )) ?? false;
+  }
 
   //final snackBar = SnackBar(content: Text('email ou mot de passe incorrect'));
   final _formKey = GlobalKey<FormState>();
@@ -220,8 +242,11 @@ class _SearchScreenState extends State<LoginScreen> {
         height: 15.0,
       ),
     ];
-    return GestureDetector(
+    return WillPopScope(
+      onWillPop: _onWillPop,
+    child: GestureDetector(
       onTap: () {WidgetsBinding.instance.focusManager.primaryFocus?.unfocus();},
+
       child: Scaffold(
         extendBodyBehindAppBar: true,
         appBar: AppBar(
@@ -315,14 +340,15 @@ class _SearchScreenState extends State<LoginScreen> {
           ],
         ),
       ),
-    );
+    ),);
   }
 
 
-  _onLoginClick() {
+  _onLoginClick() async {
     var isValid =
         authBloc.isValidLogin(_emailController.text, _pwdController.text);
     if (isValid) {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
       LoadingDialog.showLoadingDialog(context, "loading...");
       authBloc.signIn(_emailController.text, _pwdController.text, () async {
         var userr = FirebaseAuth.instance.currentUser!;
@@ -332,9 +358,8 @@ class _SearchScreenState extends State<LoginScreen> {
             .get()
             .then((snapshot) async {
           if (snapshot.exists) {
-
-            SharedPreferences prefs = await SharedPreferences.getInstance();
-            await prefs.setString("group", snapshot.get('group'));
+            await prefs.setString("id", userr.uid);
+            await prefs.setString("roles", 'user');
 
             LoadingDialog.hideLoadingDialog(context);
             Navigator.push(
@@ -347,24 +372,18 @@ class _SearchScreenState extends State<LoginScreen> {
             .get()
             .then((snapshot) async {
           if (snapshot.exists) {
+            await prefs.setString("id", userr.uid);
+            await prefs.setString("roles", snapshot.get('roles'));
 
             if (snapshot.get('roles') == "Tư vấn viên") {
-              SharedPreferences prefs = await SharedPreferences.getInstance();
-              await prefs.setString("ttv", snapshot.get('roles'));
               LoadingDialog.hideLoadingDialog(context);
               Navigator.push(context,
                   MaterialPageRoute(builder: (context) => const HomePageEmployee()));
             } else if (snapshot.get('roles') == "Trưởng nhóm") {
-              SharedPreferences prefs = await SharedPreferences.getInstance();
-              await prefs.setString("tn", snapshot.get('roles'));
-              print('id ne ${userr.uid}');
-              await prefs.setString("id", userr.uid);
               LoadingDialog.hideLoadingDialog(context);
               Navigator.push(context,
                   MaterialPageRoute(builder: (context) => const HomePageLeader()));
             } else if (snapshot.get('roles') == "Manager") {
-              SharedPreferences prefs = await SharedPreferences.getInstance();
-              await prefs.setString("mng", snapshot.get('roles'));
               LoadingDialog.hideLoadingDialog(context);
               Navigator.push(context,
                   MaterialPageRoute(builder: (context) => const HomePageManager()));
