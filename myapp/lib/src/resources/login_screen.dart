@@ -32,16 +32,16 @@ class _SearchScreenState extends State<LoginScreen> {
     return (await showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Thoát ứng dụng'),
-        content: const Text('Bạn có chắc chắn muốn thoát ứng dụng không?'),
+        title: const Text('Exit the app'),
+        content: const Text('Are you sure you want to exit the app?'),
         actions: <Widget>[
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
-            child: const Text('Hủy'),
+            child: const Text('Cancel'),
           ),
           TextButton(
             onPressed: () => exit(0),
-            child: const Text('Thoát'),
+            child: const Text('Exit'),
           ),
         ],
       ),

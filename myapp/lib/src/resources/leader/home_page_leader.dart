@@ -872,8 +872,8 @@ class _HomePageState extends State<HomePageLeader> {
                     ), child: const Center(
                       child: Padding(padding: EdgeInsets.only(top: 200),
                       child: CircularProgressIndicator(),)
-                    ),)
-
+                    ),
+                    ),
                   ],
                 ),
               ),
