@@ -343,8 +343,17 @@ class _ManageEmployeeState extends State<ManageEmployee> {
                                                       MaterialStateProperty.all(
                                                           Colors.blueAccent)),
                                               onPressed: () {
-                                                _onChangeCategoryClicked(
-                                                    employee.id, valueCategory);
+                                                try{
+                                                  if(_onChangeCategoryClicked(
+                                                      employee.id, valueCategory)){
+
+                                                  }else{
+                                                    Navigator.pop(context);
+                                                    showErrorMessage('Update failed');
+                                                  }
+                                                }catch(e){
+                                                  //
+                                                }
                                               },
                                               label: const Text(
                                                 'Save',
@@ -364,31 +373,6 @@ class _ManageEmployeeState extends State<ManageEmployee> {
                               ),
 
                               const Padding(padding: EdgeInsets.all(5)),
-                              // Container(
-                              //   width: 300,
-                              //   height: 45,
-                              //   child: ElevatedButton(
-                              //     style: ButtonStyle(
-                              //       backgroundColor: MaterialStateProperty.all<Color>(Colors.red),
-                              //       shape: MaterialStateProperty.all(
-                              //         RoundedRectangleBorder(
-                              //           // Change your radius here
-                              //           borderRadius: BorderRadius.circular(16),
-                              //         ),
-                              //       ),
-                              //     ),
-                              //     onPressed: () {
-                              //       _onCancelAccountClicked(employee.id, employee.status);
-                              //       print('press cancel account');
-                              //     },
-                              //     child: Text(
-                              //       employee.status == "enabled" ? "Vô hiệu hóa tài khoản": "Kích hoạt tài khoản",
-                              //       style: TextStyle(
-                              //           fontSize: 16,
-                              //           color: Colors.white),
-                              //     ),
-                              //   ),
-                              // ),
                               Container(
                                 height: 110,
                                 width: double.infinity,
@@ -445,11 +429,17 @@ class _ManageEmployeeState extends State<ManageEmployee> {
                                                       ? status = true
                                                       : false,
                                               onToggle: (val) {
-                                                setState(() {
-                                                  _onCancelAccountClicked(
+                                                try{
+                                                  if(_onCancelAccountClicked(
                                                       employee.id,
-                                                      employee.status);
-                                                });
+                                                      employee.status)){
+                                                  }else{
+                                                    Navigator.pop(context);
+                                                    showErrorMessage('Update failed');
+                                                  }
+                                                }catch(e){
+                                                  //
+                                                }
                                               }),
                                           Text(
                                             employee.status == 'enabled'
@@ -470,7 +460,7 @@ class _ManageEmployeeState extends State<ManageEmployee> {
                                 ),
                               ),
                               Container(
-                                height: 110,
+                                height: 125,
                                 width: double.infinity,
                                 margin: const EdgeInsets.fromLTRB(10, 0, 10, 0),
                                 padding: const EdgeInsets.all(10),
@@ -503,6 +493,7 @@ class _ManageEmployeeState extends State<ManageEmployee> {
                                                 decoration: InputDecoration(
                                                   labelText: "Password",
                                                   hintText: 'Insert password',
+                                                  errorText: snapshot.hasError? snapshot.error.toString() : null,
                                                   enabledBorder: OutlineInputBorder(
                                                       borderRadius:
                                                       BorderRadius.circular(10),
@@ -515,7 +506,23 @@ class _ManageEmployeeState extends State<ManageEmployee> {
                                         ),),
                                         const Padding(padding: EdgeInsets.only(left: 10)),
                                         InkWell(
-                                          onTap: _onChangePasswordClicked(employee),
+                                          onTap: (){
+                                            try{
+                                              if(_onChangePasswordClicked(employee)){
+                                                setState(() {
+                                                  _newPasswordController.text = '';
+                                                });
+                                              }else{
+                                                setState(() {
+                                                  _newPasswordController.text = '';
+                                                });
+                                                Navigator.pop(context);
+                                                showErrorMessage('Change password failed');
+                                              }
+                                            }catch(e){
+                                              //
+                                            }
+                                          },
                                           child: const Icon(Icons.check_circle_outline,
                                           size: 30,
                                           color: Colors.blue,),
@@ -546,13 +553,16 @@ class _ManageEmployeeState extends State<ManageEmployee> {
 
   bool isValidChangePass(String password) {
     if (password.isEmpty) {
-      _newPasswordControl.sink.addError("Nhập password");
+      _newPasswordControl.sink.addError("Insert password");
       return false;
     }
+    _newPasswordControl.sink.add('');
+
     if (password.length < 6) {
-      _newPasswordControl.sink.addError("Password phải từ 6 ký tự trở lên");
+      _newPasswordControl.sink.addError("Password must be 6 or more characters");
       return false;
     }
+    _newPasswordControl.sink.add('');
 
     return true;
   }
@@ -573,6 +583,7 @@ class _ManageEmployeeState extends State<ManageEmployee> {
         LoadingDialog.hideLoadingDialog(context);
         Navigator.push(context,
             MaterialPageRoute(builder: (context) => const ManageEmployee()));
+        showSuccessMessage('Change password success');
       });
     }
   }
@@ -669,6 +680,7 @@ class _ManageEmployeeState extends State<ManageEmployee> {
                                       decoration: InputDecoration(
                                           labelText: "Email",
                                           hintText: 'Insert Email',
+                                          errorText: snapshot.hasError? snapshot.error.toString() : null,
                                           enabledBorder: OutlineInputBorder(
                                               borderRadius:
                                                   BorderRadius.circular(10),
@@ -695,6 +707,7 @@ class _ManageEmployeeState extends State<ManageEmployee> {
                                       decoration: InputDecoration(
                                           labelText: "Name",
                                           hintText: 'Insert name',
+                                          errorText: snapshot.hasError? snapshot.error.toString() : null,
                                           enabledBorder: OutlineInputBorder(
                                               borderRadius:
                                                   BorderRadius.circular(10),
@@ -721,6 +734,7 @@ class _ManageEmployeeState extends State<ManageEmployee> {
                                       decoration: InputDecoration(
                                           labelText: "Phone number",
                                           hintText: 'Insert phone number',
+                                          errorText: snapshot.hasError? snapshot.error.toString() : null,
                                           enabledBorder: OutlineInputBorder(
                                               borderRadius:
                                                   BorderRadius.circular(10),
@@ -747,6 +761,7 @@ class _ManageEmployeeState extends State<ManageEmployee> {
                                       decoration: InputDecoration(
                                           labelText: "Password",
                                           hintText: 'Insert password',
+                                          errorText: snapshot.hasError? snapshot.error.toString() : null,
                                           enabledBorder: OutlineInputBorder(
                                               borderRadius:
                                                   BorderRadius.circular(10),
@@ -785,7 +800,27 @@ class _ManageEmployeeState extends State<ManageEmployee> {
                                                   Colors.blueAccent),
                                         ),
                                         onPressed: () {
-                                          _onAddEmployeeClicked();
+                                          try{
+                                            if(_onAddEmployeeClicked()){
+                                              setState(() {
+                                                _emailController.text = '';
+                                                _phoneController.text = '';
+                                                _nameController.text = '';
+                                                _passwordController.text = '';
+                                              });
+                                            }else{
+                                              setState(() {
+                                                _emailController.text = '';
+                                                _phoneController.text = '';
+                                                _nameController.text = '';
+                                                _passwordController.text = '';
+                                              });
+                                              Navigator.pop(context);
+                                              showErrorMessage('Create failed');
+                                            }
+                                          }catch(e){
+                                            //
+                                          }
                                         },
                                         label: const Text(
                                           'Save',
@@ -845,6 +880,7 @@ class _ManageEmployeeState extends State<ManageEmployee> {
       LoadingDialog.hideLoadingDialog(context);
       Navigator.push(context,
           MaterialPageRoute(builder: (context) => const ManageEmployee()));
+      showSuccessMessage('Update success');
     });
   }
 
@@ -869,6 +905,7 @@ class _ManageEmployeeState extends State<ManageEmployee> {
       LoadingDialog.hideLoadingDialog(context);
       Navigator.push(context,
           MaterialPageRoute(builder: (context) => const ManageEmployee()));
+      showSuccessMessage('Update success');
     });
   }
 
@@ -902,6 +939,7 @@ class _ManageEmployeeState extends State<ManageEmployee> {
         LoadingDialog.hideLoadingDialog(context);
         Navigator.push(context,
             MaterialPageRoute(builder: (context) => const ManageEmployee()));
+        showSuccessMessage('Create success');
       }, (msg) {
         LoadingDialog.hideLoadingDialog(context);
         MsgDialog.showMsgDialog(context, "Sign-In", msg);
@@ -911,21 +949,28 @@ class _ManageEmployeeState extends State<ManageEmployee> {
 
   bool isValid(String email, String name, String phone, String password) {
     if (email.isEmpty) {
-      _emailControl.sink.addError("Nhập email");
+      _emailControl.sink.addError("Insert email");
       return false;
     }
+    _emailControl.sink.add('');
+
     if (name.isEmpty) {
       _nameControl.sink.addError("Nhập tên");
       return false;
     }
+    _nameControl.sink.add('');
+
     if (phone.isEmpty) {
       _phoneControl.sink.addError("Nhập số điện thoại");
       return false;
     }
+    _phoneControl.sink.add('');
+
     if (password.isEmpty) {
       _passwordControl.sink.addError("Nhập mật khẩu");
       return false;
     }
+    _passwordControl.sink.add('');
     return true;
   }
 
@@ -995,5 +1040,19 @@ class _ManageEmployeeState extends State<ManageEmployee> {
         ),
       ),
     );
+  }
+  void showSuccessMessage(String message) {
+    final snackBar = SnackBar(content: Text(message,
+      style: const TextStyle(color: Colors.white),
+    ), backgroundColor: Colors.blueAccent,);
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+  }
+
+  void showErrorMessage(String message) {
+    final snackBar = SnackBar(content: Text(message,
+      style: const TextStyle(color: Colors.white),
+    ),backgroundColor: Colors.red,
+    );
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 }

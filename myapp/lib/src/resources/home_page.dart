@@ -78,6 +78,7 @@ class _HomePageState extends State<HomePage> {
   Future<void> reLoad() async{
     setState(() {
       isLoading = true;
+      listPost = [];
     });
     await getListPost();
     isLoading = false;
@@ -320,16 +321,25 @@ class _HomePageState extends State<HomePage> {
           ),
           const Padding(padding: EdgeInsets.fromLTRB(0, 5, 0, 0)),
           if (post.file != 'file.pdf')
-            SizedBox(
-              height: 330,
-              width: double.infinity,
-              child: FittedBox(
-                fit: BoxFit.cover,
-                child: ClipRRect(
-                  child: Image.network(
-                    post.file,
-                  ),
-                ),
+            // SizedBox(
+            //   height: 330,
+            //   width: double.infinity,
+            //   child: FittedBox(
+            //     fit: BoxFit.fitHeight,
+            //     child: ClipRRect(
+            //       child: Image.network(
+            //         post.file,
+            //       ),
+            //     ),
+            //   ),
+            // ),
+            ClipRRect(
+              borderRadius: const BorderRadius.only(
+                bottomLeft: Radius.circular(14),
+                bottomRight: Radius.circular(14),
+              ),
+              child: Image.network(
+                post.file,
               ),
             ),
           const Padding(padding: EdgeInsets.fromLTRB(10, 10, 10, 0),

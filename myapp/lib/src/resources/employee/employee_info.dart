@@ -72,29 +72,31 @@ class _MyInfoState extends State<EmployeeInfo> with SingleTickerProviderStateMix
   }
 
   bool isValidChangePass(
-      String pass, String passNew1, String passNew2, String password) {
+      String pass, String passNew1, String passNew2) {
     if (pass.isEmpty) {
       _passControll.sink.addError("Please insert your password");
       return false;
     }
+    _passControll.sink.add('');
+
     if (passNew1.isEmpty) {
       _passnew1Controll.sink.addError("Please insert your new password");
       return false;
     }
+    _passnew1Controll.sink.add('');
 
     if (passNew2.isEmpty) {
       _passnew2Controll.sink.addError("Confirm new password");
       return false;
     }
+    _passnew2Controll.sink.add('');
 
     if (passNew1 != passNew2) {
       _passnew2Controll.sink.addError("New password not match");
       return false;
     }
-    if (pass != password) {
-      _passControll.sink.addError("Password not true");
-      return false;
-    }
+    _passnew2Controll.sink.add('');
+
 
     return true;
   }
@@ -452,7 +454,15 @@ class _MyInfoState extends State<EmployeeInfo> with SingleTickerProviderStateMix
                                       Expanded(
                                         child: ElevatedButton.icon(
                                           onPressed: () {
-                                            _onSaveClicked();
+                                            try{
+                                              if(_onSaveClicked()){
+                                                showSuccessMessage('Update info success');
+                                              }else{
+                                                showErrorMessage('Update info failed');
+                                              }
+                                            }catch(e){
+                                              //
+                                            }
                                           },
                                           label: const Text(
                                             'Save',
@@ -486,6 +496,7 @@ class _MyInfoState extends State<EmployeeInfo> with SingleTickerProviderStateMix
                                         TextField(
                                           decoration: InputDecoration(
                                             labelText: "Password",
+                                            errorText: snapshot.hasError? snapshot.error.toString() : null,
                                             hintText:
                                             'Please insert your password',
                                             enabledBorder:
@@ -526,6 +537,7 @@ class _MyInfoState extends State<EmployeeInfo> with SingleTickerProviderStateMix
                                         TextField(
                                           decoration: InputDecoration(
                                               labelText: "New password",
+                                              errorText: snapshot.hasError? snapshot.error.toString() : null,
                                               hintText:
                                               'Please insert new password',
                                               enabledBorder:
@@ -566,6 +578,7 @@ class _MyInfoState extends State<EmployeeInfo> with SingleTickerProviderStateMix
                                             "Confirm password",
                                             hintText:
                                             'Confirm your password',
+                                            errorText: snapshot.hasError? snapshot.error.toString() : null,
                                             enabledBorder:
                                             OutlineInputBorder(
                                                 borderRadius:
@@ -602,7 +615,24 @@ class _MyInfoState extends State<EmployeeInfo> with SingleTickerProviderStateMix
                                       Expanded(
                                         child: ElevatedButton.icon(
                                           onPressed: () {
-                                            _onChangePassword();
+                                            try{
+                                              if(_onChangePassword()){
+                                                setState(() {
+                                                  _passController.text = '';
+                                                  _passNew1Controller.text = '';
+                                                  _passNew2Controller.text = '';
+                                                });
+                                              }else{
+                                                setState(() {
+                                                  _passController.text = '';
+                                                  _passNew1Controller.text = '';
+                                                  _passNew2Controller.text = '';
+                                                });
+                                                showErrorMessage('Change password failed');
+                                              }
+                                            }catch(e){
+                                              //
+                                            }
                                           },
                                           label: const Text(
                                             'Save',
@@ -650,7 +680,8 @@ class _MyInfoState extends State<EmployeeInfo> with SingleTickerProviderStateMix
           () {
         LoadingDialog.hideLoadingDialog(context);
         Navigator.push(
-            context, MaterialPageRoute(builder: (context) => HomePage()));
+            context, MaterialPageRoute(builder: (context) => const HomePageLeader()));
+        showSuccessMessage('Update info success');
       });
     }
   }
@@ -660,15 +691,37 @@ class _MyInfoState extends State<EmployeeInfo> with SingleTickerProviderStateMix
         _passController.text,
         _passNew1Controller.text,
         _passNew2Controller.text,
-        _passwordController.text);
+        );
 
     if (isvalid) {
       LoadingDialog.showLoadingDialog(context, "loading...");
       userR.updatePassword(_passNew2Controller.text);
       changePassword(_passNew2Controller.text, () {
         LoadingDialog.hideLoadingDialog(context);
-        Navigator.push(
-            context, MaterialPageRoute(builder: (context) =>  HomePage()));
+        if (currentEmployee.roles == "Tư vấn viên") {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (BuildContext context) =>
+                  const HomePageEmployee()));
+        } else if (currentEmployee.roles == "Trưởng nhóm") {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (BuildContext context) =>
+              const HomePageLeader(),
+            ),
+          );
+        } else if (currentEmployee.roles == "Manager") {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (BuildContext context) =>
+              const HomePageManager(),
+            ),
+          );
+        }
+        showSuccessMessage('Change password success');
       });
     }
   }
@@ -695,9 +748,7 @@ class _MyInfoState extends State<EmployeeInfo> with SingleTickerProviderStateMix
         .get();
     String id = snapshot.docs.first.id;
     var user = {"email": email, "name": name, "phone": phone};
-
     var ref = FirebaseFirestore.instance.collection('employee');
-
     ref
         .doc(id)
         .update({'email': email, 'name': name, 'phone': phone}).then((value) {
@@ -749,5 +800,20 @@ class _MyInfoState extends State<EmployeeInfo> with SingleTickerProviderStateMix
     }).catchError((err) {
       //TODO
     });
+  }
+
+  void showSuccessMessage(String message) {
+    final snackBar = SnackBar(content: Text(message,
+      style: const TextStyle(color: Colors.white),
+    ), backgroundColor: Colors.blueAccent,);
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+  }
+
+  void showErrorMessage(String message) {
+    final snackBar = SnackBar(content: Text(message,
+      style: const TextStyle(color: Colors.white),
+    ),backgroundColor: Colors.red,
+    );
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 }

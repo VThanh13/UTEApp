@@ -36,6 +36,18 @@ class _HomePageState extends State<HomePageEmployee> {
   void initState() {
     super.initState();
     getListPost();
+    reload();
+    sortListPost();
+  }
+  bool isLoading = false;
+  Future<void> reload() async {
+    setState(() {
+      isLoading = true;
+      listPost = [];
+
+    });
+    await getListPost();
+    isLoading = false;
   }
 
   var departmentName = {};
@@ -111,27 +123,24 @@ class _HomePageState extends State<HomePageEmployee> {
 
   _buildNewFeed(BuildContext context, Post post) {
     return Container(
-      margin: const EdgeInsets.all(10.0),
-      decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(15.0),
-          border: Border.all(width: 1.0, color: Colors.pinkAccent)),
+      margin: const EdgeInsets.only(top: 10),
+      color: Colors.white,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
-          const Padding(padding: EdgeInsets.fromLTRB(0, 5, 0, 0)),
+          const Padding(padding: EdgeInsets.fromLTRB(0, 10, 0, 0)),
           Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
               Container(
-                padding: const EdgeInsets.fromLTRB(20, 0, 10, 0),
+                padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
                 child: CircleAvatar(
-                  radius: 30,
+                  radius: 24,
                   backgroundColor: Colors.tealAccent,
                   child: CircleAvatar(
                     backgroundImage: NetworkImage(post.employee.image!),
-                    radius: 28,
+                    radius: 22,
                   ),
                 ),
               ),
@@ -142,19 +151,22 @@ class _HomePageState extends State<HomePageEmployee> {
                   Text(
                     post.employee.name,
                     style: const TextStyle(
-                        fontSize: 17,
+                        fontSize: 15,
                         fontStyle: FontStyle.italic,
                         fontWeight: FontWeight.w500),
                   ),
+                  const SizedBox(height: 3,),
                   Text(
                     post.time,
-                    style: const TextStyle(
-                      fontSize: 12,
+                    style: TextStyle(
+                      fontSize: 9,
+                      color: Colors.grey[400],
                     ),
                   ),
                   Text(
                     post.employee.departmentName,
-                    style: const TextStyle(fontSize: 13),
+                    style: TextStyle(fontSize: 11,
+                        color: Colors.grey[500]),
                   ),
                 ],
               ),
@@ -165,19 +177,31 @@ class _HomePageState extends State<HomePageEmployee> {
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10),
+                padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
                 child: Text(
                   post.content,
                   overflow: TextOverflow.visible,
                   maxLines: 50,
                   style: const TextStyle(
-                      fontSize: 16, fontWeight: FontWeight.w500),
+                      fontSize: 16, fontWeight: FontWeight.w400),
                 ),
               )
             ],
           ),
           const Padding(padding: EdgeInsets.fromLTRB(0, 5, 0, 0)),
           if (post.file != 'file.pdf')
+          // SizedBox(
+          //   height: 330,
+          //   width: double.infinity,
+          //   child: FittedBox(
+          //     fit: BoxFit.fitHeight,
+          //     child: ClipRRect(
+          //       child: Image.network(
+          //         post.file,
+          //       ),
+          //     ),
+          //   ),
+          // ),
             ClipRRect(
               borderRadius: const BorderRadius.only(
                 bottomLeft: Radius.circular(14),
@@ -187,6 +211,7 @@ class _HomePageState extends State<HomePageEmployee> {
                 post.file,
               ),
             ),
+          const SizedBox(height: 10,)
         ],
       ),
     );
@@ -481,25 +506,49 @@ class _HomePageState extends State<HomePageEmployee> {
               ),
             ),
             body: SafeArea(
-              minimum: const EdgeInsets.all(10),
               child: SingleChildScrollView(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: <Widget>[
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        SizedBox(
-                          height: MediaQuery.of(context).size.height * 0.85,
-                          child: ListView.builder(
-                              physics: const BouncingScrollPhysics(),
-                              itemCount: listPost.length,
-                              itemBuilder: (BuildContext context, int index) {
-                                return _buildNewFeed(context, listPost[index]);
-                              }),
-                        )
-                      ],
-                    )
+                    Visibility(
+                      visible: isLoading,
+                      replacement: RefreshIndicator(
+                        onRefresh: reload,
+                        child: Visibility(
+                          visible: listPost.isNotEmpty,
+                          replacement: const Center(
+                            child: Padding(
+                              padding: EdgeInsets.only(top: 200),
+                              child: Text('No post found!', style: TextStyle(
+                                fontSize: 20,
+                                color: Colors.grey,
+                              ),),
+                            ),
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              SizedBox(
+                                height: MediaQuery.of(context).size.height * 0.9,
+                                child: ListView.builder(
+                                    physics: const BouncingScrollPhysics(),
+                                    itemCount: listPost.length,
+                                    itemBuilder: (BuildContext context, int index) {
+                                      return _buildNewFeed(context, listPost[index]);
+                                    }),
+                              )
+                            ],
+                          ),
+                        ),
+                      ),
+                      child: const Center(
+                        child: Padding(
+                          padding: EdgeInsets.only(top: 200),
+                          child: CircularProgressIndicator(),
+                        ),
+                      ),
+                    ),
+
                   ],
                 ),
               ),

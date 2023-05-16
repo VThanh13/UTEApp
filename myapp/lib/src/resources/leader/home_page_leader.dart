@@ -83,6 +83,9 @@ class _HomePageState extends State<HomePageLeader> {
     super.initState();
     getListPost();
     reload();
+    _onCreateNewPost();
+    sortListPost();
+
   }
 
   final TextEditingController _infoPostController = TextEditingController();
@@ -126,9 +129,25 @@ class _HomePageState extends State<HomePageLeader> {
         LoadingDialog.hideLoadingDialog(context);
         Navigator.push(context,
             MaterialPageRoute(builder: (context) => const HomePageLeader()));
+        showSuccessMessage('Create post success');
       });
     }
     return 0;
+  }
+
+  void showSuccessMessage(String message) {
+    final snackBar = SnackBar(content: Text(message,
+      style: const TextStyle(color: Colors.white),
+    ), backgroundColor: Colors.blueAccent,);
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+  }
+
+  void showErrorMessage(String message) {
+    final snackBar = SnackBar(content: Text(message,
+      style: const TextStyle(color: Colors.white),
+    ),backgroundColor: Colors.red,
+    );
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 
   List<Post> listPost = [];
@@ -257,16 +276,25 @@ class _HomePageState extends State<HomePageLeader> {
           ),
           const Padding(padding: EdgeInsets.fromLTRB(0, 5, 0, 0)),
           if (post.file != 'file.pdf')
-            SizedBox(
-              height: 330,
-              width: double.infinity,
-              child: FittedBox(
-                fit: BoxFit.cover,
-                child: ClipRRect(
-                  child: Image.network(
-                    post.file,
-                  ),
-                ),
+            // SizedBox(
+            //   height: 330,
+            //   width: double.infinity,
+            //   child: FittedBox(
+            //     fit: BoxFit.fitHeight,
+            //     child: ClipRRect(
+            //       child: Image.network(
+            //         post.file,
+            //       ),
+            //     ),
+            //   ),
+            // ),
+            ClipRRect(
+              borderRadius: const BorderRadius.only(
+                bottomLeft: Radius.circular(14),
+                bottomRight: Radius.circular(14),
+              ),
+              child: Image.network(
+                post.file,
               ),
             ),
           const SizedBox(height: 10,)
@@ -288,11 +316,12 @@ class _HomePageState extends State<HomePageLeader> {
             });
   }
   bool isLoading = false;
-  Future<void> reload() async{
+  Future<void> reload() async {
     setState(() {
       isLoading = true;
-    });
+      listPost = [];
 
+    });
     await getListPost();
     isLoading = false;
   }
@@ -865,7 +894,7 @@ class _HomePageState extends State<HomePageLeader> {
                                   itemBuilder: (BuildContext context, int index) {
                                     return _buildNewFeed(context, listPost[index]);
                                   }),
-                            )
+                            ),
                           ],
                         ),
                       ),
@@ -874,6 +903,7 @@ class _HomePageState extends State<HomePageLeader> {
                       child: CircularProgressIndicator(),)
                     ),
                     ),
+
                   ],
                 ),
               ),
@@ -897,15 +927,37 @@ class _HomePageState extends State<HomePageLeader> {
         builder: (BuildContext context) {
           return Column(
             children: <Widget>[
-              const Padding(
-                padding: EdgeInsets.fromLTRB(5, 20, 5, 10),
-                child: Text(
-                  'Thêm bài đăng mới',
-                  style: TextStyle(
-                      fontSize: 17,
-                      fontWeight: FontWeight.w600,
-                      letterSpacing: 1.0),
-                ),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                   Container(
+                     width: 200,
+                     margin: const EdgeInsets.only(left: 90),
+                     child: const Text(
+                       'Create new post',
+                       style: TextStyle(
+                           fontSize: 17,
+                           fontWeight: FontWeight.w600,
+                           letterSpacing: 1.0),
+                     ),
+                   ),
+
+                  Padding(padding: const EdgeInsets.fromLTRB(1, 1, 1, 1),
+                  child: IconButton(
+                    icon: const Icon(Icons.cancel_outlined),
+                    iconSize: 30,
+                    onPressed: (){
+                      Navigator.pop(context);
+                    },
+                  ),)
+                ],
+              ),
+              const Divider(
+                height: 0,
+                color: Color(0xffAAAAAA),
+                indent: 0,
+                thickness: 1,
               ),
               SingleChildScrollView(
                 physics: const BouncingScrollPhysics(),
@@ -923,8 +975,8 @@ class _HomePageState extends State<HomePageLeader> {
                             const Padding(
                                 padding: EdgeInsets.fromLTRB(0, 10, 0, 10)),
                             Container(
-                              width: 340,
-                              margin: const EdgeInsets.fromLTRB(0, 10, 0, 15),
+                              width: double.infinity,
+                              margin: const EdgeInsets.fromLTRB(10, 10, 10, 15),
                               child: StreamBuilder(
                                 stream: infoPostController,
                                 builder: (context, snapshot) => TextField(
@@ -935,72 +987,95 @@ class _HomePageState extends State<HomePageLeader> {
                                   decoration: InputDecoration(
                                       hintMaxLines: 5,
                                       helperMaxLines: 5,
-                                      labelText: "Nội dung bài đăng",
+                                      labelText: "Post content",
                                       hintText:
-                                          'Nhập nội dung bài đăng của bạn',
+                                          'Insert post content',
                                       enabledBorder: OutlineInputBorder(
                                           borderRadius:
                                               BorderRadius.circular(10),
                                           borderSide: const BorderSide(
-                                            color: Colors.orangeAccent,
+                                            color: Colors.blueAccent,
                                             width: 1,
                                           )),
                                       focusedBorder: OutlineInputBorder(
                                           borderRadius:
                                               BorderRadius.circular(10),
                                           borderSide: const BorderSide(
-                                              color: Colors.orange,
+                                              color: Colors.blue,
                                               width: 4))),
                                 ),
                               ),
                             ),
-                            IconButton(
-                                onPressed: () {
-                                  importImage();
-                                },
-                                icon: const Icon(Icons.add_photo_alternate_rounded),
-                                iconSize: 35),
-                            Container(
-                              padding: const EdgeInsets.all(10),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceAround,
-                                children: <Widget>[
-                                  Expanded(
-                                    child: ElevatedButton.icon(
-                                      onPressed: () {
-                                        _onCreateNewPost();
-                                      },
-                                      label: const Text(
-                                        'Đăng',
-                                        style: TextStyle(
-                                            fontSize: 16,
-                                            color: Colors.white),
-                                      ),
-                                      icon: const Icon(Icons.task_alt),
-                                      style: ElevatedButton.styleFrom(
-                                          primary: Colors.orangeAccent),
+                            InkWell(
+                              child: Container(
+                                width: double.infinity,
+                                height: 50,
+                                margin: const EdgeInsets.fromLTRB(20, 10, 30, 0),
+                                decoration: BoxDecoration(
+                                  borderRadius: const BorderRadius.all(Radius.circular(10)),
+                                  border: Border.all(color: Colors.grey),
+                                ),
+                                child: Row(
+                                  children: const [
+                                    Padding(padding: EdgeInsets.fromLTRB(30, 1, 70, 1),
+                                    child: Text('Insert to your post',
+                                    style: TextStyle(
+                                      fontSize: 14
                                     ),
-                                  ),
-                                  const Padding(padding: EdgeInsets.all(10)),
-                                  Expanded(
-                                      child: ElevatedButton.icon(
-                                    onPressed: () => {Navigator.pop(context)},
-                                    label: const Text(
-                                      'Hủy',
-                                      style: TextStyle(
-                                          fontSize: 16, color: Colors.white),
                                     ),
-                                    icon: const Icon(Icons.cancel_presentation),
-                                    style: ElevatedButton.styleFrom(
-                                        primary: Colors.orangeAccent),
-                                  )),
-                                  const Padding(
-                                      padding:
-                                          EdgeInsets.fromLTRB(0, 10, 0, 30)),
-                                ],
+                                    ),
+                                    Padding(padding: EdgeInsets.fromLTRB(1, 1, 20, 1),
+                                    child: Icon(
+                                      AppIcons.file_pdf,
+                                      size: 20,
+                                      color: Colors.redAccent,
+                                    ),),
+                                    Padding(padding: EdgeInsets.fromLTRB(1, 1, 1, 1),
+                                    child: Icon(
+                                        Icons.add_photo_alternate_rounded,
+                                      size: 30,
+                                      color: Colors.lightGreenAccent,
+                                    ),)
+                                  ],
+                                ),
                               ),
-                            )
+                              onTap: (){
+                                importImage();
+                              },
+                            ),
+                            Container(
+                              margin: const EdgeInsets.fromLTRB(10, 20, 10, 10),
+                              width: double.infinity,
+                              child: ElevatedButton.icon(
+                                onPressed: () {
+                                  try{
+                                    if(_onCreateNewPost()){
+                                      setState(() {
+                                        _infoPostController.text = '';
+                                      });
+                                    }else{
+                                      setState(() {
+                                        _infoPostController.text = '';
+                                      });
+                                      Navigator.pop(context);
+                                      showErrorMessage('Create post failed');
+                                    }
+                                  }catch(e){
+                                    //
+                                  }
+
+                                },
+                                label: const Text(
+                                  'Post',
+                                  style: TextStyle(
+                                      fontSize: 16,
+                                      color: Colors.white),
+                                ),
+                                icon: const Icon(Icons.task_alt),
+                                style: ElevatedButton.styleFrom(
+                                    primary: Colors.blueAccent),
+                              ),
+                            ),
                           ],
                         ),
                       )),
