@@ -9,9 +9,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:myapp/icons/app_icons_icons.dart';
 import 'package:myapp/src/models/EmployeeModel.dart';
-import 'package:myapp/src/resources/home_page.dart';
-import 'package:myapp/src/resources/messenger/detail_question.dart';
-import 'package:myapp/src/resources/messenger/view_employee_byuser.dart';
+import 'package:myapp/src/resources/user/home_page.dart';
+import 'detail_question.dart';
+import 'view_employee_byuser.dart';
 import '../../models/ChatRoomModel.dart';
 import '../../models/UserModel.dart';
 import '../dialog/loading_dialog.dart';
@@ -46,7 +46,7 @@ class _MessengerPageState extends State<MessengerPage> {
 
   FirebaseAuth auth = FirebaseAuth.instance;
   var currentUser = FirebaseAuth.instance.currentUser!;
-  UserModel currentUserR = UserModel("", " ", "", "", "", "", "", "");
+  UserModel current_user = UserModel("", " ", "", "", "", "", "", "");
 
   @override
   void initState() {
@@ -66,21 +66,21 @@ class _MessengerPageState extends State<MessengerPage> {
 
   getCurrentUser() async {
     await FirebaseFirestore.instance
-        .collection('user')
-        .where('userId', isEqualTo: currentUser.uid)
-        .get()
-        .then((value) => {
-              setState(() {
-                currentUserR.id = value.docs.first['userId'];
-                currentUserR.name = value.docs.first['name'];
-                currentUserR.email = value.docs.first['email'];
-                currentUserR.image = value.docs.first['image'];
-                currentUserR.password = value.docs.first['password'];
-                currentUserR.phone = value.docs.first['phone'];
-                currentUserR.group = value.docs.first['group'];
-                currentUserR.status = value.docs.first['status'];
-              })
-            });
+      .collection('user')
+      .where('userId', isEqualTo: currentUser.uid)
+      .get()
+      .then((value) => {
+        setState(() {
+          current_user.id = value.docs.first['userId'];
+          current_user.name = value.docs.first['name'];
+          current_user.email = value.docs.first['email'];
+          current_user.image = value.docs.first['image'];
+          current_user.password = value.docs.first['password'];
+          current_user.phone = value.docs.first['phone'];
+          current_user.group = value.docs.first['group'];
+          current_user.status = value.docs.first['status'];
+        })
+      });
     await getChatRoomByUser();
     await getAllChatRoom();
   }
@@ -107,10 +107,10 @@ class _MessengerPageState extends State<MessengerPage> {
         .get()
         .then((value) => {
               setState(() {
-                for (var element in value.docs) {
+                value.docs.forEach((element) {
                   departmentName[element.id] = element["name"];
                   listDepartment.add(element['name']);
-                }
+                });
               })
             });
   }
@@ -118,134 +118,66 @@ class _MessengerPageState extends State<MessengerPage> {
   List<ChatRoomModel> listPublicChatRoom = [];
   getAllChatRoom() async {
     await FirebaseFirestore.instance
-        .collection('chat_room')
-        .where('mode', isEqualTo: 'public')
-        .get()
-        .then((value) => {
-              value.docs.forEach((element) {
-                ChatRoomModel chatRoom =
-                    ChatRoomModel("", "", "", "", "", "", "", "", "", "");
-                chatRoom.id = element['room_id'];
-                chatRoom.user_id = element['user_id'];
-                chatRoom.time = element['time'];
-                chatRoom.title = element['title'];
-                chatRoom.department = element['department'];
-                chatRoom.category = element['category'];
-                chatRoom.information = element['information'];
-                chatRoom.group = element['group'];
-                chatRoom.mode = element['mode'];
-                chatRoom.status = element['status'];
+      .collection('chat_room')
+      .where('mode', isEqualTo: 'public')
+      .get()
+      .then((value) => {
+        setState(() {
+          value.docs.forEach((element) {
+            ChatRoomModel chatRoom =
+            ChatRoomModel("", "", "", "", "", "", "", "", "", "");
+            chatRoom.id = element['room_id'];
+            chatRoom.user_id = element['user_id'];
+            chatRoom.time = element['time'];
+            chatRoom.title = element['title'];
+            chatRoom.department = element['department'];
+            chatRoom.category = element['category'];
+            chatRoom.information = element['information'];
+            chatRoom.group = element['group'];
+            chatRoom.mode = element['mode'];
+            chatRoom.status = element['status'];
 
-                listPublicChatRoom.add(chatRoom);
-              })
-            });
-  }
-
-  _buildAllChatRoom() {
-    listPublicChatRoom.sort((a, b) => DateFormat("dd-MM-yyyy HH:mm:ss")
-        .parse(b.time)
-        .compareTo(DateFormat("dd-MM-yyyy HH:mm:ss").parse(a.time)));
-
-    List<Widget> chatList = [];
-    listPublicChatRoom.forEach((ChatRoomModel chatRoom) {
-      chatList.add(GestureDetector(
-        // onTap: () {
-        //   Navigator.push(
-        //       context,
-        //       new MaterialPageRoute(
-        //           builder: (BuildContext context) =>
-        //               DetailQuestion(question: question)));
-        // },
-        child: Container(
-          margin: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
-          decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(15.0),
-              border: Border.all(
-                width: 1.0,
-                color: Colors.grey,
-              )),
-          child: Row(
-            children: <Widget>[
-              Expanded(
-                  child: Container(
-                margin: const EdgeInsets.all(12.0),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Text(
-                      chatRoom.title,
-                      style: const TextStyle(
-                        fontSize: 20.0,
-                        fontWeight: FontWeight.bold,
-                      ),
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    const SizedBox(
-                      height: 4.0,
-                    ),
-                    Text(
-                      chatRoom.time,
-                      style: const TextStyle(
-                        fontSize: 16.0,
-                        fontWeight: FontWeight.w600,
-                      ),
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    Text(chatRoom.status,
-                        style: TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w400,
-                          color: chatRoom.status == "Chưa trả lời"
-                              ? Colors.redAccent
-                              : Colors.green,
-                          overflow: TextOverflow.ellipsis,
-                        ))
-                  ],
-                ),
-              ))
-            ],
-          ),
-        ),
-      ));
-    });
-    return Column(children: chatList);
+            listPublicChatRoom.add(chatRoom);
+          });
+        })
+      });
   }
 
   List<ChatRoomModel> listChatRoomByUser = [];
   getChatRoomByUser() async {
     await FirebaseFirestore.instance
-        .collection('chat_room')
-        .where('user_id', isEqualTo: currentUserR.id)
-        .get()
-        .then((value) => {
-              value.docs.forEach((element) {
-                ChatRoomModel chatRoom =
-                    ChatRoomModel("", "", "", "", "", "", "", "", "", "");
-                chatRoom.id = element['room_id'];
-                chatRoom.user_id = element['user_id'];
-                chatRoom.time = element['time'];
-                chatRoom.title = element['title'];
-                chatRoom.department = element['department'];
-                chatRoom.category = element['category'];
-                chatRoom.information = element['information'];
-                chatRoom.group = element['group'];
-                chatRoom.mode = element['mode'];
-                chatRoom.status = element['status'];
+      .collection('chat_room')
+      .where('user_id', isEqualTo: current_user.id)
+      .get()
+      .then((value) => {
+        setState(() {
+          value.docs.forEach((element) {
+            ChatRoomModel chatRoom =
+                ChatRoomModel("", "", "", "", "", "", "", "", "", "");
+            chatRoom.id = element['room_id'];
+            chatRoom.user_id = element['user_id'];
+            chatRoom.time = element['time'];
+            chatRoom.title = element['title'];
+            chatRoom.department = element['department'];
+            chatRoom.category = element['category'];
+            chatRoom.information = element['information'];
+            chatRoom.group = element['group'];
+            chatRoom.mode = element['mode'];
+            chatRoom.status = element['status'];
 
-                listChatRoomByUser.add(chatRoom);
-              })
-            });
+            listChatRoomByUser.add(chatRoom);
+          });
+        })
+      });
   }
 
-  _buildChatRoomByUser() {
-    listChatRoomByUser.sort((a, b) => DateFormat("dd-MM-yyyy HH:mm:ss")
+  _buildChatRoom(listChatRoom) {
+    listChatRoom.sort((a, b) => DateFormat("dd-MM-yyyy HH:mm:ss")
         .parse(b.time)
         .compareTo(DateFormat("dd-MM-yyyy HH:mm:ss").parse(a.time)));
 
     List<Widget> chatList = [];
-    listChatRoomByUser.forEach((ChatRoomModel chatRoom) {
+    listChatRoom.forEach((ChatRoomModel chatRoom) {
       chatList.add(GestureDetector(
         onTap: () {
           Navigator.push(
@@ -356,7 +288,7 @@ class _MessengerPageState extends State<MessengerPage> {
               radius: 30,
               backgroundColor: Colors.tealAccent,
               child: CircleAvatar(
-                backgroundImage: NetworkImage(employeeModel.image!),
+                backgroundImage: NetworkImage(employeeModel.image),
                 radius: 28,
               ),
             ),
@@ -407,7 +339,7 @@ class _MessengerPageState extends State<MessengerPage> {
                     context,
                     MaterialPageRoute(
                         builder: (BuildContext context) => ViewEmployeeByUser(
-                            employee: employeeModel, users: currentUserR)));
+                            employee: employeeModel, users: current_user)));
               },
             ),
           )
@@ -448,126 +380,109 @@ class _MessengerPageState extends State<MessengerPage> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<QuerySnapshot>(
-        future: FirebaseFirestore.instance.collection("departments").get(),
-        builder: (context, snapshot) {
-          if (!snapshot.hasData) {
-            return const Center(
-              child: SizedBox(
-                  width: 20, height: 20, child: CircularProgressIndicator()),
-            );
-          }
-
-          return FutureBuilder<QuerySnapshot>(
-              future: FirebaseFirestore.instance
-                  .collection("departments")
-                  .where("name", isEqualTo: valueKhoa)
-                  .get(),
-              builder: (context, snapshot) {
-                if (!snapshot.hasData) {
-                  return const Center(
-                    child: SizedBox(
-                        width: 20,
-                        height: 20,
-                        child: CircularProgressIndicator()),
-                  );
-                }
-                // TODO: implement build
-                return Scaffold(
-                  appBar: AppBar(
-                    leading: IconButton(
-                        icon: const Icon(Icons.arrow_back, color: Colors.white),
-                        onPressed: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (BuildContext context) =>
-                                       HomePage()));
-                        }),
-                    title: const Text("Tin nhắn"),
-                    backgroundColor: Colors.blueAccent,
-                  ),
-                  bottomNavigationBar: getFooter(),
-                  floatingActionButton: FloatingActionButton(
-                      onPressed: () {
-                        if (currentUserR.id != "") {
-                          modalBottomSheetQuestion();
-                        }
-                      },
-                      backgroundColor: Colors.blue,
-                      child: const Icon(
-                        Icons.add,
-                        size: 25,
-                      )
-                      //params
-                      ),
-                  floatingActionButtonLocation:
-                      FloatingActionButtonLocation.centerDocked,
-                  body: SafeArea(
-                    minimum: const EdgeInsets.only(left: 20, right: 10),
-                    child: SingleChildScrollView(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: <Widget>[
-                          const Padding(
-                            padding: EdgeInsets.fromLTRB(0, 0, 0, 5),
-                          ),
-                          StreamBuilder<QuerySnapshot>(
-                              stream: derPart.snapshots(),
-                              builder: (context, snapshot) {
-                                if (!snapshot.hasError) {
-                                  const Text("Loading");
-                                } else {
-                                  derPart
-                                      .get()
-                                      .then((QuerySnapshot querySnapshot) {
-                                    querySnapshot.docs.forEach((doc) {
-                                    });
-                                  });
-                                }
-                                return const Text("");
-                              }),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              const Padding(
-                                padding: EdgeInsets.symmetric(horizontal: 20.0),
-                                child: Text(
-                                  'Đội ngũ tư vấn viên',
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                      fontSize: 24,
-                                      fontWeight: FontWeight.w600,
-                                      letterSpacing: 1.0),
-                                ),
-                              ),
-                              SizedBox(
-                                height: 120.0,
-                                child: ListView.builder(
-                                    physics: const BouncingScrollPhysics(),
-                                    padding: const EdgeInsets.only(left: 10.0),
-                                    scrollDirection: Axis.horizontal,
-                                    itemCount: listEmployee.length,
-                                    itemBuilder:
-                                        (BuildContext context, int index) {
-                                      // EmployeeModel employeeModel = listEmployee[index];
-                                      return _buildEmployee(
-                                          context, listEmployee[index]);
-                                    }),
-                              )
-                            ],
-                          ),
-                          getQuestion(),
-                        ],
-                      ),
+    // TODO: implement build
+    return Scaffold(
+      appBar: AppBar(
+        leading: IconButton(
+            icon: const Icon(Icons.arrow_back, color: Colors.white),
+            onPressed: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (BuildContext context) =>
+                           HomePage()));
+            }),
+        title: const Text("Tin nhắn"),
+        backgroundColor: Colors.blueAccent,
+      ),
+      bottomNavigationBar: getFooter(),
+      floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            if (current_user.id != "") {
+              modalBottomSheetQuestion();
+            }
+          },
+          backgroundColor: Colors.blue,
+          child: const Icon(
+            Icons.add,
+            size: 25,
+          )
+          //params
+          ),
+      floatingActionButtonLocation:
+          FloatingActionButtonLocation.centerDocked,
+      body: SafeArea(
+        minimum: const EdgeInsets.only(left: 20, right: 10),
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: <Widget>[
+              const Padding(
+                padding: EdgeInsets.fromLTRB(0, 0, 0, 5),
+              ),
+              StreamBuilder<QuerySnapshot>(
+                  stream: derPart.snapshots(),
+                  builder: (context, snapshot) {
+                    if (!snapshot.hasError) {
+                      const Text("Loading");
+                    } else {
+                      derPart
+                          .get()
+                          .then((QuerySnapshot querySnapshot) {
+                        querySnapshot.docs.forEach((doc) {
+                        });
+                      });
+                    }
+                    return const Text("");
+                  }),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 20.0),
+                    child: Text(
+                      'Đội ngũ tư vấn viên',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.w600,
+                          letterSpacing: 1.0),
                     ),
                   ),
-                );
-              });
-        });
+                  SizedBox(
+                    height: 120.0,
+                    child: ListView.builder(
+                        physics: const BouncingScrollPhysics(),
+                        padding: const EdgeInsets.only(left: 10.0),
+                        scrollDirection: Axis.horizontal,
+                        itemCount: listEmployee.length,
+                        itemBuilder:
+                            (BuildContext context, int index) {
+                          // EmployeeModel employeeModel = listEmployee[index];
+                          return _buildEmployee(
+                              context, listEmployee[index]);
+                        }),
+                  )
+                ],
+              ),
+              getQuestion(),
+            ],
+          ),
+        ),
+      ),
+    );
+
   }
 
   Widget getQuestion() {
+    if (listPublicChatRoom.isEmpty) {
+      return const Center(
+        child: SizedBox(
+            width: 20,
+            height: 20,
+            child: CircularProgressIndicator()),
+      );
+    }
     if (pageIndex == 0) {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -583,7 +498,7 @@ class _MessengerPageState extends State<MessengerPage> {
                   letterSpacing: 1.0),
             ),
           ),
-          _buildChatRoomByUser()
+          _buildChatRoom(listChatRoomByUser)
         ],
       );
     } else {
@@ -601,7 +516,7 @@ class _MessengerPageState extends State<MessengerPage> {
                   letterSpacing: 1.0),
             ),
           ),
-          _buildAllChatRoom()
+          _buildChatRoom(listPublicChatRoom)
         ],
       );
     }
@@ -938,14 +853,14 @@ class _MessengerPageState extends State<MessengerPage> {
     if (isvalid) {
       LoadingDialog.showLoadingDialog(context, "loading...");
       createChatRoom(
-          currentUserR.id,
+          current_user.id,
           _titleController.text,
           timeString,
           "Chưa trả lời",
           _informationController.text,
           valueKhoa!,
           valueVanDe!,
-          currentUserR.group,
+          current_user.group,
           "public",
           () {});
     }

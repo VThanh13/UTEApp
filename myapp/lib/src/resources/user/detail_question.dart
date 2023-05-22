@@ -83,7 +83,7 @@ class _DetailQuestionState extends State<DetailQuestion> {
   List<dynamic> listT = [];
 
   FirebaseAuth auth = FirebaseAuth.instance;
-  var userR = FirebaseAuth.instance.currentUser!;
+  var current_user = FirebaseAuth.instance.currentUser!;
   EmployeeModel employeeModel =
   EmployeeModel("", " ", "", "", "", "", "", "", "", "");
 
@@ -91,22 +91,6 @@ class _DetailQuestionState extends State<DetailQuestion> {
   final List<Answer> listAnswer = [];
   final List<Message> listMessage = [];
   var departmentName = {};
-
-  Future<List> getDataDropdownProblem(String? value_khoa) async {
-    QuerySnapshot snapshot = await FirebaseFirestore.instance
-        .collection("departments")
-        .where("name", isEqualTo: value_khoa)
-        .get();
-
-    List<dynamic> list = [];
-    snapshot.docs.map((e) {
-      list = (e.data() as Map)["category"];
-      return list;
-    }).toList();
-    return list;
-  }
-
-  List<String> listDepartment = [];
 
   getDepartmentName() async {
     await FirebaseFirestore.instance
@@ -248,7 +232,7 @@ class _DetailQuestionState extends State<DetailQuestion> {
           backgroundColor: Colors.tealAccent,
           child: CircleAvatar(
             backgroundImage:
-            NetworkImage(question.user.image!),
+            NetworkImage(question.user.image),
             radius: 20,
           ),
         ),
@@ -476,7 +460,7 @@ class _DetailQuestionState extends State<DetailQuestion> {
           radius: 22,
           backgroundColor: Colors.tealAccent,
           child: CircleAvatar(
-            backgroundImage: NetworkImage(answer.employee.image!),
+            backgroundImage: NetworkImage(answer.employee.image),
             radius: 20,
           ),
         ),
@@ -489,33 +473,16 @@ class _DetailQuestionState extends State<DetailQuestion> {
     MaterialPageRoute(builder: (context) => PDFViewerPage(file: file)),
   );
 
-  final TextEditingController _informationController = TextEditingController();
-  final TextEditingController _titleController = TextEditingController();
   final TextEditingController _questionController = TextEditingController();
-
-  final StreamController _informationControl = StreamController.broadcast();
-  final StreamController _titleControl = StreamController.broadcast();
   final StreamController _questionControl = StreamController.broadcast();
 
-  Stream get informationControl => _informationControl.stream;
-  Stream get titleControl => _titleControl.stream;
   Stream get questionControl => _questionControl.stream;
 
-  bool isValid(String information, String title, String question) {
-    if (information.isEmpty) {
-      _informationControl.sink.addError("Nhập thông tin liên lạc");
-      return false;
-    }
-
-    if (title.isEmpty) {
-      _titleControl.sink.addError("Nhập tiêu đề");
-      return false;
-    }
+  bool isValid(String question) {
     if (question.isEmpty) {
       _questionControl.sink.addError("Nhập câu hỏi");
       return false;
     }
-
     return true;
   }
   _modalBottomSheetAddQuestion() {
@@ -531,234 +498,121 @@ class _DetailQuestionState extends State<DetailQuestion> {
             )),
         context: context,
         builder: (BuildContext context) {
-          return StatefulBuilder(
-              builder: (BuildContext context, StateSetter setStateKhoa) {
-                return Column(
+          return Column(
+            children: <Widget>[
+              const Padding(
+                padding: EdgeInsets.fromLTRB(5, 20, 5, 10),
+                child: Text(
+                  'Đặt câu hỏi',
+                  style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.w600,
+                      letterSpacing: 1.0),
+                ),
+              ),
+              SingleChildScrollView(
+                physics: const BouncingScrollPhysics(),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    const Padding(
-                      padding: EdgeInsets.fromLTRB(5, 20, 5, 10),
-                      child: Text(
-                        'Đặt câu hỏi',
-                        style: TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.w600,
-                            letterSpacing: 1.0),
-                      ),
-                    ),
-                    SingleChildScrollView(
-                      physics: const BouncingScrollPhysics(),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          SizedBox(
-                            height: MediaQuery.of(context).size.height * 0.65,
-                            child: SingleChildScrollView(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: <Widget>[
-                                  const Padding(
-                                      padding: EdgeInsets.fromLTRB(0, 10, 0, 10)),
-                                  Container(
-                                      margin: const EdgeInsets.fromLTRB(0, 10, 0, 15),
-                                      width: 340,
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 12, vertical: 4),
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(12),
-                                        border: Border.all(
-                                            color: Colors.blueAccent, width: 4),
-                                      ),
-                                      child: DropdownButtonHideUnderline(
-                                        child: DropdownButton(
-                                          isExpanded: true,
-                                          value: valueKhoa,
-                                          hint: const Text(
-                                              "Vui lòng chọn đơn vị để hỏi"),
-                                          iconSize: 36,
-                                          items: render(listDepartment),
-                                          onChanged: (value) async {
-                                            final List<dynamic> listProblem =
-                                            await getDataDropdownProblem(
-                                                value);
-                                            setStateKhoa(() {
-                                              setState(() {
-                                                valueVanDe = null;
-                                                valueKhoa = value;
-                                                listT = listProblem;
-                                              });
-                                            });
-                                          },
+                    SizedBox(
+                      height: MediaQuery.of(context).size.height * 0.65,
+                      child: SingleChildScrollView(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: <Widget>[
+                            const Padding(
+                                padding: EdgeInsets.fromLTRB(0, 10, 0, 10)),
+                            Container(
+                              width: 340,
+                              margin: const EdgeInsets.fromLTRB(0, 10, 0, 15),
+                              child: StreamBuilder(
+                                stream: questionControl,
+                                builder: (context, snapshot) => TextField(
+                                  controller: _questionController,
+                                  maxLines: 50,
+                                  minLines: 10,
+                                  maxLength: 3000,
+                                  decoration: InputDecoration(
+                                      hintMaxLines: 5,
+                                      helperMaxLines: 5,
+                                      labelText: "Đặt câu hỏi",
+                                      hintText: 'Nhập câu hỏi của bạn',
+                                      enabledBorder: OutlineInputBorder(
+                                        borderRadius:
+                                        BorderRadius.circular(10),
+                                        borderSide: const BorderSide(
+                                          color: Colors.blueAccent,
+                                          width: 1,
                                         ),
-                                      )),
-                                  Container(
-                                      margin: const EdgeInsets.fromLTRB(0, 10, 0, 15),
-                                      width: 340,
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 12, vertical: 4),
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(12),
-                                        border: Border.all(
-                                            color: Colors.blueAccent, width: 4),
                                       ),
-                                      child: DropdownButtonHideUnderline(
-                                        child: DropdownButton(
-                                          isExpanded: true,
-                                          value: valueVanDe,
-                                          hint: const Text(
-                                              "Vui lòng chọn vấn đề để hỏi"),
-                                          iconSize: 36,
-                                          items: renderR(listT),
-                                          onChanged: (value) {
-                                            setStateKhoa(() {
-                                              setState(() {
-                                                valueVanDe = value;
-                                              });
-                                            });
-                                          },
-                                        ),
-                                      )),
-                                  Container(
-                                      margin: const EdgeInsets.fromLTRB(0, 10, 0, 15),
-                                      width: 340,
-                                      child: StreamBuilder(
-                                        stream: informationControl,
-                                        builder: (context, snapshot) => TextField(
-                                          controller: _informationController,
-                                          decoration: InputDecoration(
-                                              labelText: "Phương thức liên hệ",
-                                              hintText: 'Nhập Email/SĐT của bạn',
-                                              enabledBorder: OutlineInputBorder(
-                                                  borderRadius:
-                                                  BorderRadius.circular(10),
-                                                  borderSide: const BorderSide(
-                                                    color: Colors.blueAccent,
-                                                    width: 1,
-                                                  )),
-                                              focusedBorder: OutlineInputBorder(
-                                                  borderRadius:
-                                                  BorderRadius.circular(10),
-                                                  borderSide: const BorderSide(
-                                                      color: Colors.blue,
-                                                      width: 4))),
-                                        ),
-                                      )),
-                                  Container(
-                                    margin: const EdgeInsets.fromLTRB(0, 10, 0, 15),
-                                    width: 340,
-                                    child: StreamBuilder(
-                                      stream: titleControl,
-                                      builder: (context, snapshot) => TextField(
-                                        controller: _titleController,
-                                        decoration: InputDecoration(
-                                            labelText: "Tiêu đề",
-                                            hintText: 'Nhập Tiêu đề',
-                                            enabledBorder: OutlineInputBorder(
-                                                borderRadius:
-                                                BorderRadius.circular(10),
-                                                borderSide: const BorderSide(
-                                                  color: Colors.blueAccent,
-                                                  width: 1,
-                                                )),
-                                            focusedBorder: OutlineInputBorder(
-                                                borderRadius:
-                                                BorderRadius.circular(10),
-                                                borderSide: const BorderSide(
-                                                    color: Colors.blue,
-                                                    width: 4))),
-                                      ),
-                                    ),
-                                  ),
-                                  Container(
-                                    width: 340,
-                                    margin: const EdgeInsets.fromLTRB(0, 10, 0, 15),
-                                    child: StreamBuilder(
-                                      stream: questionControl,
-                                      builder: (context, snapshot) => TextField(
-                                        controller: _questionController,
-                                        maxLines: 50,
-                                        minLines: 10,
-                                        maxLength: 3000,
-                                        decoration: InputDecoration(
-                                            hintMaxLines: 5,
-                                            helperMaxLines: 5,
-                                            labelText: "Đặt câu hỏi",
-                                            hintText: 'Nhập câu hỏi của bạn',
-                                            enabledBorder: OutlineInputBorder(
-                                              borderRadius:
-                                              BorderRadius.circular(10),
-                                              borderSide: const BorderSide(
-                                                color: Colors.blueAccent,
-                                                width: 1,
-                                              ),
-                                            ),
-                                            focusedBorder: OutlineInputBorder(
-                                                borderRadius:
-                                                BorderRadius.circular(10),
-                                                borderSide: const BorderSide(
-                                                    color: Colors.blue,
-                                                    width: 4))),
-                                      ),
-                                    ),
-                                  ),
-                                  IconButton(
-                                      onPressed: () {
-                                        importPdf();
-                                      },
-                                      icon: const Icon(AppIcons.file_pdf)),
-                                  Container(
-                                    padding: const EdgeInsets.all(10),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                      MainAxisAlignment.spaceAround,
-                                      children: <Widget>[
-                                        Expanded(
-                                          child: ElevatedButton.icon(
-                                            onPressed: () {
-                                              _onSendQuestionClicked();
-                                              print('press save');
-                                            },
-                                            label: const Text(
-                                              'Gửi',
-                                              style: TextStyle(
-                                                  fontSize: 16,
-                                                  color: Colors.white),
-                                            ),
-                                            icon: const Icon(Icons.send_rounded),
-                                            style: ElevatedButton.styleFrom(
-                                                primary: Colors.blueAccent),
-                                          ),
-                                        ),
-                                        const Padding(padding: EdgeInsets.all(10)),
-                                        Expanded(
-                                            child: ElevatedButton.icon(
-                                              onPressed: () =>
-                                              {Navigator.pop(context)},
-                                              label: const Text(
-                                                'Thoát',
-                                                style: TextStyle(
-                                                    fontSize: 16,
-                                                    color: Colors.white),
-                                              ),
-                                              icon: const Icon(Icons.cancel_presentation),
-                                              style: ElevatedButton.styleFrom(
-                                                  primary: Colors.blueAccent),
-                                            )),
-                                        const Padding(
-                                            padding: EdgeInsets.fromLTRB(
-                                                0, 10, 0, 30)),
-                                      ],
-                                    ),
-                                  )
-                                ],
+                                      focusedBorder: OutlineInputBorder(
+                                          borderRadius:
+                                          BorderRadius.circular(10),
+                                          borderSide: const BorderSide(
+                                              color: Colors.blue,
+                                              width: 4))),
+                                ),
                               ),
                             ),
-                          ),
-                        ],
+                            IconButton(
+                                onPressed: () {
+                                  importPdf();
+                                },
+                                icon: const Icon(AppIcons.file_pdf)),
+                            Container(
+                              padding: const EdgeInsets.all(10),
+                              child: Row(
+                                mainAxisAlignment:
+                                MainAxisAlignment.spaceAround,
+                                children: <Widget>[
+                                  Expanded(
+                                    child: ElevatedButton.icon(
+                                      onPressed: () {
+                                        _onSendQuestionClicked();
+                                        print('press save');
+                                      },
+                                      label: const Text(
+                                        'Gửi',
+                                        style: TextStyle(
+                                            fontSize: 16,
+                                            color: Colors.white),
+                                      ),
+                                      icon: const Icon(Icons.send_rounded),
+                                      style: ElevatedButton.styleFrom(
+                                          primary: Colors.blueAccent),
+                                    ),
+                                  ),
+                                  const Padding(padding: EdgeInsets.all(10)),
+                                  Expanded(
+                                      child: ElevatedButton.icon(
+                                        onPressed: () =>
+                                        {Navigator.pop(context)},
+                                        label: const Text(
+                                          'Thoát',
+                                          style: TextStyle(
+                                              fontSize: 16,
+                                              color: Colors.white),
+                                        ),
+                                        icon: const Icon(Icons.cancel_presentation),
+                                        style: ElevatedButton.styleFrom(
+                                            primary: Colors.blueAccent),
+                                      )),
+                                  const Padding(
+                                      padding: EdgeInsets.fromLTRB(
+                                          0, 10, 0, 30)),
+                                ],
+                              ),
+                            )
+                          ],
+                        ),
                       ),
                     ),
                   ],
-                );
-              });
+                ),
+              ),
+            ],
+          );
         });
   }
 
@@ -792,16 +646,35 @@ class _DetailQuestionState extends State<DetailQuestion> {
   }
 
   _onSendQuestionClicked() async {
-    var isvalid = isValid(_informationController.text, _questionController.text,
-        _titleController.text);
+    var isvalid = isValid(_questionController.text);
     var time = DateTime.now();
     String timeString = DateFormat('dd-MM-yyyy HH:mm:ss').format(time);
     await uploadPdf();
     if (isvalid) {
-      LoadingDialog.showLoadingDialog(context, "loading...");
-
+      LoadingDialog.showLoadingDialog(context, "Loading...");
+      sendQuestion(timeString, pdfUrl, _questionController.text, widget.chatRoom.id, () {
+        LoadingDialog.hideLoadingDialog(context);
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => DetailQuestion(chatRoom: widget.chatRoom)));
+      });
     }
     return 0;
+  }
+
+  void sendQuestion(String time, String file, String content, String roomId,
+      Function onSucces) {
+    var ref = FirebaseFirestore.instance.collection('questions');
+    String id = ref.doc().id;
+    ref.doc(id).set({
+      'id': id,
+      'time': time,
+      'file': file,
+      'content': content,
+      'room_id': roomId,
+    }).then((value) {
+      onSucces();
+    }).catchError((err) {
+    });
   }
 
   Widget _getFAB() {
@@ -829,26 +702,6 @@ class _DetailQuestionState extends State<DetailQuestion> {
     );
   }
 
-  List<DropdownMenuItem<String>> render(List<String> list) {
-    return list.map(buildMenuItem).toList();
-  }
-
-  DropdownMenuItem<String> buildMenuItem(String item) => DropdownMenuItem(
-      value: item,
-      child: Text(
-        item,
-        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-      ));
-  DropdownMenuItem<dynamic> buildMenuItemM(dynamic item) => DropdownMenuItem(
-      value: item,
-      child: Text(
-        item,
-        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-      ));
-  List<DropdownMenuItem<dynamic>> renderR(List<dynamic> list) {
-    return list.map(buildMenuItemM).toList();
-  }
-
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
@@ -857,7 +710,7 @@ class _DetailQuestionState extends State<DetailQuestion> {
         title: const Text("Chi tiết câu hỏi"),
         backgroundColor: Colors.blueAccent,
       ),
-      floatingActionButton: _getFAB(),
+      floatingActionButton: (current_user.uid == widget.chatRoom.user_id)? _getFAB():null,
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       body: SafeArea(
         minimum: const EdgeInsets.only(left: 20, right: 10),

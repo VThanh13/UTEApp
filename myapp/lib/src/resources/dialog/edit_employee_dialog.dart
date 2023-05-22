@@ -30,7 +30,7 @@ class EditEmployeeDialog {
                         radius: 48,
                         backgroundColor: Colors.tealAccent,
                         child: CircleAvatar(
-                          backgroundImage: NetworkImage(employee.image!),
+                          backgroundImage: NetworkImage(employee.image),
                           radius: 46,
                         ),
                       ),
@@ -40,14 +40,14 @@ class EditEmployeeDialog {
               ),
               const Padding(padding: EdgeInsets.fromLTRB(0, 0, 0, 0)),
               Text(
-                employee.roles!,
+                employee.roles,
                 style: const TextStyle(
                   fontSize: 15,
                   fontWeight: FontWeight.w200,
                 ),
               ),
               Text(
-                employee.name!,
+                employee.name,
                 style: const TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.w600,
@@ -60,7 +60,7 @@ class EditEmployeeDialog {
                 child: StreamBuilder(
                   stream: nameStream,
                   builder: (context, snapshot) => TextField(
-                    controller: _nameController..text = employee.name!,
+                    controller: _nameController..text = employee.name,
                     onChanged: (text) => {},
                     decoration: InputDecoration(
                       labelText: "Tên của bạn",

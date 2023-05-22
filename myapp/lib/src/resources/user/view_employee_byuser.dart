@@ -8,8 +8,9 @@ import 'package:flutter/material.dart';
 import 'package:myapp/icons/app_icons_icons.dart';
 import 'package:myapp/src/models/EmployeeModel.dart';
 import 'package:myapp/src/models/UserModel.dart';
-import 'package:myapp/src/resources/messenger/messenger_page.dart';
+import 'messenger_page.dart';
 import '../../blocs/auth_bloc.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import '../dialog/loading_dialog.dart';
 
 class ViewEmployeeByUser extends StatefulWidget {
@@ -36,6 +37,10 @@ class _ViewEmployeeByUser extends State<ViewEmployeeByUser> {
     'Cựu sinh viên',
     'Khác'
   ];
+
+  FirebaseAuth auth = FirebaseAuth.instance;
+  var currentUser = FirebaseAuth.instance.currentUser!;
+  UserModel current_user = UserModel("", " ", "", "", "", "", "", "");
 
   DropdownMenuItem<String> buildMenuItem(String item) => DropdownMenuItem(
       value: item,
@@ -72,12 +77,31 @@ class _ViewEmployeeByUser extends State<ViewEmployeeByUser> {
             });
   }
 
+  getCurrentUser() async {
+    await FirebaseFirestore.instance
+        .collection('user')
+        .where('userId', isEqualTo: currentUser.uid)
+        .get()
+        .then((value) => {
+      setState(() {
+        current_user.id = value.docs.first['userId'];
+        current_user.name = value.docs.first['name'];
+        current_user.email = value.docs.first['email'];
+        current_user.image = value.docs.first['image'];
+        current_user.password = value.docs.first['password'];
+        current_user.phone = value.docs.first['phone'];
+        current_user.group = value.docs.first['group'];
+        current_user.status = value.docs.first['status'];
+      })
+    });
+  }
+
   @override
   void initState() {
     super.initState();
     getDepartmentName();
     getDepartment();
-    //getDepartmentName();
+    getCurrentUser();
   }
 
   final TextEditingController _informationController = TextEditingController();
@@ -109,66 +133,77 @@ class _ViewEmployeeByUser extends State<ViewEmployeeByUser> {
     super.dispose();
   }
 
-  void sendQuestion(
+  _onSendQuestionClicked() async {
+    var isvalid = isValid(_informationController.text, _questionController.text);
+    var time = DateTime.now();
+    String timeString = DateFormat('dd-MM-yyyy HH:mm:ss').format(time);
+    await uploadPdf();
+    if (isvalid) {
+      LoadingDialog.showLoadingDialog(context, "loading...");
+      createChatRoom(
+          current_user.id,
+          "Gửi thầy/cô " + widget.employee.name,
+          timeString,
+          "Chưa trả lời",
+          _informationController.text,
+          widget.employee.department,
+          widget.employee.category,
+          current_user.group,
+          "public",
+              () {});
+    }
+    return 0;
+  }
+
+  void createChatRoom(
       String userId,
       String title,
       String time,
       String status,
       String information,
-      String file,
-      String department,
-      String content,
+      String departmentId,
       String category,
-      String people,
+      String group,
+      String mode,
       Function onSucces) {
-    var ref = FirebaseFirestore.instance.collection('questions');
+    var ref = FirebaseFirestore.instance.collection('chat_room');
     String id = ref.doc().id;
-    String departmentId = listDepartmentName.keys.firstWhere(
-        (k) => listDepartmentName[k] == department,
-        orElse: () => null);
     ref.doc(id).set({
-      'id': id,
-      'userId': userId,
+      'room_id': id,
+      'user_id': userId,
       'title': title,
       'time': time,
       'status': status,
       'information': information,
-      'file': file,
       'department': departmentId,
-      'content': content,
-      'people': people,
+      'group': group,
       'category': category,
+      'mode': mode,
     }).then((value) {
       onSucces();
-    }).catchError((err) {});
-  }
-
-  _onSendQuestionClicked() async {
-    var isvalid =
-        isValid(_informationController.text, _questionController.text);
-    var time = DateTime.now();
-    String timeString = DateFormat('dd-MM-yyyy HH:mm:ss').format(time);
-    await uploadPdf();
-
-    if (isvalid) {
-      LoadingDialog.showLoadingDialog(context, "loading...");
-      sendQuestion(
-          widget.users.id,
-          "Gửi thầy/cô " + widget.employee.name,
-          timeString,
-          "Chưa trả lời",
-          _informationController.text,
-          pdfUrl,
-          departmentName,
-          _questionController.text,
-          widget.employee.category,
-          valueDoiTuong!, () {
+      sendQuestion(time, pdfUrl, _questionController.text, id, () {
         LoadingDialog.hideLoadingDialog(context);
         Navigator.push(
             context, MaterialPageRoute(builder: (context) => const MessengerPage()));
       });
-    }
-    return 0;
+    }).catchError((err) {
+    });
+  }
+
+  void sendQuestion(String time, String file, String content, String roomId,
+      Function onSucces) {
+    var ref = FirebaseFirestore.instance.collection('questions');
+    String id = ref.doc().id;
+    ref.doc(id).set({
+      'id': id,
+      'time': time,
+      'file': file,
+      'content': content,
+      'room_id': roomId,
+    }).then((value) {
+      onSucces();
+    }).catchError((err) {
+    });
   }
 
   late PlatformFile file;
@@ -255,7 +290,7 @@ class _ViewEmployeeByUser extends State<ViewEmployeeByUser> {
                           radius: 42,
                           backgroundColor: Colors.white,
                           child: CircleAvatar(
-                            backgroundImage: NetworkImage(widget.employee.image!,),
+                            backgroundImage: NetworkImage(widget.employee.image,),
                             radius: 66,
                           ),
                         ),
@@ -512,7 +547,7 @@ class _ViewEmployeeByUser extends State<ViewEmployeeByUser> {
                             style: TextStyle(
                                 fontSize: 17
                             ),),
-                          Text(widget.employee.email!,
+                          Text(widget.employee.email,
                             style: const TextStyle(
                               fontSize: 17, fontWeight: FontWeight.bold,
                             ),)

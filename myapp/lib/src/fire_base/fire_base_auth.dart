@@ -8,6 +8,7 @@ class FireAuth {
     _fireBaseAuth
         .createUserWithEmailAndPassword(email: email, password: password).then((user){
       _createEmployee(user.user!.uid, email, password, name, phone, department, category, onSuccess, onRegisterError);
+      FirebaseAuth.instance.signOut();
     }).catchError((err){
       //TODO
       _onSignUpErr(err.code, onRegisterError);
@@ -43,7 +44,7 @@ class FireAuth {
     var ref = FirebaseFirestore.instance.collection('user');
     ref.doc(userId).set({'userId': userId,
     'email':email,
-    'pass':password,
+    'password':password,
     'name':name,
     'phone': phone,
     'group': group,

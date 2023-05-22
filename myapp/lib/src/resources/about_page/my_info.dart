@@ -9,7 +9,7 @@ import 'package:permission_handler/permission_handler.dart';
 import '../../blocs/auth_bloc.dart';
 import '../../models/UserModel.dart';
 import '../dialog/loading_dialog.dart';
-import '../home_page.dart';
+import '../user/home_page.dart';
 
 class MyInfo extends StatefulWidget {
   const MyInfo({super.key});

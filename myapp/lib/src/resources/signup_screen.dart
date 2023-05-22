@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../blocs/auth_bloc.dart';
 import 'dialog/loading_dialog.dart';
 import 'dialog/msg_dialog.dart';
-import 'home_page.dart';
+import 'user/home_page.dart';
 import 'login_screen.dart';
 
 class SignUpScreen extends StatefulWidget {

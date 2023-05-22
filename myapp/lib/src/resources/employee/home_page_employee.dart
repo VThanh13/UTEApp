@@ -9,7 +9,7 @@ import 'package:myapp/src/models/EmployeeModel.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../models/NewfeedModel.dart';
-import '../home_page.dart';
+import '../user/home_page.dart';
 import '../login_screen.dart';
 import '../pdf_viewer.dart';
 import 'employee_info.dart';
@@ -139,7 +139,7 @@ class _HomePageState extends State<HomePageEmployee> {
                   radius: 24,
                   backgroundColor: Colors.tealAccent,
                   child: CircleAvatar(
-                    backgroundImage: NetworkImage(post.employee.image!),
+                    backgroundImage: NetworkImage(post.employee.image),
                     radius: 22,
                   ),
                 ),
@@ -275,10 +275,10 @@ class _HomePageState extends State<HomePageEmployee> {
               child: ListView(
                 children: <Widget>[
                   UserAccountsDrawerHeader(
-                    accountName: Text(employeeModel.name!),
-                    accountEmail: Text(employeeModel.email!),
+                    accountName: Text(employeeModel.name),
+                    accountEmail: Text(employeeModel.email),
                     currentAccountPicture: CircleAvatar(
-                      backgroundImage: NetworkImage(employeeModel.image!),
+                      backgroundImage: NetworkImage(employeeModel.image),
                     ),
                   ),
                   InkWell(

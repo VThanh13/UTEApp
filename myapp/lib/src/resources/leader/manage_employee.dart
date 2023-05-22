@@ -127,7 +127,7 @@ class _ManageEmployeeState extends State<ManageEmployee> {
               radius: 28,
               backgroundColor: Colors.tealAccent,
               child: CircleAvatar(
-                backgroundImage: NetworkImage(employee.image!),
+                backgroundImage: NetworkImage(employee.image),
                 radius: 26,
               ),
             ),
@@ -240,7 +240,7 @@ class _ManageEmployeeState extends State<ManageEmployee> {
                                         backgroundColor: Colors.tealAccent,
                                         child: CircleAvatar(
                                           backgroundImage:
-                                              NetworkImage(employee.image!),
+                                              NetworkImage(employee.image),
                                           radius: 46,
                                         ),
                                       ),
@@ -249,14 +249,14 @@ class _ManageEmployeeState extends State<ManageEmployee> {
                                 ),
                               ),
                               Text(
-                                employee.name!,
+                                employee.name,
                                 style: const TextStyle(
                                   fontSize: 20,
                                   fontWeight: FontWeight.w600,
                                 ),
                               ),
                               Text(
-                                employee.roles!,
+                                employee.roles,
                                 style: const TextStyle(
                                   fontSize: 15,
                                   fontWeight: FontWeight.w200,
@@ -926,6 +926,9 @@ class _ManageEmployeeState extends State<ManageEmployee> {
   }
 
   _onAddEmployeeClicked() {
+    String current_email = currentEmployee.email;
+    String current_password = currentEmployee.password;
+
     String email = _emailController.text;
     String name = _nameController.text;
     String phone = _phoneController.text;
@@ -933,9 +936,10 @@ class _ManageEmployeeState extends State<ManageEmployee> {
     String category = valueCategory!;
     String department = currentEmployee.department;
     if (isValid(email, name, phone, password)) {
-      LoadingDialog.showLoadingDialog(context, "loading...");
+      LoadingDialog.showLoadingDialog(context, "Loading...");
       authBloc.createEmployee(
           email, password, name, phone, department, category, () {
+        auth.signInWithEmailAndPassword(email: current_email, password: current_password);
         LoadingDialog.hideLoadingDialog(context);
         Navigator.push(context,
             MaterialPageRoute(builder: (context) => const ManageEmployee()));

@@ -6,11 +6,11 @@ import 'package:myapp/src/resources/about_page/my_file.dart';
 import 'package:myapp/src/resources/about_page/my_info.dart';
 import 'package:myapp/src/resources/about_page/about_university.dart';
 import 'package:myapp/src/resources/about_page/admission_history.dart';
-import 'package:myapp/src/resources/messenger/messenger_page.dart';
 import 'package:myapp/src/models/UserModel.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../login_screen.dart';
+import '../user/messenger_page.dart';
 
 class HomePageAdmin extends StatefulWidget {
   const HomePageAdmin({super.key});
@@ -102,10 +102,10 @@ class _HomePageState extends State<HomePageAdmin> {
               child: ListView(
                 children: <Widget>[
                   UserAccountsDrawerHeader(
-                    accountName: Text(userModel.name!),
-                    accountEmail: Text(userModel.email!),
+                    accountName: Text(userModel.name),
+                    accountEmail: Text(userModel.email),
                     currentAccountPicture: CircleAvatar(
-                      backgroundImage: NetworkImage(userModel.image!),
+                      backgroundImage: NetworkImage(userModel.image),
                     ),
                   ),
                   ListTile(

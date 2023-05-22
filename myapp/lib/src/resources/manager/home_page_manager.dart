@@ -11,7 +11,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../models/NewfeedModel.dart';
 import '../employee/employee_info.dart';
-import '../home_page.dart';
+import '../user/home_page.dart';
 import '../login_screen.dart';
 import 'manage_department.dart';
 
@@ -161,7 +161,7 @@ class _HomePageState extends State<HomePageManager> {
                   radius: 24,
                   backgroundColor: Colors.tealAccent,
                   child: CircleAvatar(
-                    backgroundImage: NetworkImage(post.employee.image!),
+                    backgroundImage: NetworkImage(post.employee.image),
                     radius: 22,
                   ),
                 ),

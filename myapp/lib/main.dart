@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:myapp/src/resources/employee/home_page_employee.dart';
-import 'package:myapp/src/resources/home_page.dart';
+import 'package:myapp/src/resources/user/home_page.dart';
 import 'package:myapp/src/resources/leader/home_page_leader.dart';
 import 'package:myapp/src/resources/login_screen.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
@@ -40,14 +40,13 @@ class MyApp extends StatefulWidget{
 class _MyAppState extends State<MyApp>{
   Widget currentPage = const LoginScreen();
 
-   checkLogin() async{
-    User? user = FirebaseAuth.instance.currentUser;
-    var currentUser = FirebaseAuth.instance.currentUser!;
+  checkLogin() async{
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? roles = prefs.getString("roles");
     String? id = prefs.getString("id");
 
     if(id != null  && id != ""){
+      var currentUser = FirebaseAuth.instance.currentUser!;
       await FirebaseFirestore.instance
           .collection('user')
           .doc(currentUser.uid)

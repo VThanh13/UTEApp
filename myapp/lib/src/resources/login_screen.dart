@@ -7,7 +7,7 @@ import '../blocs/auth_bloc.dart';
 import 'dialog/loading_dialog.dart';
 import 'dialog/msg_dialog.dart';
 import 'employee/home_page_employee.dart';
-import 'home_page.dart';
+import 'user/home_page.dart';
 import 'leader/home_page_leader.dart';
 import 'manager/home_page_manager.dart';
 import 'signup_screen.dart';

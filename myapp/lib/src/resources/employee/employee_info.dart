@@ -11,7 +11,7 @@ import 'package:permission_handler/permission_handler.dart';
 import '../../blocs/auth_bloc.dart';
 import '../../models/EmployeeModel.dart';
 import '../dialog/loading_dialog.dart';
-import '../home_page.dart';
+import '../user/home_page.dart';
 import '../manager/home_page_manager.dart';
 import 'home_page_employee.dart';
 
@@ -235,7 +235,7 @@ class _MyInfoState extends State<EmployeeInfo> with SingleTickerProviderStateMix
                               backgroundColor: Colors.tealAccent,
                               child: CircleAvatar(
                                 backgroundImage:
-                                NetworkImage(currentEmployee.image!),
+                                NetworkImage(currentEmployee.image),
                                 radius: 40,
                               ),
                             ),
@@ -275,14 +275,14 @@ class _MyInfoState extends State<EmployeeInfo> with SingleTickerProviderStateMix
                     ),
 
                     Text(
-                      currentEmployee.name!,
+                      currentEmployee.name,
                       style: const TextStyle(
                         fontSize: 23,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
                     Text(
-                      currentEmployee.roles!,
+                      currentEmployee.roles,
                       style: const TextStyle(
                         fontSize: 15,
                         fontWeight: FontWeight.w200,
@@ -340,7 +340,7 @@ class _MyInfoState extends State<EmployeeInfo> with SingleTickerProviderStateMix
                                     stream: nameStream,
                                     builder: (context, snapshot) => TextField(
                                       controller: _nameController
-                                        ..text = currentEmployee.name!,
+                                        ..text = currentEmployee.name,
                                       onChanged: (text) => {},
                                       decoration: InputDecoration(
                                         labelText: "Your name",
@@ -371,7 +371,7 @@ class _MyInfoState extends State<EmployeeInfo> with SingleTickerProviderStateMix
                                       stream: phoneStream,
                                       builder: (context, snapshot) => TextField(
                                         controller: _phoneController
-                                          ..text = currentEmployee.phone!,
+                                          ..text = currentEmployee.phone,
                                         onChanged: (text) => {},
                                         decoration: InputDecoration(
                                           labelText: "Your phone number",
@@ -401,7 +401,7 @@ class _MyInfoState extends State<EmployeeInfo> with SingleTickerProviderStateMix
                                       stream: emailStream,
                                       builder: (context, snapshot) => TextField(
                                         controller: _emailController
-                                          ..text = currentEmployee.email!,
+                                          ..text = currentEmployee.email,
                                         onChanged: (text) => {},
                                         decoration: InputDecoration(
                                             labelText: "Your Email",

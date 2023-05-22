@@ -109,7 +109,7 @@ class _LoginAdminState extends State<LoginAdmin> {
                         child: ElevatedButton(
                           onPressed: _onLoginClick,
                           style: ElevatedButton.styleFrom(
-                            primary: Colors.lightBlueAccent,
+                            backgroundColor: Colors.lightBlueAccent,
                           ),
                           child: const Text(
                             "Đăng nhập",

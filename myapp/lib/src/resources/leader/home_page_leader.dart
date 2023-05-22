@@ -225,7 +225,7 @@ class _HomePageState extends State<HomePageLeader> {
                   radius: 24,
                   backgroundColor: Colors.tealAccent,
                   child: CircleAvatar(
-                    backgroundImage: NetworkImage(post.employee.image!),
+                    backgroundImage: NetworkImage(post.employee.image),
                     radius: 22,
                   ),
                 ),
@@ -381,10 +381,10 @@ class _HomePageState extends State<HomePageLeader> {
               child: ListView(
                 children: <Widget>[
                   UserAccountsDrawerHeader(
-                    accountName: Text(employeeModel.name!),
-                    accountEmail: Text(employeeModel.email!),
+                    accountName: Text(employeeModel.name),
+                    accountEmail: Text(employeeModel.email),
                     currentAccountPicture: CircleAvatar(
-                      backgroundImage: NetworkImage(employeeModel.image!),
+                      backgroundImage: NetworkImage(employeeModel.image),
                     ),
                   ),
                   InkWell(
@@ -1116,7 +1116,7 @@ class _HomePageState extends State<HomePageLeader> {
   String imgUrl = "file.pdf";
   uploadImage() async {
     if (hadFile) {
-      File fileForFirebase = File(file.path!);
+      File fileForFirebase = File(file.path);
       FirebaseStorage storage = FirebaseStorage.instance;
       Reference ref = storage.ref().child("image_post/" + fileName);
       UploadTask uploadTask = ref.putFile(fileForFirebase);
