@@ -224,33 +224,49 @@ class _DetailQuestionState extends State<DetailQuestion> {
   
   _buildQues(Question question) {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.start,
+      mainAxisAlignment: MainAxisAlignment.end,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        CircleAvatar(
-          radius: 22,
-          backgroundColor: Colors.tealAccent,
-          child: CircleAvatar(
-            backgroundImage:
-            NetworkImage(question.user.image),
-            radius: 20,
-          ),
-        ),
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.start,
-          //mainAxisSize: MainAxisSize.min,
-
+          mainAxisAlignment: MainAxisAlignment.end,
           children: <Widget>[
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Text(
+                  '   ${question.user.name}',
+                  style: TextStyle(
+                    fontSize: 13,
+                    fontStyle: FontStyle.italic,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.grey[500]
+                  ),
+                ),
+                Text(
+                  ', ${question.time}',
+                  overflow: TextOverflow.visible,
+                  maxLines: 3,
+                  style: TextStyle(
+                      fontSize: 13,
+                      fontStyle: FontStyle.italic,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.grey[500],
+                      overflow:
+                      TextOverflow.visible),
+                ),
+              ],
+            ),
             SizedBox(
               width:
               MediaQuery.of(context).size.width - 75,
               child: Card(
                 margin: const EdgeInsets.all(5),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
+                shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.only(topLeft: Radius.circular(10),
+                  bottomLeft: Radius.circular(10), bottomRight: Radius.circular(10)),
                 ),
-                color: Colors.grey,
+                color: Colors.lightBlueAccent,
                 elevation: 10,
                 child: Column(
                   mainAxisAlignment:
@@ -265,36 +281,6 @@ class _DetailQuestionState extends State<DetailQuestion> {
                       crossAxisAlignment:
                       CrossAxisAlignment.start,
                       children: const <Widget>[],
-                    ),
-                    Column(
-                      mainAxisAlignment:
-                      MainAxisAlignment.start,
-                      crossAxisAlignment:
-                      CrossAxisAlignment.start,
-                      children: <Widget>[
-                        const Padding(
-                            padding: EdgeInsets.fromLTRB(
-                                5, 5, 5, 5)),
-                        Text(
-                          '   ' + question.user.name,
-                          style: const TextStyle(
-                            fontSize: 15,
-                            fontStyle: FontStyle.italic,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                        Text(
-                          '   Lúc ' + question.time,
-                          overflow: TextOverflow.visible,
-                          maxLines: 3,
-                          style: const TextStyle(
-                              fontSize: 15,
-                              fontStyle: FontStyle.italic,
-                              fontWeight: FontWeight.w600,
-                              overflow:
-                              TextOverflow.visible),
-                        ),
-                      ],
                     ),
                     const Padding(
                         padding: EdgeInsets.fromLTRB(
@@ -370,31 +356,76 @@ class _DetailQuestionState extends State<DetailQuestion> {
                     child: Image.network(question.file),
                   ),
                 )
-              )
+              ),
+            const SizedBox(height: 10,)
           ],
+        ),
+        CircleAvatar(
+          radius: 22,
+          backgroundColor: Colors.tealAccent,
+          child: CircleAvatar(
+            backgroundImage:
+            NetworkImage(question.user.image),
+            radius: 20,
+          ),
         ),
       ],
     );
   }
+
   _buildAnswers(Answer answer) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
+        CircleAvatar(
+          radius: 22,
+          backgroundColor: Colors.tealAccent,
+          child: CircleAvatar(
+            backgroundImage: NetworkImage(answer.employee.image),
+            radius: 20,
+          ),
+        ),
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.start,
           //mainAxisSize: MainAxisSize.min,
           children: <Widget>[
+            Row(
+              children: [
+                Text(
+                  '   ${answer.employee.name}',
+                  style: TextStyle(
+                    fontSize: 13,
+                    fontStyle: FontStyle.italic,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.grey[500],
+                  ),
+                ),
+                Text(
+                  ', ${answer.time}',
+                  overflow: TextOverflow.visible,
+                  maxLines: 3,
+                  style: TextStyle(
+                      fontSize: 13,
+                      fontStyle: FontStyle.italic,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.grey[500],
+                      overflow:
+                      TextOverflow.visible),
+                ),
+              ],
+            ),
             SizedBox(
               //width: MediaQuery.of(context).size.width -75,
               width: 285,
               child: Card(
                 margin: const EdgeInsets.all(5),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
+                shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.only(topRight: Radius.circular(10),
+                  bottomRight: Radius.circular(10), bottomLeft: Radius.circular(10)),
                 ),
-                color: Colors.lightBlueAccent,
+                color: Colors.grey,
                 elevation: 10,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.start,
@@ -406,31 +437,7 @@ class _DetailQuestionState extends State<DetailQuestion> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: const <Widget>[],
                     ),
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        const Padding(padding: EdgeInsets.fromLTRB(5, 5, 5, 5)),
-                        Text(
-                          '   ' + answer.employee.name,
-                          style: const TextStyle(
-                            fontSize: 15,
-                            fontStyle: FontStyle.italic,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                        Text(
-                          '   Lúc ' + answer.time,
-                          overflow: TextOverflow.visible,
-                          maxLines: 3,
-                          style: const TextStyle(
-                              fontSize: 15,
-                              fontStyle: FontStyle.italic,
-                              fontWeight: FontWeight.w600,
-                              overflow: TextOverflow.visible),
-                        ),
-                      ],
-                    ),
+
                     const Padding(padding: EdgeInsets.fromLTRB(5, 5, 5, 5)),
                     Container(
                         padding: const EdgeInsets.fromLTRB(10, 0, 5, 5),
@@ -454,16 +461,10 @@ class _DetailQuestionState extends State<DetailQuestion> {
                 ),
               ),
             ),
+            const SizedBox(height: 10,)
           ],
         ),
-        CircleAvatar(
-          radius: 22,
-          backgroundColor: Colors.tealAccent,
-          child: CircleAvatar(
-            backgroundImage: NetworkImage(answer.employee.image),
-            radius: 20,
-          ),
-        ),
+
       ],
     );
 
@@ -480,141 +481,140 @@ class _DetailQuestionState extends State<DetailQuestion> {
 
   bool isValid(String question) {
     if (question.isEmpty) {
-      _questionControl.sink.addError("Nhập câu hỏi");
+      _questionControl.sink.addError("Insert message");
       return false;
     }
     return true;
   }
-  _modalBottomSheetAddQuestion() {
-    return showModalBottomSheet(
-        isScrollControlled: true,
-        constraints: BoxConstraints.loose(Size(
-            MediaQuery.of(context).size.width,
-            MediaQuery.of(context).size.height * 0.75)),
-        shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(20),
-              topRight: Radius.circular(20),
-            )),
-        context: context,
-        builder: (BuildContext context) {
-          return Column(
-            children: <Widget>[
-              const Padding(
-                padding: EdgeInsets.fromLTRB(5, 20, 5, 10),
-                child: Text(
-                  'Đặt câu hỏi',
-                  style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.w600,
-                      letterSpacing: 1.0),
-                ),
-              ),
-              SingleChildScrollView(
-                physics: const BouncingScrollPhysics(),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.65,
-                      child: SingleChildScrollView(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: <Widget>[
-                            const Padding(
-                                padding: EdgeInsets.fromLTRB(0, 10, 0, 10)),
-                            Container(
-                              width: 340,
-                              margin: const EdgeInsets.fromLTRB(0, 10, 0, 15),
-                              child: StreamBuilder(
-                                stream: questionControl,
-                                builder: (context, snapshot) => TextField(
-                                  controller: _questionController,
-                                  maxLines: 50,
-                                  minLines: 10,
-                                  maxLength: 3000,
-                                  decoration: InputDecoration(
-                                      hintMaxLines: 5,
-                                      helperMaxLines: 5,
-                                      labelText: "Đặt câu hỏi",
-                                      hintText: 'Nhập câu hỏi của bạn',
-                                      enabledBorder: OutlineInputBorder(
-                                        borderRadius:
-                                        BorderRadius.circular(10),
-                                        borderSide: const BorderSide(
-                                          color: Colors.blueAccent,
-                                          width: 1,
-                                        ),
-                                      ),
-                                      focusedBorder: OutlineInputBorder(
-                                          borderRadius:
-                                          BorderRadius.circular(10),
-                                          borderSide: const BorderSide(
-                                              color: Colors.blue,
-                                              width: 4))),
-                                ),
-                              ),
-                            ),
-                            IconButton(
-                                onPressed: () {
-                                  importPdf();
-                                },
-                                icon: const Icon(AppIcons.file_pdf)),
-                            Container(
-                              padding: const EdgeInsets.all(10),
-                              child: Row(
-                                mainAxisAlignment:
-                                MainAxisAlignment.spaceAround,
-                                children: <Widget>[
-                                  Expanded(
-                                    child: ElevatedButton.icon(
-                                      onPressed: () {
-                                        _onSendQuestionClicked();
-                                        print('press save');
-                                      },
-                                      label: const Text(
-                                        'Gửi',
-                                        style: TextStyle(
-                                            fontSize: 16,
-                                            color: Colors.white),
-                                      ),
-                                      icon: const Icon(Icons.send_rounded),
-                                      style: ElevatedButton.styleFrom(
-                                          primary: Colors.blueAccent),
-                                    ),
-                                  ),
-                                  const Padding(padding: EdgeInsets.all(10)),
-                                  Expanded(
-                                      child: ElevatedButton.icon(
-                                        onPressed: () =>
-                                        {Navigator.pop(context)},
-                                        label: const Text(
-                                          'Thoát',
-                                          style: TextStyle(
-                                              fontSize: 16,
-                                              color: Colors.white),
-                                        ),
-                                        icon: const Icon(Icons.cancel_presentation),
-                                        style: ElevatedButton.styleFrom(
-                                            primary: Colors.blueAccent),
-                                      )),
-                                  const Padding(
-                                      padding: EdgeInsets.fromLTRB(
-                                          0, 10, 0, 30)),
-                                ],
-                              ),
-                            )
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          );
-        });
-  }
+  // _modalBottomSheetAddQuestion() {
+  //   return showModalBottomSheet(
+  //       isScrollControlled: true,
+  //       constraints: BoxConstraints.loose(Size(
+  //           MediaQuery.of(context).size.width,
+  //           MediaQuery.of(context).size.height * 0.75)),
+  //       shape: const RoundedRectangleBorder(
+  //           borderRadius: BorderRadius.only(
+  //             topLeft: Radius.circular(20),
+  //             topRight: Radius.circular(20),
+  //           )),
+  //       context: context,
+  //       builder: (BuildContext context) {
+  //         return Column(
+  //           children: <Widget>[
+  //             const Padding(
+  //               padding: EdgeInsets.fromLTRB(5, 20, 5, 10),
+  //               child: Text(
+  //                 'Send message',
+  //                 style: TextStyle(
+  //                     fontSize: 24,
+  //                     fontWeight: FontWeight.w600,
+  //                     letterSpacing: 1.0),
+  //               ),
+  //             ),
+  //             SingleChildScrollView(
+  //               physics: const BouncingScrollPhysics(),
+  //               child: Column(
+  //                 crossAxisAlignment: CrossAxisAlignment.start,
+  //                 children: <Widget>[
+  //                   SizedBox(
+  //                     height: MediaQuery.of(context).size.height * 0.65,
+  //                     child: SingleChildScrollView(
+  //                       child: Column(
+  //                         mainAxisAlignment: MainAxisAlignment.start,
+  //                         children: <Widget>[
+  //                           const Padding(
+  //                               padding: EdgeInsets.fromLTRB(0, 10, 0, 10)),
+  //                           Container(
+  //                             width: 340,
+  //                             margin: const EdgeInsets.fromLTRB(0, 10, 0, 15),
+  //                             child: StreamBuilder(
+  //                               stream: questionControl,
+  //                               builder: (context, snapshot) => TextField(
+  //                                 controller: _questionController,
+  //                                 maxLines: 50,
+  //                                 minLines: 10,
+  //                                 maxLength: 3000,
+  //                                 decoration: InputDecoration(
+  //                                     hintMaxLines: 5,
+  //                                     helperMaxLines: 5,
+  //                                     labelText: "Send message",
+  //                                     hintText: 'Insert message',
+  //                                     enabledBorder: OutlineInputBorder(
+  //                                       borderRadius:
+  //                                       BorderRadius.circular(10),
+  //                                       borderSide: const BorderSide(
+  //                                         color: Colors.blueAccent,
+  //                                         width: 1,
+  //                                       ),
+  //                                     ),
+  //                                     focusedBorder: OutlineInputBorder(
+  //                                         borderRadius:
+  //                                         BorderRadius.circular(10),
+  //                                         borderSide: const BorderSide(
+  //                                             color: Colors.blue,
+  //                                             width: 4))),
+  //                               ),
+  //                             ),
+  //                           ),
+  //                           IconButton(
+  //                               onPressed: () {
+  //                                 importPdf();
+  //                               },
+  //                               icon: const Icon(AppIcons.file_pdf)),
+  //                           Container(
+  //                             padding: const EdgeInsets.all(10),
+  //                             child: Row(
+  //                               mainAxisAlignment:
+  //                               MainAxisAlignment.spaceAround,
+  //                               children: <Widget>[
+  //                                 Expanded(
+  //                                   child: ElevatedButton.icon(
+  //                                     onPressed: () {
+  //                                       _onSendQuestionClicked();
+  //                                     },
+  //                                     label: const Text(
+  //                                       'Send',
+  //                                       style: TextStyle(
+  //                                           fontSize: 16,
+  //                                           color: Colors.white),
+  //                                     ),
+  //                                     icon: const Icon(Icons.send_rounded),
+  //                                     style: ElevatedButton.styleFrom(
+  //                                         primary: Colors.blueAccent),
+  //                                   ),
+  //                                 ),
+  //                                 const Padding(padding: EdgeInsets.all(10)),
+  //                                 Expanded(
+  //                                     child: ElevatedButton.icon(
+  //                                       onPressed: () =>
+  //                                       {Navigator.pop(context)},
+  //                                       label: const Text(
+  //                                         'Cancel',
+  //                                         style: TextStyle(
+  //                                             fontSize: 16,
+  //                                             color: Colors.white),
+  //                                       ),
+  //                                       icon: const Icon(Icons.cancel_presentation),
+  //                                       style: ElevatedButton.styleFrom(
+  //                                           primary: Colors.blueAccent),
+  //                                     )),
+  //                                 const Padding(
+  //                                     padding: EdgeInsets.fromLTRB(
+  //                                         0, 10, 0, 30)),
+  //                               ],
+  //                             ),
+  //                           )
+  //                         ],
+  //                       ),
+  //                     ),
+  //                   ),
+  //                 ],
+  //               ),
+  //             ),
+  //           ],
+  //         );
+  //       });
+  // }
 
   late PlatformFile file;
   bool hadFile = false;
@@ -651,10 +651,9 @@ class _DetailQuestionState extends State<DetailQuestion> {
     String timeString = DateFormat('dd-MM-yyyy HH:mm:ss').format(time);
     await uploadPdf();
     if (isvalid) {
-      LoadingDialog.showLoadingDialog(context, "Loading...");
       sendQuestion(timeString, pdfUrl, _questionController.text, widget.chatRoom.id, () {
         LoadingDialog.hideLoadingDialog(context);
-        Navigator.push(
+        Navigator.pushReplacement(
             context, MaterialPageRoute(builder: (context) => DetailQuestion(chatRoom: widget.chatRoom)));
       });
     }
@@ -677,63 +676,151 @@ class _DetailQuestionState extends State<DetailQuestion> {
     });
   }
 
-  Widget _getFAB() {
-    return SpeedDial(
-      animatedIcon: AnimatedIcons.menu_close,
-      animatedIconTheme: const IconThemeData(size: 22),
-      backgroundColor: Colors.blue,
-      visible: true,
-      curve: Curves.bounceIn,
-      children: [
-        // FAB 1
-        SpeedDialChild(
-            child: const Icon(Icons.send),
-            backgroundColor: Colors.blue,
-            onTap: () {
-              _modalBottomSheetAddQuestion();
-            },
-            label: 'Đặt câu hỏi',
-            labelStyle: const TextStyle(
-                fontWeight: FontWeight.w500,
-                color: Colors.white,
-                fontSize: 16.0),
-            labelBackgroundColor: Colors.blueAccent),
-      ],
-    );
-  }
+  // Widget _getFAB() {
+  //   return SpeedDial(
+  //     animatedIcon: AnimatedIcons.menu_close,
+  //     animatedIconTheme: const IconThemeData(size: 22),
+  //     backgroundColor: Colors.blue,
+  //     visible: true,
+  //     curve: Curves.bounceIn,
+  //     children: [
+  //       // FAB 1
+  //       SpeedDialChild(
+  //           child: const Icon(Icons.send),
+  //           backgroundColor: Colors.blue,
+  //           onTap: () {
+  //             _modalBottomSheetAddQuestion();
+  //           },
+  //           label: 'Send message',
+  //           labelStyle: const TextStyle(
+  //               fontWeight: FontWeight.w500,
+  //               color: Colors.white,
+  //               fontSize: 16.0),
+  //           labelBackgroundColor: Colors.blueAccent),
+  //     ],
+  //   );
+  // }
 
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("Chi tiết câu hỏi"),
-        backgroundColor: Colors.blueAccent,
-      ),
-      floatingActionButton: (current_user.uid == widget.chatRoom.user_id)? _getFAB():null,
-      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-      body: SafeArea(
-        minimum: const EdgeInsets.only(left: 20, right: 10),
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
+    return GestureDetector(
+      onTap: (){
+        WidgetsBinding.instance.focusManager.primaryFocus?.unfocus();
+      },
+      child: Scaffold(
+        resizeToAvoidBottomInset: false,
+
+        appBar: AppBar(
+          title: const Text('Message'),
+          backgroundColor: Colors.blueAccent,
+        ),
+        // floatingActionButton: (current_user.uid == widget.chatRoom.user_id)? _getFAB():null,
+        // floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+        body: SafeArea(
+          child:
+          Column(
             crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
             children: <Widget>[
-              //Text("chi tiet cau hoi"),
-              //Text(widget.question.title),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  const Padding(padding: EdgeInsets.fromLTRB(0, 10, 0, 10)),
-                  _buildMessage(),
-                ],
+              const Padding(padding: EdgeInsets.fromLTRB(0, 5, 0, 10)),
+              Container(
+                height: 505,
+                margin: const EdgeInsets.fromLTRB(5, 0, 5, 0),
+                width: double.maxFinite,
+                child: SingleChildScrollView(
+                  child: _buildMessage(),
+                ),
+              ),
+              SingleChildScrollView(
+                reverse: true,
+                child: Column(
+                  children: [
+
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Container(
+                          width: 250,
+                          margin: const EdgeInsets.fromLTRB(0, 10, 0, 10),
+                          child: StreamBuilder(
+                            stream: questionControl,
+                            builder: (context, snapshot) => TextField(
+                              controller: _questionController,
+                              maxLines: 10,
+                              minLines: 1,
+                              maxLength: 3000,
+                              decoration: InputDecoration(
+                                  hintMaxLines: 5,
+                                  helperMaxLines: 5,
+                                  labelText: "Send message",
+                                  hintText: 'Insert message',
+                                  errorText: snapshot.hasError? snapshot.error.toString() : null,
+                                  enabledBorder: OutlineInputBorder(
+                                    borderRadius:
+                                    BorderRadius.circular(10),
+                                    borderSide: const BorderSide(
+                                      color: Colors.blueAccent,
+                                      width: 1,
+                                    ),
+                                  ),
+                                  focusedBorder: OutlineInputBorder(
+                                      borderRadius:
+                                      BorderRadius.circular(10),
+                                      borderSide: const BorderSide(
+                                          color: Colors.blue,
+                                          width: 3))),
+                            ),
+                          ),
+                        ),
+                        Padding(padding: const EdgeInsets.fromLTRB(0, 0, 2, 0),
+                          child: IconButton(
+                            onPressed: (){
+                              importPdf();
+                            },
+                            icon: const Icon(AppIcons.file_pdf,
+                              size: 20,
+                              color: Colors.redAccent,),
+                          ),),
+                        Padding(padding: const EdgeInsets.fromLTRB(0, 0, 2, 0),
+                          child: IconButton(
+                            onPressed: (){
+                              try{
+                                if( _onSendQuestionClicked()){
+                                  setState(() {
+                                    _questionController.text = '';
+                                  });
+                                }else{
+                                  showErrorMessage('Send message fail, check your internet connection');
+                                }
+                              }catch(e){
+                                //
+                              }
+                            },
+                            icon: const Icon(Icons.send_sharp,
+                              size: 25,
+                              color: Colors.blueAccent,),
+                          ),)
+                      ],
+                    ),
+
+                  ],
+                ),
               ),
             ],
           ),
         ),
+
       ),
     );
+  }
+  void showErrorMessage(String message) {
+    final snackBar = SnackBar(content: Text(message,
+      style: const TextStyle(color: Colors.white),
+    ),backgroundColor: Colors.red,
+    );
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 }

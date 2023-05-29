@@ -123,6 +123,7 @@ class _HomePageState extends State<HomePageLeader> {
     String timeString = DateFormat('dd-MM-yyyy HH:mm:ss').format(time);
     await uploadImage();
     if (isValidContentT) {
+      if (!mounted) return;
       LoadingDialog.showLoadingDialog(context, "loading...");
       createNewPost(
           employeeModel.id, _infoPostController.text, timeString, imgUrl, () {
@@ -685,7 +686,8 @@ class _HomePageState extends State<HomePageLeader> {
                       SharedPreferences prefs = await SharedPreferences.getInstance();
                       await prefs.setString("id", "");
                       await FirebaseAuth.instance.signOut();
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => const LoginScreen()));
+                      if (!mounted) return;
+                      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const LoginScreen()));
 
                     },
                     child: SizedBox(

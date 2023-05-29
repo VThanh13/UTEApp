@@ -129,7 +129,7 @@ class _HomePageState extends State<HomePageAdmin> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (BuildContext context) => AboutUniversity(),
+                          builder: (BuildContext context) => const AboutUniversity(),
                         ),
                       );
                     },
@@ -144,7 +144,7 @@ class _HomePageState extends State<HomePageAdmin> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (BuildContext context) => AdmissionHistory(),
+                          builder: (BuildContext context) => const AdmissionHistory(),
                         ),
                       );
                     },
@@ -159,7 +159,7 @@ class _HomePageState extends State<HomePageAdmin> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (BuildContext context) => MyFile(),
+                          builder: (BuildContext context) => const MyFile(),
                         ),
                       );
                     },
@@ -174,6 +174,7 @@ class _HomePageState extends State<HomePageAdmin> {
                       SharedPreferences prefs = await SharedPreferences.getInstance();
                       await prefs.setString("id", "");
                       await FirebaseAuth.instance.signOut();
+                      if (!mounted) return;
                       Navigator.push(
                         context,
                         MaterialPageRoute(

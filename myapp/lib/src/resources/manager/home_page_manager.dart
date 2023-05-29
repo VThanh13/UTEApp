@@ -598,7 +598,8 @@ class _HomePageState extends State<HomePageManager> {
                       SharedPreferences prefs = await SharedPreferences.getInstance();
                       await prefs.setString("id", "");
                       await FirebaseAuth.instance.signOut();
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => const LoginScreen()));
+                      if (!mounted) return;
+                      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const LoginScreen()));
 
                     },
                     child: SizedBox(

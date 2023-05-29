@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:myapp/src/resources/forgot_password.dart';
 import '../blocs/auth_bloc.dart';
 import 'dialog/loading_dialog.dart';
 import 'dialog/msg_dialog.dart';
@@ -104,7 +105,9 @@ class _SearchScreenState extends State<LoginScreen> {
                     child: Material(
                       color: Colors.transparent,
                       child: InkWell(
-                        onTap: () {},
+                        onTap: () {
+                           Navigator.push(context, MaterialPageRoute(builder: (context) => const ForgotPasswordForm()));
+                        },
                         child: Text(
                           "Forgot Password?",
                           style: TextStyle(
@@ -117,7 +120,7 @@ class _SearchScreenState extends State<LoginScreen> {
                     )),
               ),
               const SizedBox(
-                height: 10.0,
+                height: 20.0,
               ),
               SizedBox(
                 height: 55.0,
@@ -349,6 +352,7 @@ class _SearchScreenState extends State<LoginScreen> {
         authBloc.isValidLogin(_emailController.text, _pwdController.text);
     if (isValid) {
       SharedPreferences prefs = await SharedPreferences.getInstance();
+      if (!mounted) return;
       LoadingDialog.showLoadingDialog(context, "loading...");
       authBloc.signIn(_emailController.text, _pwdController.text, () async {
         var userr = FirebaseAuth.instance.currentUser!;
@@ -360,7 +364,7 @@ class _SearchScreenState extends State<LoginScreen> {
           if (snapshot.exists) {
             await prefs.setString("id", userr.uid);
             await prefs.setString("roles", 'user');
-
+            if (!mounted) return;
             LoadingDialog.hideLoadingDialog(context);
             Navigator.push(
                 context, MaterialPageRoute(builder: (context) => const HomePage()));
@@ -376,14 +380,17 @@ class _SearchScreenState extends State<LoginScreen> {
             await prefs.setString("roles", snapshot.get('roles'));
 
             if (snapshot.get('roles') == "Tư vấn viên") {
+              if (!mounted) return;
               LoadingDialog.hideLoadingDialog(context);
               Navigator.push(context,
                   MaterialPageRoute(builder: (context) => const HomePageEmployee()));
             } else if (snapshot.get('roles') == "Trưởng nhóm") {
+              if (!mounted) return;
               LoadingDialog.hideLoadingDialog(context);
               Navigator.push(context,
                   MaterialPageRoute(builder: (context) => const HomePageLeader()));
             } else if (snapshot.get('roles') == "Manager") {
+              if (!mounted) return;
               LoadingDialog.hideLoadingDialog(context);
               Navigator.push(context,
                   MaterialPageRoute(builder: (context) => const HomePageManager()));
@@ -392,7 +399,7 @@ class _SearchScreenState extends State<LoginScreen> {
         });
       }, (msg) {
         LoadingDialog.hideLoadingDialog(context);
-        MsgDialog.showMsgDialog(context, "Sign-In", msg);
+        MsgDialog.showMsgDialog(context, "Sign In failed", msg);
       });
     }
   }

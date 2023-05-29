@@ -123,15 +123,16 @@ class _HomePageState extends State<HomePage> {
     String timeString = DateFormat('dd-MM-yyyy HH:mm:ss').format(time);
     await uploadPdf();
     if (isvalid) {
+      if (!mounted) return;
       LoadingDialog.showLoadingDialog(context, "loading...");
       createChatRoom(
           current_user.id,
-          "Thắc mắc bài đăng ngày " + post.time,
+          "Post ${post.content}",
           timeString,
           "Chưa trả lời",
           _informationController.text,
           post.employee.departmentId,
-          "",
+          post.employee.category,
           current_user.group,
           "public",
               () {});
@@ -395,6 +396,7 @@ class _HomePageState extends State<HomePage> {
           topRight: Radius.circular(20),
         )),
         context: context,
+
         builder: (BuildContext contetxt) {
           return StatefulBuilder(
               builder: (BuildContext context, StateSetter setStateKhoa) {
@@ -405,187 +407,186 @@ class _HomePageState extends State<HomePage> {
               child: SizedBox(
                 height: 600,
                 child: SingleChildScrollView(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: <Widget>[
-                      const Padding(padding: EdgeInsets.fromLTRB(0, 20, 0, 0)),
-                      const Text(
-                        "You have question for this post",
-                        textAlign: TextAlign.center,
-                        style:
-                        TextStyle(fontSize: 17, fontWeight: FontWeight.w600),
-                      ),
-                      const Padding(padding: EdgeInsets.fromLTRB(0, 10, 0, 0)),
-                      // Container(
-                      //   margin: const EdgeInsets.fromLTRB(0, 10, 0, 15),
-                      //   width: 340,
-                      //   padding:
-                      //   const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                      //   decoration: BoxDecoration(
-                      //       borderRadius: BorderRadius.circular(12),
-                      //       border: Border.all(
-                      //         color: Colors.blueAccent,
-                      //         width: 4,
-                      //       )),
-                      //   child: DropdownButtonHideUnderline(
-                      //     child: DropdownButton<String>(
-                      //       isExpanded: true,
-                      //       value: value_doituong,
-                      //       hint: const Text("Pl"),
-                      //       iconSize: 36,
-                      //       items: item_doituong.map(buildMenuItem).toList(),
-                      //       onChanged: (value) {
-                      //         setStateKhoa(() {
-                      //           setState(() {
-                      //             value_doituong = value;
-                      //           });
-                      //         });
-                      //       },
-                      //     ),
-                      //   ),
-                      // ),
-                      Container(
-                        margin: const EdgeInsets.fromLTRB(20, 20, 20, 15),
-                        width: double.infinity,
-                        child: StreamBuilder(
-                          stream: informationControl,
-                          builder: (context, snapshot) => TextField(
-                            controller: _informationController,
-                            decoration: InputDecoration(
-                                labelText: "Contact method",
-                                hintText: 'Insert your Email/Phone',
-                                errorText: snapshot.hasError? snapshot.error.toString() : null,
-                                enabledBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(10),
-                                    borderSide: const BorderSide(
-                                      color: Colors.blueAccent,
-                                      width: 1,
-                                    )),
-                                focusedBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(10),
-                                    borderSide: const BorderSide(
-                                        color: Colors.blue, width: 4))),
-                          ),
+                  child: Padding(
+                    padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        const Padding(padding: EdgeInsets.fromLTRB(0, 20, 0, 0)),
+                        const Text(
+                          "You have question for this post",
+                          textAlign: TextAlign.center,
+                          style:
+                          TextStyle(fontSize: 17, fontWeight: FontWeight.w600),
                         ),
-                      ),
-                      Container(
-                        width: double.infinity,
-                        margin: const EdgeInsets.fromLTRB(20, 20, 20, 15),
-                        child: StreamBuilder(
-                          stream: questionControl,
-                          builder: (context, snapshot) => TextField(
-                            controller: _questionController,
-                            maxLines: 50,
-                            minLines: 7,
-                            maxLength: 3000,
-                            decoration: InputDecoration(
-                                hintMaxLines: 5,
-                                helperMaxLines: 5,
-                                errorText: snapshot.hasError? snapshot.error.toString() : null,
-                                labelText: "Send question",
-                                hintText: 'Insert your question',
-                                enabledBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(10),
-                                    borderSide: const BorderSide(
-                                      color: Colors.blueAccent,
-                                      width: 1,
-                                    )),
-                                focusedBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(10),
-                                    borderSide: const BorderSide(
-                                        color: Colors.blue, width: 4))),
-                          ),
-                        ),
-                      ),
-                      InkWell(
-                        child: Container(
-                          height: 70,
-                          margin: const EdgeInsets.fromLTRB(100, 0, 110, 0),
+                        const Padding(padding: EdgeInsets.fromLTRB(0, 10, 0, 0)),
+                        // Container(
+                        //   margin: const EdgeInsets.fromLTRB(0, 10, 0, 15),
+                        //   width: 340,
+                        //   padding:
+                        //   const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                        //   decoration: BoxDecoration(
+                        //       borderRadius: BorderRadius.circular(12),
+                        //       border: Border.all(
+                        //         color: Colors.blueAccent,
+                        //         width: 4,
+                        //       )),
+                        //   child: DropdownButtonHideUnderline(
+                        //     child: DropdownButton<String>(
+                        //       isExpanded: true,
+                        //       value: value_doituong,
+                        //       hint: const Text("Pl"),
+                        //       iconSize: 36,
+                        //       items: item_doituong.map(buildMenuItem).toList(),
+                        //       onChanged: (value) {
+                        //         setStateKhoa(() {
+                        //           setState(() {
+                        //             value_doituong = value;
+                        //           });
+                        //         });
+                        //       },
+                        //     ),
+                        //   ),
+                        // ),
+                        Container(
+                          margin: const EdgeInsets.fromLTRB(20, 20, 20, 15),
                           width: double.infinity,
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            children: const [
-                              Padding(padding: EdgeInsets.fromLTRB(25, 5, 0, 5),
-                                child: Icon(AppIcons.file_pdf,
-                                  color: Colors.red,),
-                              ),
-                              Padding(padding: EdgeInsets.fromLTRB(0, 5, 5, 5),
-                                child: Text('Attached files',
-                                  style: TextStyle(
-                                      fontSize: 14,
-                                      fontStyle: FontStyle.italic,
-                                      color: Colors.grey
-                                  ),),)
-                            ],
+                          child: StreamBuilder(
+                            stream: informationControl,
+                            builder: (context, snapshot) => TextField(
+                              controller: _informationController,
+                              decoration: InputDecoration(
+                                  labelText: "Contact method",
+                                  hintText: 'Insert your Email/Phone',
+                                  errorText: snapshot.hasError? snapshot.error.toString() : null,
+                                  enabledBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(10),
+                                      borderSide: const BorderSide(
+                                        color: Colors.blueAccent,
+                                        width: 1,
+                                      )),
+                                  focusedBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(10),
+                                      borderSide: const BorderSide(
+                                          color: Colors.blue, width: 4))),
+                            ),
                           ),
                         ),
-                        onTap: (){
-                          importPdf();
-                        },
-                      ),
-                      Container(
-                        padding: const EdgeInsets.all(10),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          children: <Widget>[
-                            Expanded(
-                              child: ElevatedButton.icon(
-                                onPressed: () {
-                                  //_onSendQuestionClicked(post);
-                                  try{
-                                    if(_onSendQuestionClicked(post)){
-                                      setState(() {
-                                        _informationController.text = '';
-                                        _questionController.text = '';
-                                      });
-                                    }else{
-                                      setState(() {
-                                        _informationController.text = '';
-                                        _questionController.text = '';
-                                      });
-                                      Navigator.pop(context);
-                                      showErrorMessage('Send question failed');
-                                    }
-
-                                  }catch(e){
-                                    // setState(() {
-                                    //   _informationController.text = '';
-                                    //   _questionController.text = '';
-                                    // });
-                                    // Navigator.pop(context);
-                                    // showErrorMessage('Send question failed');
-                                  }
-                                },
-                                label: const Text(
-                                  'Send',
-                                  style: TextStyle(
-                                      fontSize: 16, color: Colors.white),
-                                ),
-                                icon: const Icon(Icons.mail_outline_rounded),
-                                style: ElevatedButton.styleFrom(
-                                    primary: Colors.blueAccent),
-                              ),
+                        Container(
+                          width: double.infinity,
+                          margin: const EdgeInsets.fromLTRB(20, 20, 20, 15),
+                          child: StreamBuilder(
+                            stream: questionControl,
+                            builder: (context, snapshot) => TextField(
+                              controller: _questionController,
+                              maxLines: 50,
+                              minLines: 7,
+                              maxLength: 3000,
+                              decoration: InputDecoration(
+                                  hintMaxLines: 5,
+                                  helperMaxLines: 5,
+                                  errorText: snapshot.hasError? snapshot.error.toString() : null,
+                                  labelText: "Send question",
+                                  hintText: 'Insert your question',
+                                  enabledBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(10),
+                                      borderSide: const BorderSide(
+                                        color: Colors.blueAccent,
+                                        width: 1,
+                                      )),
+                                  focusedBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(10),
+                                      borderSide: const BorderSide(
+                                          color: Colors.blue, width: 4))),
                             ),
-                            const Padding(padding: EdgeInsets.all(10)),
-                            Expanded(
+                          ),
+                        ),
+                        InkWell(
+                          child: Container(
+                            height: 70,
+                            margin: const EdgeInsets.fromLTRB(100, 0, 110, 0),
+                            width: double.infinity,
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              children: const [
+                                Padding(padding: EdgeInsets.fromLTRB(25, 5, 0, 5),
+                                  child: Icon(AppIcons.file_pdf,
+                                    color: Colors.red,),
+                                ),
+                                Padding(padding: EdgeInsets.fromLTRB(0, 5, 5, 5),
+                                  child: Text('Attached files',
+                                    style: TextStyle(
+                                        fontSize: 14,
+                                        fontStyle: FontStyle.italic,
+                                        color: Colors.grey
+                                    ),),)
+                              ],
+                            ),
+                          ),
+                          onTap: (){
+                            importPdf();
+                          },
+                        ),
+                        Container(
+                          padding: const EdgeInsets.all(10),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: <Widget>[
+                              Expanded(
                                 child: ElevatedButton.icon(
-                                  onPressed: () => {},
+                                  onPressed: () {
+                                    //_onSendQuestionClicked(post);
+                                    try{
+                                      if(_onSendQuestionClicked(post)){
+                                        setState(() {
+                                          _informationController.text = '';
+                                          _questionController.text = '';
+                                        });
+                                      }else{
+                                        setState(() {
+                                          _informationController.text = '';
+                                          _questionController.text = '';
+                                        });
+                                        Navigator.pop(context);
+                                        showErrorMessage('Send question failed');
+                                      }
+
+                                    }catch(e){
+                                    //
+                                    }
+                                  },
                                   label: const Text(
-                                    'Cancel',
-                                    style:
-                                    TextStyle(fontSize: 16, color: Colors.white),
+                                    'Send',
+                                    style: TextStyle(
+                                        fontSize: 16, color: Colors.white),
                                   ),
-                                  icon: const Icon(Icons.cancel_presentation),
+                                  icon: const Icon(Icons.mail_outline_rounded),
                                   style: ElevatedButton.styleFrom(
                                       primary: Colors.blueAccent),
-                                )),
-                            const Padding(
-                                padding: EdgeInsets.fromLTRB(0, 10, 0, 30)),
-                          ],
-                        ),
-                      )
-                    ],
+                                ),
+                              ),
+                              const Padding(padding: EdgeInsets.all(10)),
+                              Expanded(
+                                  child: ElevatedButton.icon(
+                                    onPressed: () => {},
+                                    label: const Text(
+                                      'Cancel',
+                                      style:
+                                      TextStyle(fontSize: 16, color: Colors.white),
+                                    ),
+                                    icon: const Icon(Icons.cancel_presentation),
+                                    style: ElevatedButton.styleFrom(
+                                        primary: Colors.blueAccent),
+                                  )),
+                              const Padding(
+                                  padding: EdgeInsets.fromLTRB(0, 10, 0, 30)),
+                            ],
+                          ),
+                        )
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -613,7 +614,7 @@ class _HomePageState extends State<HomePage> {
     if (had_file) {
       File fileForFirebase = File(file.path!);
       FirebaseStorage storage = FirebaseStorage.instance;
-      Reference ref = storage.ref().child("pdf/" + file.name);
+      Reference ref = storage.ref().child("pdf/${file.name}");
       UploadTask uploadTask = ref.putFile(fileForFirebase);
       await uploadTask.whenComplete(() async {
         var url = await ref.getDownloadURL();
@@ -725,7 +726,7 @@ class _HomePageState extends State<HomePage> {
                 children: <Widget>[
                   UserAccountsDrawerHeader(
                     accountName: Text(
-                        current_user.name != null ? current_user.name : 'abc'),
+                        current_user.name ?? 'abc'),
                     accountEmail: Text(current_user.email),
                     arrowColor: Colors.redAccent,
                     currentAccountPicture: CircleAvatar(
@@ -890,7 +891,8 @@ class _HomePageState extends State<HomePage> {
                           await SharedPreferences.getInstance();
                       await prefs.setString("id", "");
                       await FirebaseAuth.instance.signOut();
-                      Navigator.push(
+                      if (!mounted) return;
+                      Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
                               builder: (context) => const LoginScreen()));

@@ -1,20 +1,14 @@
-import 'dart:async';
 import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
 import 'package:intl/intl.dart';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:myapp/icons/app_icons_icons.dart';
-import 'package:myapp/src/models/QuestionModel.dart';
 import 'package:myapp/src/resources/employee/home_page_employee.dart';
 import 'package:myapp/src/resources/manager/home_page_manager.dart';
-import '../user/detail_question.dart';
 
 import '../../models/ChatRoomModel.dart';
 import '../../models/EmployeeModel.dart';
-import '../../models/UserModel.dart';
-import '../dialog/loading_dialog.dart';
 import '../leader/home_page_leader.dart';
 import 'detail_question_employee.dart';
 
@@ -27,7 +21,7 @@ class _MessengerPageState extends State<MessengerPageEmployee> {
   FirebaseAuth auth = FirebaseAuth.instance;
   var user_auth = FirebaseAuth.instance.currentUser!;
   EmployeeModel employeeModel =
-      new EmployeeModel("", " ", "", "", "", "", "", "", "", "");
+      EmployeeModel("", " ", "", "", "", "", "", "", "", "");
   EmployeeModel current_employee =
       EmployeeModel("", "", "", "", "", "", "", "", "", "");
   @override
@@ -157,6 +151,7 @@ class _MessengerPageState extends State<MessengerPageEmployee> {
       });
   }
 
+  @override
   void dispose() {
     super.dispose();
   }
@@ -167,41 +162,41 @@ class _MessengerPageState extends State<MessengerPageEmployee> {
         future: FirebaseFirestore.instance.collection("departments").get(),
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
-            return Center(
-              child: Container(
+            return const Center(
+              child: SizedBox(
                   width: 20, height: 20, child: CircularProgressIndicator()),
             );
           }
           // TODO: implement build
           return Scaffold(
-            appBar: new AppBar(
+            appBar: AppBar(
               leading: IconButton(
-                  icon: Icon(Icons.arrow_back, color: Colors.white),
+                  icon: const Icon(Icons.arrow_back, color: Colors.white),
                   onPressed: () {
                     if(current_employee.roles=="Tư vấn viên"){
                       Navigator.push(
                           context,
-                          new MaterialPageRoute(
+                          MaterialPageRoute(
                               builder: (BuildContext context) =>
-                              new HomePageEmployee()));
+                              const HomePageEmployee()));
                     }
                     else if(current_employee.roles=="Trưởng nhóm"){
                       Navigator.push(
                           context,
-                          new MaterialPageRoute(
+                          MaterialPageRoute(
                               builder: (BuildContext context) =>
-                              new HomePageLeader()));
+                              const HomePageLeader()));
                     }
                     else if(current_employee.roles=="Manager"){
                       Navigator.push(
                           context,
-                          new MaterialPageRoute(
+                          MaterialPageRoute(
                               builder: (BuildContext context) =>
-                              new HomePageManager()));
+                              const HomePageManager()));
                     }
                   }
               ),
-              title: const Text("Tin nhắn"),
+              title: const Text("Message"),
               backgroundColor: Colors.blueAccent,
             ),
             bottomNavigationBar: getFooter(),
@@ -211,7 +206,7 @@ class _MessengerPageState extends State<MessengerPageEmployee> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: <Widget>[
-                    Padding(
+                    const Padding(
                       padding: EdgeInsets.fromLTRB(0, 0, 0, 5),
                     ),
                     getQuestion(),
@@ -228,15 +223,16 @@ class _MessengerPageState extends State<MessengerPageEmployee> {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          Padding(
+          const Padding(
             padding: EdgeInsets.symmetric(horizontal: 20.0),
             child: Text(
-              'Câu hỏi của bạn | Chưa trả lời',
+              'Not answered',
               textAlign: TextAlign.center,
               style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w600,
-                  letterSpacing: 1.0),
+                  fontSize: 20,
+                  fontWeight: FontWeight.w500,
+                color: Colors.redAccent
+              ),
             ),
           ),
           _buildChatRoom(listUnanwsered)
@@ -247,15 +243,16 @@ class _MessengerPageState extends State<MessengerPageEmployee> {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          Padding(
+          const Padding(
             padding: EdgeInsets.symmetric(horizontal: 20.0),
             child: Text(
-              'Câu hỏi của bạn | Đã trả lời',
+              'Answered',
               textAlign: TextAlign.center,
               style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w600,
-                  letterSpacing: 1.0),
+                  fontSize: 20,
+                  fontWeight: FontWeight.w500,
+                color: Colors.green,
+              ),
             ),
           ),
           _buildChatRoom(listAnwsered)
@@ -266,15 +263,16 @@ class _MessengerPageState extends State<MessengerPageEmployee> {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          Padding(
+          const Padding(
             padding: EdgeInsets.symmetric(horizontal: 20.0),
             child: Text(
-              'Tất cả câu hỏi',
+              'All question',
               textAlign: TextAlign.right,
               style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w600,
-                  letterSpacing: 1.0),
+                  fontSize: 20,
+                  fontWeight: FontWeight.w500,
+                color: Colors.blueAccent
+                  ),
             ),
           ),
           _buildChatRoom(listPublicChatRoom)
@@ -327,11 +325,17 @@ class _MessengerPageState extends State<MessengerPageEmployee> {
                         const SizedBox(
                           height: 4.0,
                         ),
+                        Text('From: ${chatRoom.group}',
+                        style: const TextStyle(
+                          color: Colors.black
+                        ),
+                        ),
                         Text(
                           chatRoom.time,
                           style: const TextStyle(
-                            fontSize: 16.0,
-                            fontWeight: FontWeight.w600,
+                            fontSize: 14.0,
+                            fontWeight: FontWeight.w400,
+                            color: Colors.grey,
                           ),
                           overflow: TextOverflow.ellipsis,
                         ),

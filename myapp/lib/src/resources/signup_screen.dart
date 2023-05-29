@@ -92,6 +92,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
               child: Form(
                 key: _formKey,
                 child: Column(
+                  mainAxisSize: MainAxisSize.min,
                   children: [
                     const SizedBox(
                       height: 15.0,
@@ -112,7 +113,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     Padding(
                       padding: const EdgeInsets.only(left: 25.0, right: 25.0),
                       child: Material(
-                        elevation: 15.0,
+                        elevation: 3.0,
                         shadowColor: Colors.black,
                         borderRadius: BorderRadius.circular(15.0),
                         child: Padding(
@@ -178,8 +179,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     Padding(
                       padding: const EdgeInsets.only(left: 25.0, right: 25.0),
                       child: Material(
-                        elevation: 15.0,
-                        shadowColor: Colors.black,
+                        elevation: 3.0,
+
                         borderRadius: BorderRadius.circular(15.0),
                         child: Padding(
                           padding:
@@ -205,6 +206,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               validator: (val) {
                                 if (val!.isEmpty) {
                                   return 'Please insert your email';
+                                } else if(val.contains('@') == false){
+                                  return "Email not contain @";
                                 }
                                 return null;
                               }),
@@ -217,7 +220,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     Padding(
                       padding: const EdgeInsets.only(left: 25.0, right: 25.0),
                       child: Material(
-                        elevation: 15.0,
+                        elevation: 3.0,
                         shadowColor: Colors.black,
                         borderRadius: BorderRadius.circular(15.0),
                         child: Padding(
@@ -256,7 +259,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     Padding(
                       padding: const EdgeInsets.only(left: 25.0, right: 25.0),
                       child: Material(
-                        elevation: 15.0,
+                        elevation: 3.0,
                         shadowColor: Colors.black,
                         borderRadius: BorderRadius.circular(15.0),
                         child: Padding(
@@ -284,7 +287,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                 if (val!.isEmpty) {
                                   return 'Please insert your password';
                                 } else if (val.length < 6) {
-                                  return 'Password at least 5 characters';
+                                  return 'Password at least 6 characters';
                                 }
                                 return null;
                               }),
@@ -297,7 +300,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     Padding(
                       padding: const EdgeInsets.only(left: 25.0, right: 25.0),
                       child: Material(
-                        elevation: 15.0,
+                        elevation: 3.0,
                         shadowColor: Colors.black,
                         borderRadius: BorderRadius.circular(15.0),
                         child: Padding(
@@ -393,10 +396,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     Material(
                       child: InkWell(
                         onTap: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => const LoginScreen()));
+                          Navigator.pop(context);
                         },
                         child: Text(
                           "Sign in",
@@ -428,15 +428,18 @@ class _SignUpScreenState extends State<SignUpScreen> {
   _onSignUpClicked() {
     var isValid = authBloc.isValidSignUp(_nameController.text,
         _emailController.text, _passController.text, _phoneController.text);
-    LoadingDialog.showLoadingDialog(context, "loading...");
-    authBloc.signUp(_emailController.text, _passController.text,
-        _phoneController.text, _nameController.text, valueDoiTuong!, () {
-      LoadingDialog.hideLoadingDialog(context);
-      Navigator.push(
-          context, MaterialPageRoute(builder: (context) => const  HomePage()));
-    }, (msg) {
-      LoadingDialog.hideLoadingDialog(context);
-      MsgDialog.showMsgDialog(context, "Sign-In", msg);
-    });
+    if(isValid){
+      LoadingDialog.showLoadingDialog(context, "loading...");
+      authBloc.signUp(_emailController.text, _passController.text,
+          _phoneController.text, _nameController.text, valueDoiTuong!, () {
+            LoadingDialog.hideLoadingDialog(context);
+            Navigator.push(
+                context, MaterialPageRoute(builder: (context) => const  HomePage()));
+          }, (msg) {
+            LoadingDialog.hideLoadingDialog(context);
+            MsgDialog.showMsgDialog(context, "Sign Up failed", msg);
+          });
+    }
+
   }
 }

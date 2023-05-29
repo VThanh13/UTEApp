@@ -115,12 +115,12 @@ class _ViewEmployeeByUser extends State<ViewEmployeeByUser> {
 
   bool isValid(String information, String question) {
     if (information.isEmpty) {
-      _informationControl.sink.addError("Nhập thông tin liên lạc");
+      _informationControl.sink.addError("Insert your Email/Phone");
       return false;
     }
 
     if (question.isEmpty) {
-      _questionControl.sink.addError("Nhập câu hỏi");
+      _questionControl.sink.addError("Insert message");
       return false;
     }
     return true;
@@ -139,10 +139,11 @@ class _ViewEmployeeByUser extends State<ViewEmployeeByUser> {
     String timeString = DateFormat('dd-MM-yyyy HH:mm:ss').format(time);
     await uploadPdf();
     if (isvalid) {
+      if (!mounted) return;
       LoadingDialog.showLoadingDialog(context, "loading...");
       createChatRoom(
           current_user.id,
-          "Gửi thầy/cô " + widget.employee.name,
+          "Send ${widget.employee.name}",
           timeString,
           "Chưa trả lời",
           _informationController.text,
@@ -165,7 +166,7 @@ class _ViewEmployeeByUser extends State<ViewEmployeeByUser> {
       String category,
       String group,
       String mode,
-      Function onSucces) {
+      Function onSuccess) {
     var ref = FirebaseFirestore.instance.collection('chat_room');
     String id = ref.doc().id;
     ref.doc(id).set({
@@ -180,7 +181,7 @@ class _ViewEmployeeByUser extends State<ViewEmployeeByUser> {
       'category': category,
       'mode': mode,
     }).then((value) {
-      onSucces();
+      onSuccess();
       sendQuestion(time, pdfUrl, _questionController.text, id, () {
         LoadingDialog.hideLoadingDialog(context);
         Navigator.push(
@@ -225,7 +226,7 @@ class _ViewEmployeeByUser extends State<ViewEmployeeByUser> {
     if (hadFile) {
       File fileForFirebase = File(file.path!);
       FirebaseStorage storage = FirebaseStorage.instance;
-      Reference ref = storage.ref().child("pdf/" + file.name);
+      Reference ref = storage.ref().child("pdf/${file.name}");
       UploadTask uploadTask = ref.putFile(fileForFirebase);
       await uploadTask.whenComplete(() async {
         var url = await ref.getDownloadURL();
@@ -249,7 +250,7 @@ class _ViewEmployeeByUser extends State<ViewEmployeeByUser> {
               children: <Widget>[
                 Stack(
                   children: <Widget>[
-                    SizedBox(
+                    const SizedBox(
                       height: 300,
                       width: double.infinity,
                     ),
@@ -395,6 +396,7 @@ class _ViewEmployeeByUser extends State<ViewEmployeeByUser> {
                                                             labelText: "Contact method",
                                                             hintText:
                                                             'Insert your Email/Phone',
+                                                            errorText: snapshot.hasError? snapshot.error.toString() : null,
                                                             enabledBorder: OutlineInputBorder(
                                                                 borderRadius:
                                                                 BorderRadius.circular(10),
@@ -431,6 +433,7 @@ class _ViewEmployeeByUser extends State<ViewEmployeeByUser> {
                                                             helperMaxLines: 5,
                                                             labelText: "Send question",
                                                             hintText: 'Insert your question',
+                                                            errorText: snapshot.hasError? snapshot.error.toString() : null,
                                                             enabledBorder: OutlineInputBorder(
                                                                 borderRadius:
                                                                 BorderRadius.circular(10),

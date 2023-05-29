@@ -264,8 +264,11 @@ class _DetailQuestionState extends State<DetailQuestionEmployee> {
     }
     return Column(children: messageList);
   }
+  String name = '';
+
 
   _buildQues(Question question) {
+    name = question.user.name;
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -285,15 +288,41 @@ class _DetailQuestionState extends State<DetailQuestionEmployee> {
           //mainAxisSize: MainAxisSize.min,
 
           children: <Widget>[
+            Row(
+              children: [
+                Text(
+                  '   ${question.user.name}',
+                  style: TextStyle(
+                    fontSize: 13,
+                    fontStyle: FontStyle.italic,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.grey[500],
+                  ),
+                ),
+                Text(
+                  ', ${question.time}',
+                  overflow: TextOverflow.visible,
+                  maxLines: 3,
+                  style: TextStyle(
+                      fontSize: 13,
+                      fontStyle: FontStyle.italic,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.grey[500],
+                      overflow:
+                      TextOverflow.visible),
+                ),
+              ],
+            ),
             SizedBox(
               width:
               MediaQuery.of(context).size.width - 75,
               child: Card(
                 margin: const EdgeInsets.all(5),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
+                shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.only(topRight: Radius.circular(10),
+                      bottomLeft: Radius.circular(10), bottomRight: Radius.circular(10)),
                 ),
-                color: Colors.grey,
+                color: Colors.grey[400],
                 elevation: 10,
                 child: Column(
                   mainAxisAlignment:
@@ -308,36 +337,6 @@ class _DetailQuestionState extends State<DetailQuestionEmployee> {
                       crossAxisAlignment:
                       CrossAxisAlignment.start,
                       children: const <Widget>[],
-                    ),
-                    Column(
-                      mainAxisAlignment:
-                      MainAxisAlignment.start,
-                      crossAxisAlignment:
-                      CrossAxisAlignment.start,
-                      children: <Widget>[
-                        const Padding(
-                            padding: EdgeInsets.fromLTRB(
-                                5, 5, 5, 5)),
-                        Text(
-                          '   ' + question.user.name,
-                          style: const TextStyle(
-                            fontSize: 15,
-                            fontStyle: FontStyle.italic,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                        Text(
-                          '   Lúc ' + question.time,
-                          overflow: TextOverflow.visible,
-                          maxLines: 3,
-                          style: const TextStyle(
-                              fontSize: 15,
-                              fontStyle: FontStyle.italic,
-                              fontWeight: FontWeight.w600,
-                              overflow:
-                              TextOverflow.visible),
-                        ),
-                      ],
                     ),
                     const Padding(
                         padding: EdgeInsets.fromLTRB(
@@ -358,9 +357,9 @@ class _DetailQuestionState extends State<DetailQuestionEmployee> {
                                 TextOverflow.visible,
                                 maxLines: 20,
                                 style: const TextStyle(
-                                    fontSize: 15,
+                                    fontSize: 16,
                                     fontWeight:
-                                    FontWeight.w400),
+                                    FontWeight.w500),
                               ),
                             )
                           ],
@@ -377,11 +376,12 @@ class _DetailQuestionState extends State<DetailQuestionEmployee> {
                                       final url =
                                           question.file;
                                       final file = await PDFApi.loadNetwork(url);
+                                      if (!mounted) return;
                                       openPDF(context, file);
                                     },
                                     icon: const Icon(AppIcons.file_pdf,
                                         color: Color(0xED0565B2)),),
-                                  const Text("File PDF đính kèm",
+                                  const Text("File PDF",
                                     overflow:
                                     TextOverflow.visible,
                                     style: TextStyle(
@@ -410,10 +410,13 @@ class _DetailQuestionState extends State<DetailQuestionEmployee> {
                     ),
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(8.0),
-                      child: Image.network(question.file),
+                      child: Image.network(question.file,
+                      fit: BoxFit.cover,),
+
                     ),
                   )
-              )
+              ),
+            const SizedBox(height: 10,),
           ],
         ),
       ],
@@ -429,13 +432,39 @@ class _DetailQuestionState extends State<DetailQuestionEmployee> {
           mainAxisAlignment: MainAxisAlignment.start,
           //mainAxisSize: MainAxisSize.min,
           children: <Widget>[
+            Row(
+              children: [
+                Text(
+                  '   ${answer.employee.name}',
+                  style: TextStyle(
+                    fontSize: 13,
+                    fontStyle: FontStyle.italic,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.grey[500],
+                  ),
+                ),
+                Text(
+                  ', ${answer.time}',
+                  overflow: TextOverflow.visible,
+                  maxLines: 3,
+                  style: TextStyle(
+                      fontSize: 13,
+                      fontStyle: FontStyle.italic,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.grey[500],
+                      overflow:
+                      TextOverflow.visible),
+                ),
+              ],
+            ),
             SizedBox(
               //width: MediaQuery.of(context).size.width -75,
               width: 285,
               child: Card(
                 margin: const EdgeInsets.all(5),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
+                shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.only(topLeft: Radius.circular(10),
+                  bottomRight: Radius.circular(10), bottomLeft: Radius.circular(10)),
                 ),
                 color: Colors.lightBlueAccent,
                 elevation: 10,
@@ -448,31 +477,6 @@ class _DetailQuestionState extends State<DetailQuestionEmployee> {
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: const <Widget>[],
-                    ),
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        const Padding(padding: EdgeInsets.fromLTRB(5, 5, 5, 5)),
-                        Text(
-                          '   ' + answer.employee.name,
-                          style: const TextStyle(
-                            fontSize: 15,
-                            fontStyle: FontStyle.italic,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                        Text(
-                          '   Lúc ' + answer.time,
-                          overflow: TextOverflow.visible,
-                          maxLines: 3,
-                          style: const TextStyle(
-                              fontSize: 15,
-                              fontStyle: FontStyle.italic,
-                              fontWeight: FontWeight.w600,
-                              overflow: TextOverflow.visible),
-                        ),
-                      ],
                     ),
                     const Padding(padding: EdgeInsets.fromLTRB(5, 5, 5, 5)),
                     Container(
@@ -497,6 +501,7 @@ class _DetailQuestionState extends State<DetailQuestionEmployee> {
                 ),
               ),
             ),
+            const SizedBox(height: 10,),
           ],
         ),
         CircleAvatar(
@@ -518,7 +523,7 @@ class _DetailQuestionState extends State<DetailQuestionEmployee> {
 
   bool isValid(String answer) {
     if (answer.isEmpty) {
-      _answerControl.sink.addError("Nhập câu trả lời");
+      _answerControl.sink.addError("Insert answers");
       return false;
     }
     return true;
@@ -539,7 +544,7 @@ class _DetailQuestionState extends State<DetailQuestionEmployee> {
             onTap: () {
               _modalBottomSheetAddAnswer();
             },
-            label: 'Gửi câu trả lời',
+            label: 'Send answer',
             labelStyle: const TextStyle(
                 fontWeight: FontWeight.w500,
                 color: Colors.white,
@@ -552,7 +557,7 @@ class _DetailQuestionState extends State<DetailQuestionEmployee> {
             onTap: () {
               _modalBottomSheetChange();
             },
-            label: 'Chuyển câu hỏi',
+            label: 'Move question',
             labelStyle: const TextStyle(
                 fontWeight: FontWeight.w500,
                 color: Colors.white,
@@ -577,146 +582,144 @@ class _DetailQuestionState extends State<DetailQuestionEmployee> {
         builder: (BuildContext context) {
           return StatefulBuilder(
               builder: (BuildContext context, StateSetter setStateKhoa) {
-                return Container(
-                  child: Column(
-                    children: <Widget>[
-                      const Padding(
-                        padding: EdgeInsets.fromLTRB(5, 20, 5, 10),
-                        child: Text(
-                          'Chuyển câu hỏi',
-                          style: TextStyle(
-                              fontSize: 24,
-                              fontWeight: FontWeight.w600,
-                              letterSpacing: 1.0),
-                        ),
+                return Column(
+                  children: <Widget>[
+                    const Padding(
+                      padding: EdgeInsets.fromLTRB(5, 20, 5, 10),
+                      child: Text(
+                        'Move question',
+                        style: TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.w600,
+                            letterSpacing: 1.0),
                       ),
-                      SingleChildScrollView(
-                        physics: const BouncingScrollPhysics(),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            SizedBox(
-                              height: MediaQuery.of(context).size.height * 0.45,
-                              child: SingleChildScrollView(
-                                  child: SizedBox(
-                                    height: 300,
-                                    child: Column(
-                                      mainAxisAlignment: MainAxisAlignment.start,
-                                      children: <Widget>[
-                                        const Padding(
-                                            padding: EdgeInsets.fromLTRB(0, 10, 0, 10)),
-                                        Container(
-                                            margin: const EdgeInsets.fromLTRB(0, 10, 0, 15),
-                                            width: 340,
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 12, vertical: 4),
-                                            decoration: BoxDecoration(
-                                              borderRadius: BorderRadius.circular(12),
-                                              border: Border.all(
-                                                  color: Colors.blueAccent, width: 4),
-                                            ),
-                                            child: DropdownButtonHideUnderline(
-                                              child: DropdownButton(
-                                                isExpanded: true,
-                                                value: valueKhoa,
-                                                hint: const Text("Vui lòng chọn đơn vị"),
-                                                iconSize: 36,
-                                                items: render(listDepartment),
-                                                onChanged: (value) async {
-                                                  final List<dynamic> listProblem =
-                                                  await getDataDropdownProblem(
-                                                      value);
-                                                  setStateKhoa(() {
-                                                    setState(() {
-                                                      valueVanDe = null;
-                                                      valueKhoa = value;
-                                                      listT = listProblem;
-                                                    });
+                    ),
+                    SingleChildScrollView(
+                      physics: const BouncingScrollPhysics(),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          SizedBox(
+                            height: MediaQuery.of(context).size.height * 0.45,
+                            child: SingleChildScrollView(
+                                child: SizedBox(
+                                  height: 300,
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: <Widget>[
+                                      const Padding(
+                                          padding: EdgeInsets.fromLTRB(0, 10, 0, 10)),
+                                      Container(
+                                          margin: const EdgeInsets.fromLTRB(0, 10, 0, 15),
+                                          width: 340,
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 12, vertical: 4),
+                                          decoration: BoxDecoration(
+                                            borderRadius: BorderRadius.circular(12),
+                                            border: Border.all(
+                                                color: Colors.blueAccent, width: 4),
+                                          ),
+                                          child: DropdownButtonHideUnderline(
+                                            child: DropdownButton(
+                                              isExpanded: true,
+                                              value: valueKhoa,
+                                              hint: const Text("Please choose department"),
+                                              iconSize: 36,
+                                              items: render(listDepartment),
+                                              onChanged: (value) async {
+                                                final List<dynamic> listProblem =
+                                                await getDataDropdownProblem(
+                                                    value);
+                                                setStateKhoa(() {
+                                                  setState(() {
+                                                    valueVanDe = null;
+                                                    valueKhoa = value;
+                                                    listT = listProblem;
                                                   });
-                                                },
-                                              ),
-                                            )),
-                                        Container(
-                                            margin: const EdgeInsets.fromLTRB(0, 10, 0, 15),
-                                            width: 340,
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 12, vertical: 4),
-                                            decoration: BoxDecoration(
-                                              borderRadius: BorderRadius.circular(12),
-                                              border: Border.all(
-                                                  color: Colors.blueAccent, width: 4),
+                                                });
+                                              },
                                             ),
-                                            child: DropdownButtonHideUnderline(
-                                              child: DropdownButton(
-                                                isExpanded: true,
-                                                value: valueVanDe,
-                                                hint: const Text("Vui lòng chọn vấn đề"),
-                                                iconSize: 36,
-                                                items: renderR(listT),
-                                                onChanged: (value) {
-                                                  setStateKhoa(() {
-                                                    setState(() {
-                                                      valueVanDe = value;
-                                                    });
+                                          )),
+                                      Container(
+                                          margin: const EdgeInsets.fromLTRB(0, 10, 0, 15),
+                                          width: 340,
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 12, vertical: 4),
+                                          decoration: BoxDecoration(
+                                            borderRadius: BorderRadius.circular(12),
+                                            border: Border.all(
+                                                color: Colors.blueAccent, width: 4),
+                                          ),
+                                          child: DropdownButtonHideUnderline(
+                                            child: DropdownButton(
+                                              isExpanded: true,
+                                              value: valueVanDe,
+                                              hint: const Text("Please choose category"),
+                                              iconSize: 36,
+                                              items: renderR(listT),
+                                              onChanged: (value) {
+                                                setStateKhoa(() {
+                                                  setState(() {
+                                                    valueVanDe = value;
                                                   });
+                                                });
+                                              },
+                                            ),
+                                          )),
+                                      Container(
+                                        padding: const EdgeInsets.all(10),
+                                        child: Row(
+                                          mainAxisAlignment:
+                                          MainAxisAlignment.spaceAround,
+                                          children: <Widget>[
+                                            Expanded(
+                                              child: ElevatedButton.icon(
+                                                onPressed: () {
+                                                  _onChangeQuestionClicked(
+                                                      widget.chatRoom.id);
                                                 },
+                                                label: const Text(
+                                                  'Save',
+                                                  style: TextStyle(
+                                                      fontSize: 16,
+                                                      color: Colors.white),
+                                                ),
+                                                icon: const Icon(Icons.save_outlined),
+                                                style: ElevatedButton.styleFrom(
+                                                    backgroundColor:
+                                                    Colors.blueAccent),
                                               ),
-                                            )),
-                                        Container(
-                                          padding: const EdgeInsets.all(10),
-                                          child: Row(
-                                            mainAxisAlignment:
-                                            MainAxisAlignment.spaceAround,
-                                            children: <Widget>[
-                                              Expanded(
+                                            ),
+                                            const Padding(padding: EdgeInsets.all(10)),
+                                            Expanded(
                                                 child: ElevatedButton.icon(
-                                                  onPressed: () {
-                                                    _onChangeQuestionClicked(
-                                                        widget.chatRoom.id);
-                                                  },
+                                                  onPressed: () =>
+                                                  {Navigator.pop(context)},
                                                   label: const Text(
-                                                    'Lưu',
+                                                    'Cancel',
                                                     style: TextStyle(
                                                         fontSize: 16,
                                                         color: Colors.white),
                                                   ),
-                                                  icon: const Icon(Icons.save_outlined),
+                                                  icon: const Icon(Icons.cancel_presentation),
                                                   style: ElevatedButton.styleFrom(
                                                       backgroundColor:
                                                       Colors.blueAccent),
-                                                ),
-                                              ),
-                                              const Padding(padding: EdgeInsets.all(10)),
-                                              Expanded(
-                                                  child: ElevatedButton.icon(
-                                                    onPressed: () =>
-                                                    {Navigator.pop(context)},
-                                                    label: const Text(
-                                                      'Thoát',
-                                                      style: TextStyle(
-                                                          fontSize: 16,
-                                                          color: Colors.white),
-                                                    ),
-                                                    icon: const Icon(Icons.cancel_presentation),
-                                                    style: ElevatedButton.styleFrom(
-                                                        backgroundColor:
-                                                        Colors.blueAccent),
-                                                  )),
-                                              const Padding(
-                                                  padding: EdgeInsets.fromLTRB(
-                                                      0, 10, 0, 30)),
-                                            ],
-                                          ),
-                                        )
-                                      ],
-                                    ),
-                                  )),
-                            ),
-                          ],
-                        ),
+                                                )),
+                                            const Padding(
+                                                padding: EdgeInsets.fromLTRB(
+                                                    0, 10, 0, 30)),
+                                          ],
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                )),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 );
               });
         });
@@ -742,7 +745,7 @@ class _DetailQuestionState extends State<DetailQuestionEmployee> {
                     const Padding(
                       padding: EdgeInsets.fromLTRB(5, 20, 5, 10),
                       child: Text(
-                        'Trả lời câu hỏi',
+                        'Answer question',
                         style: TextStyle(
                             fontSize: 24,
                             fontWeight: FontWeight.w600,
@@ -775,8 +778,8 @@ class _DetailQuestionState extends State<DetailQuestionEmployee> {
                                             decoration: InputDecoration(
                                                 hintMaxLines: 5,
                                                 helperMaxLines: 5,
-                                                labelText: "Trả lời câu hỏi",
-                                                hintText: 'Nhập nội dung câu trả lời',
+                                                labelText: "Answer question",
+                                                hintText: 'Insert answer',
                                                 enabledBorder: OutlineInputBorder(
                                                     borderRadius:
                                                     BorderRadius.circular(10),
@@ -802,11 +805,20 @@ class _DetailQuestionState extends State<DetailQuestionEmployee> {
                                             Expanded(
                                               child: ElevatedButton.icon(
                                                 onPressed: () {
-                                                  _onSendAnswerClicked();
-                                                  print('press save');
+                                                  try{
+                                                    if(_onSendAnswerClicked()){
+                                                      setState(() {
+                                                        _answerController.text = '';
+                                                      });
+                                                    }else{
+                                                      showErrorMessage('Send message fail, check your internet connection');
+                                                    }
+                                                  }catch(e){
+                                                    //
+                                                  }
                                                 },
                                                 label: const Text(
-                                                  'Gửi',
+                                                  'Send',
                                                   style: TextStyle(
                                                       fontSize: 16,
                                                       color: Colors.white),
@@ -822,7 +834,7 @@ class _DetailQuestionState extends State<DetailQuestionEmployee> {
                                                   onPressed: () =>
                                                   {Navigator.pop(context)},
                                                   label: const Text(
-                                                    'Hủy',
+                                                    'Cancel',
                                                     style: TextStyle(
                                                         fontSize: 16,
                                                         color: Colors.white),
@@ -955,7 +967,7 @@ class _DetailQuestionState extends State<DetailQuestionEmployee> {
     // TODO: implement build
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Chi tiết câu hỏi"),
+        title: Text(name),
         backgroundColor: Colors.blueAccent,
       ),
       floatingActionButton: ableToAnswer()? _getFAB():null,
@@ -967,8 +979,6 @@ class _DetailQuestionState extends State<DetailQuestionEmployee> {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              //Text("chi tiet cau hoi"),
-              //Text(widget.question.title),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.start,
@@ -983,5 +993,12 @@ class _DetailQuestionState extends State<DetailQuestionEmployee> {
         ),
       ),
     );
+  }
+  void showErrorMessage(String message) {
+    final snackBar = SnackBar(content: Text(message,
+      style: const TextStyle(color: Colors.white),
+    ),backgroundColor: Colors.red,
+    );
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 }

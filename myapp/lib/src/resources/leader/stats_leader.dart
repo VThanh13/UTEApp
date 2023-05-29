@@ -53,7 +53,7 @@ class ChartSampleData {
   /// Holds size of the datapoint
   final num? size;
 
-  /// Holds datalabel/text value mapper of the datapoint
+  /// Holds datatables/text value mapper of the datapoint
   final String? text;
 
   /// Holds open value of the datapoint
@@ -301,7 +301,7 @@ class _StatsPageState extends State<StatsLeaderPage> {
     return SfCircularChart(
       // Enables the tooltip for all the series in chart
         tooltipBehavior: _tooltipBehavior,
-        title: ChartTitle(text: 'Thống kê tư vấn viên'),
+        title: ChartTitle(text: 'Statistics consultant'),
       legend: Legend(isVisible: true),
       series: <CircularSeries>[
           // Initialize line series
@@ -323,7 +323,7 @@ class _StatsPageState extends State<StatsLeaderPage> {
       enableAxisAnimation: true,
       plotAreaBorderWidth: 0,
       title: ChartTitle(
-          text: 'Thống kê số câu hỏi từng lĩnh vực'),
+          text: 'Statistics of the number of questions in each field'),
       legend: Legend(
           isVisible: true, overflowMode: LegendItemOverflowMode.wrap),
       primaryXAxis: CategoryAxis(
@@ -345,12 +345,12 @@ class _StatsPageState extends State<StatsLeaderPage> {
           dataSource: chartData!,
           xValueMapper: (ChartSampleData sales, _) => sales.x as String,
           yValueMapper: (ChartSampleData sales, _) => sales.y,
-          name: 'Đã trả lời'),
+          name: 'Answered'),
       StackedColumnSeries<ChartSampleData, String>(
           dataSource: chartData!,
           xValueMapper: (ChartSampleData sales, _) => sales.x as String,
           yValueMapper: (ChartSampleData sales, _) => sales.yValue,
-          name: 'Chưa trả lời'),
+          name: 'Not answered'),
     ];
   }
 
@@ -463,7 +463,7 @@ class _StatsPageState extends State<StatsLeaderPage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         const Text(
-                          "Tư vấn viên",
+                          "Counselors",
                           style: TextStyle(
                               fontWeight: FontWeight.w500,
                               fontSize: 13,
@@ -529,7 +529,7 @@ class _StatsPageState extends State<StatsLeaderPage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         const Text(
-                          "Câu hỏi",
+                          "Question",
                           style: TextStyle(
                               fontWeight: FontWeight.w500,
                               fontSize: 13,
@@ -587,7 +587,7 @@ class _StatsPageState extends State<StatsLeaderPage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         const Text(
-                          "Lĩnh vực",
+                          "Field",
                           style: TextStyle(
                               fontWeight: FontWeight.w500,
                               fontSize: 13,
@@ -616,7 +616,6 @@ class _StatsPageState extends State<StatsLeaderPage> {
   }
 
   Widget getBody() {
-    var size = MediaQuery.of(context).size;
 
     return SingleChildScrollView(
       child: Column(
@@ -640,7 +639,7 @@ class _StatsPageState extends State<StatsLeaderPage> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: const [
                       Text(
-                        "Thống kê",
+                        "Statistical",
                         style: TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
@@ -702,18 +701,19 @@ class _StatsPageState extends State<StatsLeaderPage> {
         backgroundColor: const Color(0xCBCBD5DE),
         bottomNavigationBar: getFooter(),
         body: getBody(),
-        floatingActionButton: FloatingActionButton(
-            onPressed: () {
-              //selectedTab(4);
-            },
-            backgroundColor: Colors.pink,
-            child: const Icon(
-              Icons.add,
-              size: 25,
-            )
-            //params
-            ),
-        floatingActionButtonLocation:
-            FloatingActionButtonLocation.centerDocked);
+        // floatingActionButton: FloatingActionButton(
+        //     onPressed: () {
+        //       //selectedTab(4);
+        //     },
+        //     backgroundColor: Colors.blueAccent,
+        //     child: const Icon(
+        //       Icons.add,
+        //       size: 25,
+        //     )
+        //     //params
+        //     ),
+        // floatingActionButtonLocation:
+        //     FloatingActionButtonLocation.centerDocked);
+    );
   }
 }

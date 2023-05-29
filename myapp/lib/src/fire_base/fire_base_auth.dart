@@ -35,7 +35,7 @@ class FireAuth {
         .then((user) {
       onSuccess();
     }).catchError((err) {
-      onSignInError("Đăng nhập thất bại, vui lòng thử lại");
+      onSignInError("Check your email, password or internet connect!");
     });
   }
 
@@ -53,7 +53,7 @@ class FireAuth {
       onSuccess();
     }).catchError((err){
       //TODO
-      onRegisterError("Đăng ký không thành công, vui lòng thử lại");
+      onRegisterError("Check your information or internet connect!");
     });
   }
   _createEmployee(String userId, String email, String password, String name, String phone,
@@ -75,23 +75,23 @@ class FireAuth {
       onSuccess();
     }).catchError((err){
       //TODO
-      onRegisterError("Đăng ký không thành công, vui lòng thử lại");
+      onRegisterError("Check your information or internet connect!");
     });
   }
   void _onSignUpErr(String code, Function(String) onRegisterError) {
     switch (code) {
       case "ERROR_INVALID_EMAIL":
       case "ERROR_INVALID_CREDENTIAL":
-        onRegisterError("Email không hợp lệ");
+        onRegisterError("Email not true");
         break;
       case "ERROR_EMAIL_ALREADY_IN_USE":
-        onRegisterError("Email đã tồn tại");
+        onRegisterError("Email is valid");
         break;
       case "ERROR_WEAK_PASSWORD":
-        onRegisterError("Mật khẩu không đủ mạnh");
+        onRegisterError("Password is weak");
         break;
       default:
-        onRegisterError("Đăng ký không thành công, vui lòng thử lại");
+        onRegisterError("Check your information or internet connect!");
         break;
     }
   }
