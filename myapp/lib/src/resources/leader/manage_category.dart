@@ -165,14 +165,14 @@ class _ManageCategoryState extends State<ManageCategory> {
                                             borderRadius:
                                                 BorderRadius.circular(10),
                                             borderSide: const BorderSide(
-                                              color: Colors.orangeAccent,
+                                              color: Colors.blueAccent,
                                               width: 1,
                                             )),
                                         focusedBorder: OutlineInputBorder(
                                             borderRadius:
                                                 BorderRadius.circular(10),
                                             borderSide: const BorderSide(
-                                                color: Colors.orange,
+                                                color: Colors.blue,
                                                 width: 4))),
                                   ),
                                 )),
@@ -196,7 +196,7 @@ class _ManageCategoryState extends State<ManageCategory> {
                                           ),
                                           backgroundColor:
                                               MaterialStateProperty.all(
-                                                  Colors.orangeAccent)),
+                                                  Colors.blueAccent)),
                                       onPressed: () {
                                         _onChangeCategoryClicked(
                                             category, index);
@@ -223,7 +223,7 @@ class _ManageCategoryState extends State<ManageCategory> {
                                           ),
                                           backgroundColor:
                                               MaterialStateProperty.all(
-                                                  Colors.orangeAccent)),
+                                                  Colors.blueAccent)),
                                       onPressed: () =>
                                           {Navigator.pop(context)},
                                       label: const Text(
@@ -332,14 +332,14 @@ class _ManageCategoryState extends State<ManageCategory> {
                                               borderRadius:
                                                   BorderRadius.circular(10),
                                               borderSide: const BorderSide(
-                                                color: Colors.orangeAccent,
+                                                color: Colors.blueAccent,
                                                 width: 1,
                                               )),
                                           focusedBorder: OutlineInputBorder(
                                               borderRadius:
                                                   BorderRadius.circular(10),
                                               borderSide: const BorderSide(
-                                                  color: Colors.orange,
+                                                  color: Colors.blue,
                                                   width: 4))),
                                     ),
                                   )),
@@ -363,7 +363,7 @@ class _ManageCategoryState extends State<ManageCategory> {
                                             ),
                                             backgroundColor:
                                                 MaterialStateProperty.all(
-                                                    Colors.orangeAccent)),
+                                                    Colors.blueAccent)),
                                         onPressed: () {
                                           _onAddCategoryClicked();
                                         },
@@ -389,7 +389,7 @@ class _ManageCategoryState extends State<ManageCategory> {
                                             ),
                                             backgroundColor:
                                                 MaterialStateProperty.all(
-                                                    Colors.orangeAccent)),
+                                                    Colors.blueAccent)),
                                         onPressed: () =>
                                             {Navigator.pop(context)},
                                         label: const Text(
@@ -459,13 +459,13 @@ class _ManageCategoryState extends State<ManageCategory> {
                       builder: (BuildContext context) => const HomePageLeader()));
             }),
         title: const Text("Quản lý lĩnh vực trong khoa"),
-        backgroundColor: Colors.orangeAccent,
+        backgroundColor: Colors.blueAccent,
       ),
       floatingActionButton: FloatingActionButton(
           onPressed: () {
             _modalBottomSheetAddCategory();
           },
-          backgroundColor: Colors.orange,
+          backgroundColor: Colors.blue,
           child: const Icon(
             Icons.add,
             size: 25,

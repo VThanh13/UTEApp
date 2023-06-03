@@ -103,16 +103,16 @@ class _MessengerPageState extends State<MessengerPage> {
   var departmentName = {};
   getDepartmentName() async {
     await FirebaseFirestore.instance
-        .collection('departments')
-        .get()
-        .then((value) => {
-              setState(() {
-                value.docs.forEach((element) {
-                  departmentName[element.id] = element["name"];
-                  listDepartment.add(element['name']);
-                });
-              })
-            });
+      .collection('departments')
+      .get()
+      .then((value) => {
+        setState(() {
+          value.docs.forEach((element) {
+            departmentName[element.id] = element["name"];
+            listDepartment.add(element['name']);
+          });
+        })
+      });
   }
 
   List<ChatRoomModel> listPublicChatRoom = [];
@@ -213,7 +213,7 @@ class _MessengerPageState extends State<MessengerPage> {
                       const SizedBox(
                         height: 4.0,
                       ),
-                      Text(chatRoom.category == ''? 'To Leader' : 'To: ${chatRoom.category}',
+                      Text(chatRoom.category == ''? 'To: Leader' : 'To: ${chatRoom.category}',
                       style: const TextStyle(
                         color: Colors.black,
                       ),),
@@ -279,22 +279,18 @@ class _MessengerPageState extends State<MessengerPage> {
       },
       child: Container(
         margin: const EdgeInsets.fromLTRB(0, 0, 10, 10),
-        width: 230,
+        width: 100,
         decoration: BoxDecoration(
-            color: Colors.white,
             borderRadius: BorderRadius.circular(15.0),
-            border: Border.all(
-              width: 1.0,
-              color: Colors.blueAccent,
-            )),
-        child: Row(
+            ),
+        child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
             Container(
               padding: const EdgeInsets.fromLTRB(10, 0, 0, 0),
               child: CircleAvatar(
                 radius: 28,
-                backgroundColor: Colors.tealAccent,
+                backgroundColor: Colors.blueAccent,
                 child: CircleAvatar(
                   backgroundImage: NetworkImage(employeeModel.image),
                   radius: 26,
@@ -306,12 +302,12 @@ class _MessengerPageState extends State<MessengerPage> {
               margin: const EdgeInsets.fromLTRB(5, 0, 5, 5),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
                   Text(
                     employeeModel.name,
                     style: const TextStyle(
-                        fontSize: 18,
+                        fontSize: 10,
                         fontStyle: FontStyle.italic,
                         fontWeight: FontWeight.w500),
                     overflow: TextOverflow.ellipsis,
@@ -319,13 +315,13 @@ class _MessengerPageState extends State<MessengerPage> {
                   Text(
                     employeeModel.roles,
                     style: const TextStyle(
-                        fontSize: 15, fontWeight: FontWeight.w400),
+                        fontSize: 10, fontWeight: FontWeight.w400),
                     overflow: TextOverflow.ellipsis,
                   ),
                   Text(
-                    departmentName[employeeModel.department]==''? 'Manager' : departmentName[employeeModel.department],
+                    employeeModel.department == '' ? 'Manager' : departmentName[employeeModel.department],
                     style: const TextStyle(
-                        fontSize: 15, fontWeight: FontWeight.w400),
+                        fontSize: 10, fontWeight: FontWeight.w400),
                     overflow: TextOverflow.ellipsis,
                   ),
                 ],
@@ -429,7 +425,7 @@ class _MessengerPageState extends State<MessengerPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   SizedBox(
-                    height: 104.0,
+                    height: 110.0,
                     child: ListView.builder(
                         physics: const BouncingScrollPhysics(),
                         padding: const EdgeInsets.only(left: 10.0),
@@ -471,24 +467,41 @@ class _MessengerPageState extends State<MessengerPage> {
     }
     if (pageIndex == 0) {
       return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
+          Container(
+            height: 40,
+            child: const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 10.0),
+              child: Text(
+                'Your questions',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600,
+                    letterSpacing: 1.0),
+              ),
+            ),
+          ),
           _buildChatRoom(listChatRoomByUser)
         ],
       );
     } else {
       return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
-          const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 20.0),
-            child: Text(
-              'Tất cả câu hỏi',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w600,
-                  letterSpacing: 1.0),
+          Container(
+            height: 40,
+            child: const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 20.0),
+              child: Text(
+                'All questions',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600,
+                    letterSpacing: 1.0),
+              ),
             ),
           ),
           _buildChatRoom(listPublicChatRoom)
@@ -686,7 +699,21 @@ class _MessengerPageState extends State<MessengerPage> {
                                   onPressed: () {
                                     importPdf();
                                   },
-                                  icon: const Icon(AppIcons.file_pdf)),
+                                  color: hadFile
+                                      ? Colors.redAccent
+                                      : Colors.black,
+                                  icon: const Icon(AppIcons.file_pdf)
+                              ),
+                              hadFile ? const Text(
+                                'One file selected',
+                                style: TextStyle(
+                                    fontSize: 16,
+                                    color: Colors.red),
+                              ) : const Text('No file selected',
+                                style: TextStyle(
+                                    fontSize: 16,
+                                    color: Colors.black),
+                              ),
                               Container(
                                 padding: const EdgeInsets.all(10),
                                 child: Row(

@@ -221,17 +221,20 @@ class _MessengerPageState extends State<MessengerPageEmployee> {
   Widget getQuestion() {
     if (pageIndex == 0 && current_employee.roles!="Manager") {
       return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
-          const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 20.0),
-            child: Text(
-              'Not answered',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.w500,
-                color: Colors.redAccent
+          Container(
+            height: 40,
+            child: const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 20.0),
+              child: Text(
+                'Not answered',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.redAccent,
+                    letterSpacing: 1.0),
               ),
             ),
           ),
@@ -241,17 +244,20 @@ class _MessengerPageState extends State<MessengerPageEmployee> {
     }
     else if (pageIndex == 1 && current_employee.roles!="Manager") {
       return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
-          const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 20.0),
-            child: Text(
-              'Answered',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.w500,
-                color: Colors.green,
+          Container(
+            height: 40,
+            child: const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 20.0),
+              child: Text(
+                'Answered',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.green,
+                    letterSpacing: 1.0),
               ),
             ),
           ),
@@ -261,18 +267,21 @@ class _MessengerPageState extends State<MessengerPageEmployee> {
     }
     else {
       return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
-          const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 20.0),
-            child: Text(
-              'All question',
-              textAlign: TextAlign.right,
-              style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.w500,
-                color: Colors.blueAccent
-                  ),
+          Container(
+            height: 40,
+            child: const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 20.0),
+              child: Text(
+                'All questions',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.blueAccent,
+                    letterSpacing: 1.0),
+              ),
             ),
           ),
           _buildChatRoom(listPublicChatRoom)
@@ -296,62 +305,60 @@ class _MessengerPageState extends State<MessengerPageEmployee> {
                   builder: (BuildContext context) =>
                       DetailQuestionEmployee(chatRoom: chatRoom)));
         },
-        child: Container(
-          margin: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
-          decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(15.0),
-              border: Border.all(
-                width: 1.0,
-                color: Colors.grey,
-              )),
-          child: Row(
-            children: <Widget>[
-              Expanded(
-                  child: Container(
-                    margin: const  EdgeInsets.all(12.0),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Text(
-                          chatRoom.title,
-                          style: const TextStyle(
-                            fontSize: 20.0,
-                            fontWeight: FontWeight.bold,
+        child: Card(
+          color: Colors.grey[200],
+          child: Container(
+            //margin: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
+            margin: const EdgeInsets.fromLTRB(0, 5, 0, 0),
+            height: 90,
+
+            child: Row(
+              children: <Widget>[
+                Expanded(
+                    child: Container(
+                      margin: const  EdgeInsets.fromLTRB(10, 0, 0, 0),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Text(
+                            chatRoom.title,
+                            style: const TextStyle(
+                              fontSize: 20.0,
+                              fontWeight: FontWeight.bold,
+                            ),
+                            overflow: TextOverflow.ellipsis,
                           ),
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        const SizedBox(
-                          height: 4.0,
-                        ),
-                        Text('From: ${chatRoom.group}',
-                        style: const TextStyle(
-                          color: Colors.black
-                        ),
-                        ),
-                        Text(
-                          chatRoom.time,
-                          style: const TextStyle(
-                            fontSize: 14.0,
-                            fontWeight: FontWeight.w400,
-                            color: Colors.grey,
+                          const SizedBox(
+                            height: 4.0,
                           ),
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        Text(chatRoom.status,
-                            style: TextStyle(
-                              fontSize: 12,
+                          Text('From: ${chatRoom.group}',
+                            style: const TextStyle(
+                              color: Colors.black,
+                            ),),
+                          Text(
+                            chatRoom.time,
+                            style: const TextStyle(
+                              fontSize: 14.0,
                               fontWeight: FontWeight.w400,
-                              color: chatRoom.status == "Chưa trả lời"
-                                  ? Colors.redAccent
-                                  : Colors.green,
-                              overflow: TextOverflow.ellipsis,
-                            ))
-                      ],
-                    ),
-                  ))
-            ],
+                              color: Colors.grey,
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          Text(chatRoom.status,
+                              style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w400,
+                                color: chatRoom.status == "Chưa trả lời"
+                                    ? Colors.redAccent
+                                    : Colors.green,
+                                overflow: TextOverflow.ellipsis,
+                              ))
+                        ],
+                      ),
+                    ))
+              ],
+            ),
           ),
         ),
       ));

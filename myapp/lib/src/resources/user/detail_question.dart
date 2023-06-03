@@ -287,7 +287,7 @@ class _DetailQuestionState extends State<DetailQuestion> {
                             5, 5, 5, 5)),
                     Container(
                         padding: const EdgeInsets.fromLTRB(
-                            10, 0, 5, 5),
+                            10, 0, 5, 10),
                         child: Row(
                           crossAxisAlignment:
                           CrossAxisAlignment.start,
@@ -362,7 +362,7 @@ class _DetailQuestionState extends State<DetailQuestion> {
         ),
         CircleAvatar(
           radius: 22,
-          backgroundColor: Colors.tealAccent,
+          backgroundColor: Colors.blueAccent,
           child: CircleAvatar(
             backgroundImage:
             NetworkImage(question.user.image),
@@ -380,7 +380,7 @@ class _DetailQuestionState extends State<DetailQuestion> {
       children: <Widget>[
         CircleAvatar(
           radius: 22,
-          backgroundColor: Colors.tealAccent,
+          backgroundColor: Colors.blueAccent,
           child: CircleAvatar(
             backgroundImage: NetworkImage(answer.employee.image),
             radius: 20,
@@ -417,8 +417,8 @@ class _DetailQuestionState extends State<DetailQuestion> {
               ],
             ),
             SizedBox(
-              //width: MediaQuery.of(context).size.width -75,
-              width: 285,
+              width: MediaQuery.of(context).size.width - 97,
+              // width: 285,
               child: Card(
                 margin: const EdgeInsets.all(5),
                 shape: const RoundedRectangleBorder(
@@ -440,7 +440,7 @@ class _DetailQuestionState extends State<DetailQuestion> {
 
                     const Padding(padding: EdgeInsets.fromLTRB(5, 5, 5, 5)),
                     Container(
-                        padding: const EdgeInsets.fromLTRB(10, 0, 5, 5),
+                        padding: const EdgeInsets.fromLTRB(10, 0, 5, 10),
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           mainAxisAlignment: MainAxisAlignment.start,
@@ -486,135 +486,6 @@ class _DetailQuestionState extends State<DetailQuestion> {
     }
     return true;
   }
-  // _modalBottomSheetAddQuestion() {
-  //   return showModalBottomSheet(
-  //       isScrollControlled: true,
-  //       constraints: BoxConstraints.loose(Size(
-  //           MediaQuery.of(context).size.width,
-  //           MediaQuery.of(context).size.height * 0.75)),
-  //       shape: const RoundedRectangleBorder(
-  //           borderRadius: BorderRadius.only(
-  //             topLeft: Radius.circular(20),
-  //             topRight: Radius.circular(20),
-  //           )),
-  //       context: context,
-  //       builder: (BuildContext context) {
-  //         return Column(
-  //           children: <Widget>[
-  //             const Padding(
-  //               padding: EdgeInsets.fromLTRB(5, 20, 5, 10),
-  //               child: Text(
-  //                 'Send message',
-  //                 style: TextStyle(
-  //                     fontSize: 24,
-  //                     fontWeight: FontWeight.w600,
-  //                     letterSpacing: 1.0),
-  //               ),
-  //             ),
-  //             SingleChildScrollView(
-  //               physics: const BouncingScrollPhysics(),
-  //               child: Column(
-  //                 crossAxisAlignment: CrossAxisAlignment.start,
-  //                 children: <Widget>[
-  //                   SizedBox(
-  //                     height: MediaQuery.of(context).size.height * 0.65,
-  //                     child: SingleChildScrollView(
-  //                       child: Column(
-  //                         mainAxisAlignment: MainAxisAlignment.start,
-  //                         children: <Widget>[
-  //                           const Padding(
-  //                               padding: EdgeInsets.fromLTRB(0, 10, 0, 10)),
-  //                           Container(
-  //                             width: 340,
-  //                             margin: const EdgeInsets.fromLTRB(0, 10, 0, 15),
-  //                             child: StreamBuilder(
-  //                               stream: questionControl,
-  //                               builder: (context, snapshot) => TextField(
-  //                                 controller: _questionController,
-  //                                 maxLines: 50,
-  //                                 minLines: 10,
-  //                                 maxLength: 3000,
-  //                                 decoration: InputDecoration(
-  //                                     hintMaxLines: 5,
-  //                                     helperMaxLines: 5,
-  //                                     labelText: "Send message",
-  //                                     hintText: 'Insert message',
-  //                                     enabledBorder: OutlineInputBorder(
-  //                                       borderRadius:
-  //                                       BorderRadius.circular(10),
-  //                                       borderSide: const BorderSide(
-  //                                         color: Colors.blueAccent,
-  //                                         width: 1,
-  //                                       ),
-  //                                     ),
-  //                                     focusedBorder: OutlineInputBorder(
-  //                                         borderRadius:
-  //                                         BorderRadius.circular(10),
-  //                                         borderSide: const BorderSide(
-  //                                             color: Colors.blue,
-  //                                             width: 4))),
-  //                               ),
-  //                             ),
-  //                           ),
-  //                           IconButton(
-  //                               onPressed: () {
-  //                                 importPdf();
-  //                               },
-  //                               icon: const Icon(AppIcons.file_pdf)),
-  //                           Container(
-  //                             padding: const EdgeInsets.all(10),
-  //                             child: Row(
-  //                               mainAxisAlignment:
-  //                               MainAxisAlignment.spaceAround,
-  //                               children: <Widget>[
-  //                                 Expanded(
-  //                                   child: ElevatedButton.icon(
-  //                                     onPressed: () {
-  //                                       _onSendQuestionClicked();
-  //                                     },
-  //                                     label: const Text(
-  //                                       'Send',
-  //                                       style: TextStyle(
-  //                                           fontSize: 16,
-  //                                           color: Colors.white),
-  //                                     ),
-  //                                     icon: const Icon(Icons.send_rounded),
-  //                                     style: ElevatedButton.styleFrom(
-  //                                         primary: Colors.blueAccent),
-  //                                   ),
-  //                                 ),
-  //                                 const Padding(padding: EdgeInsets.all(10)),
-  //                                 Expanded(
-  //                                     child: ElevatedButton.icon(
-  //                                       onPressed: () =>
-  //                                       {Navigator.pop(context)},
-  //                                       label: const Text(
-  //                                         'Cancel',
-  //                                         style: TextStyle(
-  //                                             fontSize: 16,
-  //                                             color: Colors.white),
-  //                                       ),
-  //                                       icon: const Icon(Icons.cancel_presentation),
-  //                                       style: ElevatedButton.styleFrom(
-  //                                           primary: Colors.blueAccent),
-  //                                     )),
-  //                                 const Padding(
-  //                                     padding: EdgeInsets.fromLTRB(
-  //                                         0, 10, 0, 30)),
-  //                               ],
-  //                             ),
-  //                           )
-  //                         ],
-  //                       ),
-  //                     ),
-  //                   ),
-  //                 ],
-  //               ),
-  //             ),
-  //           ],
-  //         );
-  //       });
-  // }
 
   late PlatformFile file;
   bool hadFile = false;
@@ -676,31 +547,6 @@ class _DetailQuestionState extends State<DetailQuestion> {
     });
   }
 
-  // Widget _getFAB() {
-  //   return SpeedDial(
-  //     animatedIcon: AnimatedIcons.menu_close,
-  //     animatedIconTheme: const IconThemeData(size: 22),
-  //     backgroundColor: Colors.blue,
-  //     visible: true,
-  //     curve: Curves.bounceIn,
-  //     children: [
-  //       // FAB 1
-  //       SpeedDialChild(
-  //           child: const Icon(Icons.send),
-  //           backgroundColor: Colors.blue,
-  //           onTap: () {
-  //             _modalBottomSheetAddQuestion();
-  //           },
-  //           label: 'Send message',
-  //           labelStyle: const TextStyle(
-  //               fontWeight: FontWeight.w500,
-  //               color: Colors.white,
-  //               fontSize: 16.0),
-  //           labelBackgroundColor: Colors.blueAccent),
-  //     ],
-  //   );
-  // }
-
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
@@ -715,10 +561,9 @@ class _DetailQuestionState extends State<DetailQuestion> {
           title: const Text('Message'),
           backgroundColor: Colors.blueAccent,
         ),
-        // floatingActionButton: (current_user.uid == widget.chatRoom.user_id)? _getFAB():null,
-        // floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-        body: SafeArea(
-          child:
+        bottomNavigationBar: (current_user.uid == widget.chatRoom.user_id)? _inputQuestion():null,
+        body: Column(
+          children:<Widget>[
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.start,
@@ -726,96 +571,100 @@ class _DetailQuestionState extends State<DetailQuestion> {
             children: <Widget>[
               const Padding(padding: EdgeInsets.fromLTRB(0, 5, 0, 10)),
               Container(
-                height: 505,
+                height: 604,
                 margin: const EdgeInsets.fromLTRB(5, 0, 5, 0),
                 width: double.maxFinite,
                 child: SingleChildScrollView(
                   child: _buildMessage(),
                 ),
               ),
-              SingleChildScrollView(
-                reverse: true,
-                child: Column(
-                  children: [
-
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Container(
-                          width: 250,
-                          margin: const EdgeInsets.fromLTRB(0, 10, 0, 10),
-                          child: StreamBuilder(
-                            stream: questionControl,
-                            builder: (context, snapshot) => TextField(
-                              controller: _questionController,
-                              maxLines: 10,
-                              minLines: 1,
-                              maxLength: 3000,
-                              decoration: InputDecoration(
-                                  hintMaxLines: 5,
-                                  helperMaxLines: 5,
-                                  labelText: "Send message",
-                                  hintText: 'Insert message',
-                                  errorText: snapshot.hasError? snapshot.error.toString() : null,
-                                  enabledBorder: OutlineInputBorder(
-                                    borderRadius:
-                                    BorderRadius.circular(10),
-                                    borderSide: const BorderSide(
-                                      color: Colors.blueAccent,
-                                      width: 1,
-                                    ),
-                                  ),
-                                  focusedBorder: OutlineInputBorder(
-                                      borderRadius:
-                                      BorderRadius.circular(10),
-                                      borderSide: const BorderSide(
-                                          color: Colors.blue,
-                                          width: 3))),
-                            ),
-                          ),
-                        ),
-                        Padding(padding: const EdgeInsets.fromLTRB(0, 0, 2, 0),
-                          child: IconButton(
-                            onPressed: (){
-                              importPdf();
-                            },
-                            icon: const Icon(AppIcons.file_pdf,
-                              size: 20,
-                              color: Colors.redAccent,),
-                          ),),
-                        Padding(padding: const EdgeInsets.fromLTRB(0, 0, 2, 0),
-                          child: IconButton(
-                            onPressed: (){
-                              try{
-                                if( _onSendQuestionClicked()){
-                                  setState(() {
-                                    _questionController.text = '';
-                                  });
-                                }else{
-                                  showErrorMessage('Send message fail, check your internet connection');
-                                }
-                              }catch(e){
-                                //
-                              }
-                            },
-                            icon: const Icon(Icons.send_sharp,
-                              size: 25,
-                              color: Colors.blueAccent,),
-                          ),)
-                      ],
-                    ),
-
-                  ],
-                ),
-              ),
+              // SingleChildScrollView(
+              //   reverse: true,
+              //   child: Column(
+              //     children: [
+              //       (current_user.uid == widget.chatRoom.user_id)? _inputQuestion() : Text('')
+              //     ],
+              //   ),
+              // ),
             ],
-          ),
-        ),
 
+          ),
+        ],
+        ),
       ),
     );
   }
+
+  _inputQuestion(){
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Container(
+          width: 250,
+          margin: const EdgeInsets.fromLTRB(0, 10, 0, 10),
+          child: StreamBuilder(
+            stream: questionControl,
+            builder: (context, snapshot) => TextField(
+              controller: _questionController,
+              maxLines: 10,
+              minLines: 1,
+              maxLength: 3000,
+              decoration: InputDecoration(
+                  hintMaxLines: 5,
+                  helperMaxLines: 5,
+                  labelText: "Send message",
+                  hintText: 'Insert message',
+                  errorText: snapshot.hasError? snapshot.error.toString() : null,
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius:
+                    BorderRadius.circular(10),
+                    borderSide: const BorderSide(
+                      color: Colors.blueAccent,
+                      width: 1,
+                    ),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                      borderRadius:
+                      BorderRadius.circular(10),
+                      borderSide: const BorderSide(
+                          color: Colors.blue,
+                          width: 3))),
+            ),
+          ),
+        ),
+        Padding(padding: const EdgeInsets.fromLTRB(0, 0, 2, 0),
+          child: IconButton(
+            onPressed: (){
+              importPdf();
+            },
+            icon: const Icon(AppIcons.file_pdf,
+              size: 20,
+              color: Colors.redAccent,),
+          ),),
+        Padding(padding: const EdgeInsets.fromLTRB(0, 0, 2, 0),
+          child: IconButton(
+            onPressed: (){
+              try{
+                if( _onSendQuestionClicked()){
+                  setState(() {
+                    _questionController.text = '';
+                  });
+                }else{
+                  showErrorMessage('Send message fail, check your internet connection');
+                }
+              }catch(e){
+                //
+              }
+            },
+            icon: const Icon(Icons.send_sharp,
+              size: 25,
+              color: Colors.blueAccent,),
+          ),)
+      ],
+    );
+  }
+
   void showErrorMessage(String message) {
     final snackBar = SnackBar(content: Text(message,
       style: const TextStyle(color: Colors.white),

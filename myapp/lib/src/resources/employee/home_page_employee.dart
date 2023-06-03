@@ -12,6 +12,7 @@ import '../../models/NewfeedModel.dart';
 import '../user/home_page.dart';
 import '../login_screen.dart';
 import '../pdf_viewer.dart';
+import '../user/messenger_page.dart';
 import 'employee_info.dart';
 import 'messenger_employee.dart';
 
@@ -204,8 +205,8 @@ class _HomePageState extends State<HomePageEmployee> {
           // ),
             ClipRRect(
               borderRadius: const BorderRadius.only(
-                bottomLeft: Radius.circular(14),
-                bottomRight: Radius.circular(14),
+                bottomLeft: Radius.circular(0),
+                bottomRight: Radius.circular(0),
               ),
               child: Image.network(
                 post.file,

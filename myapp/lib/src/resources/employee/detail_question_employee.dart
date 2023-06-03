@@ -275,7 +275,7 @@ class _DetailQuestionState extends State<DetailQuestionEmployee> {
       children: <Widget>[
         CircleAvatar(
           radius: 22,
-          backgroundColor: Colors.tealAccent,
+          backgroundColor: Colors.blueAccent,
           child: CircleAvatar(
             backgroundImage:
             NetworkImage(question.user.image),
@@ -315,7 +315,7 @@ class _DetailQuestionState extends State<DetailQuestionEmployee> {
             ),
             SizedBox(
               width:
-              MediaQuery.of(context).size.width - 75,
+              MediaQuery.of(context).size.width - 97,
               child: Card(
                 margin: const EdgeInsets.all(5),
                 shape: const RoundedRectangleBorder(
@@ -343,7 +343,7 @@ class _DetailQuestionState extends State<DetailQuestionEmployee> {
                             5, 5, 5, 5)),
                     Container(
                         padding: const EdgeInsets.fromLTRB(
-                            10, 0, 5, 5),
+                            10, 0, 5, 10),
                         child: Row(
                           crossAxisAlignment:
                           CrossAxisAlignment.start,
@@ -402,7 +402,7 @@ class _DetailQuestionState extends State<DetailQuestionEmployee> {
             if(question.file!='file.pdf' && !question.file.substring(question.file.length - 57).startsWith('.pdf'))
               SizedBox(
                   width:
-                  MediaQuery.of(context).size.width - 75,
+                  MediaQuery.of(context).size.width - 97,
                   child: Card(
                     margin: const EdgeInsets.all(5),
                     shape: RoundedRectangleBorder(
@@ -480,7 +480,7 @@ class _DetailQuestionState extends State<DetailQuestionEmployee> {
                     ),
                     const Padding(padding: EdgeInsets.fromLTRB(5, 5, 5, 5)),
                     Container(
-                        padding: const EdgeInsets.fromLTRB(10, 0, 5, 5),
+                        padding: const EdgeInsets.fromLTRB(10, 0, 5, 10),
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           mainAxisAlignment: MainAxisAlignment.start,
@@ -506,7 +506,7 @@ class _DetailQuestionState extends State<DetailQuestionEmployee> {
         ),
         CircleAvatar(
           radius: 22,
-          backgroundColor: Colors.tealAccent,
+          backgroundColor: Colors.blueAccent,
           child: CircleAvatar(
             backgroundImage: NetworkImage(answer.employee.image),
             radius: 20,

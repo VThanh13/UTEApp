@@ -456,7 +456,21 @@ class _ViewEmployeeByUser extends State<ViewEmployeeByUser> {
                                                     onPressed: () {
                                                       importPdf();
                                                     },
-                                                    icon: const Icon(AppIcons.file_pdf)),
+                                                    color: hadFile
+                                                        ? Colors.redAccent
+                                                        : Colors.black,
+                                                    icon: const Icon(AppIcons.file_pdf)
+                                                ),
+                                                hadFile ? const Text(
+                                                  'One file selected',
+                                                  style: TextStyle(
+                                                      fontSize: 16,
+                                                      color: Colors.red),
+                                                ) : const Text('No file selected',
+                                                  style: TextStyle(
+                                                      fontSize: 16,
+                                                      color: Colors.black),
+                                                ),
                                                 Container(
                                                   padding: const EdgeInsets.all(10),
                                                   child: Row(
