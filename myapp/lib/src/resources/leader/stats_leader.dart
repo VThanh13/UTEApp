@@ -107,23 +107,23 @@ class _StatsPageState extends State<StatsLeaderPage> {
   }
   getCurrentEmployee() async {
     await FirebaseFirestore.instance
-        .collection('employee')
-        .where("id", isEqualTo: userAuth.uid)
-        .get()
-        .then((value) => {
-      setState(() {
-        currentEmployee.id = value.docs.first['id'];
-        currentEmployee.name = value.docs.first['name'];
-        currentEmployee.email = value.docs.first['email'];
-        currentEmployee.image = value.docs.first['image'];
-        currentEmployee.password = value.docs.first['password'];
-        currentEmployee.phone = value.docs.first['phone'];
-        currentEmployee.department = value.docs.first['department'];
-        currentEmployee.category = value.docs.first['category'];
-        currentEmployee.roles = value.docs.first['roles'];
-        currentEmployee.status = value.docs.first['status'];
-      })
-    });
+      .collection('employee')
+      .where("id", isEqualTo: userAuth.uid)
+      .get()
+      .then((value) => {
+        setState(() {
+          currentEmployee.id = value.docs.first['id'];
+          currentEmployee.name = value.docs.first['name'];
+          currentEmployee.email = value.docs.first['email'];
+          currentEmployee.image = value.docs.first['image'];
+          currentEmployee.password = value.docs.first['password'];
+          currentEmployee.phone = value.docs.first['phone'];
+          currentEmployee.department = value.docs.first['department'];
+          currentEmployee.category = value.docs.first['category'];
+          currentEmployee.roles = value.docs.first['roles'];
+          currentEmployee.status = value.docs.first['status'];
+        })
+      });
     await getDataStats();
   }
   getDataStats() async {
@@ -145,7 +145,7 @@ class _StatsPageState extends State<StatsLeaderPage> {
       })
     });
     await FirebaseFirestore.instance
-        .collection('questions')
+        .collection('chat_room')
         .where("department", isEqualTo: currentEmployee.department)
         .get()
         .then((value) => {
@@ -185,7 +185,7 @@ class _StatsPageState extends State<StatsLeaderPage> {
     int dtl2=0;
     int ctl2=0;
     FirebaseFirestore.instance
-        .collection('questions')
+        .collection('chat_room')
         .where('department', isEqualTo: currentEmployee.department)
         .where('category', isEqualTo: "")
         .get()
@@ -224,7 +224,7 @@ class _StatsPageState extends State<StatsLeaderPage> {
       dtl=0;
       ctl=0;
       FirebaseFirestore.instance
-          .collection('questions')
+          .collection('chat_room')
           .where('department', isEqualTo: currentEmployee.department)
           .where('category', isEqualTo: category)
           .get()

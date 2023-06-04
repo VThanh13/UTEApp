@@ -486,7 +486,7 @@ class _ManageCategoryState extends State<ManageCategory> {
                         letterSpacing: 1.0))),
             SingleChildScrollView(
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
                   SizedBox(
                     height: MediaQuery.of(context).size.height * 0.78,

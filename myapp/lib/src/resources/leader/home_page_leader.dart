@@ -66,7 +66,7 @@ class Post {
 
 class _HomePageState extends State<HomePageLeader> {
   FirebaseAuth auth = FirebaseAuth.instance;
-  var userR = FirebaseAuth.instance.currentUser!;
+  var user_auth = FirebaseAuth.instance.currentUser!;
   EmployeeModel employeeModel =
       EmployeeModel("", " ", "", "", "", "", "", "", "", "");
   var departmentName = {};
@@ -124,7 +124,7 @@ class _HomePageState extends State<HomePageLeader> {
     await uploadImage();
     if (isValidContentT) {
       if (!mounted) return;
-      LoadingDialog.showLoadingDialog(context, "loading...");
+      LoadingDialog.showLoadingDialog(context, "Please Wait...");
       createNewPost(
           employeeModel.id, _infoPostController.text, timeString, imgUrl, () {
         LoadingDialog.hideLoadingDialog(context);
@@ -156,47 +156,49 @@ class _HomePageState extends State<HomePageLeader> {
     await getDepartmentName();
     List<NewfeedModel> listNewfeed = [];
     await FirebaseFirestore.instance
-        .collection('newfeed')
-        .get()
-        .then((value) => {
-              value.docs.forEach((element) {
-                NewfeedModel newFeed = NewfeedModel("", "", "", "", "");
-                newFeed.id = element['id'];
-                newFeed.content = element['content'];
-                newFeed.time = element['time'];
-                newFeed.file = element['file'];
-                newFeed.employeeId = element['employeeId'];
+      .collection('newfeed')
+      .get()
+      .then((value) => {
+        setState(() {
+          value.docs.forEach((element) {
+            NewfeedModel newFeed = NewfeedModel("", "", "", "", "");
+            newFeed.id = element['id'];
+            newFeed.content = element['content'];
+            newFeed.time = element['time'];
+            newFeed.file = element['file'];
+            newFeed.employeeId = element['employeeId'];
 
-                listNewfeed.add(newFeed);
-              })
-            });
+            listNewfeed.add(newFeed);
+          });
+        }),
+      });
     listNewfeed.forEach((element) async {
       Employee employee = Employee("", "", "", "", "", "", "", "", "", "", "");
       Post post = Post(
           element.id, employee, element.content, element.time, element.file);
       await FirebaseFirestore.instance
-          .collection('employee')
-          .where("id", isEqualTo: element.employeeId)
-          .get()
-          .then((value) => {
-                setState(() {
-                  employee.id = value.docs.first['id'];
-                  employee.name = value.docs.first['name'];
-                  employee.email = value.docs.first['email'];
-                  employee.image = value.docs.first['image'];
-                  employee.password = value.docs.first['password'];
-                  employee.phone = value.docs.first['phone'];
-                  employee.departmentId = value.docs.first['department'];
-                  employee.departmentName =
-                      departmentName[employee.departmentId];
-                  employee.category = value.docs.first['category'];
-                  employee.roles = value.docs.first['roles'];
-                  employee.status = value.docs.first['status'];
-                  post.employee = employee;
-                  listPost.add(post);
-                  sortListPost();
-                })
-              });
+        .collection('employee')
+        .where("id", isEqualTo: element.employeeId)
+        .get()
+        .then((value) => {
+          setState(() {
+            employee.id = value.docs.first['id'];
+            employee.name = value.docs.first['name'];
+            employee.email = value.docs.first['email'];
+            employee.image = value.docs.first['image'];
+            employee.password = value.docs.first['password'];
+            employee.phone = value.docs.first['phone'];
+            employee.departmentId = value.docs.first['department'];
+            employee.departmentName =
+                departmentName[employee.departmentId];
+            employee.category = value.docs.first['category'];
+            employee.roles = value.docs.first['roles'];
+            employee.status = value.docs.first['status'];
+            post.employee = employee;
+            listPost.add(post);
+            sortListPost();
+          })
+        });
     });
   }
 
@@ -224,7 +226,7 @@ class _HomePageState extends State<HomePageLeader> {
                 padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
                 child: CircleAvatar(
                   radius: 24,
-                  backgroundColor: Colors.tealAccent,
+                  backgroundColor: Colors.blueAccent,
                   child: CircleAvatar(
                     backgroundImage: NetworkImage(post.employee.image),
                     radius: 22,
@@ -332,7 +334,7 @@ class _HomePageState extends State<HomePageLeader> {
     return FutureBuilder<QuerySnapshot>(
         future: FirebaseFirestore.instance
             .collection("employee")
-            .where("id", isEqualTo: userR.uid)
+            .where("id", isEqualTo: user_auth.uid)
             .get(),
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
@@ -784,7 +786,7 @@ class _HomePageState extends State<HomePageLeader> {
                                   children: [
                                     CircleAvatar(
                                       radius: 28,
-                                      backgroundColor: Colors.tealAccent,
+                                      backgroundColor: Colors.blueAccent,
                                       child: CircleAvatar(
                                         backgroundImage: NetworkImage(
                                             employeeModel.image),

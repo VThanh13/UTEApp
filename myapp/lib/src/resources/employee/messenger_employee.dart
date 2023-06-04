@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:myapp/src/resources/employee/home_page_employee.dart';
 import 'package:myapp/src/resources/manager/home_page_manager.dart';
 
+import '../../../icons/app_icons_icons.dart';
 import '../../models/ChatRoomModel.dart';
 import '../../models/EmployeeModel.dart';
 import '../leader/home_page_leader.dart';
@@ -201,7 +202,7 @@ class _MessengerPageState extends State<MessengerPageEmployee> {
             ),
             bottomNavigationBar: getFooter(),
             body: SafeArea(
-              minimum: const EdgeInsets.only(left: 20, right: 10),
+              minimum: const EdgeInsets.only(left: 5, right: 5),
               child: SingleChildScrollView(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.start,
@@ -226,7 +227,7 @@ class _MessengerPageState extends State<MessengerPageEmployee> {
           Container(
             height: 40,
             child: const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20.0),
+              padding: EdgeInsets.symmetric(horizontal: 10.0),
               child: Text(
                 'Not answered',
                 textAlign: TextAlign.center,
@@ -249,7 +250,7 @@ class _MessengerPageState extends State<MessengerPageEmployee> {
           Container(
             height: 40,
             child: const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20.0),
+              padding: EdgeInsets.symmetric(horizontal: 10.0),
               child: Text(
                 'Answered',
                 textAlign: TextAlign.center,
@@ -272,7 +273,7 @@ class _MessengerPageState extends State<MessengerPageEmployee> {
           Container(
             height: 40,
             child: const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20.0),
+              padding: EdgeInsets.symmetric(horizontal: 10.0),
               child: Text(
                 'All questions',
                 textAlign: TextAlign.center,
@@ -372,8 +373,30 @@ class _MessengerPageState extends State<MessengerPageEmployee> {
       List<IconData> iconItems = [
         Icons.mark_email_unread_sharp,
         Icons.mark_email_read_sharp,
-        Icons.question_answer_outlined,
+        AppIcons.chat,
       ];
+      return BottomNavigationBar(
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(Icons.mark_email_unread_sharp),
+            label: 'Not answered',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.mark_email_read_sharp),
+            label: 'Answered',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(AppIcons.chat),
+            label: 'All questions',
+          ),
+        ],
+        currentIndex: pageIndex,
+        selectedItemColor: Colors.blue,
+        // gapLocation: GapLocation.center,
+        onTap: (index) {
+          selectedTab(index);
+        },
+      );
       return AnimatedBottomNavigationBar(
         activeColor: Colors.blue,
         splashColor: Colors.grey,

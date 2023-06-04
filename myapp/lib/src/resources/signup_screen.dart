@@ -429,7 +429,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
     var isValid = authBloc.isValidSignUp(_nameController.text,
         _emailController.text, _passController.text, _phoneController.text);
     if(isValid){
-      LoadingDialog.showLoadingDialog(context, "loading...");
+      LoadingDialog.showLoadingDialog(context, "Please Wait...");
       authBloc.signUp(_emailController.text, _passController.text,
           _phoneController.text, _nameController.text, valueDoiTuong!, () {
             LoadingDialog.hideLoadingDialog(context);

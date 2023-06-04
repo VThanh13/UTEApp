@@ -350,19 +350,22 @@ class _SearchScreenState extends State<LoginScreen> {
   _onLoginClick() async {
     var isValid =
         authBloc.isValidLogin(_emailController.text, _pwdController.text);
-    if (isValid) {
+    if (!isValid){
+      MsgDialog.showMsgDialog(context, "Sign in failed", "Invalid Email or Password");
+    }
+    else {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       if (!mounted) return;
-      LoadingDialog.showLoadingDialog(context, "loading...");
+      LoadingDialog.showLoadingDialog(context, "Please Wait...");
       authBloc.signIn(_emailController.text, _pwdController.text, () async {
-        var userr = FirebaseAuth.instance.currentUser!;
+        var user_auth = FirebaseAuth.instance.currentUser!;
         await FirebaseFirestore.instance
             .collection('user')
-            .doc(userr.uid)
+            .doc(user_auth.uid)
             .get()
             .then((snapshot) async {
           if (snapshot.exists) {
-            await prefs.setString("id", userr.uid);
+            await prefs.setString("id", user_auth.uid);
             await prefs.setString("roles", 'user');
             if (!mounted) return;
             LoadingDialog.hideLoadingDialog(context);
@@ -372,11 +375,11 @@ class _SearchScreenState extends State<LoginScreen> {
         });
         await FirebaseFirestore.instance
             .collection('employee')
-            .doc(userr.uid)
+            .doc(user_auth.uid)
             .get()
             .then((snapshot) async {
           if (snapshot.exists) {
-            await prefs.setString("id", userr.uid);
+            await prefs.setString("id", user_auth.uid);
             await prefs.setString("roles", snapshot.get('roles'));
 
             if (snapshot.get('roles') == "Tư vấn viên") {

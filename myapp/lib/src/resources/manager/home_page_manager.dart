@@ -34,7 +34,7 @@ class Post {
 
 class _HomePageState extends State<HomePageManager> {
   FirebaseAuth auth = FirebaseAuth.instance;
-  var userR = FirebaseAuth.instance.currentUser!;
+  var user_auth = FirebaseAuth.instance.currentUser!;
   EmployeeModel employeeModel =
       EmployeeModel("", " ", "", "", "", "", "", "", "", "");
   @override
@@ -79,34 +79,24 @@ class _HomePageState extends State<HomePageManager> {
     await getDepartmentName();
     List<NewfeedModel> listNewFeed = [];
     await FirebaseFirestore.instance
-        .collection('newfeed')
-        .get()
-        .then((value) => {
-              value.docs.forEach((element) {
-                NewfeedModel newFeed = NewfeedModel("", "", "", "", "");
-                newFeed.id = element['id'];
-                newFeed.content = element['content'];
-                newFeed.time = element['time'];
-                newFeed.file = element['file'];
-                newFeed.employeeId = element['employeeId'];
+      .collection('newfeed')
+      .get()
+      .then((value) => {
+        setState(() {
+          value.docs.forEach((element) {
+            NewfeedModel newFeed = NewfeedModel("", "", "", "", "");
+            newFeed.id = element['id'];
+            newFeed.content = element['content'];
+            newFeed.time = element['time'];
+            newFeed.file = element['file'];
+            newFeed.employeeId = element['employeeId'];
 
-                listNewFeed.add(newFeed);
-              })
-            });
+            listNewFeed.add(newFeed);
+          });
+        })
+      });
     listNewFeed.forEach((element) async {
-      Employee employee = Employee(
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-      );
+      Employee employee = Employee("", "", "", "", "", "", "", "", "", "", "");
       Post post = Post(
           element.id, employee, element.content, element.time, element.file);
       await FirebaseFirestore.instance
@@ -159,7 +149,7 @@ class _HomePageState extends State<HomePageManager> {
                 padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
                 child: CircleAvatar(
                   radius: 24,
-                  backgroundColor: Colors.tealAccent,
+                  backgroundColor: Colors.blueAccent,
                   child: CircleAvatar(
                     backgroundImage: NetworkImage(post.employee.image),
                     radius: 22,
@@ -244,7 +234,7 @@ class _HomePageState extends State<HomePageManager> {
     return FutureBuilder<QuerySnapshot>(
         future: FirebaseFirestore.instance
             .collection("employee")
-            .where("id", isEqualTo: userR.uid)
+            .where("id", isEqualTo: user_auth.uid)
             .get(),
         builder: (context, snapshot) {
           if (!snapshot.hasData) {

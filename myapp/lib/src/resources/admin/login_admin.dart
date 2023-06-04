@@ -126,12 +126,12 @@ class _LoginAdminState extends State<LoginAdmin> {
     var isValid =
         authBloc.isValidLogin(_emailController.text, _passController.text);
     if (isValid) {
-      LoadingDialog.showLoadingDialog(context, "loading...");
+      LoadingDialog.showLoadingDialog(context, "Please Wait...");
       authBloc.signIn(_emailController.text, _passController.text, () async {
-        var userR = FirebaseAuth.instance.currentUser!;
+        var user_auth = FirebaseAuth.instance.currentUser!;
         var snapshot = await FirebaseFirestore.instance
             .collection('admin')
-            .where('id', isEqualTo: userR.uid)
+            .where('id', isEqualTo: user_auth.uid)
             .get();
         if (snapshot.docs.isNotEmpty) {
           LoadingDialog.hideLoadingDialog(context);

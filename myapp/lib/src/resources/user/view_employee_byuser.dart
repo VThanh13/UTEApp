@@ -140,7 +140,7 @@ class _ViewEmployeeByUser extends State<ViewEmployeeByUser> {
     await uploadPdf();
     if (isvalid) {
       if (!mounted) return;
-      LoadingDialog.showLoadingDialog(context, "loading...");
+      LoadingDialog.showLoadingDialog(context, "Please Wait...");
       createChatRoom(
           current_user.id,
           "Send ${widget.employee.name}",

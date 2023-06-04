@@ -124,7 +124,7 @@ class _HomePageState extends State<HomePage> {
     await uploadPdf();
     if (isvalid) {
       if (!mounted) return;
-      LoadingDialog.showLoadingDialog(context, "loading...");
+      LoadingDialog.showLoadingDialog(context, "Please Wait...");
       createChatRoom(
           current_user.id,
           "Post ${post.content}",
@@ -211,20 +211,22 @@ class _HomePageState extends State<HomePage> {
     await getDepartmentName();
     List<NewfeedModel> listNewfeed = [];
     await FirebaseFirestore.instance
-        .collection('newfeed')
-        .get()
-        .then((value) => {
-              value.docs.forEach((element) {
-                NewfeedModel newfeed = NewfeedModel("", "", "", "", "");
-                newfeed.id = element['id'];
-                newfeed.content = element['content'];
-                newfeed.time = element['time'];
-                newfeed.file = element['file'];
-                newfeed.employeeId = element['employeeId'];
+      .collection('newfeed')
+      .get()
+      .then((value) => {
+        setState(() {
+          value.docs.forEach((element) {
+            NewfeedModel newfeed = NewfeedModel("", "", "", "", "");
+            newfeed.id = element['id'];
+            newfeed.content = element['content'];
+            newfeed.time = element['time'];
+            newfeed.file = element['file'];
+            newfeed.employeeId = element['employeeId'];
 
-                listNewfeed.add(newfeed);
-              })
-            });
+            listNewfeed.add(newfeed);
+          });
+        })
+      });
     listNewfeed.forEach((element) async {
       Employee employee = Employee("", "", "", "", "", "", "", "", "", "", "");
       Post post = Post(
@@ -278,7 +280,7 @@ class _HomePageState extends State<HomePage> {
                 padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
                 child: CircleAvatar(
                   radius: 24,
-                  backgroundColor: Colors.tealAccent,
+                  backgroundColor: Colors.blueAccent,
                   child: CircleAvatar(
                     backgroundImage: NetworkImage(post.employee.image),
                     radius: 22,

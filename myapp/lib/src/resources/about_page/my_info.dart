@@ -116,14 +116,13 @@ class _MyInfoState extends State<MyInfo> with SingleTickerProviderStateMixin{
   }
 
   FirebaseAuth auth = FirebaseAuth.instance;
-  var userR = FirebaseAuth.instance.currentUser!;
-  String name = "1234";
+  var user_auth = FirebaseAuth.instance.currentUser!;
   UserModel userModel = UserModel("", " ", "", "", "", "", "", "");
 
   Future<String> getUserNameFromUID() async {
     final snapshot = await FirebaseFirestore.instance
         .collection('user')
-        .where('userId', isEqualTo: userR.uid)
+        .where('userId', isEqualTo: user_auth.uid)
         .get();
     return snapshot.docs.first['name'];
   }
@@ -132,7 +131,7 @@ class _MyInfoState extends State<MyInfo> with SingleTickerProviderStateMixin{
   getCurrentUser() async {
     final snapshot = await FirebaseFirestore.instance
         .collection('user')
-        .where('userId', isEqualTo: userR.uid)
+        .where('userId', isEqualTo: user_auth.uid)
         .get();
     userModel = snapshot.docs.first as UserModel;
   }
@@ -142,7 +141,7 @@ class _MyInfoState extends State<MyInfo> with SingleTickerProviderStateMixin{
     return FutureBuilder<QuerySnapshot>(
         future: FirebaseFirestore.instance
             .collection("user")
-            .where("userId", isEqualTo: userR.uid)
+            .where("userId", isEqualTo: user_auth.uid)
             .get(),
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
@@ -573,7 +572,7 @@ class _MyInfoState extends State<MyInfo> with SingleTickerProviderStateMixin{
         _nameController.text, _emailController.text, _phoneController.text);
 
     if (isvalid) {
-      LoadingDialog.showLoadingDialog(context, "loading...");
+      LoadingDialog.showLoadingDialog(context, "Please Wait...");
       changeInfo(
           _emailController.text, _nameController.text, _phoneController.text,
           () {
@@ -592,8 +591,8 @@ class _MyInfoState extends State<MyInfo> with SingleTickerProviderStateMixin{
         _passwordController.text);
 
     if (isvalid) {
-      LoadingDialog.showLoadingDialog(context, "loading...");
-      userR.updatePassword(_passNew2Controller.text);
+      LoadingDialog.showLoadingDialog(context, "Please Wait...");
+      user_auth.updatePassword(_passNew2Controller.text);
       changePassword(_passNew2Controller.text, () {
         LoadingDialog.hideLoadingDialog(context);
         Navigator.push(
@@ -606,7 +605,7 @@ class _MyInfoState extends State<MyInfo> with SingleTickerProviderStateMixin{
       String email, String name, String phone, Function onSuccess) async {
     QuerySnapshot snapshot = await FirebaseFirestore.instance
         .collection('user')
-        .where('userId', isEqualTo: userR.uid)
+        .where('userId', isEqualTo: user_auth.uid)
         .get();
     String id = snapshot.docs.first.id;
     var user = {"email": email, "name": name, "phone": phone};
@@ -625,7 +624,7 @@ class _MyInfoState extends State<MyInfo> with SingleTickerProviderStateMixin{
   void changePassword(String pass, Function onSuccess) async {
     QuerySnapshot snapshot = await FirebaseFirestore.instance
         .collection('user')
-        .where('userId', isEqualTo: userR.uid)
+        .where('userId', isEqualTo: user_auth.uid)
         .get();
     String id = snapshot.docs.first.id;
     var ref = FirebaseFirestore.instance.collection('user');
@@ -656,7 +655,7 @@ class _MyInfoState extends State<MyInfo> with SingleTickerProviderStateMixin{
         await uploadTask.whenComplete(() async {
           var url = await ref.getDownloadURL();
           image_url = url.toString();
-          updateAvatar(userR.uid, image_url, () {
+          updateAvatar(user_auth.uid, image_url, () {
             LoadingDialog.hideLoadingDialog(context);
             Navigator.push(context,
                 MaterialPageRoute(builder: (context) => const MyInfo()));

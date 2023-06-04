@@ -571,7 +571,7 @@ class _ManageEmployeeState extends State<ManageEmployee> {
     var isvalid = isValidChangePass(_newPasswordController.text);
     if (isvalid) {
       String password = _newPasswordController.text;
-      LoadingDialog.showLoadingDialog(context, "loading...");
+      LoadingDialog.showLoadingDialog(context, "Please Wait...");
 
       FirebaseAuth.instance.signInWithEmailAndPassword(
           email: employee.email, password: employee.password);
@@ -875,7 +875,7 @@ class _ManageEmployeeState extends State<ManageEmployee> {
   }
 
   _onChangeCategoryClicked(id, category) {
-    LoadingDialog.showLoadingDialog(context, "loading...");
+    LoadingDialog.showLoadingDialog(context, "Please Wait...");
     changeCategory(id, category, () {
       LoadingDialog.hideLoadingDialog(context);
       Navigator.push(context,
@@ -900,7 +900,7 @@ class _ManageEmployeeState extends State<ManageEmployee> {
   }
 
   _onCancelAccountClicked(id, status) {
-    LoadingDialog.showLoadingDialog(context, "loading...");
+    LoadingDialog.showLoadingDialog(context, "Please Wait...");
     cancelAccount(id, status, () {
       LoadingDialog.hideLoadingDialog(context);
       Navigator.push(context,
@@ -936,7 +936,7 @@ class _ManageEmployeeState extends State<ManageEmployee> {
     String category = valueCategory!;
     String department = currentEmployee.department;
     if (isValid(email, name, phone, password)) {
-      LoadingDialog.showLoadingDialog(context, "Loading...");
+      LoadingDialog.showLoadingDialog(context, "Please Wait...");
       authBloc.createEmployee(
           email, password, name, phone, department, category, () {
         auth.signInWithEmailAndPassword(email: current_email, password: current_password);

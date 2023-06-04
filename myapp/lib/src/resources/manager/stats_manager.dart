@@ -82,7 +82,7 @@ class PieChartData {
 
 class _StatsPageState extends State<StatsManagerPage> {
   FirebaseAuth auth = FirebaseAuth.instance;
-  var userR = FirebaseAuth.instance.currentUser!;
+  var user_auth = FirebaseAuth.instance.currentUser!;
   EmployeeModel employeeModel =
       EmployeeModel("", " ", "", "", "", "", "", "", "", "");
   int pageIndex = 0;

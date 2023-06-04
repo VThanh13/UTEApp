@@ -863,7 +863,7 @@ class _DetailQuestionState extends State<DetailQuestionEmployee> {
   }
 
   _onChangeQuestionClicked(id) {
-    LoadingDialog.showLoadingDialog(context, "Loading...");
+    LoadingDialog.showLoadingDialog(context, "Please Wait...");
     changeQuestion(id, valueKhoa!, valueVanDe!, () {
       LoadingDialog.hideLoadingDialog(context);
       Navigator.push(context,
@@ -892,7 +892,7 @@ class _DetailQuestionState extends State<DetailQuestionEmployee> {
     String timeString = DateFormat('dd-MM-yyyy HH:mm:ss').format(time);
 
     if (isvalid) {
-      LoadingDialog.showLoadingDialog(context, "Loading...");
+      LoadingDialog.showLoadingDialog(context, "Please Wait...");
       sendAnswer(currentEmployee.id, _answerController.text, timeString, widget.chatRoom.id,
               () {
             LoadingDialog.hideLoadingDialog(context);

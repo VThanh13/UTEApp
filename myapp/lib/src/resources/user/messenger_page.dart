@@ -393,12 +393,11 @@ class _MessengerPageState extends State<MessengerPage> {
             Icons.add,
             size: 25,
           )
-          //params
-          ),
+      ),
       floatingActionButtonLocation:
           FloatingActionButtonLocation.centerDocked,
       body: SafeArea(
-        minimum: const EdgeInsets.only(left: 2, right: 10),
+        minimum: const EdgeInsets.only(left: 5, right: 5),
         child: SingleChildScrollView(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
@@ -814,8 +813,26 @@ class _MessengerPageState extends State<MessengerPage> {
   Widget getFooter() {
     List<IconData> iconItems = [
       Icons.message,
-      Icons.question_answer_outlined,
+      AppIcons.chat,
     ];
+    // return BottomNavigationBar(
+    //   items: const <BottomNavigationBarItem>[
+    //     BottomNavigationBarItem(
+    //       icon: Icon(Icons.message),
+    //       label: 'Your questions',
+    //     ),
+    //     BottomNavigationBarItem(
+    //       icon: Icon(AppIcons.chat),
+    //       label: 'All questions',
+    //     ),
+    //   ],
+    //   currentIndex: pageIndex,
+    //   selectedItemColor: Colors.blue,
+    //   // gapLocation: GapLocation.center,
+    //   onTap: (index) {
+    //     selectedTab(index);
+    //   },
+    // );
     return AnimatedBottomNavigationBar(
       activeColor: Colors.blue,
       splashColor: Colors.grey,
@@ -868,7 +885,7 @@ class _MessengerPageState extends State<MessengerPage> {
     await uploadPdf();
     if (isvalid) {
       if (!mounted) return;
-      LoadingDialog.showLoadingDialog(context, "loading...");
+      LoadingDialog.showLoadingDialog(context, "Please Wait...");
       createChatRoom(
           current_user.id,
           _titleController.text,

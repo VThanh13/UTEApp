@@ -455,7 +455,7 @@ class _ManageDepartmentState extends State<ManageDepartment> {
 
   changeLeader(EmployeeModel oldLeader, EmployeeModel newLeader) {
     var ref = FirebaseFirestore.instance.collection('employee');
-    LoadingDialog.showLoadingDialog(context, "loading...");
+    LoadingDialog.showLoadingDialog(context, "Please Wait...");
     ref.doc(oldLeader.id).update({
       'category': listDepartment[oldLeader.department].category.first,
       'roles': 'Tư vấn viên'
