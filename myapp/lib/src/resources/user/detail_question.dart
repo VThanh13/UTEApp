@@ -567,7 +567,8 @@ class _DetailQuestionState extends State<DetailQuestion> {
                   child: _buildMessage(),
                   ),
                 ),
-            _inputQuestion(),
+            if(current_user.uid == widget.chatRoom.user_id)
+              _inputQuestion(),
           ],
           ),
         ),

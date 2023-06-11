@@ -957,6 +957,64 @@ class _DetailQuestionState extends State<DetailQuestionEmployee> {
     return false;
   }
 
+  _inputAnswer(){
+    return Container(
+      height: 50,
+      width: double.maxFinite,
+      decoration: BoxDecoration(
+        border: Border.all(
+          color: Colors.blueAccent,
+          width: 1,
+        ),
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          IconButton(
+            onPressed: (){
+            },
+            icon: const Icon(AppIcons.file_pdf,
+              size: 20,
+              color: Colors.redAccent,),
+          ),
+          SizedBox(
+            width: 230,
+            child: StreamBuilder(
+              stream: answerControl,
+              builder: (context, snapshot) => TextField(
+                controller: _answerController,
+                decoration: InputDecoration(
+                  errorText: snapshot.hasError? snapshot.error.toString() : null,
+                  border: InputBorder.none,
+                ),
+              ),
+            ),
+          ),
+          IconButton(
+            onPressed: (){
+              try{
+                if(_onSendAnswerClicked()){
+                  setState(() {
+                    _answerController.text = '';
+                  });
+                }else{
+                  showErrorMessage('Send message fail, check your internet connection');
+                }
+              }catch(e){
+                //
+              }
+            },
+            icon: const Icon(Icons.send_sharp,
+              size: 25,
+              color: Colors.blueAccent,),
+          )
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -989,61 +1047,8 @@ class _DetailQuestionState extends State<DetailQuestionEmployee> {
                       child: _buildMessage(),
                     ),
                   ),
-                  Container(
-                    height: 50,
-                    width: double.maxFinite,
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        color: Colors.blueAccent,
-                        width: 1,
-                      ),
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        IconButton(
-                          onPressed: (){
-                          },
-                          icon: const Icon(AppIcons.file_pdf,
-                            size: 20,
-                            color: Colors.redAccent,),
-                        ),
-                        SizedBox(
-                          width: 230,
-                          child: StreamBuilder(
-                            stream: answerControl,
-                            builder: (context, snapshot) => TextField(
-                              controller: _answerController,
-                              decoration: InputDecoration(
-                                errorText: snapshot.hasError? snapshot.error.toString() : null,
-                                border: InputBorder.none,
-                              ),
-                            ),
-                          ),
-                        ),
-                        IconButton(
-                          onPressed: (){
-                            try{
-                              if(_onSendAnswerClicked()){
-                                setState(() {
-                                  _answerController.text = '';
-                                });
-                              }else{
-                                showErrorMessage('Send message fail, check your internet connection');
-                              }
-                            }catch(e){
-                              //
-                            }
-                          },
-                          icon: const Icon(Icons.send_sharp,
-                            size: 25,
-                            color: Colors.blueAccent,),
-                        )
-                      ],
-                    ),
-                  )
+                  if(ableToAnswer())
+                    _inputAnswer()
                 ],
               ),
             ],
