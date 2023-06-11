@@ -12,7 +12,6 @@ import '../../models/NewfeedModel.dart';
 import '../user/home_page.dart';
 import '../login_screen.dart';
 import '../pdf_viewer.dart';
-import '../user/messenger_page.dart';
 import 'employee_info.dart';
 import 'messenger_employee.dart';
 
@@ -26,8 +25,7 @@ class HomePageEmployee extends StatefulWidget {
 class _HomePageState extends State<HomePageEmployee> {
   FirebaseAuth auth = FirebaseAuth.instance;
   var user_auth = FirebaseAuth.instance.currentUser!;
-  EmployeeModel employeeModel =
-      EmployeeModel("", " ", "", "", "", "", "", "", "", "");
+  EmployeeModel employeeModel = EmployeeModel();
   @override
   void dispose() {
     super.dispose();
@@ -36,7 +34,7 @@ class _HomePageState extends State<HomePageEmployee> {
   @override
   void initState() {
     super.initState();
-    getListPost();
+    // getListPost();
     reload();
     sortListPost();
   }
@@ -54,15 +52,15 @@ class _HomePageState extends State<HomePageEmployee> {
   var departmentName = {};
   getDepartmentName() async {
     await FirebaseFirestore.instance
-        .collection('departments')
-        .get()
-        .then((value) => {
-              setState(() {
-                for (var element in value.docs) {
-                  departmentName[element.id] = element["name"];
-                }
-              })
-            });
+      .collection('departments')
+      .get()
+      .then((value) => {
+        setState(() {
+          for (var element in value.docs) {
+            departmentName[element.id] = element["name"];
+          }
+        })
+      });
   }
 
   List<Post> listPost = [];
@@ -75,7 +73,7 @@ class _HomePageState extends State<HomePageEmployee> {
       .then((value) => {
         setState(() {
           value.docs.forEach((element) {
-            NewfeedModel newFeed = NewfeedModel("", "", "", "", "");
+            NewfeedModel newFeed = NewfeedModel();
             newFeed.id = element['id'];
             newFeed.content = element['content'];
             newFeed.time = element['time'];
@@ -87,32 +85,31 @@ class _HomePageState extends State<HomePageEmployee> {
         })
       });
     listNewFeed.forEach((element) async {
-      Employee employee = Employee("", "", "", "", "", "", "", "", "", "", "");
+      Employee employee = Employee("", "", "", "", "", "", "", "", [], "", "");
       Post post = Post(
-          element.id, employee, element.content, element.time, element.file);
+          element.id!, employee, element.content!, element.time!, element.file!);
       await FirebaseFirestore.instance
-          .collection('employee')
-          .where("id", isEqualTo: element.employeeId)
-          .get()
-          .then((value) => {
-                setState(() {
-                  employee.id = value.docs.first['id'];
-                  employee.name = value.docs.first['name'];
-                  employee.email = value.docs.first['email'];
-                  employee.image = value.docs.first['image'];
-                  employee.password = value.docs.first['password'];
-                  employee.phone = value.docs.first['phone'];
-                  employee.departmentId = value.docs.first['department'];
-                  employee.departmentName =
-                      departmentName[employee.departmentId];
-                  employee.category = value.docs.first['category'];
-                  employee.roles = value.docs.first['roles'];
-                  employee.status = value.docs.first['status'];
-                  post.employee = employee;
-                  listPost.add(post);
-                  sortListPost();
-                })
-              });
+        .collection('employee')
+        .doc(element.employeeId)
+        .get()
+        .then((value) => {
+          setState(() {
+            employee.id = value['id'];
+            employee.name = value['name'];
+            employee.email = value['email'];
+            employee.image = value['image'];
+            employee.password = value['password'];
+            employee.phone = value['phone'];
+            employee.departmentId = value['department'];
+            employee.departmentName = departmentName[employee.departmentId];
+            employee.category = value['category'].cast<String>();
+            employee.roles = value['roles'];
+            employee.status = value['status'];
+            post.employee = employee;
+            listPost.add(post);
+            sortListPost();
+          })
+        });
     });
   }
 
@@ -245,7 +242,7 @@ class _HomePageState extends State<HomePageEmployee> {
             employeeModel.password = (e.data() as Map)['password'];
             employeeModel.phone = (e.data() as Map)['phone'];
             employeeModel.department = (e.data() as Map)['department'];
-            employeeModel.category = (e.data() as Map)['category'];
+            employeeModel.category = (e.data() as Map)['category'].cast<String>();
             employeeModel.roles = (e.data() as Map)['roles'];
             employeeModel.status = (e.data() as Map)['status'];
 
@@ -278,10 +275,10 @@ class _HomePageState extends State<HomePageEmployee> {
               child: ListView(
                 children: <Widget>[
                   UserAccountsDrawerHeader(
-                    accountName: Text(employeeModel.name),
-                    accountEmail: Text(employeeModel.email),
+                    accountName: Text(employeeModel.name!),
+                    accountEmail: Text(employeeModel.email!),
                     currentAccountPicture: CircleAvatar(
-                      backgroundImage: NetworkImage(employeeModel.image),
+                      backgroundImage: NetworkImage(employeeModel.image!),
                     ),
                   ),
                   InkWell(

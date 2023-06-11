@@ -21,10 +21,8 @@ class MessengerPageEmployee extends StatefulWidget {
 class _MessengerPageState extends State<MessengerPageEmployee> {
   FirebaseAuth auth = FirebaseAuth.instance;
   var user_auth = FirebaseAuth.instance.currentUser!;
-  EmployeeModel employeeModel =
-      EmployeeModel("", " ", "", "", "", "", "", "", "", "");
-  EmployeeModel current_employee =
-      EmployeeModel("", "", "", "", "", "", "", "", "", "");
+  EmployeeModel employeeModel = EmployeeModel();
+  EmployeeModel current_employee = EmployeeModel();
   @override
   void initState() {
     super.initState();
@@ -45,7 +43,7 @@ class _MessengerPageState extends State<MessengerPageEmployee> {
         current_employee.password = value.docs.first['password'];
         current_employee.phone = value.docs.first['phone'];
         current_employee.department = value.docs.first['department'];
-        current_employee.category = value.docs.first['category'];
+        current_employee.category = value.docs.first['category'].cast<String>();
         current_employee.roles = value.docs.first['roles'];
         current_employee.status = value.docs.first['status'];
       })
@@ -63,8 +61,7 @@ class _MessengerPageState extends State<MessengerPageEmployee> {
       .then((value) => {
       setState(() {
         value.docs.forEach((element) {
-          ChatRoomModel chatRoom =
-          ChatRoomModel("", "", "", "", "", "", "", "", "", "");
+          ChatRoomModel chatRoom = ChatRoomModel();
           chatRoom.id = element['room_id'];
           chatRoom.user_id = element['user_id'];
           chatRoom.time = element['time'];
@@ -85,21 +82,20 @@ class _MessengerPageState extends State<MessengerPageEmployee> {
   List<ChatRoomModel> listUnanwsered = [];
   getUnanwseredChatRoom() async {
     String key = "category";
-    String value = current_employee.category;
+    List<String> values = current_employee.category!;
     if(current_employee.roles == "Trưởng nhóm"){
-      String key = "department";
-      String value = current_employee.department;
+      key = "department";
+      values.add(current_employee.department!);
     }
     await FirebaseFirestore.instance
       .collection('chat_room')
-      .where(key, isEqualTo: value)
+      .where(key, whereIn: values)
       .where('status', isEqualTo: 'Chưa trả lời')
       .get()
       .then((value) => {
         setState(() {
           value.docs.forEach((element) {
-            ChatRoomModel chatRoom =
-            ChatRoomModel("", "", "", "", "", "", "", "", "", "");
+            ChatRoomModel chatRoom = ChatRoomModel();
             chatRoom.id = element['room_id'];
             chatRoom.user_id = element['user_id'];
             chatRoom.time = element['time'];
@@ -120,21 +116,20 @@ class _MessengerPageState extends State<MessengerPageEmployee> {
   List<ChatRoomModel> listAnwsered = [];
   getAnwseredChatRoom() async {
     String key = "category";
-    String value = current_employee.category;
+    List<String> values = current_employee.category!;
     if(current_employee.roles == "Trưởng nhóm"){
-      String key = "department";
-      String value = current_employee.department;
+      key = "department";
+      values.add(current_employee.department!);
     }
     await FirebaseFirestore.instance
       .collection('chat_room')
-      .where(key, isEqualTo: value)
+      .where(key, whereIn: values)
       .where('status', isEqualTo: 'Đã trả lời')
       .get()
       .then((value) => {
         setState(() {
           value.docs.forEach((element) {
-            ChatRoomModel chatRoom =
-            ChatRoomModel("", "", "", "", "", "", "", "", "", "");
+            ChatRoomModel chatRoom = ChatRoomModel();
             chatRoom.id = element['room_id'];
             chatRoom.user_id = element['user_id'];
             chatRoom.time = element['time'];
@@ -323,7 +318,7 @@ class _MessengerPageState extends State<MessengerPageEmployee> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
                           Text(
-                            chatRoom.title,
+                            chatRoom.title!,
                             style: const TextStyle(
                               fontSize: 20.0,
                               fontWeight: FontWeight.bold,
@@ -338,7 +333,7 @@ class _MessengerPageState extends State<MessengerPageEmployee> {
                               color: Colors.black,
                             ),),
                           Text(
-                            chatRoom.time,
+                            chatRoom.time!,
                             style: const TextStyle(
                               fontSize: 14.0,
                               fontWeight: FontWeight.w400,
@@ -346,7 +341,7 @@ class _MessengerPageState extends State<MessengerPageEmployee> {
                             ),
                             overflow: TextOverflow.ellipsis,
                           ),
-                          Text(chatRoom.status,
+                          Text(chatRoom.status!,
                               style: TextStyle(
                                 fontSize: 12,
                                 fontWeight: FontWeight.w400,

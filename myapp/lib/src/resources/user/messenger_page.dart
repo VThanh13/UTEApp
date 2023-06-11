@@ -46,7 +46,7 @@ class _MessengerPageState extends State<MessengerPage> {
 
   FirebaseAuth auth = FirebaseAuth.instance;
   var currentUser = FirebaseAuth.instance.currentUser!;
-  UserModel current_user = UserModel("", " ", "", "", "", "", "", "");
+  UserModel current_user = UserModel();
 
   @override
   void initState() {
@@ -124,8 +124,7 @@ class _MessengerPageState extends State<MessengerPage> {
       .then((value) => {
         setState(() {
           value.docs.forEach((element) {
-            ChatRoomModel chatRoom =
-            ChatRoomModel("", "", "", "", "", "", "", "", "", "");
+            ChatRoomModel chatRoom = ChatRoomModel();
             chatRoom.id = element['room_id'];
             chatRoom.user_id = element['user_id'];
             chatRoom.time = element['time'];
@@ -152,8 +151,7 @@ class _MessengerPageState extends State<MessengerPage> {
       .then((value) => {
         setState(() {
           value.docs.forEach((element) {
-            ChatRoomModel chatRoom =
-                ChatRoomModel("", "", "", "", "", "", "", "", "", "");
+            ChatRoomModel chatRoom = ChatRoomModel();
             chatRoom.id = element['room_id'];
             chatRoom.user_id = element['user_id'];
             chatRoom.time = element['time'];
@@ -203,7 +201,7 @@ class _MessengerPageState extends State<MessengerPage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       Text(
-                        chatRoom.title,
+                        chatRoom.title!,
                         style: const TextStyle(
                           fontSize: 20.0,
                           fontWeight: FontWeight.bold,
@@ -218,7 +216,7 @@ class _MessengerPageState extends State<MessengerPage> {
                         color: Colors.black,
                       ),),
                       Text(
-                        chatRoom.time,
+                        chatRoom.time!,
                         style: const TextStyle(
                           fontSize: 14.0,
                           fontWeight: FontWeight.w400,
@@ -226,7 +224,7 @@ class _MessengerPageState extends State<MessengerPage> {
                         ),
                         overflow: TextOverflow.ellipsis,
                       ),
-                      Text(chatRoom.status,
+                      Text(chatRoom.status!,
                           style: TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.w400,
@@ -250,26 +248,28 @@ class _MessengerPageState extends State<MessengerPage> {
   List<EmployeeModel> listEmployee = [];
   getEmployeeData() async {
     await FirebaseFirestore.instance
-        .collection('employee')
-        .get()
-        .then((value) => {
-              value.docs.forEach((element) {
-                EmployeeModel eModel =
-                    EmployeeModel("", " ", "", "", "", "", "", "", "", "");
-                eModel.id = element['id'];
-                eModel.name = element['name'];
-                eModel.email = element['email'];
-                eModel.image = element['image'];
-                eModel.password = element['password'];
-                eModel.phone = element['phone'];
-                eModel.department = element['department'];
-                eModel.category = element['category'];
-                eModel.roles = element['roles'];
-                eModel.status = element['status'];
+      .collection('employee')
+      .get()
+      .then((value) => {
+        setState(() {
+          value.docs.forEach((element) {
+            EmployeeModel eModel =
+                EmployeeModel();
+            eModel.id = element['id'];
+            eModel.name = element['name'];
+            eModel.email = element['email'];
+            eModel.image = element['image'];
+            eModel.password = element['password'];
+            eModel.phone = element['phone'];
+            eModel.department = element['department'];
+            eModel.category = element['category'].cast<String>();
+            eModel.roles = element['roles'];
+            eModel.status = element['status'];
 
-                listEmployee.add(eModel);
-              })
-            });
+            listEmployee.add(eModel);
+          });
+        })
+      });
   }
 
   _buildEmployee(BuildContext context, EmployeeModel employeeModel) {
@@ -292,7 +292,7 @@ class _MessengerPageState extends State<MessengerPage> {
                 radius: 28,
                 backgroundColor: Colors.blueAccent,
                 child: CircleAvatar(
-                  backgroundImage: NetworkImage(employeeModel.image),
+                  backgroundImage: NetworkImage(employeeModel.image!),
                   radius: 26,
                 ),
               ),
@@ -305,7 +305,7 @@ class _MessengerPageState extends State<MessengerPage> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
                   Text(
-                    employeeModel.name,
+                    employeeModel.name!,
                     style: const TextStyle(
                         fontSize: 10,
                         fontStyle: FontStyle.italic,
@@ -313,7 +313,7 @@ class _MessengerPageState extends State<MessengerPage> {
                     overflow: TextOverflow.ellipsis,
                   ),
                   Text(
-                    employeeModel.roles,
+                    employeeModel.roles!,
                     style: const TextStyle(
                         fontSize: 10, fontWeight: FontWeight.w400),
                     overflow: TextOverflow.ellipsis,
@@ -887,14 +887,14 @@ class _MessengerPageState extends State<MessengerPage> {
       if (!mounted) return;
       LoadingDialog.showLoadingDialog(context, "Please Wait...");
       createChatRoom(
-          current_user.id,
+          current_user.id!,
           _titleController.text,
           timeString,
           "Chưa trả lời",
           _informationController.text,
           valueKhoa!,
           valueVanDe!,
-          current_user.group,
+          current_user.group!,
           "public",
           () {});
     }

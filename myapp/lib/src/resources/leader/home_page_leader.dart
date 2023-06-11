@@ -67,8 +67,7 @@ class Post {
 class _HomePageState extends State<HomePageLeader> {
   FirebaseAuth auth = FirebaseAuth.instance;
   var user_auth = FirebaseAuth.instance.currentUser!;
-  EmployeeModel employeeModel =
-      EmployeeModel("", " ", "", "", "", "", "", "", "", "");
+  EmployeeModel employeeModel = EmployeeModel();
   var departmentName = {};
 
   Post? get post => null;
@@ -81,7 +80,7 @@ class _HomePageState extends State<HomePageLeader> {
   @override
   void initState() {
     super.initState();
-    getListPost();
+    // getListPost();
     reload();
     _onCreateNewPost();
     sortListPost();
@@ -126,7 +125,7 @@ class _HomePageState extends State<HomePageLeader> {
       if (!mounted) return;
       LoadingDialog.showLoadingDialog(context, "Please Wait...");
       createNewPost(
-          employeeModel.id, _infoPostController.text, timeString, imgUrl, () {
+          employeeModel.id!, _infoPostController.text, timeString, imgUrl, () {
         LoadingDialog.hideLoadingDialog(context);
         Navigator.push(context,
             MaterialPageRoute(builder: (context) => const HomePageLeader()));
@@ -161,7 +160,7 @@ class _HomePageState extends State<HomePageLeader> {
       .then((value) => {
         setState(() {
           value.docs.forEach((element) {
-            NewfeedModel newFeed = NewfeedModel("", "", "", "", "");
+            NewfeedModel newFeed = NewfeedModel();
             newFeed.id = element['id'];
             newFeed.content = element['content'];
             newFeed.time = element['time'];
@@ -175,7 +174,7 @@ class _HomePageState extends State<HomePageLeader> {
     listNewfeed.forEach((element) async {
       Employee employee = Employee("", "", "", "", "", "", "", "", "", "", "");
       Post post = Post(
-          element.id, employee, element.content, element.time, element.file);
+          element.id!, employee, element.content!, element.time!, element.file!);
       await FirebaseFirestore.instance
         .collection('employee')
         .where("id", isEqualTo: element.employeeId)
@@ -191,7 +190,7 @@ class _HomePageState extends State<HomePageLeader> {
             employee.departmentId = value.docs.first['department'];
             employee.departmentName =
                 departmentName[employee.departmentId];
-            employee.category = value.docs.first['category'];
+            employee.category = value.docs.first['category'].cast<String>();
             employee.roles = value.docs.first['roles'];
             employee.status = value.docs.first['status'];
             post.employee = employee;
@@ -351,7 +350,7 @@ class _HomePageState extends State<HomePageLeader> {
             employeeModel.password = (e.data() as Map)['password'];
             employeeModel.phone = (e.data() as Map)['phone'];
             employeeModel.department = (e.data() as Map)['department'];
-            employeeModel.category = (e.data() as Map)['category'];
+            employeeModel.category = (e.data() as Map)['category'].cast<String>();
             employeeModel.roles = (e.data() as Map)['roles'];
             employeeModel.status = (e.data() as Map)['status'];
 
@@ -384,10 +383,10 @@ class _HomePageState extends State<HomePageLeader> {
               child: ListView(
                 children: <Widget>[
                   UserAccountsDrawerHeader(
-                    accountName: Text(employeeModel.name),
-                    accountEmail: Text(employeeModel.email),
+                    accountName: Text(employeeModel.name!),
+                    accountEmail: Text(employeeModel.email!),
                     currentAccountPicture: CircleAvatar(
-                      backgroundImage: NetworkImage(employeeModel.image),
+                      backgroundImage: NetworkImage(employeeModel.image!),
                     ),
                   ),
                   InkWell(
@@ -789,7 +788,7 @@ class _HomePageState extends State<HomePageLeader> {
                                       backgroundColor: Colors.blueAccent,
                                       child: CircleAvatar(
                                         backgroundImage: NetworkImage(
-                                            employeeModel.image),
+                                            employeeModel.image!),
                                         radius: 26,
                                       ),
                                     ),

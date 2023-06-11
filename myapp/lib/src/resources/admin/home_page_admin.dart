@@ -22,7 +22,7 @@ class HomePageAdmin extends StatefulWidget {
 class _HomePageState extends State<HomePageAdmin> {
   FirebaseAuth auth = FirebaseAuth.instance;
   var user_auth = FirebaseAuth.instance.currentUser!;
-  UserModel userModel = UserModel("", " ", "", "", "", "", "", "");
+  UserModel userModel = UserModel();
 
   Future<String> getUserNameFromUID() async {
     final snapshot = await FirebaseFirestore.instance
@@ -101,10 +101,10 @@ class _HomePageState extends State<HomePageAdmin> {
               child: ListView(
                 children: <Widget>[
                   UserAccountsDrawerHeader(
-                    accountName: Text(userModel.name),
-                    accountEmail: Text(userModel.email),
+                    accountName: Text(userModel.name!),
+                    accountEmail: Text(userModel.email!),
                     currentAccountPicture: CircleAvatar(
-                      backgroundImage: NetworkImage(userModel.image),
+                      backgroundImage: NetworkImage(userModel.image!),
                     ),
                   ),
                   ListTile(

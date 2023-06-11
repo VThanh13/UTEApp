@@ -43,7 +43,7 @@ class Employee {
   String phone;
   String departmentId;
   String departmentName;
-  String category;
+  List<String> category;
   String roles;
   String status;
 
@@ -64,14 +64,13 @@ class Employee {
 class _HomePageState extends State<HomePage> {
   FirebaseAuth auth = FirebaseAuth.instance;
   var currentUser = FirebaseAuth.instance.currentUser!;
-  // String name = "1234";
-  UserModel current_user = UserModel("", " ", "", "", "", "", "", "");
+  UserModel current_user = UserModel();
 
   @override
   void initState() {
     super.initState();
     getCurrentUser();
-    getListPost();
+    // getListPost();
     reLoad();
   }
   bool isLoading = true;
@@ -105,14 +104,14 @@ class _HomePageState extends State<HomePage> {
 
   cacheCurrentUser() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString("id", current_user.id);
-    await prefs.setString("name", current_user.name);
-    await prefs.setString("email", current_user.email);
-    await prefs.setString("image", current_user.image);
-    await prefs.setString("password", current_user.password);
-    await prefs.setString("phone", current_user.phone);
-    await prefs.setString("group", current_user.group);
-    await prefs.setString("status", current_user.status);
+    await prefs.setString("id", current_user.id!);
+    await prefs.setString("name", current_user.name!);
+    await prefs.setString("email", current_user.email!);
+    await prefs.setString("image", current_user.image!);
+    await prefs.setString("password", current_user.password!);
+    await prefs.setString("phone", current_user.phone!);
+    await prefs.setString("group", current_user.group!);
+    await prefs.setString("status", current_user.status!);
   }
 
   var departmentName = {};
@@ -126,14 +125,14 @@ class _HomePageState extends State<HomePage> {
       if (!mounted) return;
       LoadingDialog.showLoadingDialog(context, "Please Wait...");
       createChatRoom(
-          current_user.id,
+          current_user.id!,
           "Post ${post.content}",
           timeString,
           "Chưa trả lời",
           _informationController.text,
           post.employee.departmentId,
-          post.employee.category,
-          current_user.group,
+          post.employee.category[0],
+          current_user.group!,
           "public",
               () {});
     }
@@ -216,7 +215,7 @@ class _HomePageState extends State<HomePage> {
       .then((value) => {
         setState(() {
           value.docs.forEach((element) {
-            NewfeedModel newfeed = NewfeedModel("", "", "", "", "");
+            NewfeedModel newfeed = NewfeedModel();
             newfeed.id = element['id'];
             newfeed.content = element['content'];
             newfeed.time = element['time'];
@@ -228,9 +227,9 @@ class _HomePageState extends State<HomePage> {
         })
       });
     listNewfeed.forEach((element) async {
-      Employee employee = Employee("", "", "", "", "", "", "", "", "", "", "");
+      Employee employee = Employee("", "", "", "", "", "", "", "", [], "", "");
       Post post = Post(
-          element.id, employee, element.content, element.time, element.file);
+          element.id!, employee, element.content!, element.time!, element.file!);
       FirebaseFirestore.instance
         .collection('employee')
         .where("id", isEqualTo: element.employeeId)
@@ -244,9 +243,8 @@ class _HomePageState extends State<HomePage> {
             employee.password = value.docs.first['password'];
             employee.phone = value.docs.first['phone'];
             employee.departmentId = value.docs.first['department'];
-            employee.departmentName =
-                departmentName[employee.departmentId];
-            employee.category = value.docs.first['category'];
+            employee.departmentName = departmentName[employee.departmentId];
+            employee.category = value.docs.first['category'].cast<String>();
             employee.roles = value.docs.first['roles'];
             employee.status = value.docs.first['status'];
             post.employee = employee;
@@ -729,10 +727,10 @@ class _HomePageState extends State<HomePage> {
                   UserAccountsDrawerHeader(
                     accountName: Text(
                         current_user.name ?? 'abc'),
-                    accountEmail: Text(current_user.email),
+                    accountEmail: Text(current_user.email!),
                     arrowColor: Colors.redAccent,
                     currentAccountPicture: CircleAvatar(
-                      backgroundImage: NetworkImage(current_user.image),
+                      backgroundImage: NetworkImage(current_user.image!),
                     ),
                   ),
                   InkWell(

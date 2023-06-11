@@ -21,8 +21,7 @@ class _ManageDepartmentState extends State<ManageDepartment> {
   FirebaseAuth auth = FirebaseAuth.instance;
   var userAuth = FirebaseAuth.instance.currentUser!;
   AuthBloc authBloc = AuthBloc();
-  EmployeeModel currentEmployee =
-      EmployeeModel("", "", "", "", "", "", "", "", "", "");
+  EmployeeModel currentEmployee = EmployeeModel();
   List<EmployeeModel> listEmployee = [];
 
   final StreamController _categoryController = StreamController();
@@ -65,11 +64,10 @@ class _ManageDepartmentState extends State<ManageDepartment> {
               setState(() {
                 for (var element in value.docs) {
                   if (element['roles'] == 'Trưởng nhóm') {
-                    EmployeeModel employeeModel =
-                        EmployeeModel("", "", "", "", "", "", "", "", "", "");
+                    EmployeeModel employeeModel = EmployeeModel();
                     employeeModel.id = element['id'];
                     employeeModel.name = element['name'];
-                    employeeModel.category = element['category'];
+                    employeeModel.category = element['category'].cast<String>();
                     employeeModel.email = element['email'];
                     employeeModel.image = element['image'];
                     employeeModel.password = element['password'];
@@ -97,7 +95,7 @@ class _ManageDepartmentState extends State<ManageDepartment> {
               currentEmployee.password = value.docs.first['password'],
               currentEmployee.phone = value.docs.first['phone'],
               currentEmployee.department = value.docs.first['department'],
-              currentEmployee.category = value.docs.first['category'],
+              currentEmployee.category = value.docs.first['category'].cast<String>(),
               currentEmployee.roles = value.docs.first['roles'],
               currentEmployee.status = value.docs.first['status'],
             });
@@ -123,7 +121,7 @@ class _ManageDepartmentState extends State<ManageDepartment> {
                 Container(
                   padding: const EdgeInsets.fromLTRB(10, 20, 10, 20),
                   child: Expanded(
-                      child: Text(department.name,
+                      child: Text(department.name!,
                           textAlign: TextAlign.left,
                           style: const TextStyle(
                               fontSize: 15,
@@ -155,7 +153,7 @@ class _ManageDepartmentState extends State<ManageDepartment> {
                 Container(
                   padding: const EdgeInsets.fromLTRB(10, 20, 10, 20),
                   child: Expanded(
-                      child: Text(employee.name,
+                      child: Text(employee.name!,
                           textAlign: TextAlign.left,
                           style: const TextStyle(
                               fontSize: 15,
@@ -178,7 +176,7 @@ class _ManageDepartmentState extends State<ManageDepartment> {
         .then((value) => {
               setState(() {
                 for (var element in value.docs) {
-                  DepartmentModel departmentModel = DepartmentModel("", "", []);
+                  DepartmentModel departmentModel = DepartmentModel();
                   departmentModel.id = element['id'];
                   departmentModel.name = element['name'];
                   departmentModel.category = element['category'].cast<String>();
@@ -196,11 +194,10 @@ class _ManageDepartmentState extends State<ManageDepartment> {
         .then((value) => {
               setState(() {
                 for (var element in value.docs) {
-                  EmployeeModel employeeModel =
-                      EmployeeModel("", "", "", "", "", "", "", "", "", "");
+                  EmployeeModel employeeModel = EmployeeModel();
                   employeeModel.id = element['id'];
                   employeeModel.name = element['name'];
-                  employeeModel.category = element['category'];
+                  employeeModel.category = element['category'].cast<String>();
                   employeeModel.email = element['email'];
                   employeeModel.image = element['image'];
                   employeeModel.password = element['password'];
@@ -265,7 +262,7 @@ class _ManageDepartmentState extends State<ManageDepartment> {
                                   builder: (context, snapshot) => TextField(
                                     //controller: _categoryController,
                                     controller: TextEditingController()
-                                      ..text = department.name,
+                                      ..text = department.name!,
                                     decoration: InputDecoration(
                                         labelText: "Tên khoa",
                                         hintText: 'Nhập Tên khoa',

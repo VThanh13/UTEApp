@@ -19,8 +19,7 @@ class _ManageCategoryState extends State<ManageCategory> {
   FirebaseAuth auth = FirebaseAuth.instance;
   var userAuth = FirebaseAuth.instance.currentUser!;
   AuthBloc authBloc = AuthBloc();
-  EmployeeModel currentEmployee =
-      EmployeeModel("", "", "", "", "", "", "", "", "", "");
+  EmployeeModel currentEmployee = EmployeeModel();
   List<String> listCategory = [];
 
   final TextEditingController _categoryController = TextEditingController();
@@ -48,21 +47,23 @@ class _ManageCategoryState extends State<ManageCategory> {
 
   getCurrentUser() async {
     await FirebaseFirestore.instance
-        .collection('employee')
-        .where('id', isEqualTo: userAuth.uid)
-        .get()
-        .then((value) => {
-              currentEmployee.id = value.docs.first['id'],
-              currentEmployee.name = value.docs.first['name'],
-              currentEmployee.email = value.docs.first['email'],
-              currentEmployee.image = value.docs.first['image'],
-              currentEmployee.password = value.docs.first['password'],
-              currentEmployee.phone = value.docs.first['phone'],
-              currentEmployee.department = value.docs.first['department'],
-              currentEmployee.category = value.docs.first['category'],
-              currentEmployee.roles = value.docs.first['roles'],
-              currentEmployee.status = value.docs.first['status']
-            });
+      .collection('employee')
+      .where('id', isEqualTo: userAuth.uid)
+      .get()
+      .then((value) => {
+        setState(() {
+          currentEmployee.id = value.docs.first['id'];
+          currentEmployee.name = value.docs.first['name'];
+          currentEmployee.email = value.docs.first['email'];
+          currentEmployee.image = value.docs.first['image'];
+          currentEmployee.password = value.docs.first['password'];
+          currentEmployee.phone = value.docs.first['phone'];
+          currentEmployee.department = value.docs.first['department'];
+          currentEmployee.category = value.docs.first['category'].cast<String>();
+          currentEmployee.roles = value.docs.first['roles'];
+          currentEmployee.status = value.docs.first['status'];
+        })
+      });
 
     await getListCategory();
   }
@@ -100,15 +101,15 @@ class _ManageCategoryState extends State<ManageCategory> {
 
   getListCategory() async {
     await FirebaseFirestore.instance
-        .collection('departments')
-        .where('id', isEqualTo: currentEmployee.department)
-        .get()
-        .then((value) => {
-              setState(() {
-                listCategory = value.docs.first["category"].cast<String>();
-                departmentName = value.docs.first["name"];
-              })
-            });
+      .collection('departments')
+      .where('id', isEqualTo: currentEmployee.department)
+      .get()
+      .then((value) => {
+        setState(() {
+          listCategory = value.docs.first["category"].cast<String>();
+          departmentName = value.docs.first["name"];
+        })
+      });
   }
 
   _modalBottomSheetEditCategory(String category, index) {

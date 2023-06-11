@@ -40,7 +40,7 @@ class _ViewEmployeeByUser extends State<ViewEmployeeByUser> {
 
   FirebaseAuth auth = FirebaseAuth.instance;
   var currentUser = FirebaseAuth.instance.currentUser!;
-  UserModel current_user = UserModel("", " ", "", "", "", "", "", "");
+  UserModel current_user = UserModel();
 
   DropdownMenuItem<String> buildMenuItem(String item) => DropdownMenuItem(
       value: item,
@@ -52,15 +52,15 @@ class _ViewEmployeeByUser extends State<ViewEmployeeByUser> {
   String departmentName = "";
 
   getDepartmentName() async {
-    var snapshot = await FirebaseFirestore.instance
-        .collection('departments')
-        .where('id', isEqualTo: widget.employee.department)
-        .get()
-        .then((value) => {
-              setState(() {
-                departmentName = value.docs.first["name"];
-              })
-            });
+    await FirebaseFirestore.instance
+      .collection('departments')
+      .doc(widget.employee.department)
+      .get()
+      .then((value) => {
+        setState(() {
+          departmentName = value["name"];
+        })
+      });
   }
 
   var listDepartmentName = Map();
@@ -79,19 +79,19 @@ class _ViewEmployeeByUser extends State<ViewEmployeeByUser> {
 
   getCurrentUser() async {
     await FirebaseFirestore.instance
-        .collection('user')
-        .where('userId', isEqualTo: currentUser.uid)
-        .get()
-        .then((value) => {
+      .collection('user')
+      .doc(currentUser.uid)
+      .get()
+      .then((value) => {
       setState(() {
-        current_user.id = value.docs.first['userId'];
-        current_user.name = value.docs.first['name'];
-        current_user.email = value.docs.first['email'];
-        current_user.image = value.docs.first['image'];
-        current_user.password = value.docs.first['password'];
-        current_user.phone = value.docs.first['phone'];
-        current_user.group = value.docs.first['group'];
-        current_user.status = value.docs.first['status'];
+        current_user.id = value['userId'];
+        current_user.name = value['name'];
+        current_user.email = value['email'];
+        current_user.image = value['image'];
+        current_user.password = value['password'];
+        current_user.phone = value['phone'];
+        current_user.group = value['group'];
+        current_user.status = value['status'];
       })
     });
   }
@@ -142,14 +142,14 @@ class _ViewEmployeeByUser extends State<ViewEmployeeByUser> {
       if (!mounted) return;
       LoadingDialog.showLoadingDialog(context, "Please Wait...");
       createChatRoom(
-          current_user.id,
+          current_user.id!,
           "Send ${widget.employee.name}",
           timeString,
           "Chưa trả lời",
           _informationController.text,
-          widget.employee.department,
-          widget.employee.category,
-          current_user.group,
+          widget.employee.department!,
+          widget.employee.category![0],
+          current_user.group!,
           "public",
               () {});
     }
@@ -235,6 +235,241 @@ class _ViewEmployeeByUser extends State<ViewEmployeeByUser> {
     }
   }
 
+  _modelBottomSheetSendMessage(){
+    showModalBottomSheet(
+        isScrollControlled: true,
+        // constraints: BoxConstraints.loose(Size(
+        //     MediaQuery.of(context).size.width,
+        //     MediaQuery.of(context).size.height * 0.75)),
+        shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(20),
+              topRight: Radius.circular(20),
+            )),
+        context: context,
+        builder: (BuildContext context) {
+          return StatefulBuilder(builder:
+              (BuildContext context,
+              StateSetter setStateKhoa) {
+            return SizedBox(
+              height: 600,
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: <Widget>[
+                    const Padding(
+                        padding: EdgeInsets.fromLTRB(
+                            0, 10, 0, 20)),
+                    const Text(
+                      "Send Message",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w400),
+                    ),
+                    Container(
+                        margin: const EdgeInsets.fromLTRB(
+                            0, 10, 0, 15),
+                        width: 340,
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 12, vertical: 4),
+                        decoration: BoxDecoration(
+                          borderRadius:
+                          BorderRadius.circular(12),
+                          border: Border.all(
+                              color: Colors.blueAccent,
+                              width: 4),
+                        ),
+                        child: DropdownButtonHideUnderline(
+                          child: DropdownButton<String>(
+                            isExpanded: true,
+                            value: valueDoiTuong,
+                            hint: const Text(
+                                "Please choose position"),
+                            iconSize: 36,
+                            items: itemDoiTuong
+                                .map(buildMenuItem)
+                                .toList(),
+                            onChanged: (value) {
+                              setStateKhoa(() {
+                                setState(() {
+                                  valueDoiTuong = value;
+                                });
+                              });
+                            },
+                          ),
+                        )),
+                    Container(
+                      margin: const EdgeInsets.fromLTRB(
+                          0, 10, 0, 15),
+                      width: 340,
+                      child: StreamBuilder(
+                        stream: informationControl,
+                        builder: (context, snapshot) =>
+                            TextField(
+                              controller: _informationController,
+                              decoration: InputDecoration(
+                                labelText: "Contact method",
+                                hintText:
+                                'Insert your Email/Phone',
+                                errorText: snapshot.hasError? snapshot.error.toString() : null,
+                                enabledBorder: OutlineInputBorder(
+                                    borderRadius:
+                                    BorderRadius.circular(10),
+                                    borderSide: const BorderSide(
+                                      color: Colors.blueAccent,
+                                      width: 1,
+                                    )),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius:
+                                  BorderRadius.circular(10),
+                                  borderSide: const BorderSide(
+                                    color: Colors.blue,
+                                    width: 4,
+                                  ),
+                                ),
+                              ),
+                            ),
+                      ),
+                    ),
+                    Container(
+                      width: 340,
+                      margin: const EdgeInsets.fromLTRB(
+                          0, 10, 0, 15),
+                      child: StreamBuilder(
+                        stream: questionControl,
+                        builder: (context, snapshot) =>
+                            TextField(
+                              controller: _questionController,
+                              maxLines: 50,
+                              minLines: 7,
+                              maxLength: 3000,
+                              decoration: InputDecoration(
+                                hintMaxLines: 5,
+                                helperMaxLines: 5,
+                                labelText: "Send question",
+                                hintText: 'Insert your question',
+                                errorText: snapshot.hasError? snapshot.error.toString() : null,
+                                enabledBorder: OutlineInputBorder(
+                                    borderRadius:
+                                    BorderRadius.circular(10),
+                                    borderSide: const BorderSide(
+                                      color: Colors.blueAccent,
+                                      width: 1,
+                                    )),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius:
+                                  BorderRadius.circular(10),
+                                  borderSide: const BorderSide(
+                                      color: Colors.blue,
+                                      width: 4),
+                                ),
+                              ),
+                            ),
+                      ),
+                    ),
+                    IconButton(
+                        onPressed: () {
+                          importPdf();
+                        },
+                        color: hadFile
+                            ? Colors.redAccent
+                            : Colors.black,
+                        icon: const Icon(AppIcons.file_pdf)
+                    ),
+                    hadFile ? const Text(
+                      'One file selected',
+                      style: TextStyle(
+                          fontSize: 16,
+                          color: Colors.red),
+                    ) : const Text('No file selected',
+                      style: TextStyle(
+                          fontSize: 16,
+                          color: Colors.black),
+                    ),
+                    Container(
+                      padding: const EdgeInsets.all(10),
+                      child: Row(
+                        mainAxisAlignment:
+                        MainAxisAlignment.spaceAround,
+                        children: <Widget>[
+                          Expanded(
+                            child: ElevatedButton.icon(
+                              onPressed: () {
+                                _onSendQuestionClicked();
+                              },
+                              label: const Text(
+                                'Send',
+                                style: TextStyle(
+                                    fontSize: 16,
+                                    color: Colors.white),
+                              ),
+                              icon: const Icon(
+                                  Icons.mail_outline_rounded),
+                              style: ElevatedButton.styleFrom(
+                                  primary: Colors.blueAccent),
+                            ),
+                          ),
+                          const Padding(
+                            padding: EdgeInsets.all(10),),
+                          Expanded(
+                              child: ElevatedButton.icon(
+                                onPressed: () =>
+                                {Navigator.pop(context)},
+                                label: const Text(
+                                  'Cancel',
+                                  style: TextStyle(
+                                      fontSize: 16,
+                                      color: Colors.white),
+                                ),
+                                icon: const Icon(
+                                    Icons.cancel_presentation),
+                                style: ElevatedButton.styleFrom(
+                                    primary: Colors.blueAccent),
+                              )),
+                          const Padding(
+                              padding: EdgeInsets.fromLTRB(
+                                  0, 10, 0, 30)),
+                        ],
+                      ),
+                    )
+                  ],
+                ),
+              ),
+            );
+          });
+        });
+  }
+
+  _listCategory() {
+    List<Widget> categoryList = [];
+    widget.employee.category!.forEach((category) {
+      categoryList.add(
+        Container(
+          margin: const EdgeInsets.fromLTRB(20, 10, 0, 0),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              const Icon(Icons.quiz_outlined,
+                size: 30,),
+              const Padding(padding: EdgeInsets.only(left: 15)),
+              Expanded(
+                  child: Text(category,
+                    style: const TextStyle(
+                      fontSize: 17, fontWeight: FontWeight.bold,
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,))
+            ],
+          ),
+        )
+      );
+
+    });
+    return Column(children: categoryList);
+  }
+
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
@@ -291,7 +526,7 @@ class _ViewEmployeeByUser extends State<ViewEmployeeByUser> {
                           radius: 42,
                           backgroundColor: Colors.white,
                           child: CircleAvatar(
-                            backgroundImage: NetworkImage(widget.employee.image,),
+                            backgroundImage: NetworkImage(widget.employee.image!),
                             radius: 66,
                           ),
                         ),
@@ -303,226 +538,24 @@ class _ViewEmployeeByUser extends State<ViewEmployeeByUser> {
                   margin: const EdgeInsets.fromLTRB(20, 10, 20, 0),
                   child: Column(
                     children: <Widget>[
-                      Text(widget.employee.name,
+                      Text(widget.employee.name!,
                         style: const TextStyle(
                             fontSize: 22,
                             fontWeight: FontWeight.w600
                         ),
                       ),
-                      Text(widget.employee.roles,
+                      Text(widget.employee.roles!,
                         style: const TextStyle(
                           fontSize: 15,
                         ),
                       ),
                       Container(
                         margin: const EdgeInsets.only(right: 1),
-                        child: Expanded(
+                        child: Container(
                             child: ElevatedButton.icon(
                               icon: const Icon(Icons.mark_chat_unread),
                               onPressed: () {
-                                showModalBottomSheet(
-                                    isScrollControlled: true,
-                                    // constraints: BoxConstraints.loose(Size(
-                                    //     MediaQuery.of(context).size.width,
-                                    //     MediaQuery.of(context).size.height * 0.75)),
-                                    shape: const RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.only(
-                                          topLeft: Radius.circular(20),
-                                          topRight: Radius.circular(20),
-                                        )),
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      return StatefulBuilder(builder:
-                                          (BuildContext context,
-                                          StateSetter setStateKhoa) {
-                                        return SizedBox(
-                                          height: 600,
-                                          child: SingleChildScrollView(
-                                            child: Column(
-                                              mainAxisAlignment: MainAxisAlignment.start,
-                                              children: <Widget>[
-                                                const Padding(
-                                                    padding: EdgeInsets.fromLTRB(
-                                                        0, 10, 0, 20)),
-                                                const Text(
-                                                  "Send Message",
-                                                  textAlign: TextAlign.center,
-                                                  style: TextStyle(
-                                                      fontSize: 15,
-                                                      fontWeight: FontWeight.w400),
-                                                ),
-                                                Container(
-                                                    margin: const EdgeInsets.fromLTRB(
-                                                        0, 10, 0, 15),
-                                                    width: 340,
-                                                    padding: const EdgeInsets.symmetric(
-                                                        horizontal: 12, vertical: 4),
-                                                    decoration: BoxDecoration(
-                                                      borderRadius:
-                                                      BorderRadius.circular(12),
-                                                      border: Border.all(
-                                                          color: Colors.blueAccent,
-                                                          width: 4),
-                                                    ),
-                                                    child: DropdownButtonHideUnderline(
-                                                      child: DropdownButton<String>(
-                                                        isExpanded: true,
-                                                        value: valueDoiTuong,
-                                                        hint: const Text(
-                                                            "Please choose position"),
-                                                        iconSize: 36,
-                                                        items: itemDoiTuong
-                                                            .map(buildMenuItem)
-                                                            .toList(),
-                                                        onChanged: (value) {
-                                                          setStateKhoa(() {
-                                                            setState(() {
-                                                              valueDoiTuong = value;
-                                                            });
-                                                          });
-                                                        },
-                                                      ),
-                                                    )),
-                                                Container(
-                                                  margin: const EdgeInsets.fromLTRB(
-                                                      0, 10, 0, 15),
-                                                  width: 340,
-                                                  child: StreamBuilder(
-                                                    stream: informationControl,
-                                                    builder: (context, snapshot) =>
-                                                        TextField(
-                                                          controller: _informationController,
-                                                          decoration: InputDecoration(
-                                                            labelText: "Contact method",
-                                                            hintText:
-                                                            'Insert your Email/Phone',
-                                                            errorText: snapshot.hasError? snapshot.error.toString() : null,
-                                                            enabledBorder: OutlineInputBorder(
-                                                                borderRadius:
-                                                                BorderRadius.circular(10),
-                                                                borderSide: const BorderSide(
-                                                                  color: Colors.blueAccent,
-                                                                  width: 1,
-                                                                )),
-                                                            focusedBorder: OutlineInputBorder(
-                                                              borderRadius:
-                                                              BorderRadius.circular(10),
-                                                              borderSide: const BorderSide(
-                                                                color: Colors.blue,
-                                                                width: 4,
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ),
-                                                  ),
-                                                ),
-                                                Container(
-                                                  width: 340,
-                                                  margin: const EdgeInsets.fromLTRB(
-                                                      0, 10, 0, 15),
-                                                  child: StreamBuilder(
-                                                    stream: questionControl,
-                                                    builder: (context, snapshot) =>
-                                                        TextField(
-                                                          controller: _questionController,
-                                                          maxLines: 50,
-                                                          minLines: 7,
-                                                          maxLength: 3000,
-                                                          decoration: InputDecoration(
-                                                            hintMaxLines: 5,
-                                                            helperMaxLines: 5,
-                                                            labelText: "Send question",
-                                                            hintText: 'Insert your question',
-                                                            errorText: snapshot.hasError? snapshot.error.toString() : null,
-                                                            enabledBorder: OutlineInputBorder(
-                                                                borderRadius:
-                                                                BorderRadius.circular(10),
-                                                                borderSide: const BorderSide(
-                                                                  color: Colors.blueAccent,
-                                                                  width: 1,
-                                                                )),
-                                                            focusedBorder: OutlineInputBorder(
-                                                              borderRadius:
-                                                              BorderRadius.circular(10),
-                                                              borderSide: const BorderSide(
-                                                                  color: Colors.blue,
-                                                                  width: 4),
-                                                            ),
-                                                          ),
-                                                        ),
-                                                  ),
-                                                ),
-                                                IconButton(
-                                                    onPressed: () {
-                                                      importPdf();
-                                                    },
-                                                    color: hadFile
-                                                        ? Colors.redAccent
-                                                        : Colors.black,
-                                                    icon: const Icon(AppIcons.file_pdf)
-                                                ),
-                                                hadFile ? const Text(
-                                                  'One file selected',
-                                                  style: TextStyle(
-                                                      fontSize: 16,
-                                                      color: Colors.red),
-                                                ) : const Text('No file selected',
-                                                  style: TextStyle(
-                                                      fontSize: 16,
-                                                      color: Colors.black),
-                                                ),
-                                                Container(
-                                                  padding: const EdgeInsets.all(10),
-                                                  child: Row(
-                                                    mainAxisAlignment:
-                                                    MainAxisAlignment.spaceAround,
-                                                    children: <Widget>[
-                                                      Expanded(
-                                                        child: ElevatedButton.icon(
-                                                          onPressed: () {
-                                                            _onSendQuestionClicked();
-                                                          },
-                                                          label: const Text(
-                                                            'Send',
-                                                            style: TextStyle(
-                                                                fontSize: 16,
-                                                                color: Colors.white),
-                                                          ),
-                                                          icon: const Icon(
-                                                              Icons.mail_outline_rounded),
-                                                          style: ElevatedButton.styleFrom(
-                                                              primary: Colors.blueAccent),
-                                                        ),
-                                                      ),
-                                                      const Padding(
-                                                        padding: EdgeInsets.all(10),),
-                                                      Expanded(
-                                                          child: ElevatedButton.icon(
-                                                            onPressed: () =>
-                                                            {Navigator.pop(context)},
-                                                            label: const Text(
-                                                              'Cancel',
-                                                              style: TextStyle(
-                                                                  fontSize: 16,
-                                                                  color: Colors.white),
-                                                            ),
-                                                            icon: const Icon(
-                                                                Icons.cancel_presentation),
-                                                            style: ElevatedButton.styleFrom(
-                                                                primary: Colors.blueAccent),
-                                                          )),
-                                                      const Padding(
-                                                          padding: EdgeInsets.fromLTRB(
-                                                              0, 10, 0, 30)),
-                                                    ],
-                                                  ),
-                                                )
-                                              ],
-                                            ),
-                                          ),
-                                        );
-                                      });
-                                    });
+                                _modelBottomSheetSendMessage();
                               },
                               style: ElevatedButton.styleFrom(
                                 primary: Colors.blue,
@@ -564,7 +597,7 @@ class _ViewEmployeeByUser extends State<ViewEmployeeByUser> {
                             style: TextStyle(
                                 fontSize: 17
                             ),),
-                          Text(widget.employee.email,
+                          Text(widget.employee.email!,
                             style: const TextStyle(
                               fontSize: 17, fontWeight: FontWeight.bold,
                             ),)
@@ -582,7 +615,7 @@ class _ViewEmployeeByUser extends State<ViewEmployeeByUser> {
                             style: TextStyle(
                                 fontSize: 17
                             ),),
-                          Text(widget.employee.phone,
+                          Text(widget.employee.phone!,
                             style: const TextStyle(
                               fontSize: 17, fontWeight: FontWeight.bold,
                             ),)
@@ -605,24 +638,8 @@ class _ViewEmployeeByUser extends State<ViewEmployeeByUser> {
                         ],
                       ),
                     ),
-                    Container(
-                      margin: const EdgeInsets.fromLTRB(20, 10, 0, 0),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          const Icon(Icons.quiz_outlined,
-                            size: 30,),
-                          const Padding(padding: EdgeInsets.only(left: 15)),
-                          Expanded(child: Text(widget.employee.category,
-                            style: const TextStyle(
-                              fontSize: 17, fontWeight: FontWeight.bold,
-                            ),
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,))
-                        ],
-                      ),
-                    )
+                    if(widget.employee.category![0] != "")
+                      _listCategory()
                   ],
                 ),
               ],

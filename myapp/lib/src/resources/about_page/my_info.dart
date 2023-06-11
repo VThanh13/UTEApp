@@ -117,7 +117,7 @@ class _MyInfoState extends State<MyInfo> with SingleTickerProviderStateMixin{
 
   FirebaseAuth auth = FirebaseAuth.instance;
   var user_auth = FirebaseAuth.instance.currentUser!;
-  UserModel userModel = UserModel("", " ", "", "", "", "", "", "");
+  UserModel userModel = UserModel();
 
   Future<String> getUserNameFromUID() async {
     final snapshot = await FirebaseFirestore.instance
@@ -199,7 +199,7 @@ class _MyInfoState extends State<MyInfo> with SingleTickerProviderStateMixin{
                                   radius: 42,
                                   backgroundColor: Colors.tealAccent,
                                   child: CircleAvatar(
-                                    backgroundImage: NetworkImage(userModel.image),
+                                    backgroundImage: NetworkImage(userModel.image!),
                                     radius: 40,
                                   ),
                                 ),
@@ -238,7 +238,7 @@ class _MyInfoState extends State<MyInfo> with SingleTickerProviderStateMixin{
                           ),
                         ),
                         Text(
-                          userModel.name,
+                          userModel.name!,
                           style: const TextStyle(
                             fontSize: 23,
                             fontWeight: FontWeight.w600,
@@ -295,7 +295,7 @@ class _MyInfoState extends State<MyInfo> with SingleTickerProviderStateMixin{
                                       child: StreamBuilder(
                                         stream: nameStream,
                                         builder: (context, snapshot) => TextField(
-                                          controller: _nameController..text = userModel.name,
+                                          controller: _nameController..text = userModel.name!,
                                           onChanged: (text) => {},
                                           decoration: InputDecoration(
                                             labelText: "Your name",
@@ -325,7 +325,7 @@ class _MyInfoState extends State<MyInfo> with SingleTickerProviderStateMixin{
                                       child: StreamBuilder(
                                         stream: phoneStream,
                                         builder: (context, snapshot) => TextField(
-                                          controller: _phoneController..text = userModel.phone,
+                                          controller: _phoneController..text = userModel.phone!,
                                           onChanged: (text) => {},
                                           decoration: InputDecoration(
                                             labelText: "Your phone number",
@@ -354,7 +354,7 @@ class _MyInfoState extends State<MyInfo> with SingleTickerProviderStateMixin{
                                       child: StreamBuilder(
                                         stream: emailStream,
                                         builder: (context, snapshot) => TextField(
-                                          controller: _emailController..text = userModel.email,
+                                          controller: _emailController..text = userModel.email!,
                                           onChanged: (text) => {},
                                           decoration: InputDecoration(
                                             labelText: "Your Email",
@@ -601,19 +601,10 @@ class _MyInfoState extends State<MyInfo> with SingleTickerProviderStateMixin{
     }
   }
 
-  void changeInfo(
-      String email, String name, String phone, Function onSuccess) async {
-    QuerySnapshot snapshot = await FirebaseFirestore.instance
-        .collection('user')
-        .where('userId', isEqualTo: user_auth.uid)
-        .get();
-    String id = snapshot.docs.first.id;
-    var user = {"email": email, "name": name, "phone": phone};
-
+  void changeInfo(String email, String name, String phone, Function onSuccess) async {
     var ref = FirebaseFirestore.instance.collection('user');
 
-    ref
-        .doc(id)
+    ref.doc(user_auth.uid)
         .update({'email': email, 'name': name, 'phone': phone}).then((value) {
       onSuccess();
     }).catchError((err) {
@@ -622,14 +613,9 @@ class _MyInfoState extends State<MyInfo> with SingleTickerProviderStateMixin{
   }
 
   void changePassword(String pass, Function onSuccess) async {
-    QuerySnapshot snapshot = await FirebaseFirestore.instance
-        .collection('user')
-        .where('userId', isEqualTo: user_auth.uid)
-        .get();
-    String id = snapshot.docs.first.id;
     var ref = FirebaseFirestore.instance.collection('user');
 
-    ref.doc(id).update({'password': pass}).then((value) {
+    ref.doc(user_auth.uid).update({'password': pass}).then((value) {
       onSuccess();
     }).catchError((err) {});
   }

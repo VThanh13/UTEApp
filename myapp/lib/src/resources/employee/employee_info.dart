@@ -115,28 +115,27 @@ class _MyInfoState extends State<EmployeeInfo> with SingleTickerProviderStateMix
 
   FirebaseAuth auth = FirebaseAuth.instance;
   var user_auth = FirebaseAuth.instance.currentUser!;
-  EmployeeModel currentEmployee =
-      EmployeeModel("", "", "", "", "", "", "", "", "", "");
+  EmployeeModel currentEmployee = EmployeeModel();
   String departmentName = "";
   getEmployee() async {
     await FirebaseFirestore.instance
-        .collection('employee')
-        .where('id', isEqualTo: user_auth.uid)
-        .get()
-        .then((value) => {
-              //setState((){
-              currentEmployee.id = value.docs.first['id'],
-              currentEmployee.name = value.docs.first['name'],
-              currentEmployee.email = value.docs.first['email'],
-              currentEmployee.image = value.docs.first['image'],
-              currentEmployee.password = value.docs.first['password'],
-              currentEmployee.phone = value.docs.first['phone'],
-              currentEmployee.department = value.docs.first['department'],
-              currentEmployee.category = value.docs.first['category'],
-              currentEmployee.roles = value.docs.first['roles'],
-              currentEmployee.status = value.docs.first['status']
-              //})
-            });
+      .collection('employee')
+      .where('id', isEqualTo: user_auth.uid)
+      .get()
+      .then((value) => {
+        setState((){
+          currentEmployee.id = value.docs.first['id'];
+          currentEmployee.name = value.docs.first['name'];
+          currentEmployee.email = value.docs.first['email'];
+          currentEmployee.image = value.docs.first['image'];
+          currentEmployee.password = value.docs.first['password'];
+          currentEmployee.phone = value.docs.first['phone'];
+          currentEmployee.department = value.docs.first['department'];
+          currentEmployee.category = value.docs.first['category'].cast<String>();
+          currentEmployee.roles = value.docs.first['roles'];
+          currentEmployee.status = value.docs.first['status'];
+        })
+      });
 
     await getDepartmentName();
   }
@@ -235,7 +234,7 @@ class _MyInfoState extends State<EmployeeInfo> with SingleTickerProviderStateMix
                               backgroundColor: Colors.tealAccent,
                               child: CircleAvatar(
                                 backgroundImage:
-                                NetworkImage(currentEmployee.image),
+                                NetworkImage(currentEmployee.image!),
                                 radius: 40,
                               ),
                             ),
@@ -275,14 +274,14 @@ class _MyInfoState extends State<EmployeeInfo> with SingleTickerProviderStateMix
                     ),
 
                     Text(
-                      currentEmployee.name,
+                      currentEmployee.name!,
                       style: const TextStyle(
                         fontSize: 23,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
                     Text(
-                      currentEmployee.roles,
+                      currentEmployee.roles!,
                       style: const TextStyle(
                         fontSize: 15,
                         fontWeight: FontWeight.w200,
@@ -340,7 +339,7 @@ class _MyInfoState extends State<EmployeeInfo> with SingleTickerProviderStateMix
                                     stream: nameStream,
                                     builder: (context, snapshot) => TextField(
                                       controller: _nameController
-                                        ..text = currentEmployee.name,
+                                        ..text = currentEmployee.name!,
                                       onChanged: (text) => {},
                                       decoration: InputDecoration(
                                         labelText: "Your name",
@@ -371,7 +370,7 @@ class _MyInfoState extends State<EmployeeInfo> with SingleTickerProviderStateMix
                                       stream: phoneStream,
                                       builder: (context, snapshot) => TextField(
                                         controller: _phoneController
-                                          ..text = currentEmployee.phone,
+                                          ..text = currentEmployee.phone!,
                                         onChanged: (text) => {},
                                         decoration: InputDecoration(
                                           labelText: "Your phone number",
@@ -401,7 +400,7 @@ class _MyInfoState extends State<EmployeeInfo> with SingleTickerProviderStateMix
                                       stream: emailStream,
                                       builder: (context, snapshot) => TextField(
                                         controller: _emailController
-                                          ..text = currentEmployee.email,
+                                          ..text = currentEmployee.email!,
                                         onChanged: (text) => {},
                                         decoration: InputDecoration(
                                             labelText: "Your Email",

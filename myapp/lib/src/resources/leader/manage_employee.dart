@@ -22,8 +22,7 @@ class _ManageEmployeeState extends State<ManageEmployee> {
   FirebaseAuth auth = FirebaseAuth.instance;
   var userAuth = FirebaseAuth.instance.currentUser!;
   AuthBloc authBloc = AuthBloc();
-  EmployeeModel currentEmployee =
-      EmployeeModel("", "", "", "", "", "", "", "", "", "");
+  EmployeeModel currentEmployee = EmployeeModel();
   List<String> listCategory = [];
 
   bool status = false;
@@ -76,7 +75,7 @@ class _ManageEmployeeState extends State<ManageEmployee> {
               currentEmployee.password = value.docs.first['password'],
               currentEmployee.phone = value.docs.first['phone'],
               currentEmployee.department = value.docs.first['department'],
-              currentEmployee.category = value.docs.first['category'],
+              currentEmployee.category = value.docs.first['category'].cast<String>(),
               currentEmployee.roles = value.docs.first['roles'],
               currentEmployee.status = value.docs.first['status']
             });
@@ -95,8 +94,7 @@ class _ManageEmployeeState extends State<ManageEmployee> {
         .then((value) => {
               setState(() {
                 value.docs.forEach((element) {
-                  EmployeeModel employeeModel =
-                      EmployeeModel("", "", "", "", "", "", "", "", "", "");
+                  EmployeeModel employeeModel = EmployeeModel();
                   employeeModel.id = element['id'];
                   employeeModel.name = element['name'];
                   employeeModel.email = element['email'];
@@ -104,7 +102,7 @@ class _ManageEmployeeState extends State<ManageEmployee> {
                   employeeModel.password = element['password'];
                   employeeModel.phone = element['phone'];
                   employeeModel.department = element['department'];
-                  employeeModel.category = element['category'];
+                  employeeModel.category = element['category'].cast<String>();
                   employeeModel.roles = element['roles'];
                   employeeModel.status = element['status'];
 
@@ -127,7 +125,7 @@ class _ManageEmployeeState extends State<ManageEmployee> {
               radius: 28,
               backgroundColor: Colors.tealAccent,
               child: CircleAvatar(
-                backgroundImage: NetworkImage(employee.image),
+                backgroundImage: NetworkImage(employee.image!),
                 radius: 26,
               ),
             ),
@@ -141,7 +139,7 @@ class _ManageEmployeeState extends State<ManageEmployee> {
                   children: <Widget>[
                     Container(
                         padding: const EdgeInsets.fromLTRB(10, 15, 0, 5),
-                        child: Text(employee.name,
+                        child: Text(employee.name!,
                             textAlign: TextAlign.left,
                             style: const TextStyle(
                               fontSize: 17,
@@ -189,7 +187,7 @@ class _ManageEmployeeState extends State<ManageEmployee> {
   }
 
   _modalBottomSheetEditEmployee(EmployeeModel employee) {
-    valueCategory = employee.category;
+    valueCategory = employee.category![0];
     return showModalBottomSheet(
         isScrollControlled: true,
         constraints: BoxConstraints.loose(
@@ -240,7 +238,7 @@ class _ManageEmployeeState extends State<ManageEmployee> {
                                         backgroundColor: Colors.tealAccent,
                                         child: CircleAvatar(
                                           backgroundImage:
-                                              NetworkImage(employee.image),
+                                              NetworkImage(employee.image!),
                                           radius: 46,
                                         ),
                                       ),
@@ -249,14 +247,14 @@ class _ManageEmployeeState extends State<ManageEmployee> {
                                 ),
                               ),
                               Text(
-                                employee.name,
+                                employee.name!,
                                 style: const TextStyle(
                                   fontSize: 20,
                                   fontWeight: FontWeight.w600,
                                 ),
                               ),
                               Text(
-                                employee.roles,
+                                employee.roles!,
                                 style: const TextStyle(
                                   fontSize: 15,
                                   fontWeight: FontWeight.w200,
@@ -577,7 +575,7 @@ class _ManageEmployeeState extends State<ManageEmployee> {
           email: employee.email, password: employee.password);
       FirebaseAuth.instance.currentUser?.updatePassword(password);
       FirebaseAuth.instance.signInWithEmailAndPassword(
-          email: currentEmployee.email, password: currentEmployee.password);
+          email: currentEmployee.email!, password: currentEmployee.password!);
 
       changePassword(employee.id, password, () {
         LoadingDialog.hideLoadingDialog(context);
@@ -885,14 +883,9 @@ class _ManageEmployeeState extends State<ManageEmployee> {
   }
 
   changeCategory(id, category, Function onSuccess) async {
-    QuerySnapshot snapshot = await FirebaseFirestore.instance
-        .collection('employee')
-        .where('id', isEqualTo: id)
-        .get();
-    String docId = snapshot.docs.first.id;
     var ref = FirebaseFirestore.instance.collection('employee');
 
-    ref.doc(docId).update({'category': category}).then((value) {
+    ref.doc(id).update({'category': category}).then((value) {
       onSuccess();
     }).catchError((err) {
       //TODO
@@ -910,14 +903,9 @@ class _ManageEmployeeState extends State<ManageEmployee> {
   }
 
   cancelAccount(id, status, Function onSuccess) async {
-    QuerySnapshot snapshot = await FirebaseFirestore.instance
-        .collection('employee')
-        .where('id', isEqualTo: id)
-        .get();
-    String docId = snapshot.docs.first.id;
     var ref = FirebaseFirestore.instance.collection('employee');
 
-    ref.doc(docId).update(
+    ref.doc(id).update(
         {'status': status == 'enabled' ? 'disabled' : 'enabled'}).then((value) {
       onSuccess();
     }).catchError((err) {
@@ -926,15 +914,15 @@ class _ManageEmployeeState extends State<ManageEmployee> {
   }
 
   _onAddEmployeeClicked() {
-    String current_email = currentEmployee.email;
-    String current_password = currentEmployee.password;
+    String current_email = currentEmployee.email!;
+    String current_password = currentEmployee.password!;
 
     String email = _emailController.text;
     String name = _nameController.text;
     String phone = _phoneController.text;
     String password = _passwordController.text;
     String category = valueCategory!;
-    String department = currentEmployee.department;
+    String department = currentEmployee.department!;
     if (isValid(email, name, phone, password)) {
       LoadingDialog.showLoadingDialog(context, "Please Wait...");
       authBloc.createEmployee(

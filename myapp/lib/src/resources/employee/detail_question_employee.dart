@@ -53,7 +53,7 @@ class Message{
   Message(this.type, this.id, this.time);
 }
 
-UserModel uModel = UserModel("", " ", "", "", "", "", "", "");
+UserModel uModel = UserModel();
 
 class _DetailQuestionState extends State<DetailQuestionEmployee> {
   @override
@@ -89,10 +89,8 @@ class _DetailQuestionState extends State<DetailQuestionEmployee> {
 
   FirebaseAuth auth = FirebaseAuth.instance;
   var current_user_auth = FirebaseAuth.instance.currentUser!;
-  EmployeeModel employeeModel =
-  EmployeeModel("", " ", "", "", "", "", "", "", "", "");
-  EmployeeModel currentEmployee =
-  EmployeeModel("", "", "", "", "", "", "", "", "", "");
+  EmployeeModel employeeModel = EmployeeModel();
+  EmployeeModel currentEmployee = EmployeeModel();
 
   final List<Question> listQuestion = [];
   final List<Answer> listAnswer = [];
@@ -132,39 +130,41 @@ class _DetailQuestionState extends State<DetailQuestionEmployee> {
 
   getCurrentUser() async {
     await FirebaseFirestore.instance
-        .collection('employee')
-        .where('id', isEqualTo: current_user_auth.uid)
-        .get()
-        .then((value) => {
-      currentEmployee.id = value.docs.first['id'],
-      currentEmployee.name = value.docs.first['name'],
-      currentEmployee.email = value.docs.first['email'],
-      currentEmployee.image = value.docs.first['image'],
-      currentEmployee.password = value.docs.first['password'],
-      currentEmployee.phone = value.docs.first['phone'],
-      currentEmployee.department = value.docs.first['department'],
-      currentEmployee.category = value.docs.first['category'],
-      currentEmployee.roles = value.docs.first['roles'],
-      currentEmployee.status = value.docs.first['status']
-    });
+      .collection('employee')
+      .doc(current_user_auth.uid)
+      .get()
+      .then((value) => {
+        setState(() {
+          currentEmployee.id = value['id'];
+          currentEmployee.name = value['name'];
+          currentEmployee.email = value['email'];
+          currentEmployee.image = value['image'];
+          currentEmployee.password = value['password'];
+          currentEmployee.phone = value['phone'];
+          currentEmployee.department = value['department'];
+          currentEmployee.category = value['category'].cast<String>();
+          currentEmployee.roles = value['roles'];
+          currentEmployee.status = value['status'];
+        })
+      });
   }
 
   getQuestionData() async {
-    UserModel userModel = UserModel("", " ", "", "", "", "", "", "");
+    UserModel userModel = UserModel();
     await FirebaseFirestore.instance
         .collection('user')
-        .where('userId', isEqualTo: widget.chatRoom.user_id)
+        .doc(widget.chatRoom.user_id)
         .get()
         .then((value) => {
       setState(() {
-        userModel.id = value.docs.first['userId'];
-        userModel.name = value.docs.first['name'];
-        userModel.email = value.docs.first['email'];
-        userModel.image = value.docs.first['image'];
-        userModel.password = value.docs.first['password'];
-        userModel.phone = value.docs.first['phone'];
-        userModel.group = value.docs.first['group'];
-        userModel.status = value.docs.first['status'];
+        userModel.id = value['userId'];
+        userModel.name = value['name'];
+        userModel.email = value['email'];
+        userModel.image = value['image'];
+        userModel.password = value['password'];
+        userModel.phone = value['phone'];
+        userModel.group = value['group'];
+        userModel.status = value['status'];
       })
     });
     await FirebaseFirestore.instance
@@ -189,56 +189,55 @@ class _DetailQuestionState extends State<DetailQuestionEmployee> {
   getAnswerData() async {
     List<AnswerModel> listAns = [];
     await FirebaseFirestore.instance
-        .collection('answer')
-        .where('room_id', isEqualTo: widget.chatRoom.id)
+      .collection('answer')
+      .where('room_id', isEqualTo: widget.chatRoom.id)
+      .get()
+      .then((value) => {
+        setState(() {
+          value.docs.forEach((element) {
+            AnswerModel ans = AnswerModel();
+            ans.employee_id = element['employee_id'];
+            ans.id = element['id'];
+            ans.room_id = element['room_id'];
+            ans.content = element['content'];
+            ans.time = element['time'];
+
+            listAns.add(ans);
+          });
+        })
+    });
+    Answer ans;
+    listAns.forEach((element) async {
+      EmployeeModel employeeModel = EmployeeModel();
+      // Answer ans = Answer(element.id, element.room_id, element.content, element.time, employeeModel);
+      await FirebaseFirestore.instance
+        .collection('employee')
+        .doc(element.employee_id)
         .get()
         .then((value) => {
-      setState(() {
-        value.docs.forEach((element) {
-          AnswerModel ans = AnswerModel("", "", "", "", "");
-          ans.employee_id = element['employee_id'];
-          ans.id = element['id'];
-          ans.room_id = element['room_id'];
-          ans.content = element['content'];
-          ans.time = element['time'];
-
-          listAns.add(ans);
+          setState(() {
+            employeeModel.id = value['id'];
+            employeeModel.name = value['name'];
+            employeeModel.email = value['email'];
+            employeeModel.image = value['image'];
+            employeeModel.password = value['password'];
+            employeeModel.phone = value['phone'];
+            employeeModel.department = value['department'];
+            employeeModel.category = value['category'].cast<String>();
+            employeeModel.roles = value['roles'];
+            employeeModel.status = value['status'];
+            ans = Answer(element.id!, element.room_id!, element.content!, element.time!, employeeModel!);
+            // ans.employee = employeeModel;
+            listAnswer.add(ans);
+            Message message = Message('answer', ans.id, ans.time);
+            listMessage.add(message);
+          })
         });
-      })
-    });
-
-    listAns.forEach((element) async {
-      EmployeeModel employeeModel =
-      EmployeeModel("", "", "", "", "", "", "", "", "", "");
-      Answer ans = Answer(element.id, element.room_id, element.content,
-          element.time, employeeModel);
-      await FirebaseFirestore.instance
-          .collection('employee')
-          .where('id', isEqualTo: element.employee_id)
-          .get()
-          .then((value) => {
-        setState(() {
-          employeeModel.id = value.docs.first['id'];
-          employeeModel.name = value.docs.first['name'];
-          employeeModel.email = value.docs.first['email'];
-          employeeModel.image = value.docs.first['image'];
-          employeeModel.password = value.docs.first['password'];
-          employeeModel.phone = value.docs.first['phone'];
-          employeeModel.department = value.docs.first['department'];
-          employeeModel.category = value.docs.first['category'];
-          employeeModel.roles = value.docs.first['roles'];
-          employeeModel.status = value.docs.first['status'];
-          ans.employee = employeeModel;
-          listAnswer.add(ans);
-          Message message = Message('answer', ans.id, ans.time);
-          listMessage.add(message);
-        })
-      });
     });
   }
 
   _buildMessage(){
-    if (listMessage.isEmpty || departmentName.isEmpty) {
+    if (listMessage.isEmpty || departmentName.isEmpty || currentEmployee.category == null) {
       return const Center(
         child: SizedBox(
             width: 20,
@@ -268,7 +267,7 @@ class _DetailQuestionState extends State<DetailQuestionEmployee> {
 
 
   _buildQues(Question question) {
-    name = question.user.name;
+    name = question.user.name!;
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -278,7 +277,7 @@ class _DetailQuestionState extends State<DetailQuestionEmployee> {
           backgroundColor: Colors.blueAccent,
           child: CircleAvatar(
             backgroundImage:
-            NetworkImage(question.user.image),
+            NetworkImage(question.user.image!),
             radius: 20,
           ),
         ),
@@ -508,7 +507,7 @@ class _DetailQuestionState extends State<DetailQuestionEmployee> {
           radius: 22,
           backgroundColor: Colors.blueAccent,
           child: CircleAvatar(
-            backgroundImage: NetworkImage(answer.employee.image),
+            backgroundImage: NetworkImage(answer.employee.image!),
             radius: 20,
           ),
         ),
@@ -893,7 +892,7 @@ class _DetailQuestionState extends State<DetailQuestionEmployee> {
 
     if (isvalid) {
       LoadingDialog.showLoadingDialog(context, "Please Wait...");
-      sendAnswer(currentEmployee.id, _answerController.text, timeString, widget.chatRoom.id,
+      sendAnswer(currentEmployee.id!, _answerController.text, timeString, widget.chatRoom.id!,
               () {
             LoadingDialog.hideLoadingDialog(context);
             Navigator.push(
@@ -953,10 +952,10 @@ class _DetailQuestionState extends State<DetailQuestionEmployee> {
   }
 
   bool ableToAnswer(){
-    if(currentEmployee.category == widget.chatRoom.category)
+    if(currentEmployee.category != null && currentEmployee.category!.contains(widget.chatRoom.category))
       return true;
 
-    else if(currentEmployee.category == "" && currentEmployee.department == widget.chatRoom.department)
+    else if(currentEmployee.category != null && currentEmployee.category![0] == "" && currentEmployee.department! == widget.chatRoom.department)
       return true;
 
     return false;

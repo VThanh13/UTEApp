@@ -54,7 +54,7 @@ class Message{
   Message(this.type, this.id, this.time);
 }
 
-UserModel uModel = UserModel("", " ", "", "", "", "", "", "");
+UserModel uModel = UserModel();
 
 class _DetailQuestionState extends State<DetailQuestion> {
   @override
@@ -84,8 +84,7 @@ class _DetailQuestionState extends State<DetailQuestion> {
 
   FirebaseAuth auth = FirebaseAuth.instance;
   var current_user = FirebaseAuth.instance.currentUser!;
-  EmployeeModel employeeModel =
-  EmployeeModel("", " ", "", "", "", "", "", "", "", "");
+  EmployeeModel employeeModel = EmployeeModel();
 
   final List<Question> listQuestion = [];
   final List<Answer> listAnswer = [];
@@ -107,7 +106,7 @@ class _DetailQuestionState extends State<DetailQuestion> {
     await getAnswerData();
   }
   getQuestionData() async {
-    UserModel userModel = UserModel("", " ", "", "", "", "", "", "");
+    UserModel userModel = UserModel();
     await FirebaseFirestore.instance
         .collection('user')
         .where('userId', isEqualTo: widget.chatRoom.user_id)
@@ -152,7 +151,7 @@ class _DetailQuestionState extends State<DetailQuestion> {
         .then((value) => {
           setState(() {
               value.docs.forEach((element) {
-                AnswerModel ans = AnswerModel("", "", "", "", "");
+                AnswerModel ans = AnswerModel();
                 ans.employee_id = element['employee_id'];
                 ans.id = element['id'];
                 ans.room_id = element['room_id'];
@@ -165,10 +164,9 @@ class _DetailQuestionState extends State<DetailQuestion> {
         });
 
     listAns.forEach((element) async {
-      EmployeeModel employeeModel =
-          EmployeeModel("", "", "", "", "", "", "", "", "", "");
-      Answer ans = Answer(element.id, element.room_id, element.content,
-          element.time, employeeModel);
+      EmployeeModel employeeModel = EmployeeModel();
+      Answer ans = Answer(element.id!, element.room_id!, element.content!,
+          element.time!, employeeModel);
       await FirebaseFirestore.instance
           .collection('employee')
           .where('id', isEqualTo: element.employee_id)
@@ -182,7 +180,7 @@ class _DetailQuestionState extends State<DetailQuestion> {
                   employeeModel.password = value.docs.first['password'];
                   employeeModel.phone = value.docs.first['phone'];
                   employeeModel.department = value.docs.first['department'];
-                  employeeModel.category = value.docs.first['category'];
+                  employeeModel.category = value.docs.first['category'].cast<String>();
                   employeeModel.roles = value.docs.first['roles'];
                   employeeModel.status = value.docs.first['status'];
                   ans.employee = employeeModel;
@@ -365,7 +363,7 @@ class _DetailQuestionState extends State<DetailQuestion> {
           backgroundColor: Colors.blueAccent,
           child: CircleAvatar(
             backgroundImage:
-            NetworkImage(question.user.image),
+            NetworkImage(question.user.image!),
             radius: 20,
           ),
         ),
@@ -382,7 +380,7 @@ class _DetailQuestionState extends State<DetailQuestion> {
           radius: 22,
           backgroundColor: Colors.blueAccent,
           child: CircleAvatar(
-            backgroundImage: NetworkImage(answer.employee.image),
+            backgroundImage: NetworkImage(answer.employee.image!),
             radius: 20,
           ),
         ),
@@ -522,7 +520,7 @@ class _DetailQuestionState extends State<DetailQuestion> {
     String timeString = DateFormat('dd-MM-yyyy HH:mm:ss').format(time);
     await uploadPdf();
     if (isvalid) {
-      sendQuestion(timeString, pdfUrl, _questionController.text, widget.chatRoom.id, () {
+      sendQuestion(timeString, pdfUrl, _questionController.text, widget.chatRoom.id!, () {
         LoadingDialog.hideLoadingDialog(context);
         Navigator.pushReplacement(
             context, MaterialPageRoute(builder: (context) => DetailQuestion(chatRoom: widget.chatRoom)));

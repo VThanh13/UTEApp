@@ -81,8 +81,7 @@ class PieChartData {
 class _StatsPageState extends State<StatsLeaderPage> {
   FirebaseAuth auth = FirebaseAuth.instance;
   var userAuth = FirebaseAuth.instance.currentUser!;
-  EmployeeModel currentEmployee =
-  EmployeeModel("", " ", "", "", "", "", "", "", "", "");
+  EmployeeModel currentEmployee = EmployeeModel();
   int pageIndex = 0;
   int allUser = 0;
   int allEmployee = 0;
@@ -119,7 +118,7 @@ class _StatsPageState extends State<StatsLeaderPage> {
           currentEmployee.password = value.docs.first['password'];
           currentEmployee.phone = value.docs.first['phone'];
           currentEmployee.department = value.docs.first['department'];
-          currentEmployee.category = value.docs.first['category'];
+          currentEmployee.category = value.docs.first['category'].cast<String>();
           currentEmployee.roles = value.docs.first['roles'];
           currentEmployee.status = value.docs.first['status'];
         })
