@@ -366,7 +366,6 @@ class _MessengerPageState extends State<MessengerPage> {
 
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -468,9 +467,9 @@ class _MessengerPageState extends State<MessengerPage> {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
-          Container(
+          const SizedBox(
             height: 40,
-            child: const Padding(
+            child: Padding(
               padding: EdgeInsets.symmetric(horizontal: 10.0),
               child: Text(
                 'Your questions',
@@ -489,9 +488,9 @@ class _MessengerPageState extends State<MessengerPage> {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
-          Container(
+          const SizedBox(
             height: 40,
-            child: const Padding(
+            child: Padding(
               padding: EdgeInsets.symmetric(horizontal: 20.0),
               child: Text(
                 'All questions',
