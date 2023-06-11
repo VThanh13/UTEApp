@@ -507,10 +507,10 @@ class _HomePageState extends State<HomePage> {
                             height: 70,
                             margin: const EdgeInsets.fromLTRB(100, 0, 110, 0),
                             width: double.infinity,
-                            child: Row(
+                            child: const Row(
                               crossAxisAlignment: CrossAxisAlignment.center,
                               mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              children: const [
+                              children: [
                                 Padding(padding: EdgeInsets.fromLTRB(25, 5, 0, 5),
                                   child: Icon(AppIcons.file_pdf,
                                     color: Colors.red,),

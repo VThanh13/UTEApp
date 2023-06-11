@@ -330,12 +330,12 @@ class _DetailQuestionState extends State<DetailQuestionEmployee> {
                   CrossAxisAlignment.start,
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
-                    Row(
+                    const Row(
                       mainAxisAlignment:
                       MainAxisAlignment.start,
                       crossAxisAlignment:
                       CrossAxisAlignment.start,
-                      children: const <Widget>[],
+                      children: <Widget>[],
                     ),
                     const Padding(
                         padding: EdgeInsets.fromLTRB(
@@ -423,7 +423,7 @@ class _DetailQuestionState extends State<DetailQuestionEmployee> {
   }
   _buildAnswers(Answer answer) {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.start,
+      mainAxisAlignment: MainAxisAlignment.end,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         Column(
@@ -472,10 +472,10 @@ class _DetailQuestionState extends State<DetailQuestionEmployee> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
-                    Row(
+                    const Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      children: const <Widget>[],
+                      children: <Widget>[],
                     ),
                     const Padding(padding: EdgeInsets.fromLTRB(5, 5, 5, 5)),
                     Container(
@@ -500,7 +500,7 @@ class _DetailQuestionState extends State<DetailQuestionEmployee> {
                 ),
               ),
             ),
-            const SizedBox(height: 10,),
+            const SizedBox(height: 15,),
           ],
         ),
         CircleAvatar(
@@ -616,7 +616,7 @@ class _DetailQuestionState extends State<DetailQuestionEmployee> {
                                           decoration: BoxDecoration(
                                             borderRadius: BorderRadius.circular(12),
                                             border: Border.all(
-                                                color: Colors.blueAccent, width: 4),
+                                                color: Colors.blueAccent, width: 2),
                                           ),
                                           child: DropdownButtonHideUnderline(
                                             child: DropdownButton(
@@ -647,7 +647,7 @@ class _DetailQuestionState extends State<DetailQuestionEmployee> {
                                           decoration: BoxDecoration(
                                             borderRadius: BorderRadius.circular(12),
                                             border: Border.all(
-                                                color: Colors.blueAccent, width: 4),
+                                                color: Colors.blueAccent, width: 2),
                                           ),
                                           child: DropdownButtonHideUnderline(
                                             child: DropdownButton(
@@ -880,8 +880,6 @@ class _DetailQuestionState extends State<DetailQuestionEmployee> {
     }).then((value) {
       onSuccess();
     }).catchError((err) {
-      //TODO
-
     });
   }
 
@@ -891,7 +889,6 @@ class _DetailQuestionState extends State<DetailQuestionEmployee> {
     String timeString = DateFormat('dd-MM-yyyy HH:mm:ss').format(time);
 
     if (isvalid) {
-      LoadingDialog.showLoadingDialog(context, "Please Wait...");
       sendAnswer(currentEmployee.id!, _answerController.text, timeString, widget.chatRoom.id!,
               () {
             LoadingDialog.hideLoadingDialog(context);
@@ -927,7 +924,6 @@ class _DetailQuestionState extends State<DetailQuestionEmployee> {
 
     ref.doc(room_id).update({'status': "Đã trả lời"}).then((value) {
     }).catchError((err) {
-      //TODO
     });
   }
 
@@ -963,28 +959,91 @@ class _DetailQuestionState extends State<DetailQuestionEmployee> {
 
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(name),
-        backgroundColor: Colors.blueAccent,
-      ),
-      floatingActionButton: ableToAnswer()? _getFAB():null,
-      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-      body: SafeArea(
-        minimum: const EdgeInsets.only(left: 20, right: 10),
-        child: SingleChildScrollView(
+    return GestureDetector(
+      onTap: (){
+        WidgetsBinding.instance.focusManager.primaryFocus?.unfocus();
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(name),
+          actions: [
+            IconButton(onPressed: (){
+              _modalBottomSheetChange();
+            },
+                icon: const Icon(Icons.more_horiz),),
+          ],
+          backgroundColor: Colors.blueAccent,
+        ),
+        body: SingleChildScrollView(
+          padding: const EdgeInsets.all(10),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
-                  const Padding(padding: EdgeInsets.fromLTRB(0, 10, 0, 10)),
-                  _buildMessage(),
+                  SizedBox(
+                    height: 560,
+                    width: double.maxFinite,
+                    child: SingleChildScrollView(
+                      child: _buildMessage(),
+                    ),
+                  ),
+                  Container(
+                    height: 50,
+                    width: double.maxFinite,
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                        color: Colors.blueAccent,
+                        width: 1,
+                      ),
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        IconButton(
+                          onPressed: (){
+                          },
+                          icon: const Icon(AppIcons.file_pdf,
+                            size: 20,
+                            color: Colors.redAccent,),
+                        ),
+                        SizedBox(
+                          width: 230,
+                          child: StreamBuilder(
+                            stream: answerControl,
+                            builder: (context, snapshot) => TextField(
+                              controller: _answerController,
+                              decoration: InputDecoration(
+                                errorText: snapshot.hasError? snapshot.error.toString() : null,
+                                border: InputBorder.none,
+                              ),
+                            ),
+                          ),
+                        ),
+                        IconButton(
+                          onPressed: (){
+                            try{
+                              if(_onSendAnswerClicked()){
+                                setState(() {
+                                  _answerController.text = '';
+                                });
+                              }else{
+                                showErrorMessage('Send message fail, check your internet connection');
+                              }
+                            }catch(e){
+                              //
+                            }
+                          },
+                          icon: const Icon(Icons.send_sharp,
+                            size: 25,
+                            color: Colors.blueAccent,),
+                        )
+                      ],
+                    ),
+                  )
                 ],
               ),
             ],

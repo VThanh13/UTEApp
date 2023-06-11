@@ -5,7 +5,6 @@ import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:intl/intl.dart';
 
 import '../../../icons/app_icons_icons.dart';
@@ -273,12 +272,12 @@ class _DetailQuestionState extends State<DetailQuestion> {
                   CrossAxisAlignment.start,
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
-                    Row(
+                    const Row(
                       mainAxisAlignment:
                       MainAxisAlignment.start,
                       crossAxisAlignment:
                       CrossAxisAlignment.start,
-                      children: const <Widget>[],
+                      children: <Widget>[],
                     ),
                     const Padding(
                         padding: EdgeInsets.fromLTRB(
@@ -430,10 +429,10 @@ class _DetailQuestionState extends State<DetailQuestion> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
-                    Row(
+                    const Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      children: const <Widget>[],
+                      children: <Widget>[],
                     ),
 
                     const Padding(padding: EdgeInsets.fromLTRB(5, 5, 5, 5)),
@@ -454,7 +453,7 @@ class _DetailQuestionState extends State<DetailQuestion> {
                               ),
                             )
                           ],
-                        )),
+                        ),),
                   ],
                 ),
               ),
@@ -547,101 +546,72 @@ class _DetailQuestionState extends State<DetailQuestion> {
 
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
     return GestureDetector(
       onTap: (){
         WidgetsBinding.instance.focusManager.primaryFocus?.unfocus();
       },
       child: Scaffold(
-        resizeToAvoidBottomInset: false,
-
         appBar: AppBar(
           title: const Text('Message'),
           backgroundColor: Colors.blueAccent,
         ),
-        bottomNavigationBar: (current_user.uid == widget.chatRoom.user_id)? _inputQuestion():null,
-        body: Column(
-          children:<Widget>[
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              const Padding(padding: EdgeInsets.fromLTRB(0, 5, 0, 10)),
-              Container(
-                height: 604,
-                margin: const EdgeInsets.fromLTRB(5, 0, 5, 0),
+       // bottomNavigationBar: (current_user.uid == widget.chatRoom.user_id)? _inputQuestion():null,
+        body: SingleChildScrollView(
+          padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
+          child: Column(
+            children:<Widget>[
+              SizedBox(
+                height: 560,
                 width: double.maxFinite,
                 child: SingleChildScrollView(
                   child: _buildMessage(),
+                  ),
                 ),
-              ),
-              // SingleChildScrollView(
-              //   reverse: true,
-              //   child: Column(
-              //     children: [
-              //       (current_user.uid == widget.chatRoom.user_id)? _inputQuestion() : Text('')
-              //     ],
-              //   ),
-              // ),
-            ],
-
+            _inputQuestion(),
+          ],
           ),
-        ],
         ),
       ),
     );
   }
 
   _inputQuestion(){
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        Container(
-          width: 250,
-          margin: const EdgeInsets.fromLTRB(0, 10, 0, 10),
-          child: StreamBuilder(
-            stream: questionControl,
-            builder: (context, snapshot) => TextField(
-              controller: _questionController,
-              maxLines: 10,
-              minLines: 1,
-              maxLength: 3000,
-              decoration: InputDecoration(
-                  hintMaxLines: 5,
-                  helperMaxLines: 5,
-                  labelText: "Send message",
-                  hintText: 'Insert message',
-                  errorText: snapshot.hasError? snapshot.error.toString() : null,
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius:
-                    BorderRadius.circular(10),
-                    borderSide: const BorderSide(
-                      color: Colors.blueAccent,
-                      width: 1,
-                    ),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                      borderRadius:
-                      BorderRadius.circular(10),
-                      borderSide: const BorderSide(
-                          color: Colors.blue,
-                          width: 3))),
-            ),
-          ),
+    return Container(
+      height: 50,
+      width: double.maxFinite,
+      decoration: BoxDecoration(
+        border: Border.all(
+          color: Colors.blueAccent,
+          width: 1,
         ),
-        Padding(padding: const EdgeInsets.fromLTRB(0, 0, 2, 0),
-          child: IconButton(
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          IconButton(
             onPressed: (){
               importPdf();
             },
             icon: const Icon(AppIcons.file_pdf,
               size: 20,
               color: Colors.redAccent,),
-          ),),
-        Padding(padding: const EdgeInsets.fromLTRB(0, 0, 2, 0),
-          child: IconButton(
+          ),
+          SizedBox(
+            width: 230,
+            child: StreamBuilder(
+              stream: questionControl,
+              builder: (context, snapshot) => TextField(
+                controller: _questionController,
+                decoration: InputDecoration(
+                    errorText: snapshot.hasError? snapshot.error.toString() : null,
+                  border: InputBorder.none,
+                    ),
+              ),
+            ),
+          ),
+          IconButton(
             onPressed: (){
               try{
                 if( _onSendQuestionClicked()){
@@ -658,8 +628,9 @@ class _DetailQuestionState extends State<DetailQuestion> {
             icon: const Icon(Icons.send_sharp,
               size: 25,
               color: Colors.blueAccent,),
-          ),)
-      ],
+          )
+        ],
+      ),
     );
   }
 
