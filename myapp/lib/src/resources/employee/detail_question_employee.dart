@@ -45,7 +45,7 @@ class Question {
   Question(this.id, this.roomId, this.content, this.time, this.user, this.file);
 }
 
-class Message{
+class Message {
   String type;
   String id;
   String time;
@@ -64,6 +64,7 @@ class _DetailQuestionState extends State<DetailQuestionEmployee> {
   @override
   void initState() {
     getCurrentUser();
+    _numItems = 10;
     getDepartmentName();
     super.initState();
   }
@@ -117,36 +118,36 @@ class _DetailQuestionState extends State<DetailQuestionEmployee> {
         .collection('departments')
         .get()
         .then((value) => {
-      setState(() {
-        value.docs.forEach((element) {
-          departmentName[element.id] = element["name"];
-          listDepartment.add(element['name']);
-        });
-      })
-    });
+              setState(() {
+                value.docs.forEach((element) {
+                  departmentName[element.id] = element["name"];
+                  listDepartment.add(element['name']);
+                });
+              })
+            });
     await getQuestionData();
     await getAnswerData();
   }
 
   getCurrentUser() async {
     await FirebaseFirestore.instance
-      .collection('employee')
-      .doc(current_user_auth.uid)
-      .get()
-      .then((value) => {
-        setState(() {
-          currentEmployee.id = value['id'];
-          currentEmployee.name = value['name'];
-          currentEmployee.email = value['email'];
-          currentEmployee.image = value['image'];
-          currentEmployee.password = value['password'];
-          currentEmployee.phone = value['phone'];
-          currentEmployee.department = value['department'];
-          currentEmployee.category = value['category'].cast<String>();
-          currentEmployee.roles = value['roles'];
-          currentEmployee.status = value['status'];
-        })
-      });
+        .collection('employee')
+        .doc(current_user_auth.uid)
+        .get()
+        .then((value) => {
+              setState(() {
+                currentEmployee.id = value['id'];
+                currentEmployee.name = value['name'];
+                currentEmployee.email = value['email'];
+                currentEmployee.image = value['image'];
+                currentEmployee.password = value['password'];
+                currentEmployee.phone = value['phone'];
+                currentEmployee.department = value['department'];
+                currentEmployee.category = value['category'].cast<String>();
+                currentEmployee.roles = value['roles'];
+                currentEmployee.status = value['status'];
+              })
+            });
   }
 
   getQuestionData() async {
@@ -156,252 +157,260 @@ class _DetailQuestionState extends State<DetailQuestionEmployee> {
         .doc(widget.chatRoom.user_id)
         .get()
         .then((value) => {
-      setState(() {
-        userModel.id = value['userId'];
-        userModel.name = value['name'];
-        userModel.email = value['email'];
-        userModel.image = value['image'];
-        userModel.password = value['password'];
-        userModel.phone = value['phone'];
-        userModel.group = value['group'];
-        userModel.status = value['status'];
-      })
-    });
+              setState(() {
+                userModel.id = value['userId'];
+                userModel.name = value['name'];
+                userModel.email = value['email'];
+                userModel.image = value['image'];
+                userModel.password = value['password'];
+                userModel.phone = value['phone'];
+                userModel.group = value['group'];
+                userModel.status = value['status'];
+              })
+            });
     await FirebaseFirestore.instance
         .collection('questions')
         .where('room_id', isEqualTo: widget.chatRoom.id)
         .get()
         .then((value) => {
-      value.docs.forEach((element) {
-        Question question = Question("", "", "", "", userModel, "");
-        question.id = element['id'];
-        question.roomId = element['room_id'];
-        question.content = element['content'];
-        question.time = element['time'];
-        question.file = element['file'];
-        listQuestion.add(question);
-        Message message = Message('question', question.id, question.time);
-        listMessage.add(message);
-      })
-    });
+              value.docs.forEach((element) {
+                Question question = Question("", "", "", "", userModel, "");
+                question.id = element['id'];
+                question.roomId = element['room_id'];
+                question.content = element['content'];
+                question.time = element['time'];
+                question.file = element['file'];
+                listQuestion.add(question);
+                Message message =
+                    Message('question', question.id, question.time);
+                listMessage.add(message);
+              })
+            });
   }
 
   getAnswerData() async {
     List<AnswerModel> listAns = [];
     await FirebaseFirestore.instance
-      .collection('answer')
-      .where('room_id', isEqualTo: widget.chatRoom.id)
-      .get()
-      .then((value) => {
-        setState(() {
-          value.docs.forEach((element) {
-            AnswerModel ans = AnswerModel();
-            ans.employee_id = element['employee_id'];
-            ans.id = element['id'];
-            ans.room_id = element['room_id'];
-            ans.content = element['content'];
-            ans.time = element['time'];
+        .collection('answer')
+        .where('room_id', isEqualTo: widget.chatRoom.id)
+        .get()
+        .then((value) => {
+              setState(() {
+                value.docs.forEach((element) {
+                  AnswerModel ans = AnswerModel();
+                  ans.employee_id = element['employee_id'];
+                  ans.id = element['id'];
+                  ans.room_id = element['room_id'];
+                  ans.content = element['content'];
+                  ans.time = element['time'];
 
-            listAns.add(ans);
-          });
-        })
-    });
+                  listAns.add(ans);
+                });
+              })
+            });
     Answer ans;
     listAns.forEach((element) async {
       EmployeeModel employeeModel = EmployeeModel();
       // Answer ans = Answer(element.id, element.room_id, element.content, element.time, employeeModel);
       await FirebaseFirestore.instance
-        .collection('employee')
-        .doc(element.employee_id)
-        .get()
-        .then((value) => {
-          setState(() {
-            employeeModel.id = value['id'];
-            employeeModel.name = value['name'];
-            employeeModel.email = value['email'];
-            employeeModel.image = value['image'];
-            employeeModel.password = value['password'];
-            employeeModel.phone = value['phone'];
-            employeeModel.department = value['department'];
-            employeeModel.category = value['category'].cast<String>();
-            employeeModel.roles = value['roles'];
-            employeeModel.status = value['status'];
-            ans = Answer(element.id!, element.room_id!, element.content!, element.time!, employeeModel!);
-            // ans.employee = employeeModel;
-            listAnswer.add(ans);
-            Message message = Message('answer', ans.id, ans.time);
-            listMessage.add(message);
-          })
-        });
+          .collection('employee')
+          .doc(element.employee_id)
+          .get()
+          .then((value) => {
+                setState(() {
+                  employeeModel.id = value['id'];
+                  employeeModel.name = value['name'];
+                  employeeModel.email = value['email'];
+                  employeeModel.image = value['image'];
+                  employeeModel.password = value['password'];
+                  employeeModel.phone = value['phone'];
+                  employeeModel.department = value['department'];
+                  employeeModel.category = value['category'].cast<String>();
+                  employeeModel.roles = value['roles'];
+                  employeeModel.status = value['status'];
+                  ans = Answer(element.id!, element.room_id!, element.content!,
+                      element.time!, employeeModel!);
+                  // ans.employee = employeeModel;
+                  listAnswer.add(ans);
+                  Message message = Message('answer', ans.id, ans.time);
+                  listMessage.add(message);
+                })
+              });
     });
   }
 
-  _buildMessage(){
-    if (listMessage.isEmpty || departmentName.isEmpty || currentEmployee.category == null) {
+  bool _isLoadingMore = false;
+  int _numItems = 10;
+
+  _buildMessage() {
+    if (listMessage.isEmpty ||
+        departmentName.isEmpty ||
+        currentEmployee.category == null) {
       return const Center(
-        child: SizedBox(
-            width: 20,
-            height: 20,
-            child: CircularProgressIndicator()),
+        child:
+            SizedBox(width: 20, height: 20, child: CircularProgressIndicator()),
       );
     }
-    listMessage.sort((a, b)=> DateFormat("dd-MM-yyyy HH:mm:ss").parse(a.time).compareTo(DateFormat("dd-MM-yyyy HH:mm:ss").parse(b.time)));
+    listMessage.sort((a, b) => DateFormat("dd-MM-yyyy HH:mm:ss")
+        .parse(a.time)
+        .compareTo(DateFormat("dd-MM-yyyy HH:mm:ss").parse(b.time)));
+    var messagesToShow = listMessage.take(_numItems);
     List<Widget> messageList = [];
-    for (var message in listMessage) {
-      if(message.type == "question") {
+    for (var message in messagesToShow) {
+      if (message.type == "question") {
         messageList.add(GestureDetector(
-            child: _buildQues(
-                listQuestion.firstWhere((element) => element.id == message.id))
-        ));
-      }
-      else{
+            child: _buildQues(listQuestion
+                .firstWhere((element) => element.id == message.id))));
+      } else {
         messageList.add(GestureDetector(
             child: _buildAnswers(
-                listAnswer.firstWhere((element) => element.id == message.id))
-        ));
+                listAnswer.firstWhere((element) => element.id == message.id))));
       }
     }
-    return Column(children: messageList);
+    return Column(
+      children: <Widget>[
+        SizedBox(
+          height: 560,
+          width: double.maxFinite,
+          child: NotificationListener<ScrollNotification>(
+            onNotification: (ScrollNotification notification) {
+              if (!_isLoadingMore &&
+                  notification.metrics.pixels ==
+                      notification.metrics.maxScrollExtent) {
+                setState(() {
+                  _isLoadingMore = true;
+                  _numItems += 10;
+                });
+                Future.delayed(const Duration(milliseconds: 500), () {
+                  setState(() {
+                    _isLoadingMore = false;
+                  });
+                });
+              }
+              return true;
+            },
+            child: SingleChildScrollView(
+              child: Column(children: messageList),
+            ),
+          ),
+        ),
+      ],
+    );
   }
-  String name = '';
 
+  String name = '';
 
   _buildQues(Question question) {
     name = question.user.name!;
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.start,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        CircleAvatar(
-          radius: 22,
-          backgroundColor: Colors.blueAccent,
-          child: CircleAvatar(
-            backgroundImage:
-            NetworkImage(question.user.image!),
-            radius: 20,
-          ),
-        ),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.start,
-          //mainAxisSize: MainAxisSize.min,
-
-          children: <Widget>[
-            Row(
-              children: [
-                Text(
-                  '   ${question.user.name}',
-                  style: TextStyle(
-                    fontSize: 13,
+    return SizedBox(
+      width: MediaQuery.of(context).size.width - 40,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                '   ${question.user.name}',
+                style: TextStyle(
+                    fontSize: 10,
                     fontStyle: FontStyle.italic,
-                    fontWeight: FontWeight.w500,
+                    fontWeight: FontWeight.w400,
+                    color: Colors.grey[500]),
+              ),
+              Text(
+                ', ${question.time}',
+                overflow: TextOverflow.visible,
+                maxLines: 3,
+                style: TextStyle(
+                    fontSize: 10,
+                    fontStyle: FontStyle.italic,
+                    fontWeight: FontWeight.w400,
                     color: Colors.grey[500],
-                  ),
-                ),
-                Text(
-                  ', ${question.time}',
-                  overflow: TextOverflow.visible,
-                  maxLines: 3,
-                  style: TextStyle(
-                      fontSize: 13,
-                      fontStyle: FontStyle.italic,
-                      fontWeight: FontWeight.w500,
-                      color: Colors.grey[500],
-                      overflow:
-                      TextOverflow.visible),
-                ),
-              ],
-            ),
-            SizedBox(
-              width:
-              MediaQuery.of(context).size.width - 97,
-              child: Card(
-                margin: const EdgeInsets.all(5),
-                shape: const RoundedRectangleBorder(
-                  borderRadius: BorderRadius.only(topRight: Radius.circular(10),
-                      bottomLeft: Radius.circular(10), bottomRight: Radius.circular(10)),
-                ),
-                color: Colors.grey[400],
-                elevation: 10,
-                child: Column(
-                  mainAxisAlignment:
-                  MainAxisAlignment.start,
-                  crossAxisAlignment:
-                  CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    const Row(
-                      mainAxisAlignment:
-                      MainAxisAlignment.start,
-                      crossAxisAlignment:
-                      CrossAxisAlignment.start,
-                      children: <Widget>[],
-                    ),
-                    const Padding(
-                        padding: EdgeInsets.fromLTRB(
-                            5, 5, 5, 5)),
-                    Container(
-                        padding: const EdgeInsets.fromLTRB(
-                            10, 0, 5, 10),
-                        child: Row(
-                          crossAxisAlignment:
-                          CrossAxisAlignment.start,
-                          mainAxisAlignment:
-                          MainAxisAlignment.start,
-                          children: <Widget>[
-                            Expanded(
-                              child: Text(
-                                question.content,
-                                overflow:
-                                TextOverflow.visible,
-                                maxLines: 20,
-                                style: const TextStyle(
-                                    fontSize: 16,
-                                    fontWeight:
-                                    FontWeight.w500),
-                              ),
-                            )
-                          ],
-                        )),
-
-                    if(question.file!='file.pdf')
-                      if(question.file.substring(question.file.length - 57).startsWith('.pdf'))(
-                          Column(
-                            children: [
-                              Row(
-                                children: [
-                                  IconButton(
-                                    onPressed:() async {
-                                      final url =
-                                          question.file;
-                                      final file = await PDFApi.loadNetwork(url);
-                                      if (!mounted) return;
-                                      openPDF(context, file);
-                                    },
-                                    icon: const Icon(AppIcons.file_pdf,
-                                        color: Color(0xED0565B2)),),
-                                  const Text("File PDF",
-                                    overflow:
-                                    TextOverflow.visible,
-                                    style: TextStyle(
-                                        fontSize: 15,
-                                        fontWeight:
-                                        FontWeight.w400,
-                                        color: Color(0xED0565B2)),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          )
-                      )
-                  ],
+                    overflow: TextOverflow.visible),
+              ),
+            ],
+          ),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              CircleAvatar(
+                radius: 22,
+                backgroundColor: Colors.blueAccent,
+                child: CircleAvatar(
+                  backgroundImage: NetworkImage(question.user.image!),
+                  radius: 20,
                 ),
               ),
-            ),
-            if(question.file!='file.pdf' && !question.file.substring(question.file.length - 57).startsWith('.pdf'))
-              SizedBox(
-                  width:
-                  MediaQuery.of(context).size.width - 97,
+              const SizedBox(
+                width: 8,
+              ),
+              Expanded(
+                child: Wrap(
+                    crossAxisAlignment: WrapCrossAlignment.end,
+                    alignment: WrapAlignment.start,
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(10),
+                        margin: const EdgeInsets.only(top: 3, bottom: 10),
+                        decoration: const BoxDecoration(
+                          borderRadius: BorderRadius.only(
+                            topRight: Radius.circular(12),
+                            bottomLeft: Radius.circular(12),
+                            bottomRight: Radius.circular(12),
+                          ),
+                          color: Colors.grey,
+                        ),
+                        child: Text(
+                          question.content,
+                          maxLines: 20,
+                          style: const TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w400,
+                          ),
+                        ),
+                      ),
+                    ]),
+              ),
+              if (question.file != 'file.pdf')
+                if (question.file
+                    .substring(question.file.length - 100)
+                    .startsWith('.pdf'))
+                  (Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          IconButton(
+                            onPressed: () async {
+                              final url = question.file;
+                              final file = await PDFApi.loadNetwork(url);
+                              openPDF(context, file);
+                            },
+                            icon: const Icon(AppIcons.file_pdf,
+                                color: Color(0xED0565B2)),
+                          ),
+                          const Text(
+                            "File PDF",
+                            overflow: TextOverflow.visible,
+                            style: TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.w400,
+                                color: Color(0xED0565B2)),
+                          ),
+                        ],
+                      ),
+                    ],
+                  )),
+              if (question.file != 'file.pdf' &&
+                  !question.file
+                      .substring(question.file.length - 57)
+                      .startsWith('.pdf'))
+                SizedBox(
+                  width: MediaQuery.of(context).size.width - 92,
                   child: Card(
                     margin: const EdgeInsets.all(5),
                     shape: RoundedRectangleBorder(
@@ -409,116 +418,196 @@ class _DetailQuestionState extends State<DetailQuestionEmployee> {
                     ),
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(8.0),
-                      child: Image.network(question.file,
-                      fit: BoxFit.cover,),
-
+                      child: Image.network(question.file),
                     ),
-                  )
-              ),
-            const SizedBox(height: 10,),
-          ],
-        ),
-      ],
-    );
-  }
-  _buildAnswers(Answer answer) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.end,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.start,
-          //mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            Row(
-              children: [
-                Text(
-                  '   ${answer.employee.name}',
-                  style: TextStyle(
-                    fontSize: 13,
-                    fontStyle: FontStyle.italic,
-                    fontWeight: FontWeight.w500,
-                    color: Colors.grey[500],
                   ),
                 ),
-                Text(
-                  ', ${answer.time}',
-                  overflow: TextOverflow.visible,
-                  maxLines: 3,
-                  style: TextStyle(
-                      fontSize: 13,
-                      fontStyle: FontStyle.italic,
-                      fontWeight: FontWeight.w500,
-                      color: Colors.grey[500],
-                      overflow:
-                      TextOverflow.visible),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  _buildAnswers(Answer answer) {
+    return SizedBox(
+      width: MediaQuery.of(context).size.width - 40,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                '   ${answer.employee.name}',
+                style: TextStyle(
+                  fontSize: 10,
+                  fontStyle: FontStyle.italic,
+                  fontWeight: FontWeight.w400,
+                  color: Colors.grey[500],
                 ),
-              ],
-            ),
-            SizedBox(
-              //width: MediaQuery.of(context).size.width -75,
-              width: 285,
-              child: Card(
-                margin: const EdgeInsets.all(5),
-                shape: const RoundedRectangleBorder(
-                  borderRadius: BorderRadius.only(topLeft: Radius.circular(10),
-                  bottomRight: Radius.circular(10), bottomLeft: Radius.circular(10)),
-                ),
-                color: Colors.lightBlueAccent,
-                elevation: 10,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    const Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[],
-                    ),
-                    const Padding(padding: EdgeInsets.fromLTRB(5, 5, 5, 5)),
+              ),
+              Text(
+                ', ${answer.time}',
+                overflow: TextOverflow.visible,
+                maxLines: 3,
+                style: TextStyle(
+                    fontSize: 10,
+                    fontStyle: FontStyle.italic,
+                    fontWeight: FontWeight.w400,
+                    color: Colors.grey[500],
+                    overflow: TextOverflow.visible),
+              ),
+            ],
+          ),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+
+              Expanded(
+                child: Wrap(
+                  crossAxisAlignment: WrapCrossAlignment.end,
+                  alignment: WrapAlignment.end,
+                  children: [
                     Container(
-                        padding: const EdgeInsets.fromLTRB(10, 0, 5, 10),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: <Widget>[
-                            Expanded(
-                              child: Text(
-                                answer.content,
-                                overflow: TextOverflow.visible,
-                                maxLines: 20,
-                                style: const TextStyle(
-                                    fontSize: 15,
-                                    fontWeight: FontWeight.w400),
-                              ),
-                            )
-                          ],
-                        )),
+                      padding: const EdgeInsets.all(10),
+                      margin: const EdgeInsets.only(top: 3, bottom: 10),
+                      decoration: const BoxDecoration(
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(12),
+                          bottomLeft: Radius.circular(12),
+                          bottomRight: Radius.circular(12),
+                        ),
+                        color: Colors.lightBlueAccent,
+                      ),
+                      child: Text(
+                        answer.content,
+                        overflow: TextOverflow.visible,
+                        maxLines: 20,
+                        style: const TextStyle(
+                            fontSize: 15, fontWeight: FontWeight.w400),
+                      ),
+                    ),
                   ],
                 ),
               ),
-            ),
-            const SizedBox(height: 15,),
-          ],
-        ),
-        CircleAvatar(
-          radius: 22,
-          backgroundColor: Colors.blueAccent,
-          child: CircleAvatar(
-            backgroundImage: NetworkImage(answer.employee.image!),
-            radius: 20,
-          ),
-        ),
-      ],
-    );
+              const SizedBox(
+                width: 10,
+              ),
+              CircleAvatar(
+                radius: 22,
+                backgroundColor: Colors.blueAccent,
+                child: CircleAvatar(
+                  backgroundImage: NetworkImage(answer.employee.image!),
+                  radius: 20,
+                ),
+              ),
 
+            ],
+          )
+        ],
+      ),
+    );
+    // return Row(
+    //   mainAxisAlignment: MainAxisAlignment.end,
+    //   crossAxisAlignment: CrossAxisAlignment.start,
+    //   children: <Widget>[
+    //     Column(
+    //       crossAxisAlignment: CrossAxisAlignment.start,
+    //       mainAxisAlignment: MainAxisAlignment.start,
+    //       //mainAxisSize: MainAxisSize.min,
+    //       children: <Widget>[
+    //         Row(
+    //           children: [
+    //             Text(
+    //               '   ${answer.employee.name}',
+    //               style: TextStyle(
+    //                 fontSize: 13,
+    //                 fontStyle: FontStyle.italic,
+    //                 fontWeight: FontWeight.w500,
+    //                 color: Colors.grey[500],
+    //               ),
+    //             ),
+    //             Text(
+    //               ', ${answer.time}',
+    //               overflow: TextOverflow.visible,
+    //               maxLines: 3,
+    //               style: TextStyle(
+    //                   fontSize: 13,
+    //                   fontStyle: FontStyle.italic,
+    //                   fontWeight: FontWeight.w500,
+    //                   color: Colors.grey[500],
+    //                   overflow: TextOverflow.visible),
+    //             ),
+    //           ],
+    //         ),
+    //         SizedBox(
+    //           //width: MediaQuery.of(context).size.width -75,
+    //           width: 285,
+    //           child: Card(
+    //             margin: const EdgeInsets.all(5),
+    //             shape: const RoundedRectangleBorder(
+    //               borderRadius: BorderRadius.only(
+    //                   topLeft: Radius.circular(10),
+    //                   bottomRight: Radius.circular(10),
+    //                   bottomLeft: Radius.circular(10)),
+    //             ),
+    //             color: Colors.lightBlueAccent,
+    //             elevation: 10,
+    //             child: Column(
+    //               mainAxisAlignment: MainAxisAlignment.start,
+    //               crossAxisAlignment: CrossAxisAlignment.start,
+    //               mainAxisSize: MainAxisSize.min,
+    //               children: <Widget>[
+    //                 const Row(
+    //                   mainAxisAlignment: MainAxisAlignment.start,
+    //                   crossAxisAlignment: CrossAxisAlignment.start,
+    //                   children: <Widget>[],
+    //                 ),
+    //                 const Padding(padding: EdgeInsets.fromLTRB(5, 5, 5, 5)),
+    //                 Container(
+    //                     padding: const EdgeInsets.fromLTRB(10, 0, 5, 10),
+    //                     child: Row(
+    //                       crossAxisAlignment: CrossAxisAlignment.start,
+    //                       mainAxisAlignment: MainAxisAlignment.start,
+    //                       children: <Widget>[
+    //                         Expanded(
+    //                           child: Text(
+    //                             answer.content,
+    //                             overflow: TextOverflow.visible,
+    //                             maxLines: 20,
+    //                             style: const TextStyle(
+    //                                 fontSize: 15, fontWeight: FontWeight.w400),
+    //                           ),
+    //                         )
+    //                       ],
+    //                     )),
+    //               ],
+    //             ),
+    //           ),
+    //         ),
+    //         const SizedBox(
+    //           height: 15,
+    //         ),
+    //       ],
+    //     ),
+    //     CircleAvatar(
+    //       radius: 22,
+    //       backgroundColor: Colors.blueAccent,
+    //       child: CircleAvatar(
+    //         backgroundImage: NetworkImage(answer.employee.image!),
+    //         radius: 20,
+    //       ),
+    //     ),
+    //   ],
+    // );
   }
 
   void openPDF(BuildContext context, File file) => Navigator.of(context).push(
-    MaterialPageRoute(builder: (context) => PDFViewerPage(file: file)),
-  );
+        MaterialPageRoute(builder: (context) => PDFViewerPage(file: file)),
+      );
 
   bool isValid(String answer) {
     if (answer.isEmpty) {
@@ -574,153 +663,153 @@ class _DetailQuestionState extends State<DetailQuestionEmployee> {
             MediaQuery.of(context).size.height * 0.55)),
         shape: const RoundedRectangleBorder(
             borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(20),
-              topRight: Radius.circular(20),
-            )),
+          topLeft: Radius.circular(20),
+          topRight: Radius.circular(20),
+        )),
         context: context,
         builder: (BuildContext context) {
           return StatefulBuilder(
               builder: (BuildContext context, StateSetter setStateKhoa) {
-                return Column(
-                  children: <Widget>[
-                    const Padding(
-                      padding: EdgeInsets.fromLTRB(5, 20, 5, 10),
-                      child: Text(
-                        'Move question',
-                        style: TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.w600,
-                            letterSpacing: 1.0),
-                      ),
-                    ),
-                    SingleChildScrollView(
-                      physics: const BouncingScrollPhysics(),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          SizedBox(
-                            height: MediaQuery.of(context).size.height * 0.45,
-                            child: SingleChildScrollView(
-                                child: SizedBox(
-                                  height: 300,
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    children: <Widget>[
-                                      const Padding(
-                                          padding: EdgeInsets.fromLTRB(0, 10, 0, 10)),
-                                      Container(
-                                          margin: const EdgeInsets.fromLTRB(0, 10, 0, 15),
-                                          width: 340,
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 12, vertical: 4),
-                                          decoration: BoxDecoration(
-                                            borderRadius: BorderRadius.circular(12),
-                                            border: Border.all(
-                                                color: Colors.blueAccent, width: 2),
-                                          ),
-                                          child: DropdownButtonHideUnderline(
-                                            child: DropdownButton(
-                                              isExpanded: true,
-                                              value: valueKhoa,
-                                              hint: const Text("Please choose department"),
-                                              iconSize: 36,
-                                              items: render(listDepartment),
-                                              onChanged: (value) async {
-                                                final List<dynamic> listProblem =
-                                                await getDataDropdownProblem(
-                                                    value);
-                                                setStateKhoa(() {
-                                                  setState(() {
-                                                    valueVanDe = null;
-                                                    valueKhoa = value;
-                                                    listT = listProblem;
-                                                  });
-                                                });
-                                              },
-                                            ),
-                                          )),
-                                      Container(
-                                          margin: const EdgeInsets.fromLTRB(0, 10, 0, 15),
-                                          width: 340,
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 12, vertical: 4),
-                                          decoration: BoxDecoration(
-                                            borderRadius: BorderRadius.circular(12),
-                                            border: Border.all(
-                                                color: Colors.blueAccent, width: 2),
-                                          ),
-                                          child: DropdownButtonHideUnderline(
-                                            child: DropdownButton(
-                                              isExpanded: true,
-                                              value: valueVanDe,
-                                              hint: const Text("Please choose category"),
-                                              iconSize: 36,
-                                              items: renderR(listT),
-                                              onChanged: (value) {
-                                                setStateKhoa(() {
-                                                  setState(() {
-                                                    valueVanDe = value;
-                                                  });
-                                                });
-                                              },
-                                            ),
-                                          )),
-                                      Container(
-                                        padding: const EdgeInsets.all(10),
-                                        child: Row(
-                                          mainAxisAlignment:
-                                          MainAxisAlignment.spaceAround,
-                                          children: <Widget>[
-                                            Expanded(
-                                              child: ElevatedButton.icon(
-                                                onPressed: () {
-                                                  _onChangeQuestionClicked(
-                                                      widget.chatRoom.id);
-                                                },
-                                                label: const Text(
-                                                  'Save',
-                                                  style: TextStyle(
-                                                      fontSize: 16,
-                                                      color: Colors.white),
-                                                ),
-                                                icon: const Icon(Icons.save_outlined),
-                                                style: ElevatedButton.styleFrom(
-                                                    backgroundColor:
-                                                    Colors.blueAccent),
-                                              ),
-                                            ),
-                                            const Padding(padding: EdgeInsets.all(10)),
-                                            Expanded(
-                                                child: ElevatedButton.icon(
-                                                  onPressed: () =>
-                                                  {Navigator.pop(context)},
-                                                  label: const Text(
-                                                    'Cancel',
-                                                    style: TextStyle(
-                                                        fontSize: 16,
-                                                        color: Colors.white),
-                                                  ),
-                                                  icon: const Icon(Icons.cancel_presentation),
-                                                  style: ElevatedButton.styleFrom(
-                                                      backgroundColor:
-                                                      Colors.blueAccent),
-                                                )),
-                                            const Padding(
-                                                padding: EdgeInsets.fromLTRB(
-                                                    0, 10, 0, 30)),
-                                          ],
-                                        ),
-                                      )
-                                    ],
+            return Column(
+              children: <Widget>[
+                const Padding(
+                  padding: EdgeInsets.fromLTRB(5, 20, 5, 10),
+                  child: Text(
+                    'Move question',
+                    style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.w600,
+                        letterSpacing: 1.0),
+                  ),
+                ),
+                SingleChildScrollView(
+                  physics: const BouncingScrollPhysics(),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      SizedBox(
+                        height: MediaQuery.of(context).size.height * 0.45,
+                        child: SingleChildScrollView(
+                            child: SizedBox(
+                          height: 300,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: <Widget>[
+                              const Padding(
+                                  padding: EdgeInsets.fromLTRB(0, 10, 0, 10)),
+                              Container(
+                                  margin:
+                                      const EdgeInsets.fromLTRB(0, 10, 0, 15),
+                                  width: 340,
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 12, vertical: 4),
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(12),
+                                    border: Border.all(
+                                        color: Colors.blueAccent, width: 2),
                                   ),
-                                )),
+                                  child: DropdownButtonHideUnderline(
+                                    child: DropdownButton(
+                                      isExpanded: true,
+                                      value: valueKhoa,
+                                      hint: const Text(
+                                          "Please choose department"),
+                                      iconSize: 36,
+                                      items: render(listDepartment),
+                                      onChanged: (value) async {
+                                        final List<dynamic> listProblem =
+                                            await getDataDropdownProblem(value);
+                                        setStateKhoa(() {
+                                          setState(() {
+                                            valueVanDe = null;
+                                            valueKhoa = value;
+                                            listT = listProblem;
+                                          });
+                                        });
+                                      },
+                                    ),
+                                  )),
+                              Container(
+                                  margin:
+                                      const EdgeInsets.fromLTRB(0, 10, 0, 15),
+                                  width: 340,
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 12, vertical: 4),
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(12),
+                                    border: Border.all(
+                                        color: Colors.blueAccent, width: 2),
+                                  ),
+                                  child: DropdownButtonHideUnderline(
+                                    child: DropdownButton(
+                                      isExpanded: true,
+                                      value: valueVanDe,
+                                      hint:
+                                          const Text("Please choose category"),
+                                      iconSize: 36,
+                                      items: renderR(listT),
+                                      onChanged: (value) {
+                                        setStateKhoa(() {
+                                          setState(() {
+                                            valueVanDe = value;
+                                          });
+                                        });
+                                      },
+                                    ),
+                                  )),
+                              Container(
+                                padding: const EdgeInsets.all(10),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceAround,
+                                  children: <Widget>[
+                                    Expanded(
+                                      child: ElevatedButton.icon(
+                                        onPressed: () {
+                                          _onChangeQuestionClicked(
+                                              widget.chatRoom.id);
+                                        },
+                                        label: const Text(
+                                          'Save',
+                                          style: TextStyle(
+                                              fontSize: 16,
+                                              color: Colors.white),
+                                        ),
+                                        icon: const Icon(Icons.save_outlined),
+                                        style: ElevatedButton.styleFrom(
+                                            backgroundColor: Colors.blueAccent),
+                                      ),
+                                    ),
+                                    const Padding(padding: EdgeInsets.all(10)),
+                                    Expanded(
+                                        child: ElevatedButton.icon(
+                                      onPressed: () => {Navigator.pop(context)},
+                                      label: const Text(
+                                        'Cancel',
+                                        style: TextStyle(
+                                            fontSize: 16, color: Colors.white),
+                                      ),
+                                      icon:
+                                          const Icon(Icons.cancel_presentation),
+                                      style: ElevatedButton.styleFrom(
+                                          backgroundColor: Colors.blueAccent),
+                                    )),
+                                    const Padding(
+                                        padding:
+                                            EdgeInsets.fromLTRB(0, 10, 0, 30)),
+                                  ],
+                                ),
+                              )
+                            ],
                           ),
-                        ],
+                        )),
                       ),
-                    ),
-                  ],
-                );
-              });
+                    ],
+                  ),
+                ),
+              ],
+            );
+          });
         });
   }
 
@@ -732,132 +821,133 @@ class _DetailQuestionState extends State<DetailQuestionEmployee> {
             MediaQuery.of(context).size.height * 0.65)),
         shape: const RoundedRectangleBorder(
             borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(20),
-              topRight: Radius.circular(20),
-            )),
+          topLeft: Radius.circular(20),
+          topRight: Radius.circular(20),
+        )),
         context: context,
         builder: (BuildContext context) {
           return StatefulBuilder(
               builder: (BuildContext context, StateSetter setStateKhoa) {
-                return Column(
-                  children: <Widget>[
-                    const Padding(
-                      padding: EdgeInsets.fromLTRB(5, 20, 5, 10),
-                      child: Text(
-                        'Answer question',
-                        style: TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.w600,
-                            letterSpacing: 1.0),
-                      ),
-                    ),
-                    SingleChildScrollView(
-                      physics: const BouncingScrollPhysics(),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          SizedBox(
-                            height: MediaQuery.of(context).size.height * 0.55,
-                            child: SingleChildScrollView(
-                                child: SizedBox(
-                                  height: 600,
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    children: <Widget>[
-                                      const Padding(
-                                        padding: EdgeInsets.fromLTRB(0, 10, 0, 10),),
-                                      Container(
-                                        margin: const EdgeInsets.fromLTRB(10, 10, 10, 15),
-                                        child: StreamBuilder(
-                                          stream: answerControl,
-                                          builder: (context, snapshot) => TextField(
-                                            controller: _answerController,
-                                            maxLines: 7,
-                                            maxLength: 500,
-                                            decoration: InputDecoration(
-                                                hintMaxLines: 5,
-                                                helperMaxLines: 5,
-                                                labelText: "Answer question",
-                                                hintText: 'Insert answer',
-                                                enabledBorder: OutlineInputBorder(
-                                                    borderRadius:
-                                                    BorderRadius.circular(10),
-                                                    borderSide: const BorderSide(
-                                                      color: Colors.blueAccent,
-                                                      width: 1,
-                                                    )),
-                                                focusedBorder: OutlineInputBorder(
-                                                    borderRadius:
-                                                    BorderRadius.circular(10),
-                                                    borderSide: const BorderSide(
-                                                        color: Colors.blue,
-                                                        width: 4))),
-                                          ),
-                                        ),
-                                      ),
-                                      Container(
-                                        padding: const EdgeInsets.all(10),
-                                        child: Row(
-                                          mainAxisAlignment:
-                                          MainAxisAlignment.spaceAround,
-                                          children: <Widget>[
-                                            Expanded(
-                                              child: ElevatedButton.icon(
-                                                onPressed: () {
-                                                  try{
-                                                    if(_onSendAnswerClicked()){
-                                                      setState(() {
-                                                        _answerController.text = '';
-                                                      });
-                                                    }else{
-                                                      showErrorMessage('Send message fail, check your internet connection');
-                                                    }
-                                                  }catch(e){
-                                                    //
-                                                  }
-                                                },
-                                                label: const Text(
-                                                  'Send',
-                                                  style: TextStyle(
-                                                      fontSize: 16,
-                                                      color: Colors.white),
-                                                ),
-                                                icon: const Icon(Icons.send),
-                                                style: ElevatedButton.styleFrom(
-                                                    primary: Colors.blueAccent),
-                                              ),
-                                            ),
-                                            const Padding(padding: EdgeInsets.all(10)),
-                                            Expanded(
-                                                child: ElevatedButton.icon(
-                                                  onPressed: () =>
-                                                  {Navigator.pop(context)},
-                                                  label: const Text(
-                                                    'Cancel',
-                                                    style: TextStyle(
-                                                        fontSize: 16,
-                                                        color: Colors.white),
-                                                  ),
-                                                  icon: const Icon(Icons.cancel_presentation),
-                                                  style: ElevatedButton.styleFrom(
-                                                      primary: Colors.blueAccent),
-                                                )),
-                                            const Padding(
-                                                padding: EdgeInsets.fromLTRB(
-                                                    0, 10, 0, 30)),
-                                          ],
-                                        ),
-                                      )
-                                    ],
+            return Column(
+              children: <Widget>[
+                const Padding(
+                  padding: EdgeInsets.fromLTRB(5, 20, 5, 10),
+                  child: Text(
+                    'Answer question',
+                    style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.w600,
+                        letterSpacing: 1.0),
+                  ),
+                ),
+                SingleChildScrollView(
+                  physics: const BouncingScrollPhysics(),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      SizedBox(
+                        height: MediaQuery.of(context).size.height * 0.55,
+                        child: SingleChildScrollView(
+                            child: SizedBox(
+                          height: 600,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: <Widget>[
+                              const Padding(
+                                padding: EdgeInsets.fromLTRB(0, 10, 0, 10),
+                              ),
+                              Container(
+                                margin:
+                                    const EdgeInsets.fromLTRB(10, 10, 10, 15),
+                                child: StreamBuilder(
+                                  stream: answerControl,
+                                  builder: (context, snapshot) => TextField(
+                                    controller: _answerController,
+                                    maxLines: 7,
+                                    maxLength: 500,
+                                    decoration: InputDecoration(
+                                        hintMaxLines: 5,
+                                        helperMaxLines: 5,
+                                        labelText: "Answer question",
+                                        hintText: 'Insert answer',
+                                        enabledBorder: OutlineInputBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(10),
+                                            borderSide: const BorderSide(
+                                              color: Colors.blueAccent,
+                                              width: 1,
+                                            )),
+                                        focusedBorder: OutlineInputBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(10),
+                                            borderSide: const BorderSide(
+                                                color: Colors.blue, width: 4))),
                                   ),
-                                )),
+                                ),
+                              ),
+                              Container(
+                                padding: const EdgeInsets.all(10),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceAround,
+                                  children: <Widget>[
+                                    Expanded(
+                                      child: ElevatedButton.icon(
+                                        onPressed: () {
+                                          try {
+                                            if (_onSendAnswerClicked()) {
+                                              setState(() {
+                                                _answerController.text = '';
+                                              });
+                                            } else {
+                                              showErrorMessage(
+                                                  'Send message fail, check your internet connection');
+                                            }
+                                          } catch (e) {
+                                            //
+                                          }
+                                        },
+                                        label: const Text(
+                                          'Send',
+                                          style: TextStyle(
+                                              fontSize: 16,
+                                              color: Colors.white),
+                                        ),
+                                        icon: const Icon(Icons.send),
+                                        style: ElevatedButton.styleFrom(
+                                            primary: Colors.blueAccent),
+                                      ),
+                                    ),
+                                    const Padding(padding: EdgeInsets.all(10)),
+                                    Expanded(
+                                        child: ElevatedButton.icon(
+                                      onPressed: () => {Navigator.pop(context)},
+                                      label: const Text(
+                                        'Cancel',
+                                        style: TextStyle(
+                                            fontSize: 16, color: Colors.white),
+                                      ),
+                                      icon:
+                                          const Icon(Icons.cancel_presentation),
+                                      style: ElevatedButton.styleFrom(
+                                          primary: Colors.blueAccent),
+                                    )),
+                                    const Padding(
+                                        padding:
+                                            EdgeInsets.fromLTRB(0, 10, 0, 30)),
+                                  ],
+                                ),
+                              )
+                            ],
                           ),
-                        ],
+                        )),
                       ),
-                    ),
-                  ],
-                );
-              });
+                    ],
+                  ),
+                ),
+              ],
+            );
+          });
         });
   }
 
@@ -879,8 +969,7 @@ class _DetailQuestionState extends State<DetailQuestionEmployee> {
       'category': category,
     }).then((value) {
       onSuccess();
-    }).catchError((err) {
-    });
+    }).catchError((err) {});
   }
 
   _onSendAnswerClicked() {
@@ -889,21 +978,21 @@ class _DetailQuestionState extends State<DetailQuestionEmployee> {
     String timeString = DateFormat('dd-MM-yyyy HH:mm:ss').format(time);
 
     if (isvalid) {
-      sendAnswer(currentEmployee.id!, _answerController.text, timeString, widget.chatRoom.id!,
-              () {
-            LoadingDialog.hideLoadingDialog(context);
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) =>
-                        DetailQuestionEmployee(chatRoom: widget.chatRoom)));
-          });
+      sendAnswer(currentEmployee.id!, _answerController.text, timeString,
+          widget.chatRoom.id!, () {
+        LoadingDialog.hideLoadingDialog(context);
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) =>
+                    DetailQuestionEmployee(chatRoom: widget.chatRoom)));
+      });
     }
     return 0;
   }
 
-  void sendAnswer(String employee_id, String content, String time, String room_id,
-      Function onSuccess) {
+  void sendAnswer(String employee_id, String content, String time,
+      String room_id, Function onSuccess) {
     var ref = FirebaseFirestore.instance.collection('answer');
     String id = ref.doc().id;
     ref.doc(id).set({
@@ -915,16 +1004,17 @@ class _DetailQuestionState extends State<DetailQuestionEmployee> {
     }).then((value) {
       updateChatRoomStatus(room_id);
       onSuccess();
-    }).catchError((err) {
-    });
+    }).catchError((err) {});
   }
 
   void updateChatRoomStatus(String room_id) {
     var ref = FirebaseFirestore.instance.collection('chat_room');
 
-    ref.doc(room_id).update({'status': "Đã trả lời"}).then((value) {
-    }).catchError((err) {
-    });
+    ref
+        .doc(room_id)
+        .update({'status': "Đã trả lời"})
+        .then((value) {})
+        .catchError((err) {});
   }
 
   List<DropdownMenuItem<String>> render(List<String> list) {
@@ -947,17 +1037,18 @@ class _DetailQuestionState extends State<DetailQuestionEmployee> {
     return list.map(buildMenuItemM).toList();
   }
 
-  bool ableToAnswer(){
-    if(currentEmployee.category != null && currentEmployee.category!.contains(widget.chatRoom.category))
+  bool ableToAnswer() {
+    if (currentEmployee.category != null &&
+        currentEmployee.category!.contains(widget.chatRoom.category))
       return true;
-
-    else if(currentEmployee.category != null && currentEmployee.category![0] == "" && currentEmployee.department! == widget.chatRoom.department)
-      return true;
+    else if (currentEmployee.category != null &&
+        currentEmployee.category![0] == "" &&
+        currentEmployee.department! == widget.chatRoom.department) return true;
 
     return false;
   }
 
-  _inputAnswer(){
+  _inputAnswer() {
     return Container(
       height: 50,
       width: double.maxFinite,
@@ -973,11 +1064,12 @@ class _DetailQuestionState extends State<DetailQuestionEmployee> {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           IconButton(
-            onPressed: (){
-            },
-            icon: const Icon(AppIcons.file_pdf,
+            onPressed: () {},
+            icon: const Icon(
+              AppIcons.file_pdf,
               size: 20,
-              color: Colors.redAccent,),
+              color: Colors.redAccent,
+            ),
           ),
           SizedBox(
             width: 230,
@@ -986,29 +1078,33 @@ class _DetailQuestionState extends State<DetailQuestionEmployee> {
               builder: (context, snapshot) => TextField(
                 controller: _answerController,
                 decoration: InputDecoration(
-                  errorText: snapshot.hasError? snapshot.error.toString() : null,
+                  errorText:
+                      snapshot.hasError ? snapshot.error.toString() : null,
                   border: InputBorder.none,
                 ),
               ),
             ),
           ),
           IconButton(
-            onPressed: (){
-              try{
-                if(_onSendAnswerClicked()){
+            onPressed: () {
+              try {
+                if (_onSendAnswerClicked()) {
                   setState(() {
                     _answerController.text = '';
                   });
-                }else{
-                  showErrorMessage('Send message fail, check your internet connection');
+                } else {
+                  showErrorMessage(
+                      'Send message fail, check your internet connection');
                 }
-              }catch(e){
+              } catch (e) {
                 //
               }
             },
-            icon: const Icon(Icons.send_sharp,
+            icon: const Icon(
+              Icons.send_sharp,
               size: 25,
-              color: Colors.blueAccent,),
+              color: Colors.blueAccent,
+            ),
           )
         ],
       ),
@@ -1018,17 +1114,19 @@ class _DetailQuestionState extends State<DetailQuestionEmployee> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: (){
+      onTap: () {
         WidgetsBinding.instance.focusManager.primaryFocus?.unfocus();
       },
       child: Scaffold(
         appBar: AppBar(
           title: Text(name),
           actions: [
-            IconButton(onPressed: (){
-              _modalBottomSheetChange();
-            },
-                icon: const Icon(Icons.more_horiz),),
+            IconButton(
+              onPressed: () {
+                _modalBottomSheetChange();
+              },
+              icon: const Icon(Icons.more_horiz),
+            ),
           ],
           backgroundColor: Colors.blueAccent,
         ),
@@ -1047,8 +1145,7 @@ class _DetailQuestionState extends State<DetailQuestionEmployee> {
                       child: _buildMessage(),
                     ),
                   ),
-                  if(ableToAnswer())
-                    _inputAnswer()
+                  if (ableToAnswer()) _inputAnswer()
                 ],
               ),
             ],
@@ -1057,10 +1154,14 @@ class _DetailQuestionState extends State<DetailQuestionEmployee> {
       ),
     );
   }
+
   void showErrorMessage(String message) {
-    final snackBar = SnackBar(content: Text(message,
-      style: const TextStyle(color: Colors.white),
-    ),backgroundColor: Colors.red,
+    final snackBar = SnackBar(
+      content: Text(
+        message,
+        style: const TextStyle(color: Colors.white),
+      ),
+      backgroundColor: Colors.red,
     );
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }

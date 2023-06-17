@@ -47,23 +47,6 @@ class _MessengerPageState extends State<MessengerPage> {
   FirebaseAuth auth = FirebaseAuth.instance;
   var currentUser = FirebaseAuth.instance.currentUser!;
   UserModel current_user = UserModel();
-
-  @override
-  void initState() {
-    super.initState();
-    getCurrentUser();
-    getEmployeeData();
-    getDepartmentName();
-  }
-
-  @override
-  void dispose() {
-    _questionControl.close();
-    _titleControl.close();
-    _informationControl.close();
-    super.dispose();
-  }
-
   getCurrentUser() async {
     await FirebaseFirestore.instance
       .collection('user')
@@ -265,7 +248,6 @@ class _MessengerPageState extends State<MessengerPage> {
             eModel.category = element['category'].cast<String>();
             eModel.roles = element['roles'];
             eModel.status = element['status'];
-
             listEmployee.add(eModel);
           });
         })
@@ -360,8 +342,30 @@ class _MessengerPageState extends State<MessengerPage> {
       _questionControl.sink.addError("Insert message");
       return false;
     }
-
     return true;
+  }
+
+  late final ScrollController _scrollController;
+  late final PageStorageKey _storageKey;
+  double? _savedPosition;
+
+  @override
+  void initState() {
+    super.initState();
+    getCurrentUser();
+    getEmployeeData();
+    getDepartmentName();
+    _storageKey = const PageStorageKey('user message scroll position');
+    _scrollController = ScrollController();
+  }
+
+  @override
+  void dispose() {
+    _questionControl.close();
+    _titleControl.close();
+    _informationControl.close();
+    _scrollController.dispose();
+    super.dispose();
   }
 
   @override
@@ -397,57 +401,68 @@ class _MessengerPageState extends State<MessengerPage> {
           FloatingActionButtonLocation.centerDocked,
       body: SafeArea(
         minimum: const EdgeInsets.only(left: 5, right: 5),
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: <Widget>[
-              const Padding(
-                padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
-              ),
-              StreamBuilder<QuerySnapshot>(
-                  stream: derPart.snapshots(),
-                  builder: (context, snapshot) {
-                    if (!snapshot.hasError) {
-                      const Text("Loading");
-                    } else {
-                      derPart
-                          .get()
-                          .then((QuerySnapshot querySnapshot) {
-                        for (var doc in querySnapshot.docs) {
-                        }
-                      });
-                    }
-                    return const Text("");
-                  }),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+        child: FutureBuilder(
+          future: Future.delayed(Duration.zero),
+          builder: (BuildContext context, AsyncSnapshot<void> snapshot){
+            if(_savedPosition != null){
+              _scrollController.animateTo(_savedPosition!,
+                  duration: const Duration(milliseconds: 500),
+                  curve: Curves.easeInOut,);
+            }return SingleChildScrollView(
+              controller: _scrollController,
+              key: _storageKey,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
                 children: <Widget>[
-                  SizedBox(
-                    height: 110.0,
-                    child: ListView.builder(
-                        physics: const BouncingScrollPhysics(),
-                        padding: const EdgeInsets.only(left: 10.0),
-                        scrollDirection: Axis.horizontal,
-                        itemCount: listEmployee.length,
-                        itemBuilder:
-                            (BuildContext context, int index) {
-                          // EmployeeModel employeeModel = listEmployee[index];
-                          return _buildEmployee(
-                              context, listEmployee[index]);
-                        }),
-                  )
+                  const Padding(
+                    padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                  ),
+                  StreamBuilder<QuerySnapshot>(
+                      stream: derPart.snapshots(),
+                      builder: (context, snapshot) {
+                        if (!snapshot.hasError) {
+                          const Text("Loading");
+                        } else {
+                          derPart
+                              .get()
+                              .then((QuerySnapshot querySnapshot) {
+                            for (var doc in querySnapshot.docs) {
+                            }
+                          });
+                        }
+                        return const Text("");
+                      }),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      SizedBox(
+                        height: 110.0,
+                        child: ListView.builder(
+                            physics: const BouncingScrollPhysics(),
+                            padding: const EdgeInsets.only(left: 10.0),
+                            scrollDirection: Axis.horizontal,
+                            itemCount: listEmployee.length,
+                            itemBuilder:
+                                (BuildContext context, int index) {
+                              // EmployeeModel employeeModel = listEmployee[index];
+                              return _buildEmployee(
+                                  context, listEmployee[index]);
+                            }),
+                      )
+                    ],
+                  ),
+                  const Divider(
+                    height: 0,
+                    color: Color(0xffAAAAAA),
+                    indent: 0,
+                    thickness: 1,
+                  ),
+                  const SizedBox(height: 5,),
+                  getQuestion(),
                 ],
               ),
-              const Divider(
-                height: 0,
-                color: Color(0xffAAAAAA),
-                indent: 0,
-                thickness: 1,
-              ),
-              const SizedBox(height: 5,),
-              getQuestion(),
-            ],
-          ),
+            );
+          },
         ),
       ),
     );
@@ -743,7 +758,7 @@ class _MessengerPageState extends State<MessengerPage> {
                                         ),
                                         icon: const Icon(Icons.send_rounded),
                                         style: ElevatedButton.styleFrom(
-                                            primary: Colors.blueAccent),
+                                            backgroundColor: Colors.blueAccent),
                                       ),
                                     ),
                                     const Padding(padding: EdgeInsets.all(10)),
@@ -759,7 +774,7 @@ class _MessengerPageState extends State<MessengerPage> {
                                       ),
                                       icon: const Icon(Icons.cancel_presentation),
                                       style: ElevatedButton.styleFrom(
-                                          primary: Colors.blueAccent),
+                                          backgroundColor: Colors.blueAccent),
                                     )),
                                     const Padding(
                                         padding: EdgeInsets.fromLTRB(
@@ -814,24 +829,6 @@ class _MessengerPageState extends State<MessengerPage> {
       Icons.message,
       AppIcons.chat,
     ];
-    // return BottomNavigationBar(
-    //   items: const <BottomNavigationBarItem>[
-    //     BottomNavigationBarItem(
-    //       icon: Icon(Icons.message),
-    //       label: 'Your questions',
-    //     ),
-    //     BottomNavigationBarItem(
-    //       icon: Icon(AppIcons.chat),
-    //       label: 'All questions',
-    //     ),
-    //   ],
-    //   currentIndex: pageIndex,
-    //   selectedItemColor: Colors.blue,
-    //   // gapLocation: GapLocation.center,
-    //   onTap: (index) {
-    //     selectedTab(index);
-    //   },
-    // );
     return AnimatedBottomNavigationBar(
       activeColor: Colors.blue,
       splashColor: Colors.grey,

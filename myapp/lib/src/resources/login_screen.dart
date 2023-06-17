@@ -61,9 +61,9 @@ class _SearchScreenState extends State<LoginScreen> {
     bool floating = false;
 
     final widgetList = [
-      Row(
+      const Row(
         mainAxisAlignment: MainAxisAlignment.center,
-        children: const [
+        children: [
           Text(
             'Welcome to UTE App',
             style: TextStyle(
@@ -129,10 +129,9 @@ class _SearchScreenState extends State<LoginScreen> {
                     if (_formKey.currentState!.validate()) {
                       _onLoginClick();
                     }
-                    //Get.to(ChoiceScreen());
                   },
                   style: ElevatedButton.styleFrom(
-                    primary: Colors.white,
+                    backgroundColor: Colors.white,
                     elevation: 0.0,
                     minimumSize: Size(screenWidth, 150),
                     padding: const EdgeInsets.symmetric(horizontal: 25),

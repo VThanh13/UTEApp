@@ -65,16 +65,8 @@ class _HomePageState extends State<HomePage> {
   FirebaseAuth auth = FirebaseAuth.instance;
   var currentUser = FirebaseAuth.instance.currentUser!;
   UserModel current_user = UserModel();
-
-  @override
-  void initState() {
-    super.initState();
-    getCurrentUser();
-    // getListPost();
-    reLoad();
-  }
   bool isLoading = true;
-  Future<void> reLoad() async{
+  Future<void> reLoad() async {
     setState(() {
       isLoading = true;
       listPost = [];
@@ -85,21 +77,21 @@ class _HomePageState extends State<HomePage> {
 
   getCurrentUser() async {
     await FirebaseFirestore.instance
-      .collection('user')
-      .where('userId', isEqualTo: currentUser.uid)
-      .get()
-      .then((value) => {
-        setState(() {
-          current_user.id = value.docs.first['userId'];
-          current_user.name = value.docs.first['name'];
-          current_user.email = value.docs.first['email'];
-          current_user.image = value.docs.first['image'];
-          current_user.password = value.docs.first['password'];
-          current_user.phone = value.docs.first['phone'];
-          current_user.group = value.docs.first['group'];
-          current_user.status = value.docs.first['status'];
-        }),
-      });
+        .collection('user')
+        .where('userId', isEqualTo: currentUser.uid)
+        .get()
+        .then((value) => {
+              setState(() {
+                current_user.id = value.docs.first['userId'];
+                current_user.name = value.docs.first['name'];
+                current_user.email = value.docs.first['email'];
+                current_user.image = value.docs.first['image'];
+                current_user.password = value.docs.first['password'];
+                current_user.phone = value.docs.first['phone'];
+                current_user.group = value.docs.first['group'];
+                current_user.status = value.docs.first['status'];
+              }),
+            });
   }
 
   cacheCurrentUser() async {
@@ -117,7 +109,8 @@ class _HomePageState extends State<HomePage> {
   var departmentName = {};
 
   _onSendQuestionClicked(Post post) async {
-    var isvalid = isValid(_informationController.text, _questionController.text);
+    var isvalid =
+        isValid(_informationController.text, _questionController.text);
     var time = DateTime.now();
     String timeString = DateFormat('dd-MM-yyyy HH:mm:ss').format(time);
     await uploadPdf();
@@ -134,7 +127,7 @@ class _HomePageState extends State<HomePage> {
           post.employee.category[0],
           current_user.group!,
           "public",
-              () {});
+          () {});
     }
     return 0;
   }
@@ -167,11 +160,10 @@ class _HomePageState extends State<HomePage> {
       onSucces();
       sendQuestion(time, pdf_url, _questionController.text, id, () {
         LoadingDialog.hideLoadingDialog(context);
-        Navigator.push(
-            context, MaterialPageRoute(builder: (context) => const MessengerPage()));
+        Navigator.push(context,
+            MaterialPageRoute(builder: (context) => const MessengerPage()));
       });
-    }).catchError((err) {
-    });
+    }).catchError((err) {});
   }
 
   void sendQuestion(String time, String file, String content, String roomId,
@@ -186,8 +178,7 @@ class _HomePageState extends State<HomePage> {
       'room_id': roomId,
     }).then((value) {
       onSucces();
-    }).catchError((err) {
-    });
+    }).catchError((err) {});
   }
 
   bool isValid(String information, String question) {
@@ -210,48 +201,50 @@ class _HomePageState extends State<HomePage> {
     await getDepartmentName();
     List<NewfeedModel> listNewfeed = [];
     await FirebaseFirestore.instance
-      .collection('newfeed')
-      .get()
-      .then((value) => {
-        setState(() {
-          value.docs.forEach((element) {
-            NewfeedModel newfeed = NewfeedModel();
-            newfeed.id = element['id'];
-            newfeed.content = element['content'];
-            newfeed.time = element['time'];
-            newfeed.file = element['file'];
-            newfeed.employeeId = element['employeeId'];
-
-            listNewfeed.add(newfeed);
-          });
-        })
-      });
-    listNewfeed.forEach((element) async {
-      Employee employee = Employee("", "", "", "", "", "", "", "", [], "", "");
-      Post post = Post(
-          element.id!, employee, element.content!, element.time!, element.file!);
-      FirebaseFirestore.instance
-        .collection('employee')
-        .where("id", isEqualTo: element.employeeId)
+        .collection('newfeed')
         .get()
         .then((value) => {
-          setState(() {
-            employee.id = value.docs.first['id'];
-            employee.name = value.docs.first['name'];
-            employee.email = value.docs.first['email'];
-            employee.image = value.docs.first['image'];
-            employee.password = value.docs.first['password'];
-            employee.phone = value.docs.first['phone'];
-            employee.departmentId = value.docs.first['department'];
-            employee.departmentName = departmentName[employee.departmentId];
-            employee.category = value.docs.first['category'].cast<String>();
-            employee.roles = value.docs.first['roles'];
-            employee.status = value.docs.first['status'];
-            post.employee = employee;
-            listPost.add(post);
-            sortListPost();
-          })
-        });
+              setState(() {
+                value.docs.forEach((element) {
+                  NewfeedModel newfeed = NewfeedModel();
+                  newfeed.id = element['id'];
+                  newfeed.content = element['content'];
+                  newfeed.time = element['time'];
+                  newfeed.file = element['file'];
+                  newfeed.employeeId = element['employeeId'];
+
+                  listNewfeed.add(newfeed);
+                });
+              })
+            });
+    listNewfeed.forEach((element) async {
+      Employee employee = Employee("", "", "", "", "", "", "", "", [], "", "");
+      Post post = Post(element.id!, employee, element.content!, element.time!,
+          element.file!);
+      FirebaseFirestore.instance
+          .collection('employee')
+          .where("id", isEqualTo: element.employeeId)
+          .get()
+          .then((value) => {
+                setState(() {
+                  employee.id = value.docs.first['id'];
+                  employee.name = value.docs.first['name'];
+                  employee.email = value.docs.first['email'];
+                  employee.image = value.docs.first['image'];
+                  employee.password = value.docs.first['password'];
+                  employee.phone = value.docs.first['phone'];
+                  employee.departmentId = value.docs.first['department'];
+                  employee.departmentName =
+                      departmentName[employee.departmentId];
+                  employee.category =
+                      value.docs.first['category'].cast<String>();
+                  employee.roles = value.docs.first['roles'];
+                  employee.status = value.docs.first['status'];
+                  post.employee = employee;
+                  listPost.add(post);
+                  sortListPost();
+                })
+              });
     });
   }
 
@@ -262,6 +255,10 @@ class _HomePageState extends State<HomePage> {
           .compareTo(DateFormat("dd-MM-yyyy HH:mm:ss").parse(a.time)));
     });
   }
+
+  final ScrollController _scrollController = ScrollController();
+  int _numItems = 10;
+  bool _isLoadingMore = false;
 
   _buildNewFeed(BuildContext context, Post post) {
     return Container(
@@ -319,7 +316,8 @@ class _HomePageState extends State<HomePage> {
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
                 child: Text(
                   post.content,
                   overflow: TextOverflow.visible,
@@ -332,18 +330,6 @@ class _HomePageState extends State<HomePage> {
           ),
           const Padding(padding: EdgeInsets.fromLTRB(0, 5, 0, 0)),
           if (post.file != 'file.pdf')
-            // SizedBox(
-            //   height: 330,
-            //   width: double.infinity,
-            //   child: FittedBox(
-            //     fit: BoxFit.fitHeight,
-            //     child: ClipRRect(
-            //       child: Image.network(
-            //         post.file,
-            //       ),
-            //     ),
-            //   ),
-            // ),
             ClipRRect(
               borderRadius: const BorderRadius.only(
                 bottomLeft: Radius.circular(0),
@@ -353,35 +339,40 @@ class _HomePageState extends State<HomePage> {
                 post.file,
               ),
             ),
-          const Padding(padding: EdgeInsets.fromLTRB(10, 10, 10, 0),
-          child: Divider(
-            height: 0,
-            color: Color(0xffAAAAAA),
-            indent: 0,
-            thickness: 1,
-          ),
+          const Padding(
+            padding: EdgeInsets.fromLTRB(10, 10, 10, 0),
+            child: Divider(
+              height: 0,
+              color: Color(0xffAAAAAA),
+              indent: 0,
+              thickness: 1,
+            ),
           ),
           InkWell(
-            onTap: (){
+            onTap: () {
               _modalBottomSheetAddQuestion(post);
             },
             child: Container(
               height: 30,
               margin: const EdgeInsets.only(top: 5),
-              child: Row(
+              child: const Row(
                 mainAxisAlignment: MainAxisAlignment.end,
-                children: const [
-                  Text('You have question?',style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w400
-                  ),),
-                  Padding(padding: EdgeInsets.fromLTRB(10, 0, 15, 0),
-                    child: Icon(Icons.send_sharp),)
+                children: [
+                  Text(
+                    'You have question?',
+                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.w400),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(10, 0, 15, 0),
+                    child: Icon(Icons.send_sharp),
+                  )
                 ],
               ),
             ),
           ),
-          const SizedBox(height: 10,)
+          const SizedBox(
+            height: 10,
+          )
         ],
       ),
     );
@@ -396,59 +387,33 @@ class _HomePageState extends State<HomePage> {
           topRight: Radius.circular(20),
         )),
         context: context,
-
-        builder: (BuildContext contetxt) {
+        builder: (BuildContext context) {
           return StatefulBuilder(
               builder: (BuildContext context, StateSetter setStateKhoa) {
             return GestureDetector(
-              onTap: (){
+              onTap: () {
                 WidgetsBinding.instance.focusManager.primaryFocus?.unfocus();
               },
               child: SizedBox(
                 height: 600,
                 child: SingleChildScrollView(
                   child: Padding(
-                    padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+                    padding: EdgeInsets.only(
+                        bottom: MediaQuery.of(context).viewInsets.bottom),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.start,
                       mainAxisSize: MainAxisSize.min,
                       children: <Widget>[
-                        const Padding(padding: EdgeInsets.fromLTRB(0, 20, 0, 0)),
+                        const Padding(
+                            padding: EdgeInsets.fromLTRB(0, 20, 0, 0)),
                         const Text(
                           "You have question for this post",
                           textAlign: TextAlign.center,
-                          style:
-                          TextStyle(fontSize: 17, fontWeight: FontWeight.w600),
+                          style: TextStyle(
+                              fontSize: 17, fontWeight: FontWeight.w600),
                         ),
-                        const Padding(padding: EdgeInsets.fromLTRB(0, 10, 0, 0)),
-                        // Container(
-                        //   margin: const EdgeInsets.fromLTRB(0, 10, 0, 15),
-                        //   width: 340,
-                        //   padding:
-                        //   const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                        //   decoration: BoxDecoration(
-                        //       borderRadius: BorderRadius.circular(12),
-                        //       border: Border.all(
-                        //         color: Colors.blueAccent,
-                        //         width: 4,
-                        //       )),
-                        //   child: DropdownButtonHideUnderline(
-                        //     child: DropdownButton<String>(
-                        //       isExpanded: true,
-                        //       value: value_doituong,
-                        //       hint: const Text("Pl"),
-                        //       iconSize: 36,
-                        //       items: item_doituong.map(buildMenuItem).toList(),
-                        //       onChanged: (value) {
-                        //         setStateKhoa(() {
-                        //           setState(() {
-                        //             value_doituong = value;
-                        //           });
-                        //         });
-                        //       },
-                        //     ),
-                        //   ),
-                        // ),
+                        const Padding(
+                            padding: EdgeInsets.fromLTRB(0, 10, 0, 0)),
                         Container(
                           margin: const EdgeInsets.fromLTRB(20, 20, 20, 15),
                           width: double.infinity,
@@ -459,7 +424,9 @@ class _HomePageState extends State<HomePage> {
                               decoration: InputDecoration(
                                   labelText: "Contact method",
                                   hintText: 'Insert your Email/Phone',
-                                  errorText: snapshot.hasError? snapshot.error.toString() : null,
+                                  errorText: snapshot.hasError
+                                      ? snapshot.error.toString()
+                                      : null,
                                   enabledBorder: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(10),
                                       borderSide: const BorderSide(
@@ -486,7 +453,9 @@ class _HomePageState extends State<HomePage> {
                               decoration: InputDecoration(
                                   hintMaxLines: 5,
                                   helperMaxLines: 5,
-                                  errorText: snapshot.hasError? snapshot.error.toString() : null,
+                                  errorText: snapshot.hasError
+                                      ? snapshot.error.toString()
+                                      : null,
                                   labelText: "Send question",
                                   hintText: 'Insert your question',
                                   enabledBorder: OutlineInputBorder(
@@ -511,21 +480,27 @@ class _HomePageState extends State<HomePage> {
                               crossAxisAlignment: CrossAxisAlignment.center,
                               mainAxisAlignment: MainAxisAlignment.spaceAround,
                               children: [
-                                Padding(padding: EdgeInsets.fromLTRB(25, 5, 0, 5),
-                                  child: Icon(AppIcons.file_pdf,
-                                    color: Colors.red,),
+                                Padding(
+                                  padding: EdgeInsets.fromLTRB(25, 5, 0, 5),
+                                  child: Icon(
+                                    AppIcons.file_pdf,
+                                    color: Colors.red,
+                                  ),
                                 ),
-                                Padding(padding: EdgeInsets.fromLTRB(0, 5, 5, 5),
-                                  child: Text('Attached files',
+                                Padding(
+                                  padding: EdgeInsets.fromLTRB(0, 5, 5, 5),
+                                  child: Text(
+                                    'Attached files',
                                     style: TextStyle(
                                         fontSize: 14,
                                         fontStyle: FontStyle.italic,
-                                        color: Colors.grey
-                                    ),),)
+                                        color: Colors.grey),
+                                  ),
+                                )
                               ],
                             ),
                           ),
-                          onTap: (){
+                          onTap: () {
                             importPdf();
                           },
                         ),
@@ -538,23 +513,23 @@ class _HomePageState extends State<HomePage> {
                                 child: ElevatedButton.icon(
                                   onPressed: () {
                                     //_onSendQuestionClicked(post);
-                                    try{
-                                      if(_onSendQuestionClicked(post)){
+                                    try {
+                                      if (_onSendQuestionClicked(post)) {
                                         setState(() {
                                           _informationController.text = '';
                                           _questionController.text = '';
                                         });
-                                      }else{
+                                      } else {
                                         setState(() {
                                           _informationController.text = '';
                                           _questionController.text = '';
                                         });
                                         Navigator.pop(context);
-                                        showErrorMessage('Send question failed');
+                                        showErrorMessage(
+                                            'Send question failed');
                                       }
-
-                                    }catch(e){
-                                    //
+                                    } catch (e) {
+                                      //
                                     }
                                   },
                                   label: const Text(
@@ -570,16 +545,16 @@ class _HomePageState extends State<HomePage> {
                               const Padding(padding: EdgeInsets.all(10)),
                               Expanded(
                                   child: ElevatedButton.icon(
-                                    onPressed: () => {},
-                                    label: const Text(
-                                      'Cancel',
-                                      style:
-                                      TextStyle(fontSize: 16, color: Colors.white),
-                                    ),
-                                    icon: const Icon(Icons.cancel_presentation),
-                                    style: ElevatedButton.styleFrom(
-                                        primary: Colors.blueAccent),
-                                  )),
+                                onPressed: () => {},
+                                label: const Text(
+                                  'Cancel',
+                                  style: TextStyle(
+                                      fontSize: 16, color: Colors.white),
+                                ),
+                                icon: const Icon(Icons.cancel_presentation),
+                                style: ElevatedButton.styleFrom(
+                                    primary: Colors.blueAccent),
+                              )),
                               const Padding(
                                   padding: EdgeInsets.fromLTRB(0, 10, 0, 30)),
                             ],
@@ -604,7 +579,7 @@ class _HomePageState extends State<HomePage> {
         allowedExtensions: ['jpg', 'jpeg', 'png', 'pdf']);
     if (result == null) return;
     setState(() {
-      file = result.files.first as PlatformFile;
+      file = result.files.first;
       had_file = true;
     });
   }
@@ -620,9 +595,8 @@ class _HomePageState extends State<HomePage> {
         var url = await ref.getDownloadURL();
         pdf_url = url.toString();
       }).catchError((onError) {
-        print(onError);
+        //
       });
-      print('pdf');
     }
   }
 
@@ -658,7 +632,6 @@ class _HomePageState extends State<HomePage> {
   Stream get informationControl => _informationControl.stream;
   Stream get questionControl => _questionControl.stream;
 
-
   @override
   void dispose() {
     _questionControl.close();
@@ -666,17 +639,42 @@ class _HomePageState extends State<HomePage> {
     super.dispose();
   }
 
+  @override
+  void initState() {
+    super.initState();
+    getCurrentUser();
+    reLoad();
+    _numItems = 10;
+    _scrollController.addListener(_scrollListener);
+  }
+
+  void _scrollListener() {
+    if (_scrollController.offset >= _scrollController.position.maxScrollExtent &&
+        !_scrollController.position.outOfRange) {
+      setState(() {
+        _numItems += 10;
+      });
+    }
+  }
+
   void showSuccessMessage(String message) {
-    final snackBar = SnackBar(content: Text(message,
-    style: const TextStyle(color: Colors.white),
-    ), backgroundColor: Colors.blueAccent,);
+    final snackBar = SnackBar(
+      content: Text(
+        message,
+        style: const TextStyle(color: Colors.white),
+      ),
+      backgroundColor: Colors.blueAccent,
+    );
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 
   void showErrorMessage(String message) {
-    final snackBar = SnackBar(content: Text(message,
-      style: const TextStyle(color: Colors.white),
-    ),backgroundColor: Colors.red,
+    final snackBar = SnackBar(
+      content: Text(
+        message,
+        style: const TextStyle(color: Colors.white),
+      ),
+      backgroundColor: Colors.red,
     );
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
@@ -701,7 +699,6 @@ class _HomePageState extends State<HomePage> {
                   width: 20, height: 20, child: CircularProgressIndicator()),
             );
           }
-          // TODO: implement build
           return Scaffold(
             appBar: AppBar(
               backgroundColor: Colors.blueAccent,
@@ -725,8 +722,7 @@ class _HomePageState extends State<HomePage> {
               child: ListView(
                 children: <Widget>[
                   UserAccountsDrawerHeader(
-                    accountName: Text(
-                        current_user.name ?? 'abc'),
+                    accountName: Text(current_user.name ?? 'abc'),
                     accountEmail: Text(current_user.email!),
                     arrowColor: Colors.redAccent,
                     currentAccountPicture: CircleAvatar(
@@ -977,43 +973,48 @@ class _HomePageState extends State<HomePage> {
                   children: <Widget>[
                     Visibility(
                       visible: isLoading,
-                        replacement: RefreshIndicator(
-                          onRefresh: reLoad,
-                          child: Visibility(
-                            visible: listPost.isNotEmpty,
-                            replacement: const Center(
-                              child: Padding(
-                                padding: EdgeInsets.only(top: 200),
-                                child: Text('No post found!', style: TextStyle(
+                      replacement: RefreshIndicator(
+                        onRefresh: reLoad,
+                        child: Visibility(
+                          visible: listPost.isNotEmpty,
+                          replacement: const Center(
+                            child: Padding(
+                              padding: EdgeInsets.only(top: 200),
+                              child: Text(
+                                'No post found!',
+                                style: TextStyle(
                                   fontSize: 20,
                                   color: Colors.grey,
-                                ),),
+                                ),
                               ),
                             ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: <Widget>[
-                                SizedBox(
-                                  height: MediaQuery.of(context).size.height * 0.9,
-                                  child: ListView.builder(
-                                      physics: const BouncingScrollPhysics(),
-                                      itemCount: listPost.length,
-                                      itemBuilder: (BuildContext context, int index) {
-                                        return _buildNewFeed(context, listPost[index]);
-                                      }),
-                                )
-                              ],
-                            ),
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              SizedBox(
+                                height:
+                                    MediaQuery.of(context).size.height * 0.9,
+                                child: ListView.builder(
+                                    physics: const BouncingScrollPhysics(),
+                                    itemCount: listPost.length,
+                                    itemBuilder:
+                                        (BuildContext context, int index) {
+                                      return _buildNewFeed(
+                                          context, listPost[index]);
+                                    }),
+                              )
+                            ],
                           ),
                         ),
-                        child: const Center(
-                          child: Padding(
-                            padding: EdgeInsets.only(top: 200),
-                            child: CircularProgressIndicator(),
-                          ),
+                      ),
+                      child: const Center(
+                        child: Padding(
+                          padding: EdgeInsets.only(top: 200),
+                          child: CircularProgressIndicator(),
                         ),
+                      ),
                     ),
-
                   ],
                 ),
               ),
