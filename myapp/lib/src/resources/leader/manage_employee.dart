@@ -3,6 +3,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_switch/flutter_switch.dart';
+import 'package:multi_select_flutter/bottom_sheet/multi_select_bottom_sheet_field.dart';
+import 'package:multi_select_flutter/chip_display/multi_select_chip_display.dart';
+import 'package:multi_select_flutter/util/multi_select_item.dart';
+import 'package:multi_select_flutter/util/multi_select_list_type.dart';
 
 import '../../blocs/auth_bloc.dart';
 import '../../models/EmployeeModel.dart';
@@ -24,6 +28,8 @@ class _ManageEmployeeState extends State<ManageEmployee> {
   AuthBloc authBloc = AuthBloc();
   EmployeeModel currentEmployee = EmployeeModel();
   List<String> listCategory = [];
+  List<String> selectedCategory = [];
+  List<String> oldCategory = [];
 
   bool status = false;
 
@@ -118,6 +124,7 @@ class _ManageEmployeeState extends State<ManageEmployee> {
         _modalBottomSheetEditEmployee(employee);
       },
       child: Card(
+        margin: const EdgeInsets.fromLTRB(0, 5, 0, 0),
         child: Row(
           children: <Widget>[
             const Padding(padding: EdgeInsets.fromLTRB(10, 15, 5, 15)),
@@ -176,18 +183,19 @@ class _ManageEmployeeState extends State<ManageEmployee> {
 
   getListCategory() async {
     await FirebaseFirestore.instance
-        .collection('departments')
-        .where('id', isEqualTo: currentEmployee.department)
-        .get()
-        .then((value) => {
-              setState(() {
-                listCategory = value.docs.first["category"].cast<String>();
-              })
-            });
+      .collection('departments')
+      .doc(currentEmployee.department)
+      .get()
+      .then((value) => {
+        setState(() {
+          listCategory = value["category"].cast<String>();
+        })
+      });
   }
 
   _modalBottomSheetEditEmployee(EmployeeModel employee) {
-    valueCategory = employee.category![0];
+    selectedCategory = employee.category!;
+    oldCategory = employee.category!;
     return showModalBottomSheet(
         isScrollControlled: true,
         constraints: BoxConstraints.loose(
@@ -222,7 +230,7 @@ class _ManageEmployeeState extends State<ManageEmployee> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       SizedBox(
-                        height: MediaQuery.of(context).size.height * 0.65,
+                        height: MediaQuery.of(context).size.height * 0.69,
                         child: SingleChildScrollView(
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.start,
@@ -261,7 +269,6 @@ class _ManageEmployeeState extends State<ManageEmployee> {
                                 ),
                               ),
                               Container(
-                                height: 180,
                                 margin: const EdgeInsets.fromLTRB(10, 0, 10, 0),
                                 padding: const EdgeInsets.all(10),
                                 width: double.infinity,
@@ -294,29 +301,45 @@ class _ManageEmployeeState extends State<ManageEmployee> {
                                               color: Colors.blueAccent,
                                               width: 4),
                                         ),
-                                        child: DropdownButtonHideUnderline(
-                                          child: DropdownButton(
-                                            isExpanded: true,
-                                            value: valueCategory,
-                                            hint: const Text(
-                                                "Please choose category"),
-                                            iconSize: 36,
-                                            items: listCategory.map((option) {
-                                              return DropdownMenuItem(
-                                                value: option,
-                                                child: Text("$option"),
-                                              );
-                                            }).toList(),
-                                            onChanged: (selectedCategory) {
-                                              setStateKhoa(() {
+                                        child: Column(
+                                          children: <Widget>[
+                                            MultiSelectBottomSheetField(
+                                              initialValue: selectedCategory,
+                                              initialChildSize: 0.4,
+                                              listType: MultiSelectListType.CHIP,
+                                              searchable: true,
+                                              buttonText: Text("Categories"),
+                                              title: Text("Categories"),
+                                              items: listCategory.map((option) =>
+                                                        MultiSelectItem<String>(
+                                                          option,
+                                                          option,
+                                                        )).toList(),
+                                              onConfirm: (values) {
                                                 setState(() {
-                                                  valueCategory =
-                                                      selectedCategory;
+                                                  selectedCategory = values.map((e) => e.toString()).toList();
                                                 });
-                                              });
-                                            },
-                                          ),
-                                        )),
+                                              },
+                                              chipDisplay: MultiSelectChipDisplay(
+                                                onTap: (value) {
+                                                  setState(() {
+                                                    selectedCategory.remove(value);
+                                                  });
+                                                },
+                                              ),
+                                            ),
+                                            selectedCategory.isEmpty
+                                                ? Container(
+                                                padding: EdgeInsets.all(10),
+                                                alignment: Alignment.centerLeft,
+                                                child: Text(
+                                                  "None selected",
+                                                  style: TextStyle(color: Colors.black54),
+                                                ))
+                                                : Container(),
+                                          ],
+                                        ),
+                                    ),
                                     Container(
                                       height: 50,
                                       padding: const EdgeInsets.fromLTRB(
@@ -331,7 +354,6 @@ class _ManageEmployeeState extends State<ManageEmployee> {
                                                   shape:
                                                       MaterialStateProperty.all(
                                                     RoundedRectangleBorder(
-                                                      // Change your radius here
                                                       borderRadius:
                                                           BorderRadius.circular(
                                                               13),
@@ -343,7 +365,7 @@ class _ManageEmployeeState extends State<ManageEmployee> {
                                               onPressed: () {
                                                 try{
                                                   if(_onChangeCategoryClicked(
-                                                      employee.id, valueCategory)){
+                                                      employee.id, selectedCategory, oldCategory)){
 
                                                   }else{
                                                     Navigator.pop(context);
@@ -369,7 +391,6 @@ class _ManageEmployeeState extends State<ManageEmployee> {
                                   ],
                                 ),
                               ),
-
                               const Padding(padding: EdgeInsets.all(5)),
                               Container(
                                 height: 110,
@@ -457,6 +478,7 @@ class _ManageEmployeeState extends State<ManageEmployee> {
                                   ],
                                 ),
                               ),
+                              const Padding(padding: EdgeInsets.all(5)),
                               Container(
                                 height: 125,
                                 width: double.infinity,
@@ -595,6 +617,7 @@ class _ManageEmployeeState extends State<ManageEmployee> {
   }
 
   _modalBottomSheetAddEmployee() {
+    selectedCategory = [];
     return showModalBottomSheet(
         isScrollControlled: true,
         constraints: BoxConstraints.loose(
@@ -634,37 +657,55 @@ class _ManageEmployeeState extends State<ManageEmployee> {
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: <Widget>[
                               Container(
-                                margin:
-                                    const EdgeInsets.fromLTRB(15, 10, 15, 10),
-                                width: double.infinity,
+                                margin: const EdgeInsets.fromLTRB(
+                                    10, 10, 10, 15),
+                                width: 400,
                                 padding: const EdgeInsets.symmetric(
                                     horizontal: 12, vertical: 4),
                                 decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(12),
+                                  borderRadius:
+                                  BorderRadius.circular(12),
                                   border: Border.all(
-                                      color: Colors.blueAccent, width: 3),
+                                      color: Colors.blueAccent,
+                                      width: 4),
                                 ),
-                                child: DropdownButtonHideUnderline(
-                                  child: DropdownButton(
-                                    isExpanded: true,
-                                    value: valueCategory,
-                                    hint: const Text(
-                                        "Please choose category"),
-                                    iconSize: 36,
-                                    items: listCategory.map((option) {
-                                      return DropdownMenuItem(
-                                        value: option,
-                                        child: Text("$option"),
-                                      );
-                                    }).toList(),
-                                    onChanged: (selectedCategory) {
-                                      setStateKhoa(() {
+                                child: Column(
+                                  children: <Widget>[
+                                    MultiSelectBottomSheetField(
+                                      initialValue: selectedCategory,
+                                      initialChildSize: 0.4,
+                                      listType: MultiSelectListType.CHIP,
+                                      searchable: true,
+                                      buttonText: Text("Categories"),
+                                      title: Text("Categories"),
+                                      items: listCategory.map((option) =>
+                                          MultiSelectItem<String>(
+                                            option,
+                                            option,
+                                          )).toList(),
+                                      onConfirm: (values) {
                                         setState(() {
-                                          valueCategory = selectedCategory;
+                                          selectedCategory = values.map((e) => e.toString()).toList();
                                         });
-                                      });
-                                    },
-                                  ),
+                                      },
+                                      chipDisplay: MultiSelectChipDisplay(
+                                        onTap: (value) {
+                                          setState(() {
+                                            selectedCategory.remove(value);
+                                          });
+                                        },
+                                      ),
+                                    ),
+                                    selectedCategory.isEmpty
+                                        ? Container(
+                                        padding: EdgeInsets.all(10),
+                                        alignment: Alignment.centerLeft,
+                                        child: Text(
+                                          "None selected",
+                                          style: TextStyle(color: Colors.black54),
+                                        ))
+                                        : Container(),
+                                  ],
                                 ),
                               ),
                               Container(
@@ -872,23 +913,29 @@ class _ManageEmployeeState extends State<ManageEmployee> {
         });
   }
 
-  _onChangeCategoryClicked(id, category) {
-    LoadingDialog.showLoadingDialog(context, "Please Wait...");
-    changeCategory(id, category, () {
-      LoadingDialog.hideLoadingDialog(context);
-      Navigator.push(context,
-          MaterialPageRoute(builder: (context) => const ManageEmployee()));
-      showSuccessMessage('Update success');
-    });
+  _onChangeCategoryClicked(id, newCategory, oldCategory) {
+    if(newCategory.isEmpty){
+      MsgDialog.showMsgDialog(context, "Change category", "Please select at least one category");
+    }
+    else{
+      LoadingDialog.showLoadingDialog(context, "Please Wait...");
+      changeCategory(id, newCategory, oldCategory, () {
+        LoadingDialog.hideLoadingDialog(context);
+        Navigator.push(context,
+            MaterialPageRoute(builder: (context) => const ManageEmployee()));
+        showSuccessMessage('Update success');
+      });
+    }
   }
 
-  changeCategory(id, category, Function onSuccess) async {
+    changeCategory(id, newCategory, oldCategory, Function onSuccess) async {
     var ref = FirebaseFirestore.instance.collection('employee');
 
-    ref.doc(id).update({'category': category}).then((value) {
+    ref.doc(id).update({'category': FieldValue.arrayRemove(oldCategory)});
+    ref.doc(id).update({'category': FieldValue.arrayUnion(newCategory)}).then((value) {
       onSuccess();
     }).catchError((err) {
-      //TODO
+      print(err);
     });
   }
 
@@ -921,7 +968,7 @@ class _ManageEmployeeState extends State<ManageEmployee> {
     String name = _nameController.text;
     String phone = _phoneController.text;
     String password = _passwordController.text;
-    String category = valueCategory!;
+    List<String> category = selectedCategory;
     String department = currentEmployee.department!;
     if (isValid(email, name, phone, password)) {
       LoadingDialog.showLoadingDialog(context, "Please Wait...");
@@ -998,7 +1045,7 @@ class _ManageEmployeeState extends State<ManageEmployee> {
       body: SafeArea(
         minimum: const EdgeInsets.only(left: 20, right: 10, top: 5),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             const Padding(
               padding: EdgeInsets.fromLTRB(5, 10, 5, 10),
@@ -1007,8 +1054,7 @@ class _ManageEmployeeState extends State<ManageEmployee> {
                 style: TextStyle(
                     fontSize: 22,
                     fontWeight: FontWeight.w500,
-                    color: Colors.grey,
-                    fontStyle: FontStyle.italic),
+                    color: Colors.grey),
               ),
             ),
             SingleChildScrollView(

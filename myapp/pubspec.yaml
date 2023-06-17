@@ -51,6 +51,7 @@ dependencies:
   flutter_native_splash: ^2.2.16
   flutter_switch: any
   shared_preferences: ^2.0.6
+  multi_select_flutter: ^4.1.3
 
 
   get: ^4.1.4

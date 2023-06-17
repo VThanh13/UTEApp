@@ -4,11 +4,11 @@ class FireAuth {
 
   final FirebaseAuth _fireBaseAuth = FirebaseAuth.instance;
   void createEmployee(String email, String password, String name, String phone,
-  String department, String category, Function onSuccess, Function(String) onRegisterError){
+  String department, List<String> category, Function onSuccess, Function(String) onRegisterError){
     _fireBaseAuth
         .createUserWithEmailAndPassword(email: email, password: password).then((user){
       _createEmployee(user.user!.uid, email, password, name, phone, department, category, onSuccess, onRegisterError);
-      FirebaseAuth.instance.signOut();
+      // FirebaseAuth.instance.signOut();
     }).catchError((err){
       //TODO
       _onSignUpErr(err.code, onRegisterError);
@@ -57,7 +57,7 @@ class FireAuth {
     });
   }
   _createEmployee(String userId, String email, String password, String name, String phone,
-      String department, String category, Function onSuccess, Function(String) onRegisterError) {
+      String department, List<String> category, Function onSuccess, Function(String) onRegisterError) {
     var ref = FirebaseFirestore.instance.collection('employee');
     ref.doc(userId).set({
       'id': userId,
