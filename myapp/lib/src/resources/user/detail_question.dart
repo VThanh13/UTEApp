@@ -604,20 +604,17 @@ class _DetailQuestionState extends State<DetailQuestion> {
               child: Column(
                 children: <Widget>[
                   SizedBox(
-                    height: 560,
                     width: double.maxFinite,
                     child: SingleChildScrollView(
                       child: Column(
                         children: <Widget>[
                           SizedBox(
-                            height: 560,
+                            height: MediaQuery.of(context).size.height * 0.8,
                             width: double.maxFinite,
                             child: SingleChildScrollView(
                               child: _buildMessage(),
                             ),
                           ),
-                          if (current_user.uid == widget.chatRoom.user_id)
-                            _inputQuestion(),
                         ],
                       ),
                     ),
