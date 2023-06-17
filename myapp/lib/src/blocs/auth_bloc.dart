@@ -70,7 +70,7 @@ class AuthBloc {
   }
 
   void createEmployee(String email, String password, String name, String phone,
-      String department, String category, Function onSuccess, Function(String) onRegisterError){
+      String department, List<String> category, Function onSuccess, Function(String) onRegisterError){
     _fireAuth.createEmployee(email, password, name, phone, department, category, onSuccess, onRegisterError);
   }
 

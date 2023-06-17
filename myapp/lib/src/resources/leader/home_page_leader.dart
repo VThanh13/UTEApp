@@ -36,7 +36,7 @@ class Employee {
   String phone;
   String departmentId;
   String departmentName;
-  String category;
+  List<String> category;
   String roles;
   String status;
 
@@ -172,27 +172,26 @@ class _HomePageState extends State<HomePageLeader> {
         }),
       });
     listNewfeed.forEach((element) async {
-      Employee employee = Employee("", "", "", "", "", "", "", "", "", "", "");
+      Employee employee = Employee("", "", "", "", "", "", "", "", [], "", "");
       Post post = Post(
           element.id!, employee, element.content!, element.time!, element.file!);
       await FirebaseFirestore.instance
         .collection('employee')
-        .where("id", isEqualTo: element.employeeId)
+        .doc(element.employeeId)
         .get()
         .then((value) => {
           setState(() {
-            employee.id = value.docs.first['id'];
-            employee.name = value.docs.first['name'];
-            employee.email = value.docs.first['email'];
-            employee.image = value.docs.first['image'];
-            employee.password = value.docs.first['password'];
-            employee.phone = value.docs.first['phone'];
-            employee.departmentId = value.docs.first['department'];
-            employee.departmentName =
-                departmentName[employee.departmentId];
-            employee.category = value.docs.first['category'].cast<String>();
-            employee.roles = value.docs.first['roles'];
-            employee.status = value.docs.first['status'];
+            employee.id = value['id'];
+            employee.name = value['name'];
+            employee.email = value['email'];
+            employee.image = value['image'];
+            employee.password = value['password'];
+            employee.phone = value['phone'];
+            employee.departmentId = value['department'];
+            employee.departmentName = departmentName[employee.departmentId];
+            employee.category = value['category'].cast<String>();
+            employee.roles = value['roles'];
+            employee.status = value['status'];
             post.employee = employee;
             listPost.add(post);
             sortListPost();
