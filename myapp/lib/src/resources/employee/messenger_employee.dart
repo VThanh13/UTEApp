@@ -49,8 +49,11 @@ class _MessengerPageState extends State<MessengerPageEmployee> {
       })
     });
     await getAllPublicChatRoom();
+    await getAllPrivateChatRoom();
     await getUnanwseredChatRoom();
     await getAnwseredChatRoom();
+    await getYourMessage();
+    await getYourChatRoom();
   }
   List<ChatRoomModel> listPublicChatRoom = [];
   getAllPublicChatRoom() async {
@@ -74,6 +77,33 @@ class _MessengerPageState extends State<MessengerPageEmployee> {
           chatRoom.status = element['status'];
 
           listPublicChatRoom.add(chatRoom);
+        });
+      })
+    });
+  }
+
+  List<ChatRoomModel> listPrivateChatRoom = [];
+  getAllPrivateChatRoom() async {
+    await FirebaseFirestore.instance
+      .collection('chat_room')
+      .where('mode', isEqualTo: 'private')
+      .get()
+      .then((value) => {
+      setState(() {
+        value.docs.forEach((element) {
+          ChatRoomModel chatRoom = ChatRoomModel();
+          chatRoom.id = element['room_id'];
+          chatRoom.user_id = element['user_id'];
+          chatRoom.time = element['time'];
+          chatRoom.title = element['title'];
+          chatRoom.department = element['department'];
+          chatRoom.category = element['category'];
+          chatRoom.information = element['information'];
+          chatRoom.group = element['group'];
+          chatRoom.mode = element['mode'];
+          chatRoom.status = element['status'];
+
+          listPrivateChatRoom.add(chatRoom);
         });
       })
     });
@@ -145,6 +175,38 @@ class _MessengerPageState extends State<MessengerPageEmployee> {
           });
         })
       });
+  }
+
+  List<ChatRoomModel> listYourChatRoom = [];
+  getYourChatRoom() async {
+    listYourChatRoom = listYourMessage + listAnwsered + listUnanwsered;
+  }
+
+  List<ChatRoomModel> listYourMessage = [];
+  getYourMessage() async {
+    await FirebaseFirestore.instance
+        .collection('chat_room')
+        .where("category", isEqualTo: current_employee.id!)
+        .get()
+        .then((value) => {
+      setState(() {
+        value.docs.forEach((element) {
+          ChatRoomModel chatRoom = ChatRoomModel();
+          chatRoom.id = element['room_id'];
+          chatRoom.user_id = element['user_id'];
+          chatRoom.time = element['time'];
+          chatRoom.title = element['title'];
+          chatRoom.department = element['department'];
+          chatRoom.category = element['category'];
+          chatRoom.information = element['information'];
+          chatRoom.group = element['group'];
+          chatRoom.mode = element['mode'];
+          chatRoom.status = element['status'];
+
+          listYourMessage.add(chatRoom);
+        });
+      })
+    });
   }
 
   @override
@@ -221,20 +283,32 @@ class _MessengerPageState extends State<MessengerPageEmployee> {
         children: <Widget>[
           Container(
             height: 40,
-            child: const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 10.0),
-              child: Text(
-                'Not answered',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.redAccent,
-                    letterSpacing: 1.0),
-              ),
+            child: const Row(
+                children: <Widget>[
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 10.0),
+                      child: Text(
+                        'Your questions',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.redAccent,
+                            letterSpacing: 1.0),
+                      ),
+                  ),
+                ]
             ),
           ),
-          _buildChatRoom(listUnanwsered)
+          _popUpMenu(),
+          if(selectedMenu == "All questions")
+            _buildChatRoom(listYourChatRoom)
+          else if(selectedMenu == "Answered questions")
+            _buildChatRoom(listAnwsered)
+          else if(selectedMenu == "Unanswered questions")
+              _buildChatRoom(listUnanwsered)
+          else
+              _buildChatRoom(listYourMessage)
         ],
       );
     }
@@ -247,7 +321,7 @@ class _MessengerPageState extends State<MessengerPageEmployee> {
             child: const Padding(
               padding: EdgeInsets.symmetric(horizontal: 10.0),
               child: Text(
-                'Answered',
+                'Private questions',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                     fontSize: 20,
@@ -257,7 +331,7 @@ class _MessengerPageState extends State<MessengerPageEmployee> {
               ),
             ),
           ),
-          _buildChatRoom(listAnwsered)
+          _buildChatRoom(listPrivateChatRoom)
         ],
       );
     }
@@ -270,7 +344,7 @@ class _MessengerPageState extends State<MessengerPageEmployee> {
             child: const Padding(
               padding: EdgeInsets.symmetric(horizontal: 10.0),
               child: Text(
-                'All questions',
+                'Public questions',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                     fontSize: 20,
@@ -284,6 +358,37 @@ class _MessengerPageState extends State<MessengerPageEmployee> {
         ],
       );
     }
+  }
+
+  String selectedMenu = "All questions";
+  _popUpMenu(){
+    return PopupMenuButton<String>(
+      initialValue: selectedMenu,
+      // Callback that sets the selected popup menu item.
+      onSelected: (String item) {
+        setState(() {
+          selectedMenu = item;
+        });
+      },
+      itemBuilder: (BuildContext context) => [
+        const PopupMenuItem<String>(
+          value: "All questions",
+          child: Text('All questions'),
+        ),
+        const PopupMenuItem<String>(
+          value: "Answered questions",
+          child: Text('Answered questions'),
+        ),
+        const PopupMenuItem<String>(
+          value: "Unanswered questions",
+          child: Text('Unanswered questions'),
+        ),
+        const PopupMenuItem<String>(
+          value: "Your messages",
+          child: Text('Your messages'),
+        ),
+      ],
+    );
   }
 
   _buildChatRoom(listChatRoom) {
@@ -374,15 +479,15 @@ class _MessengerPageState extends State<MessengerPageEmployee> {
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.mark_email_unread_sharp),
-            label: 'Not answered',
+            label: 'Your questions',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.mark_email_read_sharp),
-            label: 'Answered',
+            label: 'Private',
           ),
           BottomNavigationBarItem(
             icon: Icon(AppIcons.chat),
-            label: 'All questions',
+            label: 'Public',
           ),
         ],
         currentIndex: pageIndex,

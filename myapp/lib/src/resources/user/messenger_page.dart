@@ -891,7 +891,7 @@ class _MessengerPageState extends State<MessengerPage> {
           valueKhoa!,
           valueVanDe!,
           current_user.group!,
-          "public",
+          "private",
           () {});
     }
     return 0;

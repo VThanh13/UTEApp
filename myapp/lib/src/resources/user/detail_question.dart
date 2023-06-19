@@ -505,6 +505,7 @@ class _DetailQuestionState extends State<DetailQuestion> {
     if (isvalid) {
       sendQuestion(
           timeString, pdfUrl, _questionController.text, widget.chatRoom.id!,
+
           () {
         // LoadingDialog.hideLoadingDialog(context);
         Navigator.pushReplacement(
@@ -529,8 +530,19 @@ class _DetailQuestionState extends State<DetailQuestion> {
       'content': content,
       'room_id': roomId,
     }).then((value) {
+      updateChatRoomStatus(roomId);
       onSuccess();
     }).catchError((err) {});
+  }
+
+  void updateChatRoomStatus(String room_id) {
+    var ref = FirebaseFirestore.instance.collection('chat_room');
+
+    ref
+        .doc(room_id)
+        .update({'status': "Chưa trả lời"})
+        .then((value) {})
+        .catchError((err) {});
   }
 
   late final ScrollController _scrollController;

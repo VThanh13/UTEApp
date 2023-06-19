@@ -126,7 +126,7 @@ class _HomePageState extends State<HomePage> {
           post.employee.departmentId,
           post.employee.category[0],
           current_user.group!,
-          "public",
+          "private",
           () {});
     }
     return 0;

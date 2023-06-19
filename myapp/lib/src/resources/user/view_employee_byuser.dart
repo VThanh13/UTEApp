@@ -148,9 +148,9 @@ class _ViewEmployeeByUser extends State<ViewEmployeeByUser> {
           "Chưa trả lời",
           _informationController.text,
           widget.employee.department!,
-          widget.employee.category![0],
+          widget.employee.id!,
           current_user.group!,
-          "public",
+          "to employee",
               () {});
     }
     return 0;
