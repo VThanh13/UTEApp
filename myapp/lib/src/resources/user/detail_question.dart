@@ -503,10 +503,7 @@ class _DetailQuestionState extends State<DetailQuestion> {
     String timeString = DateFormat('dd-MM-yyyy HH:mm:ss').format(time);
     await uploadPdf();
     if (isvalid) {
-      sendQuestion(
-          timeString, pdfUrl, _questionController.text, widget.chatRoom.id!,
-
-          () {
+      sendQuestion(timeString, pdfUrl, _questionController.text, widget.chatRoom.id!,() {
         // LoadingDialog.hideLoadingDialog(context);
         Navigator.pushReplacement(
             context,
@@ -537,7 +534,6 @@ class _DetailQuestionState extends State<DetailQuestion> {
 
   void updateChatRoomStatus(String room_id) {
     var ref = FirebaseFirestore.instance.collection('chat_room');
-
     ref
         .doc(room_id)
         .update({'status': "Chưa trả lời"})

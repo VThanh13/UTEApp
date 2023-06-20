@@ -1038,13 +1038,15 @@ class _DetailQuestionState extends State<DetailQuestionEmployee> {
   }
 
   bool ableToAnswer() {
-    if (currentEmployee.category != null &&
-        currentEmployee.category!.contains(widget.chatRoom.category))
+    if (currentEmployee.id != null && currentEmployee.id! == widget.chatRoom.category) {
       return true;
-    else if (currentEmployee.category != null &&
-        currentEmployee.category![0] == "" &&
-        currentEmployee.department! == widget.chatRoom.department) return true;
-
+    }
+    else if (currentEmployee.department != null && currentEmployee.department! == widget.chatRoom.department){
+      if(currentEmployee.roles != null && currentEmployee.roles! == "Trưởng nhóm")
+        return true;
+      else if (currentEmployee.category != null && currentEmployee.category!.contains(widget.chatRoom.category))
+        return true;
+    }
     return false;
   }
 

@@ -27,20 +27,11 @@ class _MessengerPageState extends State<MessengerPage> {
   CollectionReference derPart =
       FirebaseFirestore.instance.collection('departments');
   FirebaseFirestore db = FirebaseFirestore.instance;
-  String? value;
   String? valueKhoa;
-  String? value4;
   var selectedDerpartments;
-  String? value2;
+
   String? valueVanDe;
   var departmentsItems = [];
-  var itemDoiTuong = [
-    'Học sinh THPT',
-    'Sinh viên',
-    'Phụ huynh',
-    'Cựu sinh viên',
-    'Khác'
-  ];
   List<dynamic> listT = [];
   int pageIndex = 0;
 
@@ -125,6 +116,20 @@ class _MessengerPageState extends State<MessengerPage> {
       });
   }
 
+  var employeeName = {};
+  getEmployeeName() async {
+    await FirebaseFirestore.instance
+      .collection('employee')
+      .get()
+      .then((value) => {
+        setState(() {
+          value.docs.forEach((element) {
+            employeeName[element.id] = element["name"];
+          });
+        })
+    });
+  }
+
   List<ChatRoomModel> listChatRoomByUser = [];
   getChatRoomByUser() async {
     await FirebaseFirestore.instance
@@ -194,7 +199,10 @@ class _MessengerPageState extends State<MessengerPage> {
                       const SizedBox(
                         height: 4.0,
                       ),
-                      Text(chatRoom.category == ''? 'To: Leader' : 'To: ${chatRoom.category}',
+                      if(chatRoom.category == "")
+                        Text('To: Leader')
+                      else
+                        Text(employeeName.containsKey(chatRoom.category) ? 'To: ${employeeName[chatRoom.category]}' : 'To: ${chatRoom.category}',
                       style: const TextStyle(
                         color: Colors.black,
                       ),),
@@ -355,6 +363,7 @@ class _MessengerPageState extends State<MessengerPage> {
     getCurrentUser();
     getEmployeeData();
     getDepartmentName();
+    getEmployeeName();
     _storageKey = const PageStorageKey('user message scroll position');
     _scrollController = ScrollController();
   }

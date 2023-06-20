@@ -28,16 +28,6 @@ class ViewEmployeeByUser extends StatefulWidget {
 class _ViewEmployeeByUser extends State<ViewEmployeeByUser> {
   AuthBloc authBloc = AuthBloc();
 
-  String? valueDoiTuong;
-
-  var itemDoiTuong = [
-    'Học sinh THPT',
-    'Sinh viên',
-    'Phụ huynh',
-    'Cựu sinh viên',
-    'Khác'
-  ];
-
   FirebaseAuth auth = FirebaseAuth.instance;
   var currentUser = FirebaseAuth.instance.currentUser!;
   UserModel current_user = UserModel();
@@ -66,15 +56,15 @@ class _ViewEmployeeByUser extends State<ViewEmployeeByUser> {
   var listDepartmentName = Map();
   getDepartment() async {
     await FirebaseFirestore.instance
-        .collection('departments')
-        .get()
-        .then((value) => {
-              setState(() {
-                for (var element in value.docs) {
-                  listDepartmentName[element.id] = element["name"];
-                }
-              })
-            });
+      .collection('departments')
+      .get()
+      .then((value) => {
+        setState(() {
+          for (var element in value.docs) {
+            listDepartmentName[element.id] = element["name"];
+          }
+        })
+      });
   }
 
   getCurrentUser() async {
@@ -267,38 +257,6 @@ class _ViewEmployeeByUser extends State<ViewEmployeeByUser> {
                           fontSize: 15,
                           fontWeight: FontWeight.w400),
                     ),
-                    Container(
-                        margin: const EdgeInsets.fromLTRB(
-                            0, 10, 0, 15),
-                        width: 340,
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 12, vertical: 4),
-                        decoration: BoxDecoration(
-                          borderRadius:
-                          BorderRadius.circular(12),
-                          border: Border.all(
-                              color: Colors.blueAccent,
-                              width: 4),
-                        ),
-                        child: DropdownButtonHideUnderline(
-                          child: DropdownButton<String>(
-                            isExpanded: true,
-                            value: valueDoiTuong,
-                            hint: const Text(
-                                "Please choose position"),
-                            iconSize: 36,
-                            items: itemDoiTuong
-                                .map(buildMenuItem)
-                                .toList(),
-                            onChanged: (value) {
-                              setStateKhoa(() {
-                                setState(() {
-                                  valueDoiTuong = value;
-                                });
-                              });
-                            },
-                          ),
-                        )),
                     Container(
                       margin: const EdgeInsets.fromLTRB(
                           0, 10, 0, 15),

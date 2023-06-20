@@ -613,16 +613,6 @@ class _HomePageState extends State<HomePage> {
             });
   }
 
-  var item_doituong = [
-    'Học sinh THPT',
-    'Sinh viên',
-    'Phụ huynh',
-    'Cựu sinh viên',
-    'Khác'
-  ];
-
-  String? value_doituong;
-
   final TextEditingController _informationController = TextEditingController();
   final TextEditingController _questionController = TextEditingController();
 
