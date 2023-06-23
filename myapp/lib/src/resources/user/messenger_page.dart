@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:myapp/icons/app_icons_icons.dart';
 import 'package:myapp/src/models/EmployeeModel.dart';
 import 'package:myapp/src/resources/user/home_page.dart';
+import 'package:myapp/src/resources/user/search_counselors.dart';
 import 'package:myapp/src/resources/user/view_employee_byuser.dart';
 import 'detail_question.dart';
 import '../../models/ChatRoomModel.dart';
@@ -268,8 +269,8 @@ class _MessengerPageState extends State<MessengerPage> {
         Navigator.push(context, MaterialPageRoute(builder: (context) => ViewEmployeeByUser(employee: employeeModel, users: current_user)));
       },
       child: Container(
-        margin: const EdgeInsets.fromLTRB(0, 0, 10, 10),
-        width: 100,
+        margin: const EdgeInsets.fromLTRB(0, 0, 0, 5),
+        width: 90,
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(15.0),
             ),
@@ -279,11 +280,11 @@ class _MessengerPageState extends State<MessengerPage> {
             Container(
               padding: const EdgeInsets.fromLTRB(10, 0, 0, 0),
               child: CircleAvatar(
-                radius: 28,
+                radius: 26,
                 backgroundColor: Colors.blueAccent,
                 child: CircleAvatar(
                   backgroundImage: NetworkImage(employeeModel.image!),
-                  radius: 26,
+                  radius: 24,
                 ),
               ),
             ),
@@ -446,17 +447,59 @@ class _MessengerPageState extends State<MessengerPage> {
                     children: <Widget>[
                       SizedBox(
                         height: 110.0,
-                        child: ListView.builder(
-                            physics: const BouncingScrollPhysics(),
-                            padding: const EdgeInsets.only(left: 10.0),
-                            scrollDirection: Axis.horizontal,
-                            itemCount: listEmployee.length,
-                            itemBuilder:
-                                (BuildContext context, int index) {
-                              // EmployeeModel employeeModel = listEmployee[index];
-                              return _buildEmployee(
-                                  context, listEmployee[index]);
-                            }),
+                        child: Row(
+                          children: [
+                            SizedBox(
+                              width: 60,
+                              height: 90,
+                              child: Column(
+                                children: [
+                                  InkWell(
+                                    onTap: (){
+                                      Navigator.push(context,
+                                          MaterialPageRoute(builder: (context) => const SearchCounselorsScreen()));
+                                    },
+                                    child: Container(
+                                      width: 50,
+                                      height: 50,
+                                      margin: const EdgeInsets.only(left: 10),
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(20),
+                                        color: Colors.grey[300]
+                                      ),
+                                      child: const Center(
+                                        child: Icon(Icons.search_outlined,
+                                        size: 30,),
+                                      ),
+                                    ),
+                                  ),
+                                  const Padding(
+                                    padding: EdgeInsets.fromLTRB(10, 5, 0, 0),
+                                    child: Text('Search',
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                    ),),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            SizedBox(
+                              height: 110,
+                              width: MediaQuery.of(context).size.width - 70,
+                              child: ListView.builder(
+                                  physics: const BouncingScrollPhysics(),
+                                  padding: const EdgeInsets.only(left: 10.0),
+                                  scrollDirection: Axis.horizontal,
+                                  itemCount: listEmployee.length,
+                                  itemBuilder:
+                                      (BuildContext context, int index) {
+                                    // EmployeeModel employeeModel = listEmployee[index];
+                                    return _buildEmployee(
+                                        context, listEmployee[index]);
+                                  }),
+                            ),
+                          ],
+                        ),
                       )
                     ],
                   ),
