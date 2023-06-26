@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:intl/intl.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -10,6 +11,7 @@ import 'package:myapp/icons/app_icons_icons.dart';
 import 'package:myapp/src/resources/about_page/my_info.dart';
 import 'package:myapp/src/resources/about_page/about_university.dart';
 import 'package:myapp/src/resources/login_screen.dart';
+import 'package:myapp/src/resources/user/search_post.dart';
 import 'messenger_page.dart';
 import 'package:myapp/src/models/UserModel.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -258,9 +260,15 @@ class _HomePageState extends State<HomePage> {
 
   final ScrollController _scrollController = ScrollController();
   int _numItems = 10;
-  bool _isLoadingMore = false;
+  final bool _isLoadingMore = false;
+  String nameEmployee = '';
+  String idEmployee = '';
+  String departmentEmployee = '';
 
   _buildNewFeed(BuildContext context, Post post) {
+    nameEmployee = post.employee.name;
+    idEmployee = post.employee.id;
+    departmentEmployee = post.employee.departmentName;
     return Container(
       color: Colors.white,
       margin: const EdgeInsets.only(top: 10),
@@ -269,45 +277,114 @@ class _HomePageState extends State<HomePage> {
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           Row(
-            mainAxisAlignment: MainAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Container(
-                padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
-                child: CircleAvatar(
-                  radius: 24,
-                  backgroundColor: Colors.blueAccent,
-                  child: CircleAvatar(
-                    backgroundImage: NetworkImage(post.employee.image),
-                    radius: 22,
-                  ),
-                ),
-              ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+              Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  Text(
-                    post.employee.name,
-                    style: const TextStyle(
-                        fontSize: 15,
-                        fontStyle: FontStyle.italic,
-                        fontWeight: FontWeight.w500),
-                  ),
-                  const SizedBox(
-                    height: 3,
-                  ),
-                  Text(
-                    post.time,
-                    style: TextStyle(
-                      fontSize: 9,
-                      color: Colors.grey[400],
+                  Container(
+                    padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
+                    child: CircleAvatar(
+                      radius: 24,
+                      backgroundColor: Colors.blueAccent,
+                      child: CircleAvatar(
+                        backgroundImage: NetworkImage(post.employee.image),
+                        radius: 22,
+                      ),
                     ),
                   ),
-                  Text(
-                    post.employee.departmentName,
-                    style: TextStyle(fontSize: 11, color: Colors.grey[500]),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Text(
+                        post.employee.name,
+                        style: const TextStyle(
+                            fontSize: 15,
+                            fontStyle: FontStyle.italic,
+                            fontWeight: FontWeight.w500),
+                      ),
+                      const SizedBox(
+                        height: 3,
+                      ),
+                      Text(
+                        post.time,
+                        style: TextStyle(
+                          fontSize: 9,
+                          color: Colors.grey[400],
+                        ),
+                      ),
+                      Text(
+                        post.employee.departmentName,
+                        style: TextStyle(fontSize: 11, color: Colors.grey[500]),
+                      ),
+                    ],
                   ),
                 ],
+              ),
+              IconButton(
+                onPressed: () {
+                  showCupertinoModalPopup(
+                      context: context,
+                      builder: (context) {
+                        return CupertinoActionSheet(
+                          title: const Text(
+                            'Choose options',
+                            style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.black),
+                          ),
+                          actions: [
+                            CupertinoActionSheetAction(
+                              onPressed: () {
+                                Navigator.pop(context);
+                                _modelBottomSheetSendMessage();
+                              },
+                              child: const Text(
+                                'Send message',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 14,
+                                  color: Colors.blue,
+                                ),
+                              ),
+                            ),
+                            CupertinoActionSheetAction(
+                              onPressed: () {
+                                Navigator.pop(context);
+                                _modalBottomSheetAddQuestion(post);
+                              },
+                              child: const Text(
+                                'Have question',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 14,
+                                  color: Colors.blue,
+                                ),
+                              ),
+                            ),
+                          ],
+                          cancelButton: CupertinoActionSheetAction(
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                            child: const Text(
+                              'Cancel',
+                              style: TextStyle(
+                                fontWeight: FontWeight.w500,
+                                fontSize: 14,
+                                color: Colors.black,
+                              ),
+                            ),
+                          ),
+                        );
+                      });
+                },
+                icon: const Icon(
+                  Icons.more_horiz,
+                  size: 30,
+                ),
               ),
             ],
           ),
@@ -348,28 +425,6 @@ class _HomePageState extends State<HomePage> {
               thickness: 1,
             ),
           ),
-          InkWell(
-            onTap: () {
-              _modalBottomSheetAddQuestion(post);
-            },
-            child: Container(
-              height: 30,
-              margin: const EdgeInsets.only(top: 5),
-              child: const Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  Text(
-                    'You have question?',
-                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.w400),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.fromLTRB(10, 0, 15, 0),
-                    child: Icon(Icons.send_sharp),
-                  )
-                ],
-              ),
-            ),
-          ),
           const SizedBox(
             height: 10,
           )
@@ -395,7 +450,7 @@ class _HomePageState extends State<HomePage> {
                 WidgetsBinding.instance.focusManager.primaryFocus?.unfocus();
               },
               child: SizedBox(
-                height: 600,
+                height: 520,
                 child: SingleChildScrollView(
                   child: Padding(
                     padding: EdgeInsets.only(
@@ -407,7 +462,7 @@ class _HomePageState extends State<HomePage> {
                         const Padding(
                             padding: EdgeInsets.fromLTRB(0, 20, 0, 0)),
                         const Text(
-                          "You have question for this post",
+                          "You have question for this post?",
                           textAlign: TextAlign.center,
                           style: TextStyle(
                               fontSize: 17, fontWeight: FontWeight.w600),
@@ -420,7 +475,8 @@ class _HomePageState extends State<HomePage> {
                           child: StreamBuilder(
                             stream: informationControl,
                             builder: (context, snapshot) => TextField(
-                              controller: _informationController,
+                              controller: _informationController
+                                ..text = current_user.email!,
                               decoration: InputDecoration(
                                   labelText: "Contact method",
                                   hintText: 'Insert your Email/Phone',
@@ -545,7 +601,9 @@ class _HomePageState extends State<HomePage> {
                               const Padding(padding: EdgeInsets.all(10)),
                               Expanded(
                                   child: ElevatedButton.icon(
-                                onPressed: () => {},
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
                                 label: const Text(
                                   'Cancel',
                                   style: TextStyle(
@@ -563,6 +621,203 @@ class _HomePageState extends State<HomePage> {
                       ],
                     ),
                   ),
+                ),
+              ),
+            );
+          });
+        });
+  }
+
+  _onSendMessageClicked() async {
+    var isvalid =
+        isValid(_informationController.text, _questionController.text);
+    var time = DateTime.now();
+    String timeString = DateFormat('dd-MM-yyyy HH:mm:ss').format(time);
+    await uploadPdf();
+    if (isvalid) {
+      if (!mounted) return;
+      LoadingDialog.showLoadingDialog(context, "Please Wait...");
+      createChatRoom(
+          current_user.id!,
+          "Send $nameEmployee",
+          timeString,
+          "Chưa trả lời",
+          _informationController.text,
+          departmentEmployee,
+          idEmployee,
+          current_user.group!,
+          "to employee",
+          () {});
+    }
+    return 0;
+  }
+
+  _modelBottomSheetSendMessage() {
+    showModalBottomSheet(
+        isScrollControlled: true,
+        // constraints: BoxConstraints.loose(Size(
+        //     MediaQuery.of(context).size.width,
+        //     MediaQuery.of(context).size.height * 0.75)),
+        shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(20),
+          topRight: Radius.circular(20),
+        )),
+        context: context,
+        builder: (BuildContext context) {
+          return StatefulBuilder(
+              builder: (BuildContext context, StateSetter setStateKhoa) {
+            return SizedBox(
+              height: 520,
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: <Widget>[
+                    const Padding(padding: EdgeInsets.fromLTRB(0, 10, 0, 20)),
+                    const Text(
+                      "Send Message",
+                      textAlign: TextAlign.center,
+                      style:
+                          TextStyle(fontSize: 15, fontWeight: FontWeight.w400),
+                    ),
+                    Container(
+                      margin: const EdgeInsets.fromLTRB(0, 10, 0, 15),
+                      width: 340,
+                      child: StreamBuilder(
+                        stream: informationControl,
+                        builder: (context, snapshot) => TextField(
+                          controller: _informationController
+                            ..text = current_user.email!,
+                          decoration: InputDecoration(
+                            labelText: "Contact method",
+                            hintText: 'Insert your Email/Phone',
+                            errorText: snapshot.hasError
+                                ? snapshot.error.toString()
+                                : null,
+                            enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10),
+                                borderSide: const BorderSide(
+                                  color: Colors.blueAccent,
+                                  width: 1,
+                                )),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                              borderSide: const BorderSide(
+                                color: Colors.blue,
+                                width: 4,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    Container(
+                      width: 340,
+                      margin: const EdgeInsets.fromLTRB(0, 10, 0, 15),
+                      child: StreamBuilder(
+                        stream: questionControl,
+                        builder: (context, snapshot) => TextField(
+                          controller: _questionController,
+                          maxLines: 50,
+                          minLines: 7,
+                          maxLength: 3000,
+                          decoration: InputDecoration(
+                            hintMaxLines: 5,
+                            helperMaxLines: 5,
+                            labelText: "Send question",
+                            hintText: 'Insert your question',
+                            errorText: snapshot.hasError
+                                ? snapshot.error.toString()
+                                : null,
+                            enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10),
+                                borderSide: const BorderSide(
+                                  color: Colors.blueAccent,
+                                  width: 1,
+                                )),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                              borderSide: const BorderSide(
+                                  color: Colors.blue, width: 4),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    InkWell(
+                      child: Container(
+                        height: 70,
+                        margin: const EdgeInsets.fromLTRB(100, 0, 110, 0),
+                        width: double.infinity,
+                        child: const Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            Padding(
+                              padding: EdgeInsets.fromLTRB(25, 5, 0, 5),
+                              child: Icon(
+                                AppIcons.file_pdf,
+                                color: Colors.red,
+                              ),
+                            ),
+                            Padding(
+                              padding: EdgeInsets.fromLTRB(0, 5, 5, 5),
+                              child: Text(
+                                'Attached files',
+                                style: TextStyle(
+                                    fontSize: 14,
+                                    fontStyle: FontStyle.italic,
+                                    color: Colors.grey),
+                              ),
+                            )
+                          ],
+                        ),
+                      ),
+                      onTap: () {
+                        importPdf();
+                      },
+                    ),
+                    Container(
+                      padding: const EdgeInsets.all(10),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: <Widget>[
+                          Expanded(
+                            child: ElevatedButton.icon(
+                              onPressed: () {
+                                _onSendMessageClicked();
+                              },
+                              label: const Text(
+                                'Send',
+                                style: TextStyle(
+                                    fontSize: 16, color: Colors.white),
+                              ),
+                              icon: const Icon(Icons.mail_outline_rounded),
+                              style: ElevatedButton.styleFrom(
+                                  primary: Colors.blueAccent),
+                            ),
+                          ),
+                          const Padding(
+                            padding: EdgeInsets.all(10),
+                          ),
+                          Expanded(
+                              child: ElevatedButton.icon(
+                            onPressed: () => {Navigator.pop(context)},
+                            label: const Text(
+                              'Cancel',
+                              style:
+                                  TextStyle(fontSize: 16, color: Colors.white),
+                            ),
+                            icon: const Icon(Icons.cancel_presentation),
+                            style: ElevatedButton.styleFrom(
+                                primary: Colors.blueAccent),
+                          )),
+                          const Padding(
+                              padding: EdgeInsets.fromLTRB(0, 10, 0, 30)),
+                        ],
+                      ),
+                    )
+                  ],
                 ),
               ),
             );
@@ -639,7 +894,8 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _scrollListener() {
-    if (_scrollController.offset >= _scrollController.position.maxScrollExtent &&
+    if (_scrollController.offset >=
+            _scrollController.position.maxScrollExtent &&
         !_scrollController.position.outOfRange) {
       setState(() {
         _numItems += 10;
@@ -695,17 +951,32 @@ class _HomePageState extends State<HomePage> {
               title: const Text("UTE APP"),
               actions: <Widget>[
                 IconButton(
-                    onPressed: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (BuildContext context) =>
-                                  const MessengerPage()));
-                    },
-                    icon: const Icon(
-                      AppIcons.chat,
-                      color: Colors.white,
-                    )),
+                  onPressed: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (BuildContext context) =>
+                                const MessengerPage()));
+                  },
+                  icon: const Icon(
+                    AppIcons.chat,
+                    color: Colors.white,
+                  ),
+                ),
+                IconButton(
+                  onPressed: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (BuildContext context) =>
+                            const SearchPostScreen()));
+                  },
+                  icon: const Icon(
+                    Icons.search_rounded,
+                    color: Colors.white,
+                    size: 30,
+                  ),
+                ),
               ],
             ),
             drawer: Drawer(

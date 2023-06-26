@@ -60,6 +60,7 @@ class _SearchCounselorsScreenState extends State<SearchCounselorsScreen> {
                           itemCount: snapshot.data!.docs.length,
                           itemBuilder: (context, index){
                             var data = snapshot.data!.docs[index].data() as Map<String, dynamic>;
+
                             if(name.isEmpty){
                               return ListTile(
                                 title: Text(data['name'],
@@ -85,7 +86,19 @@ class _SearchCounselorsScreenState extends State<SearchCounselorsScreen> {
 
                               return InkWell(
                                 onTap: (){
-                                  //Navigator.push(context, MaterialPageRoute(builder: (context) => ViewEmployeeByUser(employee: employee, users: current_user)));
+                                  setState(() {
+                                    employee.id = data['id'];
+                                    employee.name = data['name'];
+                                    employee.email = data['email'];
+                                    employee.status = data['status'];
+                                    employee.roles = data['roles'];
+                                    employee.image = data['image'];
+                                    employee.department = data['department'];
+                                    employee.phone = data['phone'];
+                                    employee.password = data['password'];
+                                    employee.category = List<String>.from(data['category']);
+                                  });
+                                  Navigator.push(context, MaterialPageRoute(builder: (context) => ViewEmployeeByUser(employee: employee, users: current_user)));
                                 },
                                 child: ListTile(
                                   title: Text(data['name'],

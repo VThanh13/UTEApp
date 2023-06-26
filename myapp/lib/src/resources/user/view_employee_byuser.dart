@@ -242,7 +242,7 @@ class _ViewEmployeeByUser extends State<ViewEmployeeByUser> {
               (BuildContext context,
               StateSetter setStateKhoa) {
             return SizedBox(
-              height: 600,
+              height: 520,
               child: SingleChildScrollView(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.start,
@@ -265,7 +265,8 @@ class _ViewEmployeeByUser extends State<ViewEmployeeByUser> {
                         stream: informationControl,
                         builder: (context, snapshot) =>
                             TextField(
-                              controller: _informationController,
+                              controller: _informationController
+                              ..text = current_user.email!,
                               decoration: InputDecoration(
                                 labelText: "Contact method",
                                 hintText:
@@ -508,20 +509,19 @@ class _ViewEmployeeByUser extends State<ViewEmployeeByUser> {
                       ),
                       Container(
                         margin: const EdgeInsets.only(right: 1),
-                        child: Container(
-                            child: ElevatedButton.icon(
-                              icon: const Icon(Icons.mark_chat_unread),
-                              onPressed: () {
-                                _modelBottomSheetSendMessage();
-                              },
-                              style: ElevatedButton.styleFrom(
-                                primary: Colors.blue,
-                              ),
-                              label: const Text(
-                                "Message",
-                                style: TextStyle(color: Colors.white, fontSize: 15),
-                              ),
-                            )),
+                        child: ElevatedButton.icon(
+                          icon: const Icon(Icons.mark_chat_unread),
+                          onPressed: () {
+                            _modelBottomSheetSendMessage();
+                          },
+                          style: ElevatedButton.styleFrom(
+                            primary: Colors.blue,
+                          ),
+                          label: const Text(
+                            "Message",
+                            style: TextStyle(color: Colors.white, fontSize: 15),
+                          ),
+                        ),
                       )
                     ],
                   ),

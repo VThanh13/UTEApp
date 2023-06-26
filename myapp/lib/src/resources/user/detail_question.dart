@@ -277,33 +277,6 @@ class _DetailQuestionState extends State<DetailQuestion> {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              Expanded(
-                child: Wrap(
-                    crossAxisAlignment: WrapCrossAlignment.end,
-                    alignment: WrapAlignment.end,
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(10),
-                        margin: const EdgeInsets.only(top: 3, bottom: 10),
-                        decoration: const BoxDecoration(
-                          borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(12),
-                            bottomLeft: Radius.circular(12),
-                            bottomRight: Radius.circular(12),
-                          ),
-                          color: Colors.lightBlueAccent,
-                        ),
-                        child: Text(
-                          question.content,
-                          maxLines: 20,
-                          style: const TextStyle(
-                            fontSize: 15,
-                            fontWeight: FontWeight.w400,
-                          ),
-                        ),
-                      ),
-                    ]),
-              ),
               if (question.file != 'file.pdf')
                 if (question.file
                     .substring(question.file.length - 100)
@@ -335,23 +308,70 @@ class _DetailQuestionState extends State<DetailQuestion> {
                       ),
                     ],
                   )),
-              if (question.file != 'file.pdf' &&
-                  !question.file
-                      .substring(question.file.length - 57)
-                      .startsWith('.pdf'))
+
                 SizedBox(
                   width: MediaQuery.of(context).size.width - 92,
-                  child: Card(
-                    margin: const EdgeInsets.all(5),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(8.0),
-                      child: Image.network(question.file),
-                    ),
+                  height: question.file != 'file.pdf' &&
+                      !question.file
+                          .substring(question.file.length - 57)
+                          .startsWith('.pdf')? 310: 60,
+                  child: Column(
+                    children: [
+                      Expanded(
+                        child: SizedBox(
+                          width: double.maxFinite,
+                          height: 150,
+                          child: Wrap(
+                              crossAxisAlignment: WrapCrossAlignment.end,
+                              alignment: WrapAlignment.end,
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.all(10),
+                                  margin: const EdgeInsets.only(top: 3, bottom: 10),
+                                  decoration: const BoxDecoration(
+                                    borderRadius: BorderRadius.only(
+                                      topLeft: Radius.circular(12),
+                                      bottomLeft: Radius.circular(12),
+                                      bottomRight: Radius.circular(12),
+                                    ),
+                                    color: Colors.lightBlueAccent,
+                                  ),
+                                  child: Text(
+                                    question.content,
+                                    maxLines: 20,
+                                    style: const TextStyle(
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.w400,
+                                    ),
+                                  ),
+                                ),
+                              ]),
+                        ),
+                      ),
+                      if (question.file != 'file.pdf' &&
+                          !question.file
+                              .substring(question.file.length - 57)
+                              .startsWith('.pdf'))
+                      Padding(
+                        padding: const EdgeInsets.only(top: 30),
+                        child: SizedBox(
+                          width: MediaQuery.of(context).size.width - 92,
+                          child: Card(
+                            margin: const EdgeInsets.all(5),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(8.0),
+                              child: Image.network(question.file),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
+
               const SizedBox(
                 width: 8,
               ),

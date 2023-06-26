@@ -344,45 +344,17 @@ class _DetailQuestionState extends State<DetailQuestionEmployee> {
                   radius: 20,
                 ),
               ),
-              const SizedBox(
-                width: 8,
-              ),
-              Expanded(
-                child: Wrap(
-                    crossAxisAlignment: WrapCrossAlignment.end,
-                    alignment: WrapAlignment.start,
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(10),
-                        margin: const EdgeInsets.only(top: 3, bottom: 10),
-                        decoration: const BoxDecoration(
-                          borderRadius: BorderRadius.only(
-                            topRight: Radius.circular(12),
-                            bottomLeft: Radius.circular(12),
-                            bottomRight: Radius.circular(12),
-                          ),
-                          color: Colors.grey,
-                        ),
-                        child: Text(
-                          question.content,
-                          maxLines: 20,
-                          style: const TextStyle(
-                            fontSize: 15,
-                            fontWeight: FontWeight.w400,
-                          ),
-                        ),
-                      ),
-                    ]),
-              ),
+              const SizedBox(width: 10,),
               if (question.file != 'file.pdf')
                 if (question.file
                     .substring(question.file.length - 100)
                     .startsWith('.pdf'))
                   (Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       Row(
-                        crossAxisAlignment: CrossAxisAlignment.end,
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           IconButton(
                             onPressed: () async {
@@ -405,23 +377,70 @@ class _DetailQuestionState extends State<DetailQuestionEmployee> {
                       ),
                     ],
                   )),
-              if (question.file != 'file.pdf' &&
-                  !question.file
-                      .substring(question.file.length - 57)
-                      .startsWith('.pdf'))
-                SizedBox(
-                  width: MediaQuery.of(context).size.width - 92,
-                  child: Card(
-                    margin: const EdgeInsets.all(5),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
+
+              SizedBox(
+                width: MediaQuery.of(context).size.width - 96,
+                height: question.file != 'file.pdf' &&
+                    !question.file
+                        .substring(question.file.length - 57)
+                        .startsWith('.pdf')? 310: 60,
+                child: Column(
+                  children: [
+                    Expanded(
+                      child: SizedBox(
+                        width: double.maxFinite,
+                        height: 150,
+                        child: Wrap(
+                            crossAxisAlignment: WrapCrossAlignment.start,
+                            alignment: WrapAlignment.start,
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.all(10),
+                                margin: const EdgeInsets.only(top: 3, bottom: 10),
+                                decoration:  BoxDecoration(
+                                  borderRadius: const BorderRadius.only(
+                                    topRight: Radius.circular(12),
+                                    bottomLeft: Radius.circular(12),
+                                    bottomRight: Radius.circular(12),
+                                  ),
+                                  color: Colors.grey[500],
+                                ),
+                                child: Text(
+                                  question.content,
+                                  maxLines: 20,
+                                  style: const TextStyle(
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.w400,
+                                  ),
+                                ),
+                              ),
+                            ]),
+                      ),
                     ),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(8.0),
-                      child: Image.network(question.file),
-                    ),
-                  ),
+                    if (question.file != 'file.pdf' &&
+                        !question.file
+                            .substring(question.file.length - 57)
+                            .startsWith('.pdf'))
+                      Padding(
+                        padding: const EdgeInsets.only(top: 30),
+                        child: SizedBox(
+                          width: MediaQuery.of(context).size.width - 96,
+                          child: Card(
+                            margin: const EdgeInsets.all(5),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(8.0),
+                              child: Image.network(question.file),
+                            ),
+                          ),
+                        ),
+                      ),
+                  ],
                 ),
+              ),
+
             ],
           ),
         ],
@@ -759,6 +778,7 @@ class _DetailQuestionState extends State<DetailQuestionEmployee> {
                                   )),
                               Container(
                                 padding: const EdgeInsets.all(10),
+                                margin: const EdgeInsets.only(top: 40),
                                 child: Row(
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceAround,

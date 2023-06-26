@@ -14,20 +14,31 @@ import '../leader/home_page_leader.dart';
 import 'detail_question_employee.dart';
 
 class MessengerPageEmployee extends StatefulWidget {
+  const MessengerPageEmployee({super.key});
+
   @override
-  _MessengerPageState createState() => _MessengerPageState();
+  State<MessengerPageEmployee> createState() => _MessengerPageState();
 }
 
-class _MessengerPageState extends State<MessengerPageEmployee> {
+class _MessengerPageState extends State<MessengerPageEmployee> with SingleTickerProviderStateMixin {
   FirebaseAuth auth = FirebaseAuth.instance;
   var user_auth = FirebaseAuth.instance.currentUser!;
   EmployeeModel employeeModel = EmployeeModel();
   EmployeeModel current_employee = EmployeeModel();
+  late TabController _tabController;
+  List listTabItems = [
+    'All questions',
+    'Answered questions',
+    'Unanswered questions',
+    'Your messages',
+  ];
   @override
   void initState() {
     super.initState();
     getCurrentUser();
+    _tabController = TabController(length: listTabItems.length, vsync: this);
   }
+
 
   getCurrentUser() async {
     await FirebaseFirestore.instance
@@ -212,7 +223,17 @@ class _MessengerPageState extends State<MessengerPageEmployee> {
   @override
   void dispose() {
     super.dispose();
+    _tabController.dispose();
   }
+
+  int _selectedIndex = 0;
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -225,7 +246,6 @@ class _MessengerPageState extends State<MessengerPageEmployee> {
                   width: 20, height: 20, child: CircularProgressIndicator()),
             );
           }
-          // TODO: implement build
           return Scaffold(
             appBar: AppBar(
               leading: IconButton(
@@ -257,21 +277,86 @@ class _MessengerPageState extends State<MessengerPageEmployee> {
               title: const Text("Message"),
               backgroundColor: Colors.blueAccent,
             ),
-            bottomNavigationBar: getFooter(),
-            body: SafeArea(
-              minimum: const EdgeInsets.only(left: 5, right: 5),
-              child: SingleChildScrollView(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: <Widget>[
-                    const Padding(
-                      padding: EdgeInsets.fromLTRB(0, 0, 0, 5),
-                    ),
-                    getQuestion(),
-                  ],
+            bottomNavigationBar: BottomNavigationBar(
+              items: const <BottomNavigationBarItem>[
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.mark_email_unread_sharp),
+                  label: 'Your questions',
                 ),
-              ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.mark_email_read_sharp),
+                  label: 'Private',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(AppIcons.chat),
+                  label: 'Public',
+                ),
+              ],
+              currentIndex: _selectedIndex,
+              selectedItemColor: Colors.blue,
+              // gapLocation: GapLocation.center,
+              onTap:  _onItemTapped,
             ),
+            body: [
+              Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: <Widget>[
+                const Padding(
+                  padding: EdgeInsets.fromLTRB(0, 0, 0, 10),
+                ),
+                SizedBox(
+                  height: 48,
+                  width: double.maxFinite,
+                  child: TabBar(
+                    isScrollable: true,
+                    controller: _tabController,
+                    unselectedLabelColor: Colors.black,
+                    labelColor: const Color(0xffDD4A30),
+                    indicator: const UnderlineTabIndicator(
+                      borderSide: BorderSide(
+                        color: Color(0xffDD4A30),
+                        width: 3,
+                      ),
+                    ),
+                    tabs: [
+                      ...List.generate(
+                        listTabItems.length,
+                            (index) {
+                          return Tab(
+                            text: listTabItems[index],
+
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+                Expanded(child: TabBarView(
+                  controller: _tabController,
+                  children: [
+                    SingleChildScrollView(
+                      child: _buildChatRoom(listYourChatRoom),
+                    ),
+                    SingleChildScrollView(
+                      child: _buildChatRoom(listAnwsered),
+                    ),
+                    SingleChildScrollView(
+                      child: _buildChatRoom(listUnanwsered),
+                    ),
+                    SingleChildScrollView(
+                      child: _buildChatRoom(listYourMessage),
+                    ),
+                  ],
+                ),),
+
+              ],
+            ),
+              SingleChildScrollView(
+                child: _buildChatRoom(listPrivateChatRoom),
+              ),
+              SingleChildScrollView(
+                child: _buildChatRoom(listPublicChatRoom),
+              )].elementAt(_selectedIndex),
           );
         });
   }
@@ -281,9 +366,9 @@ class _MessengerPageState extends State<MessengerPageEmployee> {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
-          Container(
+          const SizedBox(
             height: 40,
-            child: const Row(
+            child: Row(
                 children: <Widget>[
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 10.0),
@@ -316,9 +401,9 @@ class _MessengerPageState extends State<MessengerPageEmployee> {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
-          Container(
+          const SizedBox(
             height: 40,
-            child: const Padding(
+            child: Padding(
               padding: EdgeInsets.symmetric(horizontal: 10.0),
               child: Text(
                 'Private questions',
@@ -339,9 +424,9 @@ class _MessengerPageState extends State<MessengerPageEmployee> {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
-          Container(
+          const SizedBox(
             height: 40,
-            child: const Padding(
+            child: Padding(
               padding: EdgeInsets.symmetric(horizontal: 10.0),
               child: Text(
                 'Public questions',
@@ -497,22 +582,6 @@ class _MessengerPageState extends State<MessengerPageEmployee> {
           selectedTab(index);
         },
       );
-      return AnimatedBottomNavigationBar(
-        activeColor: Colors.blue,
-        splashColor: Colors.grey,
-        inactiveColor: Colors.black.withOpacity(0.5),
-        icons: iconItems,
-        activeIndex: pageIndex,
-        gapLocation: GapLocation.none,
-        notchSmoothness: NotchSmoothness.softEdge,
-        leftCornerRadius: 10,
-        iconSize: 25,
-        rightCornerRadius: 10,
-        onTap: (index) {
-          selectedTab(index);
-        },
-        //other params
-      );
     }
   }
   selectedTab(index) {
@@ -520,5 +589,6 @@ class _MessengerPageState extends State<MessengerPageEmployee> {
       pageIndex = index;
     });
   }
-
 }
+
+
