@@ -207,7 +207,7 @@ class _HomePageState extends State<HomePage> {
         .get()
         .then((value) => {
               setState(() {
-                value.docs.forEach((element) {
+                for (var element in value.docs) {
                   NewfeedModel newfeed = NewfeedModel();
                   newfeed.id = element['id'];
                   newfeed.content = element['content'];
@@ -216,7 +216,7 @@ class _HomePageState extends State<HomePage> {
                   newfeed.employeeId = element['employeeId'];
 
                   listNewfeed.add(newfeed);
-                });
+                }
               })
             });
     listNewfeed.forEach((element) async {
