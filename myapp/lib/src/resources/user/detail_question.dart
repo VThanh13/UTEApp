@@ -314,7 +314,7 @@ class _DetailQuestionState extends State<DetailQuestion> {
                   height: question.file != 'file.pdf' &&
                       !question.file
                           .substring(question.file.length - 57)
-                          .startsWith('.pdf')? 310: 60,
+                          .startsWith('.pdf')? 400: 60,
                   child: Column(
                     children: [
                       Expanded(
@@ -353,7 +353,7 @@ class _DetailQuestionState extends State<DetailQuestion> {
                               .substring(question.file.length - 57)
                               .startsWith('.pdf'))
                       Padding(
-                        padding: const EdgeInsets.only(top: 30),
+                        padding: const EdgeInsets.only(top: 35),
                         child: SizedBox(
                           width: MediaQuery.of(context).size.width - 92,
                           child: Card(
@@ -363,7 +363,8 @@ class _DetailQuestionState extends State<DetailQuestion> {
                             ),
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(8.0),
-                              child: Image.network(question.file),
+                              child: Image.network(question.file,
+                              fit: BoxFit.fitHeight,),
                             ),
                           ),
                         ),

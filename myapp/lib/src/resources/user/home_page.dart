@@ -786,6 +786,7 @@ class _HomePageState extends State<HomePage> {
                             child: ElevatedButton.icon(
                               onPressed: () {
                                 _onSendMessageClicked();
+                                Navigator.pop(context);
                               },
                               label: const Text(
                                 'Send',
