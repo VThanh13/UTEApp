@@ -357,14 +357,14 @@ class _SearchScreenState extends State<LoginScreen> {
       if (!mounted) return;
       LoadingDialog.showLoadingDialog(context, "Please Wait...");
       authBloc.signIn(_emailController.text, _pwdController.text, () async {
-        var user_auth = FirebaseAuth.instance.currentUser!;
+        var userAuth = FirebaseAuth.instance.currentUser!;
         await FirebaseFirestore.instance
             .collection('user')
-            .doc(user_auth.uid)
+            .doc(userAuth.uid)
             .get()
             .then((snapshot) async {
           if (snapshot.exists) {
-            await prefs.setString("id", user_auth.uid);
+            await prefs.setString("id", userAuth.uid);
             await prefs.setString("roles", 'user');
             if (!mounted) return;
             LoadingDialog.hideLoadingDialog(context);
@@ -374,11 +374,11 @@ class _SearchScreenState extends State<LoginScreen> {
         });
         await FirebaseFirestore.instance
             .collection('employee')
-            .doc(user_auth.uid)
+            .doc(userAuth.uid)
             .get()
             .then((snapshot) async {
           if (snapshot.exists) {
-            await prefs.setString("id", user_auth.uid);
+            await prefs.setString("id", userAuth.uid);
             await prefs.setString("roles", snapshot.get('roles'));
 
             if (snapshot.get('roles') == "Tư vấn viên") {

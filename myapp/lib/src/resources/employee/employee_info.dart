@@ -11,7 +11,6 @@ import 'package:permission_handler/permission_handler.dart';
 import '../../blocs/auth_bloc.dart';
 import '../../models/EmployeeModel.dart';
 import '../dialog/loading_dialog.dart';
-import '../user/home_page.dart';
 import '../manager/home_page_manager.dart';
 import 'home_page_employee.dart';
 
@@ -22,13 +21,13 @@ class EmployeeInfo extends StatefulWidget {
   State<EmployeeInfo> createState() => _MyInfoState();
 }
 
-class _MyInfoState extends State<EmployeeInfo> with SingleTickerProviderStateMixin{
+class _MyInfoState extends State<EmployeeInfo>
+    with SingleTickerProviderStateMixin {
   AuthBloc authBloc = AuthBloc();
   var userAuth = FirebaseAuth.instance.currentUser!;
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _passController = TextEditingController();
   final TextEditingController _passNew1Controller = TextEditingController();
   final TextEditingController _passNew2Controller = TextEditingController();
@@ -71,8 +70,7 @@ class _MyInfoState extends State<EmployeeInfo> with SingleTickerProviderStateMix
     return true;
   }
 
-  bool isValidChangePass(
-      String pass, String passNew1, String passNew2) {
+  bool isValidChangePass(String pass, String passNew1, String passNew2) {
     if (pass.isEmpty) {
       _passControll.sink.addError("Please insert your password");
       return false;
@@ -97,7 +95,6 @@ class _MyInfoState extends State<EmployeeInfo> with SingleTickerProviderStateMix
     }
     _passnew2Controll.sink.add('');
 
-
     return true;
   }
 
@@ -114,28 +111,29 @@ class _MyInfoState extends State<EmployeeInfo> with SingleTickerProviderStateMix
   }
 
   FirebaseAuth auth = FirebaseAuth.instance;
-  var user_auth = FirebaseAuth.instance.currentUser!;
+  var userAu = FirebaseAuth.instance.currentUser!;
   EmployeeModel currentEmployee = EmployeeModel();
   String departmentName = "";
   getEmployee() async {
     await FirebaseFirestore.instance
-      .collection('employee')
-      .where('id', isEqualTo: user_auth.uid)
-      .get()
-      .then((value) => {
-        setState((){
-          currentEmployee.id = value.docs.first['id'];
-          currentEmployee.name = value.docs.first['name'];
-          currentEmployee.email = value.docs.first['email'];
-          currentEmployee.image = value.docs.first['image'];
-          currentEmployee.password = value.docs.first['password'];
-          currentEmployee.phone = value.docs.first['phone'];
-          currentEmployee.department = value.docs.first['department'];
-          currentEmployee.category = value.docs.first['category'].cast<String>();
-          currentEmployee.roles = value.docs.first['roles'];
-          currentEmployee.status = value.docs.first['status'];
-        })
-      });
+        .collection('employee')
+        .where('id', isEqualTo: userAu.uid)
+        .get()
+        .then((value) => {
+              setState(() {
+                currentEmployee.id = value.docs.first['id'];
+                currentEmployee.name = value.docs.first['name'];
+                currentEmployee.email = value.docs.first['email'];
+                currentEmployee.image = value.docs.first['image'];
+                currentEmployee.password = value.docs.first['password'];
+                currentEmployee.phone = value.docs.first['phone'];
+                currentEmployee.department = value.docs.first['department'];
+                currentEmployee.category =
+                    value.docs.first['category'].cast<String>();
+                currentEmployee.roles = value.docs.first['roles'];
+                currentEmployee.status = value.docs.first['status'];
+              })
+            });
 
     await getDepartmentName();
   }
@@ -167,7 +165,7 @@ class _MyInfoState extends State<EmployeeInfo> with SingleTickerProviderStateMix
     return FutureBuilder<QuerySnapshot>(
         future: FirebaseFirestore.instance
             .collection("employee")
-            .where("id", isEqualTo: user_auth.uid)
+            .where("id", isEqualTo: userAu.uid)
             .get(),
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
@@ -180,9 +178,8 @@ class _MyInfoState extends State<EmployeeInfo> with SingleTickerProviderStateMix
             //getDepartmentName(setState);
             return currentEmployee;
           }).toString();
-          // TODO: implement build
           return GestureDetector(
-            onTap: (){
+            onTap: () {
               WidgetsBinding.instance.focusManager.primaryFocus?.unfocus();
             },
             child: Scaffold(
@@ -201,7 +198,7 @@ class _MyInfoState extends State<EmployeeInfo> with SingleTickerProviderStateMix
                           context,
                           MaterialPageRoute(
                             builder: (BuildContext context) =>
-                            const HomePageLeader(),
+                                const HomePageLeader(),
                           ),
                         );
                       } else if (currentEmployee.roles == "Manager") {
@@ -209,7 +206,7 @@ class _MyInfoState extends State<EmployeeInfo> with SingleTickerProviderStateMix
                           context,
                           MaterialPageRoute(
                             builder: (BuildContext context) =>
-                            const HomePageManager(),
+                                const HomePageManager(),
                           ),
                         );
                       }
@@ -234,7 +231,7 @@ class _MyInfoState extends State<EmployeeInfo> with SingleTickerProviderStateMix
                               backgroundColor: Colors.tealAccent,
                               child: CircleAvatar(
                                 backgroundImage:
-                                NetworkImage(currentEmployee.image!),
+                                    NetworkImage(currentEmployee.image!),
                                 radius: 40,
                               ),
                             ),
@@ -260,7 +257,7 @@ class _MyInfoState extends State<EmployeeInfo> with SingleTickerProviderStateMix
                                     uploadImage();
                                   },
                                   padding:
-                                  const EdgeInsets.fromLTRB(0, 0, 0, 0),
+                                      const EdgeInsets.fromLTRB(0, 0, 0, 0),
                                   icon: const Icon(
                                     Icons.edit,
                                     color: Colors.white,
@@ -272,7 +269,6 @@ class _MyInfoState extends State<EmployeeInfo> with SingleTickerProviderStateMix
                         ),
                       ),
                     ),
-
                     Text(
                       currentEmployee.name!,
                       style: const TextStyle(
@@ -306,15 +302,18 @@ class _MyInfoState extends State<EmployeeInfo> with SingleTickerProviderStateMix
                         unselectedLabelColor: Colors.grey,
                         tabs: const [
                           Tab(
-                            child: Text('Info',
+                            child: Text(
+                              'Info',
                               style: TextStyle(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w700,
                               ),
-                              textAlign: TextAlign.center,),
+                              textAlign: TextAlign.center,
+                            ),
                           ),
                           Tab(
-                            child: Text('Password',
+                            child: Text(
+                              'Password',
                               style: TextStyle(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w700,
@@ -324,36 +323,135 @@ class _MyInfoState extends State<EmployeeInfo> with SingleTickerProviderStateMix
                         ],
                       ),
                     ),
-                    Expanded(child: TabBarView(
-                      controller: _tabController,
-                      children: [
-                        SingleChildScrollView(
-                          child: Container(
-                            margin: const EdgeInsets.fromLTRB(10, 10, 10, 10),
-                            child: Column(
-                              children: [
-                                Container(
-                                  margin: const EdgeInsets.fromLTRB(0, 20, 0, 10),
-                                  width: 400,
-                                  child: StreamBuilder(
-                                    stream: nameStream,
-                                    builder: (context, snapshot) => TextField(
-                                      controller: _nameController
-                                        ..text = currentEmployee.name!,
+                    Expanded(
+                      child: TabBarView(
+                        controller: _tabController,
+                        children: [
+                          SingleChildScrollView(
+                            child: Container(
+                              margin: const EdgeInsets.fromLTRB(10, 10, 10, 10),
+                              child: Column(
+                                children: [
+                                  Container(
+                                    margin:
+                                        const EdgeInsets.fromLTRB(0, 20, 0, 10),
+                                    width: 400,
+                                    child: StreamBuilder(
+                                      stream: nameStream,
+                                      builder: (context, snapshot) => TextField(
+                                        controller: _nameController
+                                          ..text = currentEmployee.name!,
+                                        onChanged: (text) => {},
+                                        decoration: InputDecoration(
+                                          labelText: "Your name",
+                                          errorText: snapshot.hasError
+                                              ? snapshot.error.toString()
+                                              : null,
+                                          enabledBorder: OutlineInputBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                              borderSide: const BorderSide(
+                                                color: Colors.blueAccent,
+                                                width: 1,
+                                              )),
+                                          focusedBorder: OutlineInputBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(10),
+                                            borderSide: const BorderSide(
+                                              color: Colors.blue,
+                                              width: 4,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  Container(
+                                      margin: const EdgeInsets.fromLTRB(
+                                          0, 10, 0, 10),
+                                      width: 400,
+                                      child: StreamBuilder(
+                                        stream: phoneStream,
+                                        builder: (context, snapshot) =>
+                                            TextField(
+                                          controller: _phoneController
+                                            ..text = currentEmployee.phone!,
+                                          onChanged: (text) => {},
+                                          decoration: InputDecoration(
+                                            labelText: "Your phone number",
+                                            errorText: snapshot.hasError
+                                                ? snapshot.error.toString()
+                                                : null,
+                                            enabledBorder: OutlineInputBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(10),
+                                                borderSide: const BorderSide(
+                                                  color: Colors.blueAccent,
+                                                  width: 1,
+                                                )),
+                                            focusedBorder: OutlineInputBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                              borderSide: const BorderSide(
+                                                color: Colors.blue,
+                                                width: 4,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      )),
+                                  Container(
+                                      margin: const EdgeInsets.fromLTRB(
+                                          0, 10, 0, 10),
+                                      width: 400,
+                                      child: StreamBuilder(
+                                        stream: emailStream,
+                                        builder: (context, snapshot) =>
+                                            TextField(
+                                          controller: _emailController
+                                            ..text = currentEmployee.email!,
+                                          onChanged: (text) => {},
+                                          decoration: InputDecoration(
+                                              labelText: "Your Email",
+                                              errorText: snapshot.hasError
+                                                  ? snapshot.error.toString()
+                                                  : null,
+                                              enabledBorder: OutlineInputBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(10),
+                                                  borderSide: const BorderSide(
+                                                    color: Colors.blueAccent,
+                                                    width: 1,
+                                                  )),
+                                              focusedBorder: OutlineInputBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(10),
+                                                  borderSide: const BorderSide(
+                                                      color: Colors.blue,
+                                                      width: 4))),
+                                        ),
+                                      )),
+                                  Container(
+                                    margin:
+                                        const EdgeInsets.fromLTRB(0, 10, 0, 15),
+                                    width: 400,
+                                    child: TextField(
+                                      readOnly: true,
+                                      controller: TextEditingController()
+                                        ..text = departmentName,
                                       onChanged: (text) => {},
                                       decoration: InputDecoration(
-                                        labelText: "Your name",
-                                        errorText: snapshot.hasError
-                                            ? snapshot.error.toString()
-                                            : null,
+                                        labelText: "Your department",
                                         enabledBorder: OutlineInputBorder(
-                                            borderRadius: BorderRadius.circular(10),
+                                            borderRadius:
+                                                BorderRadius.circular(10),
                                             borderSide: const BorderSide(
                                               color: Colors.blueAccent,
                                               width: 1,
                                             )),
                                         focusedBorder: OutlineInputBorder(
-                                          borderRadius: BorderRadius.circular(10),
+                                          borderRadius:
+                                              BorderRadius.circular(10),
                                           borderSide: const BorderSide(
                                             color: Colors.blue,
                                             width: 4,
@@ -362,304 +460,204 @@ class _MyInfoState extends State<EmployeeInfo> with SingleTickerProviderStateMix
                                       ),
                                     ),
                                   ),
-                                ),
-                                Container(
-                                    margin: const EdgeInsets.fromLTRB(0, 10, 0, 10),
+                                  Container(
+                                    padding: const EdgeInsets.all(10),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceAround,
+                                      children: <Widget>[
+                                        Expanded(
+                                          child: ElevatedButton.icon(
+                                            onPressed: () {
+                                              try {
+                                                if (_onSaveClicked()) {
+                                                  showSuccessMessage(
+                                                      'Update info success');
+                                                } else {
+                                                  showErrorMessage(
+                                                      'Update info failed');
+                                                }
+                                              } catch (e) {
+                                                //
+                                              }
+                                            },
+                                            label: const Text(
+                                              'Save',
+                                              style: TextStyle(
+                                                  fontSize: 16,
+                                                  color: Colors.white),
+                                            ),
+                                            icon:
+                                                const Icon(Icons.save_outlined),
+                                            style: ElevatedButton.styleFrom(
+                                                backgroundColor: Colors.blueAccent),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                          SingleChildScrollView(
+                            child: Container(
+                              margin: const EdgeInsets.fromLTRB(10, 10, 10, 10),
+                              child: Column(
+                                children: [
+                                  Container(
+                                    margin: const EdgeInsets.fromLTRB(
+                                        15, 10, 15, 15),
                                     width: 400,
                                     child: StreamBuilder(
-                                      stream: phoneStream,
+                                      stream: passStream,
                                       builder: (context, snapshot) => TextField(
-                                        controller: _phoneController
-                                          ..text = currentEmployee.phone!,
-                                        onChanged: (text) => {},
                                         decoration: InputDecoration(
-                                          labelText: "Your phone number",
+                                          labelText: "Password",
                                           errorText: snapshot.hasError
                                               ? snapshot.error.toString()
                                               : null,
+                                          hintText:
+                                              'Please insert your password',
                                           enabledBorder: OutlineInputBorder(
-                                              borderRadius: BorderRadius.circular(10),
-                                              borderSide: const BorderSide(
-                                                color: Colors.blueAccent,
-                                                width: 1,
-                                              )),
+                                            borderRadius:
+                                                BorderRadius.circular(10),
+                                            borderSide: const BorderSide(
+                                              color: Colors.blueAccent,
+                                              width: 1,
+                                            ),
+                                          ),
                                           focusedBorder: OutlineInputBorder(
-                                            borderRadius: BorderRadius.circular(10),
+                                            borderRadius:
+                                                BorderRadius.circular(10),
                                             borderSide: const BorderSide(
                                               color: Colors.blue,
                                               width: 4,
                                             ),
                                           ),
                                         ),
+                                        controller: _passController,
                                       ),
-                                    )),
-                                Container(
-                                    margin: const EdgeInsets.fromLTRB(0, 10, 0, 10),
+                                    ),
+                                  ),
+                                  Container(
+                                    margin: const EdgeInsets.fromLTRB(
+                                        15, 10, 15, 15),
                                     width: 400,
                                     child: StreamBuilder(
-                                      stream: emailStream,
+                                      stream: passnew1Stream,
                                       builder: (context, snapshot) => TextField(
-                                        controller: _emailController
-                                          ..text = currentEmployee.email!,
-                                        onChanged: (text) => {},
                                         decoration: InputDecoration(
-                                            labelText: "Your Email",
+                                            labelText: "New password",
                                             errorText: snapshot.hasError
                                                 ? snapshot.error.toString()
                                                 : null,
+                                            hintText:
+                                                'Please insert new password',
                                             enabledBorder: OutlineInputBorder(
-                                                borderRadius: BorderRadius.circular(10),
+                                                borderRadius:
+                                                    BorderRadius.circular(10),
                                                 borderSide: const BorderSide(
                                                   color: Colors.blueAccent,
                                                   width: 1,
                                                 )),
                                             focusedBorder: OutlineInputBorder(
-                                                borderRadius: BorderRadius.circular(10),
+                                                borderRadius:
+                                                    BorderRadius.circular(10),
                                                 borderSide: const BorderSide(
-                                                    color: Colors.blue, width: 4))),
-                                      ),
-                                    )),
-                                Container(
-                                  margin: const EdgeInsets.fromLTRB(0, 10, 0, 15),
-                                  width: 400,
-                                  child: TextField(
-                                    readOnly: true,
-                                    controller: TextEditingController()
-                                      ..text = departmentName,
-                                    onChanged: (text) => {},
-                                    decoration: InputDecoration(
-                                      labelText: "Your department",
-                                      enabledBorder: OutlineInputBorder(
-                                          borderRadius: BorderRadius.circular(10),
-                                          borderSide: const BorderSide(
-                                            color: Colors.blueAccent,
-                                            width: 1,
-                                          )),
-                                      focusedBorder: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(10),
-                                        borderSide: const BorderSide(
-                                          color: Colors.blue,
-                                          width: 4,
-                                        ),
+                                                    color: Colors.blue,
+                                                    width: 4))),
+                                        controller: _passNew1Controller,
                                       ),
                                     ),
                                   ),
-                                ),
-                                Container(
-                                  padding: const EdgeInsets.all(10),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                    children: <Widget>[
-                                      Expanded(
-                                        child: ElevatedButton.icon(
-                                          onPressed: () {
-                                            try{
-                                              if(_onSaveClicked()){
-                                                showSuccessMessage('Update info success');
-                                              }else{
-                                                showErrorMessage('Update info failed');
-                                              }
-                                            }catch(e){
-                                              //
-                                            }
-                                          },
-                                          label: const Text(
-                                            'Save',
-                                            style: TextStyle(
-                                                fontSize: 16, color: Colors.white),
-                                          ),
-                                          icon: const Icon(Icons.save_outlined),
-                                          style: ElevatedButton.styleFrom(
-                                              primary: Colors.blueAccent),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                        SingleChildScrollView(
-                          child: Container(
-                            margin: const EdgeInsets.fromLTRB(10, 10, 10, 10),
-                            child: Column(
-                              children: [
-                                Container(
-                                  margin: const EdgeInsets.fromLTRB(
-                                      15, 10, 15, 15),
-                                  width: 400,
-                                  child: StreamBuilder(
-                                    stream: passStream,
-                                    builder: (context, snapshot) =>
-                                        TextField(
-                                          decoration: InputDecoration(
-                                            labelText: "Password",
-                                            errorText: snapshot.hasError? snapshot.error.toString() : null,
-                                            hintText:
-                                            'Please insert your password',
-                                            enabledBorder:
-                                            OutlineInputBorder(
+                                  Container(
+                                    margin: const EdgeInsets.fromLTRB(
+                                        15, 10, 15, 15),
+                                    width: 400,
+                                    child: StreamBuilder(
+                                      stream: passnew2Stream,
+                                      builder: (context, snapshot) => TextField(
+                                        decoration: InputDecoration(
+                                          labelText: "Confirm password",
+                                          hintText: 'Confirm your password',
+                                          errorText: snapshot.hasError
+                                              ? snapshot.error.toString()
+                                              : null,
+                                          enabledBorder: OutlineInputBorder(
                                               borderRadius:
-                                              BorderRadius.circular(
-                                                  10),
-                                              borderSide:
-                                              const BorderSide(
-                                                color:
-                                                Colors.blueAccent,
+                                                  BorderRadius.circular(10),
+                                              borderSide: const BorderSide(
+                                                color: Colors.blueAccent,
                                                 width: 1,
-                                              ),
-                                            ),
-                                            focusedBorder:
-                                            OutlineInputBorder(
-                                              borderRadius:
-                                              BorderRadius.circular(
-                                                  10),
-                                              borderSide:
-                                              const BorderSide(
-                                                color: Colors.blue,
-                                                width: 4,
-                                              ),
+                                              )),
+                                          focusedBorder: OutlineInputBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(10),
+                                            borderSide: const BorderSide(
+                                              color: Colors.blue,
+                                              width: 4,
                                             ),
                                           ),
-                                          controller: _passController,
                                         ),
-                                  ),
-                                ),
-                                Container(
-                                  margin: const EdgeInsets.fromLTRB(
-                                      15, 10, 15, 15),
-                                  width: 400,
-                                  child: StreamBuilder(
-                                    stream: passnew1Stream,
-                                    builder: (context, snapshot) =>
-                                        TextField(
-                                          decoration: InputDecoration(
-                                              labelText: "New password",
-                                              errorText: snapshot.hasError? snapshot.error.toString() : null,
-                                              hintText:
-                                              'Please insert new password',
-                                              enabledBorder:
-                                              OutlineInputBorder(
-                                                  borderRadius:
-                                                  BorderRadius
-                                                      .circular(
-                                                      10),
-                                                  borderSide:
-                                                  const BorderSide(
-                                                    color: Colors
-                                                        .blueAccent,
-                                                    width: 1,
-                                                  )),
-                                              focusedBorder: OutlineInputBorder(
-                                                  borderRadius:
-                                                  BorderRadius
-                                                      .circular(10),
-                                                  borderSide:
-                                                  const BorderSide(
-                                                      color: Colors
-                                                          .blue,
-                                                      width: 4))),
-                                          controller: _passNew1Controller,
-                                        ),
-                                  ),
-                                ),
-                                Container(
-                                  margin: const EdgeInsets.fromLTRB(
-                                      15, 10, 15, 15),
-                                  width: 400,
-                                  child: StreamBuilder(
-                                    stream: passnew2Stream,
-                                    builder: (context, snapshot) =>
-                                        TextField(
-                                          decoration: InputDecoration(
-                                            labelText:
-                                            "Confirm password",
-                                            hintText:
-                                            'Confirm your password',
-                                            errorText: snapshot.hasError? snapshot.error.toString() : null,
-                                            enabledBorder:
-                                            OutlineInputBorder(
-                                                borderRadius:
-                                                BorderRadius
-                                                    .circular(10),
-                                                borderSide:
-                                                const BorderSide(
-                                                  color: Colors
-                                                      .blueAccent,
-                                                  width: 1,
-                                                )),
-                                            focusedBorder:
-                                            OutlineInputBorder(
-                                              borderRadius:
-                                              BorderRadius.circular(
-                                                  10),
-                                              borderSide:
-                                              const BorderSide(
-                                                color: Colors.blue,
-                                                width: 4,
-                                              ),
-                                            ),
-                                          ),
-                                          controller: _passNew2Controller,
-                                        ),
-                                  ),
-                                ),
-                                Container(
-                                  padding: const EdgeInsets.all(10),
-                                  child: Row(
-                                    mainAxisAlignment:
-                                    MainAxisAlignment.spaceAround,
-                                    children: <Widget>[
-                                      Expanded(
-                                        child: ElevatedButton.icon(
-                                          onPressed: () {
-                                            try{
-                                              if(_onChangePassword()){
-                                                setState(() {
-                                                  _passController.text = '';
-                                                  _passNew1Controller.text = '';
-                                                  _passNew2Controller.text = '';
-                                                });
-                                              }else{
-                                                setState(() {
-                                                  _passController.text = '';
-                                                  _passNew1Controller.text = '';
-                                                  _passNew2Controller.text = '';
-                                                });
-                                                showErrorMessage('Change password failed');
-                                              }
-                                            }catch(e){
-                                              //
-                                            }
-                                          },
-                                          label: const Text(
-                                            'Save',
-                                            style: TextStyle(
-                                                fontSize: 16,
-                                                color: Colors.white),
-                                          ),
-                                          icon: const Icon(Icons.check),
-                                          style: ElevatedButton
-                                              .styleFrom(
-                                              primary: Colors
-                                                  .blueAccent),
-                                        ),
+                                        controller: _passNew2Controller,
                                       ),
-                                    ],
+                                    ),
                                   ),
-                                ),
-
-                              ],
+                                  Container(
+                                    padding: const EdgeInsets.all(10),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceAround,
+                                      children: <Widget>[
+                                        Expanded(
+                                          child: ElevatedButton.icon(
+                                            onPressed: () {
+                                              try {
+                                                if (_onChangePassword()) {
+                                                  setState(() {
+                                                    _passController.text = '';
+                                                    _passNew1Controller.text =
+                                                        '';
+                                                    _passNew2Controller.text =
+                                                        '';
+                                                  });
+                                                } else {
+                                                  setState(() {
+                                                    _passController.text = '';
+                                                    _passNew1Controller.text =
+                                                        '';
+                                                    _passNew2Controller.text =
+                                                        '';
+                                                  });
+                                                  showErrorMessage(
+                                                      'Change password failed');
+                                                }
+                                              } catch (e) {
+                                                //
+                                              }
+                                            },
+                                            label: const Text(
+                                              'Save',
+                                              style: TextStyle(
+                                                  fontSize: 16,
+                                                  color: Colors.white),
+                                            ),
+                                            icon: const Icon(Icons.check),
+                                            style: ElevatedButton.styleFrom(
+                                                backgroundColor: Colors.blueAccent),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
-
                           ),
-                        )
-
-                      ],
-                    )),
-
-
+                        ],
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -669,17 +667,17 @@ class _MyInfoState extends State<EmployeeInfo> with SingleTickerProviderStateMix
   }
 
   _onSaveClicked() {
-    var isvalid = isValid(
+    var isValidData = isValid(
         _nameController.text, _emailController.text, _phoneController.text);
 
-    if (isvalid) {
+    if (isValidData) {
       LoadingDialog.showLoadingDialog(context, "Please Wait...");
       changeInfo(
           _emailController.text, _nameController.text, _phoneController.text,
           () {
         LoadingDialog.hideLoadingDialog(context);
-        Navigator.push(
-            context, MaterialPageRoute(builder: (context) => const HomePageLeader()));
+        Navigator.push(context,
+            MaterialPageRoute(builder: (context) => const HomePageLeader()));
         showSuccessMessage('Update info success');
       });
     }
@@ -687,36 +685,33 @@ class _MyInfoState extends State<EmployeeInfo> with SingleTickerProviderStateMix
 
   _onChangePassword() {
     var isvalid = isValidChangePass(
-        _passController.text,
-        _passNew1Controller.text,
-        _passNew2Controller.text,
-        );
+      _passController.text,
+      _passNew1Controller.text,
+      _passNew2Controller.text,
+    );
 
     if (isvalid) {
       LoadingDialog.showLoadingDialog(context, "Please Wait...");
-      user_auth.updatePassword(_passNew2Controller.text);
+      userAu.updatePassword(_passNew2Controller.text);
       changePassword(_passNew2Controller.text, () {
         LoadingDialog.hideLoadingDialog(context);
         if (currentEmployee.roles == "Tư vấn viên") {
           Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (BuildContext context) =>
-                  const HomePageEmployee()));
+                  builder: (BuildContext context) => const HomePageEmployee()));
         } else if (currentEmployee.roles == "Trưởng nhóm") {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (BuildContext context) =>
-              const HomePageLeader(),
+              builder: (BuildContext context) => const HomePageLeader(),
             ),
           );
         } else if (currentEmployee.roles == "Manager") {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (BuildContext context) =>
-              const HomePageManager(),
+              builder: (BuildContext context) => const HomePageManager(),
             ),
           );
         }
@@ -728,38 +723,34 @@ class _MyInfoState extends State<EmployeeInfo> with SingleTickerProviderStateMix
   void changePassword(String pass, Function onSuccess) async {
     QuerySnapshot snapshot = await FirebaseFirestore.instance
         .collection('employee')
-        .where('id', isEqualTo: user_auth.uid)
+        .where('id', isEqualTo: userAu.uid)
         .get();
     String id = snapshot.docs.first.id;
     var ref = FirebaseFirestore.instance.collection('employee');
 
     ref.doc(id).update({'password': pass}).then((value) {
       onSuccess();
-    }).catchError((err) {
-    });
+    }).catchError((err) {});
   }
 
   void changeInfo(
       String email, String name, String phone, Function onSuccess) async {
     QuerySnapshot snapshot = await FirebaseFirestore.instance
         .collection('employee')
-        .where('id', isEqualTo: user_auth.uid)
+        .where('id', isEqualTo: userAu.uid)
         .get();
     String id = snapshot.docs.first.id;
-    var user = {"email": email, "name": name, "phone": phone};
     var ref = FirebaseFirestore.instance.collection('employee');
     ref
         .doc(id)
         .update({'email': email, 'name': name, 'phone': phone}).then((value) {
       onSuccess();
-    }).catchError((err) {
-      //TODO
-    });
+    }).catchError((err) {});
   }
 
   uploadImage() async {
-    final _imagePicker = ImagePicker();
-    String image_url;
+    final imagePicker = ImagePicker();
+    String imageUrl;
     //PickedFile image;
     //Check Permissions
     await Permission.photos.request();
@@ -768,27 +759,26 @@ class _MyInfoState extends State<EmployeeInfo> with SingleTickerProviderStateMix
 
     if (permissionStatus.isGranted) {
       //Select Image
-      var image = await _imagePicker.pickImage(source: ImageSource.gallery);
+      var image = await imagePicker.pickImage(source: ImageSource.gallery);
 
       if (image != null) {
         var file = File(image.path);
         FirebaseStorage storage = FirebaseStorage.instance;
-        Reference ref = storage.ref().child("avatar/" + image.name);
+        Reference ref = storage.ref().child("avatar/${image.name}");
         UploadTask uploadTask = ref.putFile(file);
         await uploadTask.whenComplete(() async {
           var url = await ref.getDownloadURL();
-          image_url = url.toString();
-          updateAvatar(userAuth.uid, image_url, () {
+          imageUrl = url.toString();
+          updateAvatar(userAuth.uid, imageUrl, () {
             LoadingDialog.hideLoadingDialog(context);
             Navigator.push(context,
                 MaterialPageRoute(builder: (context) => const EmployeeInfo()));
           });
         }).catchError((onError) {
+          return onError;
         });
-      } else {
-      }
-    } else {
-    }
+      } else {}
+    } else {}
   }
 
   updateAvatar(id, imageUrl, Function onSuccess) async {
@@ -797,21 +787,28 @@ class _MyInfoState extends State<EmployeeInfo> with SingleTickerProviderStateMix
     ref.doc(id).update({'image': imageUrl}).then((value) {
       onSuccess();
     }).catchError((err) {
-      //TODO
+      return err;
     });
   }
 
   void showSuccessMessage(String message) {
-    final snackBar = SnackBar(content: Text(message,
-      style: const TextStyle(color: Colors.white),
-    ), backgroundColor: Colors.blueAccent,);
+    final snackBar = SnackBar(
+      content: Text(
+        message,
+        style: const TextStyle(color: Colors.white),
+      ),
+      backgroundColor: Colors.blueAccent,
+    );
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 
   void showErrorMessage(String message) {
-    final snackBar = SnackBar(content: Text(message,
-      style: const TextStyle(color: Colors.white),
-    ),backgroundColor: Colors.red,
+    final snackBar = SnackBar(
+      content: Text(
+        message,
+        style: const TextStyle(color: Colors.white),
+      ),
+      backgroundColor: Colors.red,
     );
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }

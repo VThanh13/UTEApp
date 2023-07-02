@@ -1,19 +1,21 @@
+
 import 'package:flutter/material.dart';
 
 class InputTextWidget extends StatelessWidget {
   final String labelText;
   final IconData icon;
   final bool obscureText;
+  // ignore: prefer_typing_uninitialized_variables
   final keyboardType;
+  // ignore: prefer_typing_uninitialized_variables
   final controller;
 
   const InputTextWidget(
-      {required this.labelText,
+      {super.key, required this.labelText,
         required this.icon,
         required this.obscureText,
         required this.keyboardType,
-        this.controller})
-      : super();
+        this.controller});
 
 
   @override
@@ -50,6 +52,7 @@ class InputTextWidget extends StatelessWidget {
                 if (val!.isEmpty) {
                   return 'Please fill out this field!';
                 }
+                return null;
               }),
         ),
       ),

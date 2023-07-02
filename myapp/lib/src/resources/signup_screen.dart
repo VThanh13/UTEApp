@@ -3,7 +3,6 @@ import '../blocs/auth_bloc.dart';
 import 'dialog/loading_dialog.dart';
 import 'dialog/msg_dialog.dart';
 import 'user/home_page.dart';
-import 'login_screen.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -348,7 +347,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           }
                         },
                         style: ElevatedButton.styleFrom(
-                          primary: Colors.white,
+                          backgroundColor: Colors.white,
                           elevation: 0.0,
                           minimumSize: Size(screenWidth, 150),
                           padding: const EdgeInsets.symmetric(horizontal: 30),

@@ -108,6 +108,7 @@ class _ManageDepartmentState extends State<ManageDepartment> {
   _buildDepartment(BuildContext context, DepartmentModel department) {
     return GestureDetector(
       onTap: () {
+        // ignore: void_checks
         return _modalBottomSheetEditDepartment(department);
       },
       child: Card(
@@ -377,6 +378,7 @@ class _ManageDepartmentState extends State<ManageDepartment> {
                                   padding: EdgeInsets.fromLTRB(0, 10, 0, 10)),
                               GestureDetector(
                                 onTap: () {
+                                  // ignore: void_checks
                                   return _modalBottomSheetChangeLeader(
                                       leader[department.id]);
                                 },
@@ -621,7 +623,7 @@ class _ManageDepartmentState extends State<ManageDepartment> {
                     context,
                     MaterialPageRoute(
                         builder: (BuildContext context) =>
-                            HomePageManager()));
+                            const HomePageManager()));
               }),
           title: const Text("Quản lý các khoa"),
           backgroundColor: Colors.pinkAccent,
@@ -661,6 +663,7 @@ class _ManageDepartmentState extends State<ManageDepartment> {
         ),
         floatingActionButton: FloatingActionButton(
             onPressed: () {
+              // ignore: void_checks
               return _modalBottomSheetAddDepartment();
             },
             backgroundColor: Colors.pink,

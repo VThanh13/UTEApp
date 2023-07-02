@@ -3,11 +3,13 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
+// ignore: depend_on_referenced_packages
 import 'package:intl/intl.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:myapp/icons/app_icons_icons.dart';
+import 'package:myapp/src/controller/internet_check.dart';
 import 'package:myapp/src/resources/about_page/my_info.dart';
 import 'package:myapp/src/resources/about_page/about_university.dart';
 import 'package:myapp/src/resources/login_screen.dart';
@@ -66,7 +68,7 @@ class Employee {
 class _HomePageState extends State<HomePage> {
   FirebaseAuth auth = FirebaseAuth.instance;
   var currentUser = FirebaseAuth.instance.currentUser!;
-  UserModel current_user = UserModel();
+  UserModel userModel = UserModel();
   bool isLoading = true;
   Future<void> reLoad() async {
     setState(() {
@@ -77,6 +79,8 @@ class _HomePageState extends State<HomePage> {
     isLoading = false;
   }
 
+  InternetCheck internetCheck = InternetCheck();
+
   getCurrentUser() async {
     await FirebaseFirestore.instance
         .collection('user')
@@ -84,28 +88,28 @@ class _HomePageState extends State<HomePage> {
         .get()
         .then((value) => {
               setState(() {
-                current_user.id = value.docs.first['userId'];
-                current_user.name = value.docs.first['name'];
-                current_user.email = value.docs.first['email'];
-                current_user.image = value.docs.first['image'];
-                current_user.password = value.docs.first['password'];
-                current_user.phone = value.docs.first['phone'];
-                current_user.group = value.docs.first['group'];
-                current_user.status = value.docs.first['status'];
+                userModel.id = value.docs.first['userId'];
+                userModel.name = value.docs.first['name'];
+                userModel.email = value.docs.first['email'];
+                userModel.image = value.docs.first['image'];
+                userModel.password = value.docs.first['password'];
+                userModel.phone = value.docs.first['phone'];
+                userModel.group = value.docs.first['group'];
+                userModel.status = value.docs.first['status'];
               }),
             });
   }
 
   cacheCurrentUser() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString("id", current_user.id!);
-    await prefs.setString("name", current_user.name!);
-    await prefs.setString("email", current_user.email!);
-    await prefs.setString("image", current_user.image!);
-    await prefs.setString("password", current_user.password!);
-    await prefs.setString("phone", current_user.phone!);
-    await prefs.setString("group", current_user.group!);
-    await prefs.setString("status", current_user.status!);
+    await prefs.setString("id", userModel.id!);
+    await prefs.setString("name", userModel.name!);
+    await prefs.setString("email", userModel.email!);
+    await prefs.setString("image", userModel.image!);
+    await prefs.setString("password", userModel.password!);
+    await prefs.setString("phone", userModel.phone!);
+    await prefs.setString("group", userModel.group!);
+    await prefs.setString("status", userModel.status!);
   }
 
   var departmentName = {};
@@ -120,14 +124,14 @@ class _HomePageState extends State<HomePage> {
       if (!mounted) return;
       LoadingDialog.showLoadingDialog(context, "Please Wait...");
       createChatRoom(
-          current_user.id!,
+          userModel.id!,
           "Post ${post.content}",
           timeString,
           "Chưa trả lời",
           _informationController.text,
           post.employee.departmentId,
           post.employee.category[0],
-          current_user.group!,
+          userModel.group!,
           "private",
           () {});
     }
@@ -144,7 +148,7 @@ class _HomePageState extends State<HomePage> {
       String category,
       String group,
       String mode,
-      Function onSucces) {
+      Function onSuccess) {
     var ref = FirebaseFirestore.instance.collection('chat_room');
     String id = ref.doc().id;
     ref.doc(id).set({
@@ -159,8 +163,8 @@ class _HomePageState extends State<HomePage> {
       'category': category,
       'mode': mode,
     }).then((value) {
-      onSucces();
-      sendQuestion(time, pdf_url, _questionController.text, id, () {
+      onSuccess();
+      sendQuestion(time, pdfUrl, _questionController.text, id, () {
         LoadingDialog.hideLoadingDialog(context);
         Navigator.push(context,
             MaterialPageRoute(builder: (context) => const MessengerPage()));
@@ -169,7 +173,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   void sendQuestion(String time, String file, String content, String roomId,
-      Function onSucces) {
+      Function onSuccess) {
     var ref = FirebaseFirestore.instance.collection('questions');
     String id = ref.doc().id;
     ref.doc(id).set({
@@ -179,7 +183,7 @@ class _HomePageState extends State<HomePage> {
       'content': content,
       'room_id': roomId,
     }).then((value) {
-      onSucces();
+      onSuccess();
     }).catchError((err) {});
   }
 
@@ -201,25 +205,26 @@ class _HomePageState extends State<HomePage> {
   List<Post> listPost = [];
   getListPost() async {
     await getDepartmentName();
-    List<NewfeedModel> listNewfeed = [];
+    List<NewfeedModel> listNewFeed = [];
     await FirebaseFirestore.instance
         .collection('newfeed')
         .get()
         .then((value) => {
               setState(() {
                 for (var element in value.docs) {
-                  NewfeedModel newfeed = NewfeedModel();
-                  newfeed.id = element['id'];
-                  newfeed.content = element['content'];
-                  newfeed.time = element['time'];
-                  newfeed.file = element['file'];
-                  newfeed.employeeId = element['employeeId'];
+                  NewfeedModel newFeed = NewfeedModel();
+                  newFeed.id = element['id'];
+                  newFeed.content = element['content'];
+                  newFeed.time = element['time'];
+                  newFeed.file = element['file'];
+                  newFeed.employeeId = element['employeeId'];
 
-                  listNewfeed.add(newfeed);
+                  listNewFeed.add(newFeed);
                 }
               })
             });
-    listNewfeed.forEach((element) async {
+    // ignore: avoid_function_literals_in_foreach_calls
+    listNewFeed.forEach((element) async {
       Employee employee = Employee("", "", "", "", "", "", "", "", [], "", "");
       Post post = Post(element.id!, employee, element.content!, element.time!,
           element.file!);
@@ -259,8 +264,6 @@ class _HomePageState extends State<HomePage> {
   }
 
   final ScrollController _scrollController = ScrollController();
-  int _numItems = 10;
-  final bool _isLoadingMore = false;
   String nameEmployee = '';
   String idEmployee = '';
   String departmentEmployee = '';
@@ -476,7 +479,7 @@ class _HomePageState extends State<HomePage> {
                             stream: informationControl,
                             builder: (context, snapshot) => TextField(
                               controller: _informationController
-                                ..text = current_user.email!,
+                                ..text = userModel.email!,
                               decoration: InputDecoration(
                                   labelText: "Contact method",
                                   hintText: 'Insert your Email/Phone',
@@ -568,25 +571,55 @@ class _HomePageState extends State<HomePage> {
                               Expanded(
                                 child: ElevatedButton.icon(
                                   onPressed: () {
-                                    //_onSendQuestionClicked(post);
-                                    try {
-                                      if (_onSendQuestionClicked(post)) {
-                                        setState(() {
-                                          _informationController.text = '';
-                                          _questionController.text = '';
-                                        });
-                                      } else {
-                                        setState(() {
-                                          _informationController.text = '';
-                                          _questionController.text = '';
-                                        });
-                                        Navigator.pop(context);
-                                        showErrorMessage(
-                                            'Send question failed');
+                                    if(internetCheck.isInternetConnect == true){
+                                      try {
+                                        if (_onSendQuestionClicked(post)) {
+                                          setState(() {
+                                            _informationController.text = '';
+                                            _questionController.text = '';
+                                          });
+                                        } else {
+                                          setState(() {
+                                            _informationController.text = '';
+                                            _questionController.text = '';
+                                          });
+                                          Navigator.pop(context);
+                                          showErrorMessage(
+                                              'Send question failed');
+                                        }
+                                      } catch (e) {
+                                        //
                                       }
-                                    } catch (e) {
-                                      //
                                     }
+                                    else{
+                                      showDialog(
+                                          context: context,
+                                          builder: (context) {
+                                            return CupertinoAlertDialog(
+                                              title: const Column(
+                                                children: [
+                                                  Icon(
+                                                    Icons.warning_amber,
+                                                    size: 30,
+                                                    color: Colors.redAccent,
+                                                  ),
+                                                  Text('No internet'),
+                                                ],
+                                              ),
+                                              content: const Text(
+                                                  'Please check your internet connection!'),
+                                              actions: [
+                                                TextButton(
+                                                  onPressed: () {
+                                                    Navigator.pop(context);
+                                                  },
+                                                  child: const Text('OK'),
+                                                ),
+                                              ],
+                                            );
+                                          });
+                                    }
+
                                   },
                                   label: const Text(
                                     'Send',
@@ -595,7 +628,7 @@ class _HomePageState extends State<HomePage> {
                                   ),
                                   icon: const Icon(Icons.mail_outline_rounded),
                                   style: ElevatedButton.styleFrom(
-                                      primary: Colors.blueAccent),
+                                      backgroundColor: Colors.blueAccent),
                                 ),
                               ),
                               const Padding(padding: EdgeInsets.all(10)),
@@ -611,7 +644,7 @@ class _HomePageState extends State<HomePage> {
                                 ),
                                 icon: const Icon(Icons.cancel_presentation),
                                 style: ElevatedButton.styleFrom(
-                                    primary: Colors.blueAccent),
+                                    backgroundColor: Colors.blueAccent),
                               )),
                               const Padding(
                                   padding: EdgeInsets.fromLTRB(0, 10, 0, 30)),
@@ -638,14 +671,14 @@ class _HomePageState extends State<HomePage> {
       if (!mounted) return;
       LoadingDialog.showLoadingDialog(context, "Please Wait...");
       createChatRoom(
-          current_user.id!,
+          userModel.id!,
           "Send $nameEmployee",
           timeString,
           "Chưa trả lời",
           _informationController.text,
           departmentEmployee,
           idEmployee,
-          current_user.group!,
+          userModel.group!,
           "to employee",
           () {});
     }
@@ -687,7 +720,7 @@ class _HomePageState extends State<HomePage> {
                         stream: informationControl,
                         builder: (context, snapshot) => TextField(
                           controller: _informationController
-                            ..text = current_user.email!,
+                            ..text = userModel.email!,
                           decoration: InputDecoration(
                             labelText: "Contact method",
                             hintText: 'Insert your Email/Phone',
@@ -785,8 +818,39 @@ class _HomePageState extends State<HomePage> {
                           Expanded(
                             child: ElevatedButton.icon(
                               onPressed: () {
-                                _onSendMessageClicked();
-                                Navigator.pop(context);
+                                if(internetCheck.isInternetConnect == true){
+                                  _onSendMessageClicked();
+                                  Navigator.pop(context);
+                                }
+                                else{
+                                  showDialog(
+                                      context: context,
+                                      builder: (context) {
+                                        return CupertinoAlertDialog(
+                                          title: const Column(
+                                            children: [
+                                              Icon(
+                                                Icons.warning_amber,
+                                                size: 30,
+                                                color: Colors.redAccent,
+                                              ),
+                                              Text('No internet'),
+                                            ],
+                                          ),
+                                          content: const Text(
+                                              'Please check your internet connection!'),
+                                          actions: [
+                                            TextButton(
+                                              onPressed: () {
+                                                Navigator.pop(context);
+                                              },
+                                              child: const Text('OK'),
+                                            ),
+                                          ],
+                                        );
+                                      });
+                                }
+
                               },
                               label: const Text(
                                 'Send',
@@ -795,7 +859,7 @@ class _HomePageState extends State<HomePage> {
                               ),
                               icon: const Icon(Icons.mail_outline_rounded),
                               style: ElevatedButton.styleFrom(
-                                  primary: Colors.blueAccent),
+                                  backgroundColor: Colors.blueAccent),
                             ),
                           ),
                           const Padding(
@@ -811,7 +875,7 @@ class _HomePageState extends State<HomePage> {
                             ),
                             icon: const Icon(Icons.cancel_presentation),
                             style: ElevatedButton.styleFrom(
-                                primary: Colors.blueAccent),
+                                backgroundColor: Colors.blueAccent),
                           )),
                           const Padding(
                               padding: EdgeInsets.fromLTRB(0, 10, 0, 30)),
@@ -827,7 +891,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   late PlatformFile file;
-  bool had_file = false;
+  bool hadFile = false;
   importPdf() async {
     final result = await FilePicker.platform.pickFiles(
         type: FileType.custom,
@@ -836,20 +900,21 @@ class _HomePageState extends State<HomePage> {
     if (result == null) return;
     setState(() {
       file = result.files.first;
-      had_file = true;
+      hadFile = true;
     });
   }
 
-  String pdf_url = "file.pdf";
+  String pdfUrl = "file.pdf";
   uploadPdf() async {
-    if (had_file) {
+    if (hadFile) {
       File fileForFirebase = File(file.path!);
       FirebaseStorage storage = FirebaseStorage.instance;
       Reference ref = storage.ref().child("pdf/${file.name}");
       UploadTask uploadTask = ref.putFile(fileForFirebase);
       await uploadTask.whenComplete(() async {
         var url = await ref.getDownloadURL();
-        pdf_url = url.toString();
+        pdfUrl = url.toString();
+        // ignore: body_might_complete_normally_catch_error
       }).catchError((onError) {
         //
       });
@@ -862,9 +927,9 @@ class _HomePageState extends State<HomePage> {
         .get()
         .then((value) => {
               setState(() {
-                value.docs.forEach((element) {
+                for (var element in value.docs) {
                   departmentName[element.id] = element["name"];
-                });
+                }
               })
             });
   }
@@ -890,7 +955,6 @@ class _HomePageState extends State<HomePage> {
     super.initState();
     getCurrentUser();
     reLoad();
-    _numItems = 10;
     _scrollController.addListener(_scrollListener);
   }
 
@@ -898,9 +962,7 @@ class _HomePageState extends State<HomePage> {
     if (_scrollController.offset >=
             _scrollController.position.maxScrollExtent &&
         !_scrollController.position.outOfRange) {
-      setState(() {
-        _numItems += 10;
-      });
+      setState(() {});
     }
   }
 
@@ -953,11 +1015,40 @@ class _HomePageState extends State<HomePage> {
               actions: <Widget>[
                 IconButton(
                   onPressed: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (BuildContext context) =>
-                                const MessengerPage()));
+                    if (internetCheck.isInternetConnect == true) {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (BuildContext context) =>
+                                  const MessengerPage()));
+                    } else {
+                      showDialog(
+                          context: context,
+                          builder: (context) {
+                            return CupertinoAlertDialog(
+                              title: const Column(
+                                children: [
+                                  Icon(
+                                    Icons.warning_amber,
+                                    size: 30,
+                                    color: Colors.redAccent,
+                                  ),
+                                  Text('No internet'),
+                                ],
+                              ),
+                              content: const Text(
+                                  'Please check your internet connection!'),
+                              actions: [
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                  },
+                                  child: const Text('OK'),
+                                ),
+                              ],
+                            );
+                          });
+                    }
                   },
                   icon: const Icon(
                     AppIcons.chat,
@@ -966,16 +1057,45 @@ class _HomePageState extends State<HomePage> {
                 ),
                 IconButton(
                   onPressed: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (BuildContext context) =>
-                            const SearchPostScreen()));
+                    if (internetCheck.isInternetConnect == true) {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (BuildContext context) =>
+                                  const SearchPostScreen()));
+                    } else {
+                      showDialog(
+                          context: context,
+                          builder: (context) {
+                            return CupertinoAlertDialog(
+                              title: const Column(
+                                children: [
+                                  Icon(
+                                    Icons.warning_amber,
+                                    size: 30,
+                                    color: Colors.redAccent,
+                                  ),
+                                  Text('No internet'),
+                                ],
+                              ),
+                              content: const Text(
+                                  'Please check your internet connection!'),
+                              actions: [
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                  },
+                                  child: const Text('OK'),
+                                ),
+                              ],
+                            );
+                          });
+                    }
                   },
                   icon: const Icon(
                     Icons.search_rounded,
                     color: Colors.white,
-                    size: 30,
+                    size: 28,
                   ),
                 ),
               ],
@@ -984,19 +1104,49 @@ class _HomePageState extends State<HomePage> {
               child: ListView(
                 children: <Widget>[
                   UserAccountsDrawerHeader(
-                    accountName: Text(current_user.name ?? 'abc'),
-                    accountEmail: Text(current_user.email!),
+                    accountName: Text(userModel.name ?? 'abc'),
+                    accountEmail: Text(userModel.email!),
                     arrowColor: Colors.redAccent,
                     currentAccountPicture: CircleAvatar(
-                      backgroundImage: NetworkImage(current_user.image!),
+                      backgroundImage: NetworkImage(userModel.image!),
                     ),
                   ),
                   InkWell(
                     onTap: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const MyInfo()));
+                      if(internetCheck.isInternetConnect == true){
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const MyInfo()));
+                      }else{
+                        showDialog(
+                            context: context,
+                            builder: (context) {
+                              return CupertinoAlertDialog(
+                                title: const Column(
+                                  children: [
+                                    Icon(
+                                      Icons.warning_amber,
+                                      size: 30,
+                                      color: Colors.redAccent,
+                                    ),
+                                    Text('No internet'),
+                                  ],
+                                ),
+                                content: const Text(
+                                    'Please check your internet connection!'),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                    },
+                                    child: const Text('OK'),
+                                  ),
+                                ],
+                              );
+                            });
+                      }
+
                     },
                     child: SizedBox(
                       height: 56,
@@ -1021,7 +1171,7 @@ class _HomePageState extends State<HomePage> {
                                         child: FittedBox(
                                           fit: BoxFit.fitWidth,
                                           child: Icon(
-                                            Icons.person,
+                                            Icons.manage_accounts_outlined,
                                             color: Color(0xff757575),
                                           ),
                                         ),
@@ -1069,10 +1219,40 @@ class _HomePageState extends State<HomePage> {
                   ),
                   InkWell(
                     onTap: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const AboutUniversity()));
+                      if(internetCheck.isInternetConnect == true){
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const AboutUniversity()));
+                      }else{
+                        showDialog(
+                            context: context,
+                            builder: (context) {
+                              return CupertinoAlertDialog(
+                                title: const Column(
+                                  children: [
+                                    Icon(
+                                      Icons.warning_amber,
+                                      size: 30,
+                                      color: Colors.redAccent,
+                                    ),
+                                    Text('No internet'),
+                                  ],
+                                ),
+                                content: const Text(
+                                    'Please check your internet connection!'),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                    },
+                                    child: const Text('OK'),
+                                  ),
+                                ],
+                              );
+                            });
+                      }
+
                     },
                     child: SizedBox(
                       height: 56,
@@ -1145,15 +1325,45 @@ class _HomePageState extends State<HomePage> {
                   ),
                   InkWell(
                     onTap: () async {
-                      SharedPreferences prefs =
-                          await SharedPreferences.getInstance();
-                      await prefs.setString("id", "");
-                      await FirebaseAuth.instance.signOut();
-                      if (!mounted) return;
-                      Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const LoginScreen()));
+                      if(internetCheck.isInternetConnect == true){
+                        SharedPreferences prefs =
+                        await SharedPreferences.getInstance();
+                        await prefs.setString("id", "");
+                        await FirebaseAuth.instance.signOut();
+                        if (!mounted) return;
+                        Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const LoginScreen()));
+                      }else{
+                        showDialog(
+                            context: context,
+                            builder: (context) {
+                              return CupertinoAlertDialog(
+                                title: const Column(
+                                  children: [
+                                    Icon(
+                                      Icons.warning_amber,
+                                      size: 30,
+                                      color: Colors.redAccent,
+                                    ),
+                                    Text('No internet'),
+                                  ],
+                                ),
+                                content: const Text(
+                                    'Please check your internet connection!'),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                    },
+                                    child: const Text('OK'),
+                                  ),
+                                ],
+                              );
+                            });
+                      }
+
                     },
                     child: SizedBox(
                       height: 56,
@@ -1223,63 +1433,95 @@ class _HomePageState extends State<HomePage> {
                         ),
                       ),
                     ),
-                  )
+                  ),
                 ],
               ),
             ),
             body: SafeArea(
-              // minimum: const EdgeInsets.all(10),
-              child: SingleChildScrollView(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: <Widget>[
-                    Visibility(
-                      visible: isLoading,
-                      replacement: RefreshIndicator(
-                        onRefresh: reLoad,
-                        child: Visibility(
-                          visible: listPost.isNotEmpty,
-                          replacement: const Center(
-                            child: Padding(
-                              padding: EdgeInsets.only(top: 200),
-                              child: Text(
-                                'No post found!',
-                                style: TextStyle(
-                                  fontSize: 20,
-                                  color: Colors.grey,
+              child: internetCheck.isInternetConnect == true
+                  ? SingleChildScrollView(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: <Widget>[
+                          Visibility(
+                            visible: isLoading,
+                            replacement: RefreshIndicator(
+                              onRefresh: reLoad,
+                              child: Visibility(
+                                visible: listPost.isNotEmpty,
+                                replacement: const Center(
+                                  child: Padding(
+                                    padding: EdgeInsets.only(top: 200),
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Icon(
+                                          Icons.receipt_long_sharp,
+                                          color: Colors.grey,
+                                          size: 40,
+                                        ),
+                                        Text(
+                                          'No post found!',
+                                          style: TextStyle(
+                                            fontSize: 20,
+                                            color: Colors.grey,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: <Widget>[
+                                    SizedBox(
+                                      height:
+                                          MediaQuery.of(context).size.height *
+                                              0.9,
+                                      child: ListView.builder(
+                                          physics:
+                                              const BouncingScrollPhysics(),
+                                          itemCount: listPost.length,
+                                          itemBuilder: (BuildContext context,
+                                              int index) {
+                                            return _buildNewFeed(
+                                                context, listPost[index]);
+                                          }),
+                                    )
+                                  ],
                                 ),
                               ),
                             ),
+                            child: const Center(
+                              child: Padding(
+                                padding: EdgeInsets.only(top: 200),
+                                child: CircularProgressIndicator(),
+                              ),
+                            ),
                           ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              SizedBox(
-                                height:
-                                    MediaQuery.of(context).size.height * 0.9,
-                                child: ListView.builder(
-                                    physics: const BouncingScrollPhysics(),
-                                    itemCount: listPost.length,
-                                    itemBuilder:
-                                        (BuildContext context, int index) {
-                                      return _buildNewFeed(
-                                          context, listPost[index]);
-                                    }),
-                              )
-                            ],
-                          ),
-                        ),
+                        ],
                       ),
-                      child: const Center(
-                        child: Padding(
-                          padding: EdgeInsets.only(top: 200),
-                          child: CircularProgressIndicator(),
-                        ),
+                    )
+                  : const Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.warning_amber,
+                            color: Colors.redAccent,
+                            size: 45,
+                          ),
+                          Text(
+                            'No Internet connection!',
+                            style: TextStyle(
+                              fontSize: 20,
+                              color: Colors.grey,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                  ],
-                ),
-              ),
             ),
           );
         });

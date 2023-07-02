@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+// ignore: depend_on_referenced_packages
 import 'package:intl/intl.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -30,7 +31,7 @@ class _ViewEmployeeByUser extends State<ViewEmployeeByUser> {
 
   FirebaseAuth auth = FirebaseAuth.instance;
   var currentUser = FirebaseAuth.instance.currentUser!;
-  UserModel current_user = UserModel();
+  UserModel userModel = UserModel();
 
   DropdownMenuItem<String> buildMenuItem(String item) => DropdownMenuItem(
       value: item,
@@ -53,7 +54,7 @@ class _ViewEmployeeByUser extends State<ViewEmployeeByUser> {
       });
   }
 
-  var listDepartmentName = Map();
+  var listDepartmentName = {};
   getDepartment() async {
     await FirebaseFirestore.instance
       .collection('departments')
@@ -74,14 +75,14 @@ class _ViewEmployeeByUser extends State<ViewEmployeeByUser> {
       .get()
       .then((value) => {
       setState(() {
-        current_user.id = value['userId'];
-        current_user.name = value['name'];
-        current_user.email = value['email'];
-        current_user.image = value['image'];
-        current_user.password = value['password'];
-        current_user.phone = value['phone'];
-        current_user.group = value['group'];
-        current_user.status = value['status'];
+        userModel.id = value['userId'];
+        userModel.name = value['name'];
+        userModel.email = value['email'];
+        userModel.image = value['image'];
+        userModel.password = value['password'];
+        userModel.phone = value['phone'];
+        userModel.group = value['group'];
+        userModel.status = value['status'];
       })
     });
   }
@@ -132,14 +133,14 @@ class _ViewEmployeeByUser extends State<ViewEmployeeByUser> {
       if (!mounted) return;
       LoadingDialog.showLoadingDialog(context, "Please Wait...");
       createChatRoom(
-          current_user.id!,
+          userModel.id!,
           "Send ${widget.employee.name}",
           timeString,
           "Chưa trả lời",
           _informationController.text,
           widget.employee.department!,
           widget.employee.id!,
-          current_user.group!,
+          userModel.group!,
           "to employee",
               () {});
     }
@@ -221,7 +222,9 @@ class _ViewEmployeeByUser extends State<ViewEmployeeByUser> {
       await uploadTask.whenComplete(() async {
         var url = await ref.getDownloadURL();
         pdfUrl = url.toString();
-      }).catchError((onError) {});
+      }).catchError((onError) {
+        return onError;
+      });
     }
   }
 
@@ -266,7 +269,7 @@ class _ViewEmployeeByUser extends State<ViewEmployeeByUser> {
                         builder: (context, snapshot) =>
                             TextField(
                               controller: _informationController
-                              ..text = current_user.email!,
+                              ..text = userModel.email!,
                               decoration: InputDecoration(
                                 labelText: "Contact method",
                                 hintText:
@@ -366,7 +369,7 @@ class _ViewEmployeeByUser extends State<ViewEmployeeByUser> {
                               icon: const Icon(
                                   Icons.mail_outline_rounded),
                               style: ElevatedButton.styleFrom(
-                                  primary: Colors.blueAccent),
+                                  backgroundColor: Colors.blueAccent),
                             ),
                           ),
                           const Padding(
@@ -384,8 +387,8 @@ class _ViewEmployeeByUser extends State<ViewEmployeeByUser> {
                                 icon: const Icon(
                                     Icons.cancel_presentation),
                                 style: ElevatedButton.styleFrom(
-                                    primary: Colors.blueAccent),
-                              )),
+                                    backgroundColor: Colors.blueAccent),
+                              ),),
                           const Padding(
                               padding: EdgeInsets.fromLTRB(
                                   0, 10, 0, 30)),
@@ -402,7 +405,7 @@ class _ViewEmployeeByUser extends State<ViewEmployeeByUser> {
 
   _listCategory() {
     List<Widget> categoryList = [];
-    widget.employee.category!.forEach((category) {
+    for (var category in widget.employee.category!) {
       categoryList.add(
         Container(
           margin: const EdgeInsets.fromLTRB(20, 10, 0, 0),
@@ -425,7 +428,7 @@ class _ViewEmployeeByUser extends State<ViewEmployeeByUser> {
         )
       );
 
-    });
+    }
     return Column(children: categoryList);
   }
 
@@ -515,7 +518,7 @@ class _ViewEmployeeByUser extends State<ViewEmployeeByUser> {
                             _modelBottomSheetSendMessage();
                           },
                           style: ElevatedButton.styleFrom(
-                            primary: Colors.blue,
+                            backgroundColor: Colors.blue,
                           ),
                           label: const Text(
                             "Message",

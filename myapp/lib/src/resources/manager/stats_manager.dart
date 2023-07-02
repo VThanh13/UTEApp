@@ -82,7 +82,7 @@ class PieChartData {
 
 class _StatsPageState extends State<StatsManagerPage> {
   FirebaseAuth auth = FirebaseAuth.instance;
-  var user_auth = FirebaseAuth.instance.currentUser!;
+  //var userAuth = FirebaseAuth.instance.currentUser!;
   EmployeeModel employeeModel = EmployeeModel();
   int pageIndex = 0;
   int allUser = 0;
@@ -132,6 +132,7 @@ class _StatsPageState extends State<StatsManagerPage> {
         .collection('departments')
         .get()
         .then((value) => {
+              // ignore: avoid_function_literals_in_foreach_calls
               value.docs.forEach((element) {
                 setState(() {
                   departmentName[element.id] = element["name"];
@@ -162,13 +163,13 @@ class _StatsPageState extends State<StatsManagerPage> {
                     dtl = 0;
                     ctl = 0;
                   } else {
-                    values.docs.forEach((element) {
+                    for (var element in values.docs) {
                       if (element['status'] == 'Chưa trả lời') {
                         ctl += 1;
                       } else {
                         dtl += 1;
                       }
-                    });
+                    }
                   }
                   chartData?.add(ChartSampleData(
                       x: value, //Tên khoa
@@ -236,7 +237,6 @@ class _StatsPageState extends State<StatsManagerPage> {
   }
 
   Widget getColumnChart() {
-    var size = MediaQuery.of(context).size;
     return SfCartesianChart(
       enableAxisAnimation: true,
       plotAreaBorderWidth: 0,
@@ -521,7 +521,7 @@ class _StatsPageState extends State<StatsManagerPage> {
                           fontWeight: FontWeight.bold,
                           fontSize: 20,
                         ),
-                      )
+                      ),
                     ],
                   )
                 ],
@@ -534,7 +534,6 @@ class _StatsPageState extends State<StatsManagerPage> {
   }
 
   Widget getBody() {
-    var size = MediaQuery.of(context).size;
 
     return SingleChildScrollView(
       child: Column(
@@ -549,14 +548,14 @@ class _StatsPageState extends State<StatsManagerPage> {
                 // changes position of shadow
               ),
             ]),
-            child: Padding(
-              padding: const EdgeInsets.only(
+            child: const Padding(
+              padding: EdgeInsets.only(
                   top: 60, right: 20, left: 20, bottom: 25),
               child: Column(
                 children: [
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: const [
+                    children: [
                       Text(
                         "Thống kê",
                         style: TextStyle(
@@ -616,7 +615,6 @@ class _StatsPageState extends State<StatsManagerPage> {
 
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
     return Scaffold(
         backgroundColor: const Color(0xCBCBD5DE),
         bottomNavigationBar: getFooter(),

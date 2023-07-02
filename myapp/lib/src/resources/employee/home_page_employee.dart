@@ -1,4 +1,7 @@
 import 'dart:io';
+
+import 'package:flutter/cupertino.dart';
+// ignore: depend_on_referenced_packages
 import 'package:intl/intl.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -8,6 +11,7 @@ import 'package:myapp/src/resources/about_page/about_university.dart';
 import 'package:myapp/src/models/EmployeeModel.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../controller/internet_check.dart';
 import '../../models/NewfeedModel.dart';
 import '../user/home_page.dart';
 import '../login_screen.dart';
@@ -24,8 +28,9 @@ class HomePageEmployee extends StatefulWidget {
 
 class _HomePageState extends State<HomePageEmployee> {
   FirebaseAuth auth = FirebaseAuth.instance;
-  var user_auth = FirebaseAuth.instance.currentUser!;
+  var userAuth = FirebaseAuth.instance.currentUser!;
   EmployeeModel employeeModel = EmployeeModel();
+  InternetCheck internetCheck = InternetCheck();
   @override
   void dispose() {
     super.dispose();
@@ -72,7 +77,7 @@ class _HomePageState extends State<HomePageEmployee> {
       .get()
       .then((value) => {
         setState(() {
-          value.docs.forEach((element) {
+          for (var element in value.docs) {
             NewfeedModel newFeed = NewfeedModel();
             newFeed.id = element['id'];
             newFeed.content = element['content'];
@@ -81,9 +86,10 @@ class _HomePageState extends State<HomePageEmployee> {
             newFeed.employeeId = element['employeeId'];
 
             listNewFeed.add(newFeed);
-          });
+          }
         })
       });
+    // ignore: avoid_function_literals_in_foreach_calls
     listNewFeed.forEach((element) async {
       Employee employee = Employee("", "", "", "", "", "", "", "", [], "", "");
       Post post = Post(
@@ -222,7 +228,7 @@ class _HomePageState extends State<HomePageEmployee> {
     return FutureBuilder<QuerySnapshot>(
         future: FirebaseFirestore.instance
             .collection("employee")
-            .where("id", isEqualTo: user_auth.uid)
+            .where("id", isEqualTo: userAuth.uid)
             .get(),
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
@@ -249,7 +255,6 @@ class _HomePageState extends State<HomePageEmployee> {
             return employeeModel;
           }).toString();
 
-          // TODO: implement build
           return Scaffold(
             appBar: AppBar(
               title: const Text("UTE APP"),
@@ -257,13 +262,43 @@ class _HomePageState extends State<HomePageEmployee> {
               actions: <Widget>[
                 IconButton(
                     onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (BuildContext context) =>
-                              MessengerPageEmployee(),
-                        ),
-                      );
+                      if(internetCheck.isInternetConnect == true){
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (BuildContext context) =>
+                            const MessengerPageEmployee(),
+                          ),
+                        );
+                      }else{
+                        showDialog(
+                            context: context,
+                            builder: (context) {
+                              return CupertinoAlertDialog(
+                                title: const Column(
+                                  children: [
+                                    Icon(
+                                      Icons.warning_amber,
+                                      size: 30,
+                                      color: Colors.redAccent,
+                                    ),
+                                    Text('No internet'),
+                                  ],
+                                ),
+                                content: const Text(
+                                    'Please check your internet connection!'),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                    },
+                                    child: const Text('OK'),
+                                  ),
+                                ],
+                              );
+                            });
+                      }
+
                     },
                     icon: const Icon(
                       AppIcons.chat,
@@ -283,7 +318,37 @@ class _HomePageState extends State<HomePageEmployee> {
                   ),
                   InkWell(
                     onTap: (){
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => const EmployeeInfo()));
+                      if(internetCheck.isInternetConnect == true){
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => const EmployeeInfo()));
+
+                      }else{
+                        showDialog(
+                            context: context,
+                            builder: (context) {
+                              return CupertinoAlertDialog(
+                                title: const Column(
+                                  children: [
+                                    Icon(
+                                      Icons.warning_amber,
+                                      size: 30,
+                                      color: Colors.redAccent,
+                                    ),
+                                    Text('No internet'),
+                                  ],
+                                ),
+                                content: const Text(
+                                    'Please check your internet connection!'),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                    },
+                                    child: const Text('OK'),
+                                  ),
+                                ],
+                              );
+                            });
+                      }
                     },
                     child: SizedBox(
                       height: 56,
@@ -356,7 +421,37 @@ class _HomePageState extends State<HomePageEmployee> {
                   ),
                   InkWell(
                     onTap: (){
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => const AboutUniversity()));
+                      if(internetCheck.isInternetConnect == true){
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => const AboutUniversity()));
+
+                      }else{
+                        showDialog(
+                            context: context,
+                            builder: (context) {
+                              return CupertinoAlertDialog(
+                                title: const Column(
+                                  children: [
+                                    Icon(
+                                      Icons.warning_amber,
+                                      size: 30,
+                                      color: Colors.redAccent,
+                                    ),
+                                    Text('No internet'),
+                                  ],
+                                ),
+                                content: const Text(
+                                    'Please check your internet connection!'),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                    },
+                                    child: const Text('OK'),
+                                  ),
+                                ],
+                              );
+                            });
+                      }
                     },
                     child: SizedBox(
                       height: 56,
@@ -429,11 +524,41 @@ class _HomePageState extends State<HomePageEmployee> {
                   ),
                   InkWell(
                     onTap: () async {
-                      SharedPreferences prefs = await SharedPreferences.getInstance();
-                      await prefs.setString("id", "");
-                      await FirebaseAuth.instance.signOut();
-                      if (!mounted) return;
-                      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const LoginScreen()));
+                      if(internetCheck.isInternetConnect == true){
+                        SharedPreferences prefs = await SharedPreferences.getInstance();
+                        await prefs.setString("id", "");
+                        await FirebaseAuth.instance.signOut();
+                        if (!mounted) return;
+                        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const LoginScreen()));
+
+                      }else{
+                        showDialog(
+                            context: context,
+                            builder: (context) {
+                              return CupertinoAlertDialog(
+                                title: const Column(
+                                  children: [
+                                    Icon(
+                                      Icons.warning_amber,
+                                      size: 30,
+                                      color: Colors.redAccent,
+                                    ),
+                                    Text('No internet'),
+                                  ],
+                                ),
+                                content: const Text(
+                                    'Please check your internet connection!'),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                    },
+                                    child: const Text('OK'),
+                                  ),
+                                ],
+                              );
+                            });
+                      }
 
                     },
                     child: SizedBox(
@@ -508,7 +633,8 @@ class _HomePageState extends State<HomePageEmployee> {
             ),
             body: SafeArea(
               child: SingleChildScrollView(
-                child: Column(
+                child: internetCheck.isInternetConnect == true?
+                Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: <Widget>[
                     Visibility(
@@ -551,6 +677,25 @@ class _HomePageState extends State<HomePageEmployee> {
                     ),
 
                   ],
+                ):
+                const Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.warning_amber,
+                        color: Colors.redAccent,
+                        size: 45,
+                      ),
+                      Text(
+                        'No Internet connection!',
+                        style: TextStyle(
+                          fontSize: 20,
+                          color: Colors.grey,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),

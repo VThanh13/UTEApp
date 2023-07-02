@@ -16,12 +16,12 @@ class NewfeedModel{
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['employeeId'] = this.employeeId;
-    data['content'] = this.content;
-    data['time'] = this.time;
-    data['file'] = this.file;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['id'] = id;
+    data['employeeId'] = employeeId;
+    data['content'] = content;
+    data['time'] = time;
+    data['file'] = file;
     return data;
   }
 

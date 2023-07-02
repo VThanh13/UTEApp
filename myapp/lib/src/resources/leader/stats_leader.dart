@@ -166,6 +166,7 @@ class _StatsPageState extends State<StatsLeaderPage> {
         .collection('departments')
         .get()
         .then((value) => {
+          // ignore: avoid_function_literals_in_foreach_calls
           value.docs.forEach((element) {
             setState(() {
               departmentName[element.id] = element["name"];
@@ -317,7 +318,6 @@ class _StatsPageState extends State<StatsLeaderPage> {
   }
 
   Widget getColumnChart(){
-    var size = MediaQuery.of(context).size;
     return SfCartesianChart(
       enableAxisAnimation: true,
       plotAreaBorderWidth: 0,
@@ -629,14 +629,14 @@ class _StatsPageState extends State<StatsLeaderPage> {
                 // changes position of shadow
               ),
             ]),
-            child: Padding(
-              padding: const EdgeInsets.only(
+            child: const Padding(
+              padding: EdgeInsets.only(
                   top: 60, right: 20, left: 20, bottom: 25),
               child: Column(
                 children: [
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: const [
+                    children: [
                       Text(
                         "Statistical",
                         style: TextStyle(

@@ -17,6 +17,8 @@
 ///         License:   SIL ()
 ///         Homepage:  http://fortawesome.github.com/Font-Awesome/
 ///
+// ignore_for_file: constant_identifier_names
+
 import 'package:flutter/widgets.dart';
 
 class AppIcons {
@@ -54,5 +56,33 @@ class AppIcons {
   static const IconData thumbs_down_alt = IconData(0xf165, fontFamily: _kFontFam, fontPackage: _kFontPkg);
   static const IconData file_pdf = IconData(0xf1c1, fontFamily: _kFontFam, fontPackage: _kFontPkg);
   static const IconData file_image = IconData(0xf1c5, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+
   static const IconData history = IconData(0xf1da, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData photo = IconData(0xe800, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData vcard = IconData(0xe802, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData attention = IconData(0xe803, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData users_outline = IconData(0xe804, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData cog_outline = IconData(0xe805, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData menu_outline = IconData(0xe806, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData chart_bar = IconData(0xe807, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData picture_1 = IconData(0xe808, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData users_1 = IconData(0xe809, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData chart_bars = IconData(0xe843, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData sad = IconData(0xe855, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData users = IconData(0xf0c0, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData chat_empty = IconData(0xf0e6, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData chart_line = IconData(0xf201, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData expeditedssl = IconData(0xf23e, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData telegram = IconData(0xf2c6, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData tasklist = IconData(0xf31c, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData comment_discussion = IconData(0xf3c1, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData telegram_plane = IconData(0xf3fe, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData comment_dots = IconData(0xf4ad, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData comment_slash = IconData(0xf4b3, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData user_cog = IconData(0xf4fe, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData user_edit = IconData(0xf4ff, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData user_lock = IconData(0xf502, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData tired = IconData(0xf5c8, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData envelope_open_text = IconData(0xf658, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+
 }

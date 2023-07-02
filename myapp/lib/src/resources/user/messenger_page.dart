@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+// ignore: depend_on_referenced_packages
 import 'package:intl/intl.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -11,7 +12,7 @@ import 'package:myapp/icons/app_icons_icons.dart';
 import 'package:myapp/src/models/EmployeeModel.dart';
 import 'package:myapp/src/resources/user/home_page.dart';
 import 'package:myapp/src/resources/user/search_counselors.dart';
-import 'package:myapp/src/resources/user/view_employee_byuser.dart';
+import 'package:myapp/src/resources/user/view_employee_by_user.dart';
 import 'detail_question.dart';
 import '../../models/ChatRoomModel.dart';
 import '../../models/UserModel.dart';
@@ -28,8 +29,7 @@ class _MessengerPageState extends State<MessengerPage> {
   CollectionReference derPart =
       FirebaseFirestore.instance.collection('departments');
   FirebaseFirestore db = FirebaseFirestore.instance;
-  String? valueKhoa;
-  var selectedDerpartments;
+  String? valueDepart;
 
   String? valueVanDe;
   var departmentsItems = [];
@@ -38,32 +38,32 @@ class _MessengerPageState extends State<MessengerPage> {
 
   FirebaseAuth auth = FirebaseAuth.instance;
   var currentUser = FirebaseAuth.instance.currentUser!;
-  UserModel current_user = UserModel();
+  UserModel user = UserModel();
   getCurrentUser() async {
     await FirebaseFirestore.instance
-      .collection('user')
-      .where('userId', isEqualTo: currentUser.uid)
-      .get()
-      .then((value) => {
-        setState(() {
-          current_user.id = value.docs.first['userId'];
-          current_user.name = value.docs.first['name'];
-          current_user.email = value.docs.first['email'];
-          current_user.image = value.docs.first['image'];
-          current_user.password = value.docs.first['password'];
-          current_user.phone = value.docs.first['phone'];
-          current_user.group = value.docs.first['group'];
-          current_user.status = value.docs.first['status'];
-        })
-      });
+        .collection('user')
+        .where('userId', isEqualTo: currentUser.uid)
+        .get()
+        .then((value) => {
+              setState(() {
+                user.id = value.docs.first['userId'];
+                user.name = value.docs.first['name'];
+                user.email = value.docs.first['email'];
+                user.image = value.docs.first['image'];
+                user.password = value.docs.first['password'];
+                user.phone = value.docs.first['phone'];
+                user.group = value.docs.first['group'];
+                user.status = value.docs.first['status'];
+              })
+            });
     await getChatRoomByUser();
     await getAllChatRoom();
   }
 
-  Future<List> getDataDropdownProblem(String? value_khoa) async {
+  Future<List> getDataDropdownProblem(String? valueDepartment) async {
     QuerySnapshot snapshot = await FirebaseFirestore.instance
         .collection("departments")
-        .where("name", isEqualTo: value_khoa)
+        .where("name", isEqualTo: valueDepartment)
         .get();
 
     List<dynamic> list = [];
@@ -78,84 +78,84 @@ class _MessengerPageState extends State<MessengerPage> {
   var departmentName = {};
   getDepartmentName() async {
     await FirebaseFirestore.instance
-      .collection('departments')
-      .get()
-      .then((value) => {
-        setState(() {
-          value.docs.forEach((element) {
-            departmentName[element.id] = element["name"];
-            listDepartment.add(element['name']);
-          });
-        })
-      });
+        .collection('departments')
+        .get()
+        .then((value) => {
+              setState(() {
+                for (var element in value.docs) {
+                  departmentName[element.id] = element["name"];
+                  listDepartment.add(element['name']);
+                }
+              })
+            });
   }
 
   List<ChatRoomModel> listPublicChatRoom = [];
   getAllChatRoom() async {
     await FirebaseFirestore.instance
-      .collection('chat_room')
-      .where('mode', isEqualTo: 'public')
-      .get()
-      .then((value) => {
-        setState(() {
-          value.docs.forEach((element) {
-            ChatRoomModel chatRoom = ChatRoomModel();
-            chatRoom.id = element['room_id'];
-            chatRoom.user_id = element['user_id'];
-            chatRoom.time = element['time'];
-            chatRoom.title = element['title'];
-            chatRoom.department = element['department'];
-            chatRoom.category = element['category'];
-            chatRoom.information = element['information'];
-            chatRoom.group = element['group'];
-            chatRoom.mode = element['mode'];
-            chatRoom.status = element['status'];
+        .collection('chat_room')
+        .where('mode', isEqualTo: 'public')
+        .get()
+        .then((value) => {
+              setState(() {
+                for (var element in value.docs) {
+                  ChatRoomModel chatRoom = ChatRoomModel();
+                  chatRoom.id = element['room_id'];
+                  chatRoom.userId = element['user_id'];
+                  chatRoom.time = element['time'];
+                  chatRoom.title = element['title'];
+                  chatRoom.department = element['department'];
+                  chatRoom.category = element['category'];
+                  chatRoom.information = element['information'];
+                  chatRoom.group = element['group'];
+                  chatRoom.mode = element['mode'];
+                  chatRoom.status = element['status'];
 
-            listPublicChatRoom.add(chatRoom);
-          });
-        })
-      });
+                  listPublicChatRoom.add(chatRoom);
+                }
+              })
+            });
   }
 
   var employeeName = {};
   getEmployeeName() async {
     await FirebaseFirestore.instance
-      .collection('employee')
-      .get()
-      .then((value) => {
-        setState(() {
-          value.docs.forEach((element) {
-            employeeName[element.id] = element["name"];
-          });
-        })
-    });
+        .collection('employee')
+        .get()
+        .then((value) => {
+              setState(() {
+                for (var element in value.docs) {
+                  employeeName[element.id] = element["name"];
+                }
+              })
+            });
   }
 
   List<ChatRoomModel> listChatRoomByUser = [];
   getChatRoomByUser() async {
     await FirebaseFirestore.instance
-      .collection('chat_room')
-      .where('user_id', isEqualTo: current_user.id)
-      .get()
-      .then((value) => {
-        setState(() {
-          value.docs.forEach((element) {
-            ChatRoomModel chatRoom = ChatRoomModel();
-            chatRoom.id = element['room_id'];
-            chatRoom.user_id = element['user_id'];
-            chatRoom.time = element['time'];
-            chatRoom.title = element['title'];
-            chatRoom.department = element['department'];
-            chatRoom.category = element['category'];
-            chatRoom.information = element['information'];
-            chatRoom.group = element['group'];
-            chatRoom.mode = element['mode'];
-            chatRoom.status = element['status'];
+        .collection('chat_room')
+        .where('user_id', isEqualTo: user.id)
+        .get()
+        .then((value) => {
+              setState(() {
+                for (var element in value.docs) {
+                  ChatRoomModel chatRoom = ChatRoomModel();
+                  chatRoom.id = element['room_id'];
+                  chatRoom.userId = element['user_id'];
+                  chatRoom.time = element['time'];
+                  chatRoom.title = element['title'];
+                  chatRoom.department = element['department'];
+                  chatRoom.category = element['category'];
+                  chatRoom.information = element['information'];
+                  chatRoom.group = element['group'];
+                  chatRoom.mode = element['mode'];
+                  chatRoom.status = element['status'];
 
-            listChatRoomByUser.add(chatRoom);
-          });
-        })
-      });
+                  listChatRoomByUser.add(chatRoom);
+                }
+              })
+            });
   }
 
   _buildChatRoom(listChatRoom) {
@@ -184,7 +184,7 @@ class _MessengerPageState extends State<MessengerPage> {
               children: <Widget>[
                 Expanded(
                     child: Container(
-                  margin: const  EdgeInsets.fromLTRB(10, 0, 0, 0),
+                  margin: const EdgeInsets.fromLTRB(10, 0, 0, 0),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -200,13 +200,17 @@ class _MessengerPageState extends State<MessengerPage> {
                       const SizedBox(
                         height: 4.0,
                       ),
-                      if(chatRoom.category == "")
-                        Text('To: Leader')
+                      if (chatRoom.category == "")
+                        const Text('To: Leader')
                       else
-                        Text(employeeName.containsKey(chatRoom.category) ? 'To: ${employeeName[chatRoom.category]}' : 'To: ${chatRoom.category}',
-                      style: const TextStyle(
-                        color: Colors.black,
-                      ),),
+                        Text(
+                          employeeName.containsKey(chatRoom.category)
+                              ? 'To: ${employeeName[chatRoom.category]}'
+                              : 'To: ${chatRoom.category}',
+                          style: const TextStyle(
+                            color: Colors.black,
+                          ),
+                        ),
                       Text(
                         chatRoom.time!,
                         style: const TextStyle(
@@ -216,15 +220,17 @@ class _MessengerPageState extends State<MessengerPage> {
                         ),
                         overflow: TextOverflow.ellipsis,
                       ),
-                      Text(chatRoom.status!,
-                          style: TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w400,
-                            color: chatRoom.status == "Chưa trả lời"
-                                ? Colors.redAccent
-                                : Colors.green,
-                            overflow: TextOverflow.ellipsis,
-                          ))
+                      Text(
+                        chatRoom.status!,
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w400,
+                          color: chatRoom.status == "Chưa trả lời"
+                              ? Colors.redAccent
+                              : Colors.green,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
                     ],
                   ),
                 ))
@@ -240,40 +246,43 @@ class _MessengerPageState extends State<MessengerPage> {
   List<EmployeeModel> listEmployee = [];
   getEmployeeData() async {
     await FirebaseFirestore.instance
-      .collection('employee')
-      .get()
-      .then((value) => {
-        setState(() {
-          value.docs.forEach((element) {
-            EmployeeModel eModel =
-                EmployeeModel();
-            eModel.id = element['id'];
-            eModel.name = element['name'];
-            eModel.email = element['email'];
-            eModel.image = element['image'];
-            eModel.password = element['password'];
-            eModel.phone = element['phone'];
-            eModel.department = element['department'];
-            eModel.category = element['category'].cast<String>();
-            eModel.roles = element['roles'];
-            eModel.status = element['status'];
-            listEmployee.add(eModel);
-          });
-        })
-      });
+        .collection('employee')
+        .get()
+        .then((value) => {
+              setState(() {
+                for (var element in value.docs) {
+                  EmployeeModel eModel = EmployeeModel();
+                  eModel.id = element['id'];
+                  eModel.name = element['name'];
+                  eModel.email = element['email'];
+                  eModel.image = element['image'];
+                  eModel.password = element['password'];
+                  eModel.phone = element['phone'];
+                  eModel.department = element['department'];
+                  eModel.category = element['category'].cast<String>();
+                  eModel.roles = element['roles'];
+                  eModel.status = element['status'];
+                  listEmployee.add(eModel);
+                }
+              })
+            });
   }
 
   _buildEmployee(BuildContext context, EmployeeModel employeeModel) {
     return InkWell(
-      onTap: (){
-        Navigator.push(context, MaterialPageRoute(builder: (context) => ViewEmployeeByUser(employee: employeeModel, users: current_user)));
+      onTap: () {
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) =>
+                    ViewEmployeeByUser(employee: employeeModel, users: user)));
       },
       child: Container(
         margin: const EdgeInsets.fromLTRB(0, 0, 0, 5),
         width: 90,
         decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(15.0),
-            ),
+          borderRadius: BorderRadius.circular(15.0),
+        ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
@@ -289,35 +298,37 @@ class _MessengerPageState extends State<MessengerPage> {
               ),
             ),
             Expanded(
-                child: Container(
-              margin: const EdgeInsets.fromLTRB(5, 0, 5, 5),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[
-                  Text(
-                    employeeModel.name!,
-                    style: const TextStyle(
-                        fontSize: 10,
-                        fontStyle: FontStyle.italic,
-                        fontWeight: FontWeight.w500),
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  Text(
-                    employeeModel.roles!,
-                    style: const TextStyle(
-                        fontSize: 10, fontWeight: FontWeight.w400),
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  Text(
-                    employeeModel.department == '' ? 'Manager' : departmentName[employeeModel.department],
-                    style: const TextStyle(
-                        fontSize: 10, fontWeight: FontWeight.w400),
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ],
+              child: Container(
+                margin: const EdgeInsets.fromLTRB(5, 0, 5, 5),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[
+                    Text(
+                      employeeModel.name!,
+                      style: const TextStyle(
+                          fontSize: 10,
+                          fontStyle: FontStyle.italic,
+                          fontWeight: FontWeight.w500),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    Text(
+                      employeeModel.roles!,
+                      style: const TextStyle(
+                          fontSize: 10, fontWeight: FontWeight.w400),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    Text(
+                      employeeModel.department == ''
+                          ? 'Manager'
+                          : departmentName[employeeModel.department],
+                      style: const TextStyle(
+                          fontSize: 10, fontWeight: FontWeight.w400),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
+                ),
               ),
-            ),
             ),
           ],
         ),
@@ -388,8 +399,7 @@ class _MessengerPageState extends State<MessengerPage> {
               Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (BuildContext context) =>
-                           const HomePage()));
+                      builder: (BuildContext context) => const HomePage()));
             }),
         title: const Text("Message"),
         backgroundColor: Colors.blueAccent,
@@ -397,7 +407,7 @@ class _MessengerPageState extends State<MessengerPage> {
       bottomNavigationBar: getFooter(),
       floatingActionButton: FloatingActionButton(
           onPressed: () {
-            if (current_user.id != "") {
+            if (user.id != "") {
               modalBottomSheetQuestion();
             }
           },
@@ -405,172 +415,164 @@ class _MessengerPageState extends State<MessengerPage> {
           child: const Icon(
             Icons.add,
             size: 25,
-          )
-      ),
-      floatingActionButtonLocation:
-          FloatingActionButtonLocation.centerDocked,
+          )),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       body: SafeArea(
         minimum: const EdgeInsets.only(left: 5, right: 5),
-        child: FutureBuilder(
-          future: Future.delayed(Duration.zero),
-          builder: (BuildContext context, AsyncSnapshot<void> snapshot){
-            if(_savedPosition != null){
-              _scrollController.animateTo(_savedPosition!,
+        child: RefreshIndicator(
+          onRefresh: () async {
+            setState(() {
+              listPublicChatRoom.clear();
+              listChatRoomByUser.clear();
+              getAllChatRoom();
+              getChatRoomByUser();
+              // getQuestion();
+            });
+          },
+          child: FutureBuilder(
+            future: Future.delayed(Duration.zero),
+            builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
+              if (_savedPosition != null) {
+                _scrollController.animateTo(
+                  _savedPosition!,
                   duration: const Duration(milliseconds: 500),
-                  curve: Curves.easeInOut,);
-            }return SingleChildScrollView(
-              controller: _scrollController,
-              key: _storageKey,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: <Widget>[
-                  const Padding(
-                    padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
-                  ),
-                  StreamBuilder<QuerySnapshot>(
-                      stream: derPart.snapshots(),
-                      builder: (context, snapshot) {
-                        if (!snapshot.hasError) {
-                          const Text("Loading");
-                        } else {
-                          derPart
-                              .get()
-                              .then((QuerySnapshot querySnapshot) {
-                            for (var doc in querySnapshot.docs) {
-                            }
-                          });
-                        }
-                        return const Text("");
-                      }),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      SizedBox(
-                        height: 110.0,
-                        child: Row(
-                          children: [
-                            SizedBox(
-                              width: 60,
-                              height: 90,
-                              child: Column(
-                                children: [
-                                  InkWell(
-                                    onTap: (){
-                                      Navigator.push(context,
-                                          MaterialPageRoute(builder: (context) => const SearchCounselorsScreen()));
-                                    },
-                                    child: Container(
-                                      width: 50,
-                                      height: 50,
-                                      margin: const EdgeInsets.only(left: 10),
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(20),
-                                        color: Colors.grey[300]
-                                      ),
-                                      child: const Center(
-                                        child: Icon(Icons.search_outlined,
-                                        size: 30,),
+                  curve: Curves.easeInOut,
+                );
+              }
+              return SingleChildScrollView(
+                controller: _scrollController,
+                key: _storageKey,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: <Widget>[
+                    const Padding(
+                      padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                    ),
+                    StreamBuilder<QuerySnapshot>(
+                        stream: derPart.snapshots(),
+                        builder: (context, snapshot) {
+                          if (!snapshot.hasError) {
+                            const Text("Loading");
+                          } else {
+                            derPart.get().then((QuerySnapshot querySnapshot) {
+                              // ignore: unused_local_variable
+                              for (var doc in querySnapshot.docs) {}
+                            });
+                          }
+                          return const Text("");
+                        }),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        SizedBox(
+                          height: 110.0,
+                          child: Row(
+                            children: [
+                              SizedBox(
+                                width: 60,
+                                height: 90,
+                                child: Column(
+                                  children: [
+                                    InkWell(
+                                      onTap: () {
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    const SearchCounselorsScreen()));
+                                      },
+                                      child: Container(
+                                        width: 50,
+                                        height: 50,
+                                        margin: const EdgeInsets.only(left: 10),
+                                        decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(20),
+                                            color: Colors.grey[300]),
+                                        child: const Center(
+                                          child: Icon(
+                                            Icons.search_outlined,
+                                            size: 30,
+                                          ),
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                  const Padding(
-                                    padding: EdgeInsets.fromLTRB(10, 5, 0, 0),
-                                    child: Text('Search',
-                                    style: TextStyle(
-                                      fontSize: 12,
-                                    ),),
-                                  ),
-                                ],
+                                    const Padding(
+                                      padding: EdgeInsets.fromLTRB(10, 5, 0, 0),
+                                      child: Text(
+                                        'Search',
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
-                            ),
-                            SizedBox(
-                              height: 110,
-                              width: MediaQuery.of(context).size.width - 70,
-                              child: ListView.builder(
-                                  physics: const BouncingScrollPhysics(),
-                                  padding: const EdgeInsets.only(left: 10.0),
-                                  scrollDirection: Axis.horizontal,
-                                  itemCount: listEmployee.length,
-                                  itemBuilder:
-                                      (BuildContext context, int index) {
-                                    // EmployeeModel employeeModel = listEmployee[index];
-                                    return _buildEmployee(
-                                        context, listEmployee[index]);
-                                  }),
-                            ),
-                          ],
-                        ),
-                      )
-                    ],
-                  ),
-                  const Divider(
-                    height: 0,
-                    color: Color(0xffAAAAAA),
-                    indent: 0,
-                    thickness: 1,
-                  ),
-                  const SizedBox(height: 5,),
-                  getQuestion(),
-                ],
-              ),
-            );
-          },
+                              SizedBox(
+                                height: 110,
+                                width: MediaQuery.of(context).size.width - 70,
+                                child: ListView.builder(
+                                    physics: const BouncingScrollPhysics(),
+                                    padding: const EdgeInsets.only(left: 10.0),
+                                    scrollDirection: Axis.horizontal,
+                                    itemCount: listEmployee.length,
+                                    itemBuilder:
+                                        (BuildContext context, int index) {
+                                      // EmployeeModel employeeModel = listEmployee[index];
+                                      return _buildEmployee(
+                                          context, listEmployee[index]);
+                                    }),
+                              ),
+                            ],
+                          ),
+                        )
+                      ],
+                    ),
+                    const Divider(
+                      height: 0,
+                      color: Color(0xffAAAAAA),
+                      indent: 0,
+                      thickness: 1,
+                    ),
+                    const SizedBox(
+                      height: 5,
+                    ),
+                    getQuestion(),
+                  ],
+                ),
+              );
+            },
+          ),
         ),
       ),
     );
+  }
 
+  Future<void> refreshMes() async {
+    setState(() {
+      listChatRoomByUser.clear();
+      getQuestion();
+    });
+    //_buildChatRoom(listChatRoomByUser);
   }
 
   Widget getQuestion() {
     if (listPublicChatRoom.isEmpty) {
       return const Center(
-        child: SizedBox(
-            width: 20,
-            height: 20,
-            child: CircularProgressIndicator()),
+        child:
+            SizedBox(width: 20, height: 20, child: CircularProgressIndicator()),
       );
     }
     if (pageIndex == 0) {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.center,
-        children: <Widget>[
-          const SizedBox(
-            height: 40,
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 10.0),
-              child: Text(
-                'Your questions',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w600,
-                    letterSpacing: 1.0),
-              ),
-            ),
-          ),
-          _buildChatRoom(listChatRoomByUser)
-        ],
+        children: <Widget>[_buildChatRoom(listChatRoomByUser)],
       );
     } else {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.center,
-        children: <Widget>[
-          const SizedBox(
-            height: 40,
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20.0),
-              child: Text(
-                'All questions',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w600,
-                    letterSpacing: 1.0),
-              ),
-            ),
-          ),
-          _buildChatRoom(listPublicChatRoom)
-        ],
+        children: <Widget>[_buildChatRoom(listPublicChatRoom)],
       );
     }
   }
@@ -589,7 +591,7 @@ class _MessengerPageState extends State<MessengerPage> {
         context: context,
         builder: (BuildContext context) {
           return StatefulBuilder(
-              builder: (BuildContext context, StateSetter setStateKhoa) {
+              builder: (BuildContext context, StateSetter setStateDepartment) {
             return Column(
               children: <Widget>[
                 const Padding(
@@ -616,7 +618,8 @@ class _MessengerPageState extends State<MessengerPage> {
                               const Padding(
                                   padding: EdgeInsets.fromLTRB(0, 10, 0, 10)),
                               Container(
-                                  margin: const EdgeInsets.fromLTRB(0, 10, 0, 15),
+                                  margin:
+                                      const EdgeInsets.fromLTRB(0, 10, 0, 15),
                                   width: 340,
                                   padding: const EdgeInsets.symmetric(
                                       horizontal: 12, vertical: 4),
@@ -628,19 +631,18 @@ class _MessengerPageState extends State<MessengerPage> {
                                   child: DropdownButtonHideUnderline(
                                     child: DropdownButton(
                                       isExpanded: true,
-                                      value: valueKhoa,
+                                      value: valueDepart,
                                       hint: const Text(
                                           "Please select the unit to inquire"),
                                       iconSize: 36,
                                       items: render(listDepartment),
                                       onChanged: (value) async {
                                         final List<dynamic> listProblem =
-                                            await getDataDropdownProblem(
-                                                value);
-                                        setStateKhoa(() {
+                                            await getDataDropdownProblem(value);
+                                        setStateDepartment(() {
                                           setState(() {
                                             valueVanDe = null;
-                                            valueKhoa = value;
+                                            valueDepart = value;
                                             listT = listProblem;
                                           });
                                         });
@@ -648,7 +650,8 @@ class _MessengerPageState extends State<MessengerPage> {
                                     ),
                                   )),
                               Container(
-                                  margin: const EdgeInsets.fromLTRB(0, 10, 0, 15),
+                                  margin:
+                                      const EdgeInsets.fromLTRB(0, 10, 0, 15),
                                   width: 340,
                                   padding: const EdgeInsets.symmetric(
                                       horizontal: 12, vertical: 4),
@@ -666,7 +669,7 @@ class _MessengerPageState extends State<MessengerPage> {
                                       iconSize: 36,
                                       items: renderR(listT),
                                       onChanged: (value) {
-                                        setStateKhoa(() {
+                                        setStateDepartment(() {
                                           setState(() {
                                             valueVanDe = value;
                                           });
@@ -675,7 +678,8 @@ class _MessengerPageState extends State<MessengerPage> {
                                     ),
                                   )),
                               Container(
-                                  margin: const EdgeInsets.fromLTRB(0, 10, 0, 15),
+                                  margin:
+                                      const EdgeInsets.fromLTRB(0, 10, 0, 15),
                                   width: 340,
                                   child: StreamBuilder(
                                     stream: informationControl,
@@ -684,7 +688,9 @@ class _MessengerPageState extends State<MessengerPage> {
                                       decoration: InputDecoration(
                                           labelText: "Contact method",
                                           hintText: 'Insert Email/Phone',
-                                          errorText: snapshot.hasError? snapshot.error.toString() : null,
+                                          errorText: snapshot.hasError
+                                              ? snapshot.error.toString()
+                                              : null,
                                           enabledBorder: OutlineInputBorder(
                                               borderRadius:
                                                   BorderRadius.circular(10),
@@ -710,7 +716,9 @@ class _MessengerPageState extends State<MessengerPage> {
                                     decoration: InputDecoration(
                                         labelText: "Title",
                                         hintText: 'Insert Title',
-                                        errorText: snapshot.hasError? snapshot.error.toString() : null,
+                                        errorText: snapshot.hasError
+                                            ? snapshot.error.toString()
+                                            : null,
                                         enabledBorder: OutlineInputBorder(
                                             borderRadius:
                                                 BorderRadius.circular(10),
@@ -722,8 +730,7 @@ class _MessengerPageState extends State<MessengerPage> {
                                             borderRadius:
                                                 BorderRadius.circular(10),
                                             borderSide: const BorderSide(
-                                                color: Colors.blue,
-                                                width: 4))),
+                                                color: Colors.blue, width: 4))),
                                   ),
                                 ),
                               ),
@@ -742,21 +749,22 @@ class _MessengerPageState extends State<MessengerPage> {
                                         helperMaxLines: 5,
                                         labelText: "Make a question",
                                         hintText: 'Insert message',
-                                        errorText: snapshot.hasError? snapshot.error.toString() : null,
+                                        errorText: snapshot.hasError
+                                            ? snapshot.error.toString()
+                                            : null,
                                         enabledBorder: OutlineInputBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(10),
-                                            borderSide: const BorderSide(
-                                              color: Colors.blueAccent,
-                                              width: 1,
-                                            ),
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                          borderSide: const BorderSide(
+                                            color: Colors.blueAccent,
+                                            width: 1,
+                                          ),
                                         ),
                                         focusedBorder: OutlineInputBorder(
                                             borderRadius:
                                                 BorderRadius.circular(10),
                                             borderSide: const BorderSide(
-                                                color: Colors.blue,
-                                                width: 4))),
+                                                color: Colors.blue, width: 4))),
                                   ),
                                 ),
                               ),
@@ -764,21 +772,20 @@ class _MessengerPageState extends State<MessengerPage> {
                                   onPressed: () {
                                     importPdf();
                                   },
-                                  color: hadFile
-                                      ? Colors.redAccent
-                                      : Colors.black,
-                                  icon: const Icon(AppIcons.file_pdf)
-                              ),
-                              hadFile ? const Text(
-                                'One file selected',
-                                style: TextStyle(
-                                    fontSize: 16,
-                                    color: Colors.red),
-                              ) : const Text('No file selected',
-                                style: TextStyle(
-                                    fontSize: 16,
-                                    color: Colors.black),
-                              ),
+                                  color:
+                                      hadFile ? Colors.redAccent : Colors.black,
+                                  icon: const Icon(AppIcons.file_pdf)),
+                              hadFile
+                                  ? const Text(
+                                      'One file selected',
+                                      style: TextStyle(
+                                          fontSize: 16, color: Colors.red),
+                                    )
+                                  : const Text(
+                                      'No file selected',
+                                      style: TextStyle(
+                                          fontSize: 16, color: Colors.black),
+                                    ),
                               Container(
                                 padding: const EdgeInsets.all(10),
                                 child: Row(
@@ -788,17 +795,19 @@ class _MessengerPageState extends State<MessengerPage> {
                                     Expanded(
                                       child: ElevatedButton.icon(
                                         onPressed: () {
-                                          try{
-                                            if(_onSendQuestionClicked()){
+                                          try {
+                                            if (_onSendQuestionClicked()) {
                                               setState(() {
                                                 _questionController.text = '';
-                                                _informationController.text = '';
+                                                _informationController.text =
+                                                    '';
                                                 _titleController.text = '';
                                               });
-                                            }else{
-                                              showErrorMessage('Send message failed, check your internet connection');
+                                            } else {
+                                              showErrorMessage(
+                                                  'Send message failed, check your internet connection');
                                             }
-                                          }catch(e){
+                                          } catch (e) {
                                             //
                                           }
                                         },
@@ -816,21 +825,26 @@ class _MessengerPageState extends State<MessengerPage> {
                                     const Padding(padding: EdgeInsets.all(10)),
                                     Expanded(
                                         child: ElevatedButton.icon(
-                                      onPressed: () =>
-                                          {Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const MessengerPage()))},
+                                      onPressed: () => {
+                                        Navigator.pushReplacement(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    const MessengerPage()))
+                                      },
                                       label: const Text(
                                         'Cancel',
                                         style: TextStyle(
-                                            fontSize: 16,
-                                            color: Colors.white),
+                                            fontSize: 16, color: Colors.white),
                                       ),
-                                      icon: const Icon(Icons.cancel_presentation),
+                                      icon:
+                                          const Icon(Icons.cancel_presentation),
                                       style: ElevatedButton.styleFrom(
                                           backgroundColor: Colors.blueAccent),
                                     )),
                                     const Padding(
-                                        padding: EdgeInsets.fromLTRB(
-                                            0, 10, 0, 30)),
+                                        padding:
+                                            EdgeInsets.fromLTRB(0, 10, 0, 30)),
                                   ],
                                 ),
                               )
@@ -872,6 +886,7 @@ class _MessengerPageState extends State<MessengerPage> {
         var url = await ref.getDownloadURL();
         pdfUrl = url.toString();
       }).catchError((onError) {
+        return onError;
       });
     }
   }
@@ -916,33 +931,34 @@ class _MessengerPageState extends State<MessengerPage> {
         style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
       ));
   DropdownMenuItem<dynamic> buildMenuItemM(dynamic item) => DropdownMenuItem(
-      value: item,
-      child: Text(
-        item,
-        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-      ));
+        value: item,
+        child: Text(
+          item,
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+        ),
+      );
   List<DropdownMenuItem<dynamic>> renderR(List<dynamic> list) {
     return list.map(buildMenuItemM).toList();
   }
 
   _onSendQuestionClicked() async {
-    var isvalid = isValid(_informationController.text, _questionController.text,
-        _titleController.text);
+    var isValidData = isValid(_informationController.text,
+        _questionController.text, _titleController.text);
     var time = DateTime.now();
     String timeString = DateFormat('dd-MM-yyyy HH:mm:ss').format(time);
     await uploadPdf();
-    if (isvalid) {
+    if (isValidData) {
       if (!mounted) return;
       LoadingDialog.showLoadingDialog(context, "Please Wait...");
       createChatRoom(
-          current_user.id!,
+          user.id!,
           _titleController.text,
           timeString,
           "Chưa trả lời",
           _informationController.text,
-          valueKhoa!,
+          valueDepart!,
           valueVanDe!,
-          current_user.group!,
+          user.group!,
           "private",
           () {});
     }
@@ -979,11 +995,10 @@ class _MessengerPageState extends State<MessengerPage> {
       onSuccess();
       sendQuestion(time, pdfUrl, _questionController.text, id, () {
         LoadingDialog.hideLoadingDialog(context);
-        Navigator.push(
-            context, MaterialPageRoute(builder: (context) => const MessengerPage()));
+        Navigator.push(context,
+            MaterialPageRoute(builder: (context) => const MessengerPage()));
       });
-    }).catchError((err) {
-    });
+    }).catchError((err) {});
   }
 
   void sendQuestion(String time, String file, String content, String roomId,
@@ -998,13 +1013,16 @@ class _MessengerPageState extends State<MessengerPage> {
       'room_id': roomId,
     }).then((value) {
       onSuccess();
-    }).catchError((err) {
-    });
+    }).catchError((err) {});
   }
+
   void showErrorMessage(String message) {
-    final snackBar = SnackBar(content: Text(message,
-      style: const TextStyle(color: Colors.white),
-    ),backgroundColor: Colors.red,
+    final snackBar = SnackBar(
+      content: Text(
+        message,
+        style: const TextStyle(color: Colors.white),
+      ),
+      backgroundColor: Colors.red,
     );
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }

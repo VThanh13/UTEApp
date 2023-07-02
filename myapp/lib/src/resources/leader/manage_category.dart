@@ -71,6 +71,7 @@ class _ManageCategoryState extends State<ManageCategory> {
   _buildCategory(BuildContext context, String category, index) {
     return GestureDetector(
       onTap: () {
+        // ignore: void_checks
         return _modalBottomSheetEditCategory(category, index);
       },
       child: Card(

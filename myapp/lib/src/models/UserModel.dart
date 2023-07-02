@@ -22,29 +22,15 @@ class UserModel{
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['name'] = this.name;
-    data['email'] = this.email;
-    data['image'] = this.image;
-    data['password'] = this.password;
-    data['phone'] = this.phone;
-    data['group'] = this.group;
-    data['status'] = this.status;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['id'] = id;
+    data['name'] = name;
+    data['email'] = email;
+    data['image'] = image;
+    data['password'] = password;
+    data['phone'] = phone;
+    data['group'] = group;
+    data['status'] = status;
     return data;
   }
-
-  // factory UserModel.fromMap(Map<String, dynamic> json){
-  //   return UserModel(
-  //       json['id'],
-  //       json['name'],
-  //       json['email'],
-  //       json['image'],
-  //       json['password'],
-  //       json['phone'],
-  //       json['group'],
-  //       json['status'],
-  //   );
-  // }
-
 }

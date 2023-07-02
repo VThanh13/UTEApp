@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_function_literals_in_foreach_calls
+
 import 'dart:async';
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -5,6 +7,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+// ignore: depend_on_referenced_packages
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -57,8 +60,6 @@ UserModel uModel = UserModel();
 
 class _DetailQuestionState extends State<DetailQuestion> {
   String? value;
-  String? valueKhoa;
-  var selectedDerpartments;
   String? valueVanDe;
   var departmentsItems = [];
   var itemDoiTuong = [
@@ -71,7 +72,7 @@ class _DetailQuestionState extends State<DetailQuestion> {
   List<dynamic> listT = [];
 
   FirebaseAuth auth = FirebaseAuth.instance;
-  var current_user = FirebaseAuth.instance.currentUser!;
+  var currentUser = FirebaseAuth.instance.currentUser!;
   EmployeeModel employeeModel = EmployeeModel();
 
   final List<Question> listQuestion = [];
@@ -85,9 +86,9 @@ class _DetailQuestionState extends State<DetailQuestion> {
         .get()
         .then((value) => {
               setState(() {
-                value.docs.forEach((element) {
+                for (var element in value.docs) {
                   departmentName[element.id] = element["name"];
-                });
+                }
               })
             });
     await getQuestionData();
@@ -98,7 +99,7 @@ class _DetailQuestionState extends State<DetailQuestion> {
     UserModel userModel = UserModel();
     await FirebaseFirestore.instance
         .collection('user')
-        .where('userId', isEqualTo: widget.chatRoom.user_id)
+        .where('userId', isEqualTo: widget.chatRoom.userId)
         .get()
         .then((value) => {
               setState(() {
@@ -140,7 +141,7 @@ class _DetailQuestionState extends State<DetailQuestion> {
         .get()
         .then((value) => {
               setState(() {
-                value.docs.forEach((element) {
+                for (var element in value.docs) {
                   AnswerModel ans = AnswerModel();
                   ans.employee_id = element['employee_id'];
                   ans.id = element['id'];
@@ -149,7 +150,7 @@ class _DetailQuestionState extends State<DetailQuestion> {
                   ans.time = element['time'];
 
                   listAns.add(ans);
-                });
+                }
               })
             });
 
@@ -186,13 +187,6 @@ class _DetailQuestionState extends State<DetailQuestion> {
   bool _isLoadingMore = false;
 
   _buildMessage() {
-    if (listMessage.isEmpty || departmentName.isEmpty) {
-      return const Center(
-        child:
-            SizedBox(width: 20, height: 20, child: CircularProgressIndicator()),
-      );
-    }
-
     listMessage.sort((a, b) => DateFormat("dd-MM-yyyy HH:mm:ss")
         .parse(a.time)
         .compareTo(DateFormat("dd-MM-yyyy HH:mm:ss").parse(b.time)));
@@ -234,6 +228,7 @@ class _DetailQuestionState extends State<DetailQuestion> {
               return true;
             },
             child: SingleChildScrollView(
+              controller: _scrollController,
               child: Column(children: messageList),
             ),
           ),
@@ -291,6 +286,7 @@ class _DetailQuestionState extends State<DetailQuestion> {
                             onPressed: () async {
                               final url = question.file;
                               final file = await PDFApi.loadNetwork(url);
+                              // ignore: use_build_context_synchronously
                               openPDF(context, file);
                             },
                             icon: const Icon(AppIcons.file_pdf,
@@ -308,50 +304,52 @@ class _DetailQuestionState extends State<DetailQuestion> {
                       ),
                     ],
                   )),
-
-                SizedBox(
-                  width: MediaQuery.of(context).size.width - 92,
-                  height: question.file != 'file.pdf' &&
-                      !question.file
-                          .substring(question.file.length - 57)
-                          .startsWith('.pdf')? 400: 60,
-                  child: Column(
-                    children: [
-                      Expanded(
-                        child: SizedBox(
-                          width: double.maxFinite,
-                          height: 150,
-                          child: Wrap(
-                              crossAxisAlignment: WrapCrossAlignment.end,
-                              alignment: WrapAlignment.end,
-                              children: [
-                                Container(
-                                  padding: const EdgeInsets.all(10),
-                                  margin: const EdgeInsets.only(top: 3, bottom: 10),
-                                  decoration: const BoxDecoration(
-                                    borderRadius: BorderRadius.only(
-                                      topLeft: Radius.circular(12),
-                                      bottomLeft: Radius.circular(12),
-                                      bottomRight: Radius.circular(12),
-                                    ),
-                                    color: Colors.lightBlueAccent,
+              SizedBox(
+                width: MediaQuery.of(context).size.width - 92,
+                height: question.file != 'file.pdf' &&
+                        !question.file
+                            .substring(question.file.length - 57)
+                            .startsWith('.pdf')
+                    ? 400
+                    : 60,
+                child: Column(
+                  children: [
+                    Expanded(
+                      child: SizedBox(
+                        width: double.maxFinite,
+                        height: 150,
+                        child: Wrap(
+                            crossAxisAlignment: WrapCrossAlignment.end,
+                            alignment: WrapAlignment.end,
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.all(10),
+                                margin:
+                                    const EdgeInsets.only(top: 3, bottom: 10),
+                                decoration: const BoxDecoration(
+                                  borderRadius: BorderRadius.only(
+                                    topLeft: Radius.circular(12),
+                                    bottomLeft: Radius.circular(12),
+                                    bottomRight: Radius.circular(12),
                                   ),
-                                  child: Text(
-                                    question.content,
-                                    maxLines: 20,
-                                    style: const TextStyle(
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.w400,
-                                    ),
+                                  color: Colors.lightBlueAccent,
+                                ),
+                                child: Text(
+                                  question.content,
+                                  maxLines: 20,
+                                  style: const TextStyle(
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.w400,
                                   ),
                                 ),
-                              ]),
-                        ),
+                              ),
+                            ]),
                       ),
-                      if (question.file != 'file.pdf' &&
-                          !question.file
-                              .substring(question.file.length - 57)
-                              .startsWith('.pdf'))
+                    ),
+                    if (question.file != 'file.pdf' &&
+                        !question.file
+                            .substring(question.file.length - 57)
+                            .startsWith('.pdf'))
                       Padding(
                         padding: const EdgeInsets.only(top: 35),
                         child: SizedBox(
@@ -363,16 +361,17 @@ class _DetailQuestionState extends State<DetailQuestion> {
                             ),
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(8.0),
-                              child: Image.network(question.file,
-                              fit: BoxFit.fitHeight,),
+                              child: Image.network(
+                                question.file,
+                                fit: BoxFit.fitHeight,
+                              ),
                             ),
                           ),
                         ),
                       ),
-                    ],
-                  ),
+                  ],
                 ),
-
+              ),
               const SizedBox(
                 width: 8,
               ),
@@ -462,7 +461,6 @@ class _DetailQuestionState extends State<DetailQuestion> {
                             fontSize: 15, fontWeight: FontWeight.w400),
                       ),
                     ),
-
                   ],
                 ),
               ),
@@ -509,29 +507,33 @@ class _DetailQuestionState extends State<DetailQuestion> {
     if (hadFile) {
       File fileForFirebase = File(file.path!);
       FirebaseStorage storage = FirebaseStorage.instance;
-      Reference ref = storage.ref().child("pdf/" + file.name);
+      Reference ref = storage.ref().child("pdf/${file.name}");
       UploadTask uploadTask = ref.putFile(fileForFirebase);
       await uploadTask.whenComplete(() async {
         var url = await ref.getDownloadURL();
         pdfUrl = url.toString();
-      }).catchError((onError) {});
+      }).catchError((onError) {
+        return onError;
+      });
     }
   }
 
   _onSendQuestionClicked() async {
-    var isvalid = isValid(_questionController.text);
+    var isValidData = isValid(_questionController.text);
     var time = DateTime.now();
     String timeString = DateFormat('dd-MM-yyyy HH:mm:ss').format(time);
     await uploadPdf();
-    if (isvalid) {
-      sendQuestion(timeString, pdfUrl, _questionController.text, widget.chatRoom.id!,() {
-        // LoadingDialog.hideLoadingDialog(context);
-        Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-                builder: (context) =>
-                    DetailQuestion(chatRoom: widget.chatRoom)));
-        setState(() {});
+    if (isValidData) {
+      sendQuestion(
+          timeString, pdfUrl, _questionController.text, widget.chatRoom.id!,
+          () async {
+        listMessage.clear();
+        setState(() {
+          _questionController.text = '';
+        });
+        await getQuestionData();
+        //getAnswerData();
+        await _buildMessage();
       });
     }
     return 0;
@@ -553,18 +555,16 @@ class _DetailQuestionState extends State<DetailQuestion> {
     }).catchError((err) {});
   }
 
-  void updateChatRoomStatus(String room_id) {
+  void updateChatRoomStatus(String roomId) {
     var ref = FirebaseFirestore.instance.collection('chat_room');
     ref
-        .doc(room_id)
+        .doc(roomId)
         .update({'status': "Chưa trả lời"})
         .then((value) {})
         .catchError((err) {});
   }
 
-  late final ScrollController _scrollController;
-  late final PageStorageKey _storageKey;
-  double? _savedPosition;
+  final ScrollController _scrollController = ScrollController();
   int _numItems = 10;
 
   @override
@@ -573,35 +573,12 @@ class _DetailQuestionState extends State<DetailQuestion> {
     super.dispose();
   }
 
-  String _id = '';
   @override
   void initState() {
-    _id = widget.chatRoom.id!;
     getDepartmentName();
     super.initState();
     _numItems = 10;
-    _storageKey = const PageStorageKey('user message scroll position');
-    _scrollController = ScrollController();
-    _scrollController.addListener(_scrollListener);
-    SharedPreferences.getInstance().then((prefs) {
-      double? savedPosition = prefs.getDouble('scrollPosition');
-      // If a saved position was found, assign it to _savedPosition
-      if (savedPosition != null) {
-        setState(() {
-          _savedPosition = savedPosition;
-        });
-      }
-    });
-  }
-
-  void _scrollListener() {
-    if (_scrollController.offset >=
-            _scrollController.position.maxScrollExtent &&
-        !_scrollController.position.outOfRange) {
-      setState(() {
-        _numItems += 10;
-      });
-    }
+    SharedPreferences.getInstance().then((prefs) {});
   }
 
   @override
@@ -616,44 +593,31 @@ class _DetailQuestionState extends State<DetailQuestion> {
           backgroundColor: Colors.blueAccent,
         ),
         // bottomNavigationBar: (current_user.uid == widget.chatRoom.user_id)? _inputQuestion():null,
-        body: FutureBuilder(
-          future: Future.delayed(Duration.zero),
-          builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
-            if (_savedPosition != null) {
-              _scrollController.animateTo(
-                _savedPosition!,
-                duration: const Duration(milliseconds: 500),
-                curve: Curves.easeInOut,
-              );
-            }
-            return SingleChildScrollView(
-              controller: _scrollController,
-              key: _storageKey,
-              padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
-              child: Column(
-                children: <Widget>[
-                  SizedBox(
-                    width: double.maxFinite,
-                    child: SingleChildScrollView(
-                      child: Column(
-                        children: <Widget>[
-                          SizedBox(
-                            height: MediaQuery.of(context).size.height * 0.8,
-                            width: double.maxFinite,
-                            child: SingleChildScrollView(
-                              child: _buildMessage(),
-                            ),
-                          ),
-                        ],
+        body: SingleChildScrollView(
+          controller: _scrollController,
+          // key: _storageKey,
+          padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
+          child: Column(
+            children: <Widget>[
+              SizedBox(
+                width: double.maxFinite,
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: <Widget>[
+                      SizedBox(
+                        height: MediaQuery.of(context).size.height * 0.8,
+                        width: double.maxFinite,
+                        child: SingleChildScrollView(
+                          child: _buildMessage(),
+                        ),
                       ),
-                    ),
+                    ],
                   ),
-                  if (current_user.uid == widget.chatRoom.user_id)
-                    _inputQuestion(),
-                ],
+                ),
               ),
-            );
-          },
+              if (currentUser.uid == widget.chatRoom.userId) _inputQuestion(),
+            ],
+          ),
         ),
       ),
     );

@@ -1,6 +1,6 @@
 class ChatRoomModel{
   String? id;
-  String? user_id;
+  String? userId;
   String? title;
   String? time;
   String? department;
@@ -10,12 +10,12 @@ class ChatRoomModel{
   String? status;
   String? mode;
 
-  ChatRoomModel({this.id, this.user_id, this.title, this.time, this.department,
+  ChatRoomModel({this.id, this.userId, this.title, this.time, this.department,
       this.category, this.information, this.group, this.status, this.mode});
 
   ChatRoomModel.fromJson(Map<String, dynamic> json) {
     id = json['id'];
-    user_id = json['user_id'];
+    userId = json['user_id'];
     title = json['title'];
     time = json['time'];
     department = json['department'];
@@ -27,17 +27,17 @@ class ChatRoomModel{
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['user_id'] = this.user_id;
-    data['title'] = this.title;
-    data['time'] = this.time;
-    data['department'] = this.department;
-    data['category'] = this.category;
-    data['information'] = this.information;
-    data['group'] = this.group;
-    data['status'] = this.status;
-    data['mode'] = this.mode;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['id'] = id;
+    data['user_id'] = userId;
+    data['title'] = title;
+    data['time'] = time;
+    data['department'] = department;
+    data['category'] = category;
+    data['information'] = information;
+    data['group'] = group;
+    data['status'] = status;
+    data['mode'] = mode;
     return data;
   }
 

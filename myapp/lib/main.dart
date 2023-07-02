@@ -42,7 +42,6 @@ class _MyAppState extends State<MyApp>{
 
   checkLogin() async{
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? roles = prefs.getString("roles");
     String? id = prefs.getString("id");
 
     if(id != null  && id != ""){

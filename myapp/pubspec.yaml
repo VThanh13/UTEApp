@@ -54,6 +54,7 @@ dependencies:
   bloc: ^8.1.2
   flutter_bloc: ^8.1.3
   multi_select_flutter: ^4.1.3
+  internet_connection_checker: ^0.0.1+4
 
   get: ^4.1.4
 
@@ -118,6 +119,7 @@ flutter:
     - family: AppIcons
       fonts:
         - asset: assets/fonts/AppIcons.ttf
+        - asset: assets/fonts/NewIcons.ttf
   #   - family: Trajan Pro
   #     fonts:
   #       - asset: fonts/TrajanPro.ttf

@@ -9,13 +9,13 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:myapp/src/models/DepartmentModel.dart';
 import 'package:myapp/src/models/EmployeeModel.dart';
+// ignore: depend_on_referenced_packages
 import 'package:intl/intl.dart';
 
 import '../../../icons/app_icons_icons.dart';
 import '../../models/NewfeedModel.dart';
 import '../../models/UserModel.dart';
 import '../dialog/loading_dialog.dart';
-import 'home_page.dart';
 import 'messenger_page.dart';
 
 class DetailPostScreen extends StatefulWidget {
@@ -99,7 +99,7 @@ class _DetailPostScreenState extends State<DetailPostScreen> {
         var url = await ref.getDownloadURL();
         pdfUrl = url.toString();
       }).catchError((onError) {
-        //
+        return onError;
       });
     }
   }
@@ -249,9 +249,8 @@ class _DetailPostScreenState extends State<DetailPostScreen> {
                                     child: ElevatedButton.icon(
                                       onPressed: () {
                                         //_onSendQuestionClicked(post);
-                                        print(post);
-                                        try {
-                                          if (_onSendQuestionClicked(post)) {
+                                          try {
+                                          if (_onSendQuestionClicked()) {
                                             setState(() {
                                               _informationController.text = '';
                                               _questionController.text = '';
@@ -524,7 +523,7 @@ class _DetailPostScreenState extends State<DetailPostScreen> {
     return true;
   }
 
-  _onSendQuestionClicked(Post post) async {
+  _onSendQuestionClicked() async {
     var isvalid =
     isValid(_informationController.text, _questionController.text);
     var time = DateTime.now();
@@ -535,7 +534,7 @@ class _DetailPostScreenState extends State<DetailPostScreen> {
       LoadingDialog.showLoadingDialog(context, "Please Wait...");
       createChatRoom(
           userData.id!,
-          "Post ${post.content}",
+          "Post ${widget.newFeedModel.content}",
           timeString,
           "Chưa trả lời",
           _informationController.text,

@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
+// ignore: depend_on_referenced_packages
 import 'package:intl/intl.dart';
 
 import '../../../icons/app_icons_icons.dart';
@@ -71,7 +72,7 @@ class _DetailQuestionState extends State<DetailQuestionEmployee> {
 
   String? value;
   String? valueKhoa;
-  var selectedDerpartments;
+
   String? valueVanDe;
   var departmentsItems = [];
   var itemDoiTuong = [
@@ -89,7 +90,7 @@ class _DetailQuestionState extends State<DetailQuestionEmployee> {
   Stream get answerControl => _answerControl.stream;
 
   FirebaseAuth auth = FirebaseAuth.instance;
-  var current_user_auth = FirebaseAuth.instance.currentUser!;
+  var currentUserAuth = FirebaseAuth.instance.currentUser!;
   EmployeeModel employeeModel = EmployeeModel();
   EmployeeModel currentEmployee = EmployeeModel();
 
@@ -119,10 +120,10 @@ class _DetailQuestionState extends State<DetailQuestionEmployee> {
         .get()
         .then((value) => {
               setState(() {
-                value.docs.forEach((element) {
+                for (var element in value.docs) {
                   departmentName[element.id] = element["name"];
                   listDepartment.add(element['name']);
-                });
+                }
               })
             });
     await getQuestionData();
@@ -132,7 +133,7 @@ class _DetailQuestionState extends State<DetailQuestionEmployee> {
   getCurrentUser() async {
     await FirebaseFirestore.instance
         .collection('employee')
-        .doc(current_user_auth.uid)
+        .doc(currentUserAuth.uid)
         .get()
         .then((value) => {
               setState(() {
@@ -154,7 +155,7 @@ class _DetailQuestionState extends State<DetailQuestionEmployee> {
     UserModel userModel = UserModel();
     await FirebaseFirestore.instance
         .collection('user')
-        .doc(widget.chatRoom.user_id)
+        .doc(widget.chatRoom.userId)
         .get()
         .then((value) => {
               setState(() {
@@ -173,6 +174,7 @@ class _DetailQuestionState extends State<DetailQuestionEmployee> {
         .where('room_id', isEqualTo: widget.chatRoom.id)
         .get()
         .then((value) => {
+              // ignore: avoid_function_literals_in_foreach_calls
               value.docs.forEach((element) {
                 Question question = Question("", "", "", "", userModel, "");
                 question.id = element['id'];
@@ -196,7 +198,7 @@ class _DetailQuestionState extends State<DetailQuestionEmployee> {
         .get()
         .then((value) => {
               setState(() {
-                value.docs.forEach((element) {
+                for (var element in value.docs) {
                   AnswerModel ans = AnswerModel();
                   ans.employee_id = element['employee_id'];
                   ans.id = element['id'];
@@ -205,10 +207,11 @@ class _DetailQuestionState extends State<DetailQuestionEmployee> {
                   ans.time = element['time'];
 
                   listAns.add(ans);
-                });
+                }
               })
             });
     Answer ans;
+    // ignore: avoid_function_literals_in_foreach_calls
     listAns.forEach((element) async {
       EmployeeModel employeeModel = EmployeeModel();
       // Answer ans = Answer(element.id, element.room_id, element.content, element.time, employeeModel);
@@ -229,7 +232,7 @@ class _DetailQuestionState extends State<DetailQuestionEmployee> {
                   employeeModel.roles = value['roles'];
                   employeeModel.status = value['status'];
                   ans = Answer(element.id!, element.room_id!, element.content!,
-                      element.time!, employeeModel!);
+                      element.time!, employeeModel);
                   // ans.employee = employeeModel;
                   listAnswer.add(ans);
                   Message message = Message('answer', ans.id, ans.time);
@@ -360,6 +363,7 @@ class _DetailQuestionState extends State<DetailQuestionEmployee> {
                             onPressed: () async {
                               final url = question.file;
                               final file = await PDFApi.loadNetwork(url);
+                              if (!mounted) return;
                               openPDF(context, file);
                             },
                             icon: const Icon(AppIcons.file_pdf,
@@ -529,99 +533,6 @@ class _DetailQuestionState extends State<DetailQuestionEmployee> {
         ],
       ),
     );
-    // return Row(
-    //   mainAxisAlignment: MainAxisAlignment.end,
-    //   crossAxisAlignment: CrossAxisAlignment.start,
-    //   children: <Widget>[
-    //     Column(
-    //       crossAxisAlignment: CrossAxisAlignment.start,
-    //       mainAxisAlignment: MainAxisAlignment.start,
-    //       //mainAxisSize: MainAxisSize.min,
-    //       children: <Widget>[
-    //         Row(
-    //           children: [
-    //             Text(
-    //               '   ${answer.employee.name}',
-    //               style: TextStyle(
-    //                 fontSize: 13,
-    //                 fontStyle: FontStyle.italic,
-    //                 fontWeight: FontWeight.w500,
-    //                 color: Colors.grey[500],
-    //               ),
-    //             ),
-    //             Text(
-    //               ', ${answer.time}',
-    //               overflow: TextOverflow.visible,
-    //               maxLines: 3,
-    //               style: TextStyle(
-    //                   fontSize: 13,
-    //                   fontStyle: FontStyle.italic,
-    //                   fontWeight: FontWeight.w500,
-    //                   color: Colors.grey[500],
-    //                   overflow: TextOverflow.visible),
-    //             ),
-    //           ],
-    //         ),
-    //         SizedBox(
-    //           //width: MediaQuery.of(context).size.width -75,
-    //           width: 285,
-    //           child: Card(
-    //             margin: const EdgeInsets.all(5),
-    //             shape: const RoundedRectangleBorder(
-    //               borderRadius: BorderRadius.only(
-    //                   topLeft: Radius.circular(10),
-    //                   bottomRight: Radius.circular(10),
-    //                   bottomLeft: Radius.circular(10)),
-    //             ),
-    //             color: Colors.lightBlueAccent,
-    //             elevation: 10,
-    //             child: Column(
-    //               mainAxisAlignment: MainAxisAlignment.start,
-    //               crossAxisAlignment: CrossAxisAlignment.start,
-    //               mainAxisSize: MainAxisSize.min,
-    //               children: <Widget>[
-    //                 const Row(
-    //                   mainAxisAlignment: MainAxisAlignment.start,
-    //                   crossAxisAlignment: CrossAxisAlignment.start,
-    //                   children: <Widget>[],
-    //                 ),
-    //                 const Padding(padding: EdgeInsets.fromLTRB(5, 5, 5, 5)),
-    //                 Container(
-    //                     padding: const EdgeInsets.fromLTRB(10, 0, 5, 10),
-    //                     child: Row(
-    //                       crossAxisAlignment: CrossAxisAlignment.start,
-    //                       mainAxisAlignment: MainAxisAlignment.start,
-    //                       children: <Widget>[
-    //                         Expanded(
-    //                           child: Text(
-    //                             answer.content,
-    //                             overflow: TextOverflow.visible,
-    //                             maxLines: 20,
-    //                             style: const TextStyle(
-    //                                 fontSize: 15, fontWeight: FontWeight.w400),
-    //                           ),
-    //                         )
-    //                       ],
-    //                     )),
-    //               ],
-    //             ),
-    //           ),
-    //         ),
-    //         const SizedBox(
-    //           height: 15,
-    //         ),
-    //       ],
-    //     ),
-    //     CircleAvatar(
-    //       radius: 22,
-    //       backgroundColor: Colors.blueAccent,
-    //       child: CircleAvatar(
-    //         backgroundImage: NetworkImage(answer.employee.image!),
-    //         radius: 20,
-    //       ),
-    //     ),
-    //   ],
-    // );
   }
 
   void openPDF(BuildContext context, File file) => Navigator.of(context).push(
@@ -935,7 +846,7 @@ class _DetailQuestionState extends State<DetailQuestionEmployee> {
                                         ),
                                         icon: const Icon(Icons.send),
                                         style: ElevatedButton.styleFrom(
-                                            primary: Colors.blueAccent),
+                                            backgroundColor: Colors.blueAccent),
                                       ),
                                     ),
                                     const Padding(padding: EdgeInsets.all(10)),
@@ -950,7 +861,7 @@ class _DetailQuestionState extends State<DetailQuestionEmployee> {
                                       icon:
                                           const Icon(Icons.cancel_presentation),
                                       style: ElevatedButton.styleFrom(
-                                          primary: Colors.blueAccent),
+                                          backgroundColor: Colors.blueAccent),
                                     )),
                                     const Padding(
                                         padding:
@@ -976,7 +887,7 @@ class _DetailQuestionState extends State<DetailQuestionEmployee> {
     changeQuestion(id, valueKhoa!, valueVanDe!, () {
       LoadingDialog.hideLoadingDialog(context);
       Navigator.push(context,
-          MaterialPageRoute(builder: (context) => MessengerPageEmployee()));
+          MaterialPageRoute(builder: (context) => const MessengerPageEmployee()));
     });
   }
 
@@ -1011,27 +922,27 @@ class _DetailQuestionState extends State<DetailQuestionEmployee> {
     return 0;
   }
 
-  void sendAnswer(String employee_id, String content, String time,
-      String room_id, Function onSuccess) {
+  void sendAnswer(String employeeId, String content, String time,
+      String roomId, Function onSuccess) {
     var ref = FirebaseFirestore.instance.collection('answer');
     String id = ref.doc().id;
     ref.doc(id).set({
       'id': id,
-      'employee_id': employee_id,
+      'employee_id': employeeId,
       'time': time,
       'content': content,
-      'room_id': room_id,
+      'room_id': roomId,
     }).then((value) {
-      updateChatRoomStatus(room_id);
+      updateChatRoomStatus(roomId);
       onSuccess();
     }).catchError((err) {});
   }
 
-  void updateChatRoomStatus(String room_id) {
+  void updateChatRoomStatus(String roomId) {
     var ref = FirebaseFirestore.instance.collection('chat_room');
 
     ref
-        .doc(room_id)
+        .doc(roomId)
         .update({'status': "Đã trả lời"})
         .then((value) {})
         .catchError((err) {});
@@ -1062,10 +973,11 @@ class _DetailQuestionState extends State<DetailQuestionEmployee> {
       return true;
     }
     else if (currentEmployee.department != null && currentEmployee.department! == widget.chatRoom.department){
-      if(currentEmployee.roles != null && currentEmployee.roles! == "Trưởng nhóm")
+      if(currentEmployee.roles != null && currentEmployee.roles! == "Trưởng nhóm") {
         return true;
-      else if (currentEmployee.category != null && currentEmployee.category!.contains(widget.chatRoom.category))
+      } else if (currentEmployee.category != null && currentEmployee.category!.contains(widget.chatRoom.category)) {
         return true;
+      }
     }
     return false;
   }

@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:myapp/src/models/EmployeeModel.dart';
-import 'package:myapp/src/resources/user/view_employee_byuser.dart';
+import 'package:myapp/src/resources/user/view_employee_by_user.dart';
 
 import '../../models/UserModel.dart';
 
@@ -62,23 +62,40 @@ class _SearchCounselorsScreenState extends State<SearchCounselorsScreen> {
                             var data = snapshot.data!.docs[index].data() as Map<String, dynamic>;
 
                             if(name.isEmpty){
-                              return ListTile(
-                                title: Text(data['name'],
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: const TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w600
-                                ),),
-                                subtitle: Text(data['roles'],
+                              return InkWell(
+                                onTap: (){
+                                  setState(() {
+                                    employee.id = data['id'];
+                                    employee.name = data['name'];
+                                    employee.email = data['email'];
+                                    employee.status = data['status'];
+                                    employee.roles = data['roles'];
+                                    employee.image = data['image'];
+                                    employee.department = data['department'];
+                                    employee.phone = data['phone'];
+                                    employee.password = data['password'];
+                                    employee.category = List<String>.from(data['category']);
+                                  });
+                                  Navigator.push(context, MaterialPageRoute(builder: (context) => ViewEmployeeByUser(employee: employee, users: userModel)));
+                                },
+                                child: ListTile(
+                                  title: Text(data['name'],
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                   style: const TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w600
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w600
                                   ),),
-                                leading: CircleAvatar(
-                                  backgroundImage: NetworkImage(data['image']),
+                                  subtitle: Text(data['roles'],
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: const TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w600
+                                    ),),
+                                  leading: CircleAvatar(
+                                    backgroundImage: NetworkImage(data['image']),
+                                  ),
                                 ),
                               );
                             }
@@ -98,7 +115,7 @@ class _SearchCounselorsScreenState extends State<SearchCounselorsScreen> {
                                     employee.password = data['password'];
                                     employee.category = List<String>.from(data['category']);
                                   });
-                                  Navigator.push(context, MaterialPageRoute(builder: (context) => ViewEmployeeByUser(employee: employee, users: current_user)));
+                                  Navigator.push(context, MaterialPageRoute(builder: (context) => ViewEmployeeByUser(employee: employee, users: userModel)));
                                 },
                                 child: ListTile(
                                   title: Text(data['name'],
@@ -132,7 +149,7 @@ class _SearchCounselorsScreenState extends State<SearchCounselorsScreen> {
   }
   var currentUser = FirebaseAuth.instance.currentUser!;
   EmployeeModel employeeModel = EmployeeModel();
-  UserModel current_user = UserModel();
+  UserModel userModel = UserModel();
   getCurrentUser() async {
     await FirebaseFirestore.instance
         .collection('user')
@@ -140,14 +157,14 @@ class _SearchCounselorsScreenState extends State<SearchCounselorsScreen> {
         .get()
         .then((value) => {
       setState(() {
-        current_user.id = value.docs.first['userId'];
-        current_user.name = value.docs.first['name'];
-        current_user.email = value.docs.first['email'];
-        current_user.image = value.docs.first['image'];
-        current_user.password = value.docs.first['password'];
-        current_user.phone = value.docs.first['phone'];
-        current_user.group = value.docs.first['group'];
-        current_user.status = value.docs.first['status'];
+        userModel.id = value.docs.first['userId'];
+        userModel.name = value.docs.first['name'];
+        userModel.email = value.docs.first['email'];
+        userModel.image = value.docs.first['image'];
+        userModel.password = value.docs.first['password'];
+        userModel.phone = value.docs.first['phone'];
+        userModel.group = value.docs.first['group'];
+        userModel.status = value.docs.first['status'];
       })
     });
   }

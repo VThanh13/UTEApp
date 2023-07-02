@@ -16,22 +16,13 @@ class AnswerModel{
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['room_id'] = this.room_id;
-    data['content'] = this.content;
-    data['time'] = this.time;
-    data['employee_id'] = this.employee_id;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['id'] = id;
+    data['room_id'] = room_id;
+    data['content'] = content;
+    data['time'] = time;
+    data['employee_id'] = employee_id;
     return data;
   }
-  // factory AnswerModel.fromMap(Map<String, dynamic> json){
-  //   return AnswerModel(
-  //       json['id'],
-  //       json['room_id'],
-  //       json['content'],
-  //       json['time'],
-  //       json['employee_id'],
-  //   );
-  // }
 
 }

@@ -1,7 +1,9 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:image_picker/image_picker.dart';
+// ignore: depend_on_referenced_packages
 import 'package:intl/intl.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -12,6 +14,7 @@ import 'package:myapp/src/models/EmployeeModel.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../controller/internet_check.dart';
 import '../../models/NewfeedModel.dart';
 import '../employee/employee_info.dart';
 import '../dialog/loading_dialog.dart';
@@ -66,9 +69,11 @@ class Post {
 
 class _HomePageState extends State<HomePageLeader> {
   FirebaseAuth auth = FirebaseAuth.instance;
-  var user_auth = FirebaseAuth.instance.currentUser!;
+  var userAuth = FirebaseAuth.instance.currentUser!;
   EmployeeModel employeeModel = EmployeeModel();
   var departmentName = {};
+
+  InternetCheck internetCheck = InternetCheck();
 
   Post? get post => null;
   @override
@@ -159,7 +164,7 @@ class _HomePageState extends State<HomePageLeader> {
       .get()
       .then((value) => {
         setState(() {
-          value.docs.forEach((element) {
+          for (var element in value.docs) {
             NewfeedModel newFeed = NewfeedModel();
             newFeed.id = element['id'];
             newFeed.content = element['content'];
@@ -168,9 +173,10 @@ class _HomePageState extends State<HomePageLeader> {
             newFeed.employeeId = element['employeeId'];
 
             listNewfeed.add(newFeed);
-          });
+          }
         }),
       });
+    // ignore: avoid_function_literals_in_foreach_calls
     listNewfeed.forEach((element) async {
       Employee employee = Employee("", "", "", "", "", "", "", "", [], "", "");
       Post post = Post(
@@ -277,18 +283,6 @@ class _HomePageState extends State<HomePageLeader> {
           ),
           const Padding(padding: EdgeInsets.fromLTRB(0, 5, 0, 0)),
           if (post.file != 'file.pdf')
-            // SizedBox(
-            //   height: 330,
-            //   width: double.infinity,
-            //   child: FittedBox(
-            //     fit: BoxFit.fitHeight,
-            //     child: ClipRRect(
-            //       child: Image.network(
-            //         post.file,
-            //       ),
-            //     ),
-            //   ),
-            // ),
             ClipRRect(
               borderRadius: const BorderRadius.only(
                 bottomLeft: Radius.circular(0),
@@ -332,7 +326,7 @@ class _HomePageState extends State<HomePageLeader> {
     return FutureBuilder<QuerySnapshot>(
         future: FirebaseFirestore.instance
             .collection("employee")
-            .where("id", isEqualTo: user_auth.uid)
+            .where("id", isEqualTo: userAuth.uid)
             .get(),
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
@@ -355,8 +349,6 @@ class _HomePageState extends State<HomePageLeader> {
 
             return employeeModel;
           }).toString();
-
-          // TODO: implement build
           return Scaffold(
             backgroundColor: Colors.grey[300],
             appBar: AppBar(
@@ -365,11 +357,41 @@ class _HomePageState extends State<HomePageLeader> {
               actions: <Widget>[
                 IconButton(
                   onPressed: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (BuildContext context) =>
-                                MessengerPageEmployee()));
+                    if(internetCheck.isInternetConnect == true){
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (BuildContext context) =>
+                              const MessengerPageEmployee()));
+                    }else{
+                      showDialog(
+                          context: context,
+                          builder: (context) {
+                            return CupertinoAlertDialog(
+                              title: const Column(
+                                children: [
+                                  Icon(
+                                    Icons.warning_amber,
+                                    size: 30,
+                                    color: Colors.redAccent,
+                                  ),
+                                  Text('No internet'),
+                                ],
+                              ),
+                              content: const Text(
+                                  'Please check your internet connection!'),
+                              actions: [
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                  },
+                                  child: const Text('OK'),
+                                ),
+                              ],
+                            );
+                          });
+                    }
+
                   },
                   icon: const Icon(
                     AppIcons.chat,
@@ -390,7 +412,37 @@ class _HomePageState extends State<HomePageLeader> {
                   ),
                   InkWell(
                     onTap: (){
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => const EmployeeInfo()));
+                      if(internetCheck.isInternetConnect == true){
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => const EmployeeInfo()));
+
+                      }else{
+                        showDialog(
+                            context: context,
+                            builder: (context) {
+                              return CupertinoAlertDialog(
+                                title: const Column(
+                                  children: [
+                                    Icon(
+                                      Icons.warning_amber,
+                                      size: 30,
+                                      color: Colors.redAccent,
+                                    ),
+                                    Text('No internet'),
+                                  ],
+                                ),
+                                content: const Text(
+                                    'Please check your internet connection!'),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                    },
+                                    child: const Text('OK'),
+                                  ),
+                                ],
+                              );
+                            });
+                      }
                     },
                     child: SizedBox(
                       height: 56,
@@ -463,7 +515,37 @@ class _HomePageState extends State<HomePageLeader> {
                   ),
                   InkWell(
                     onTap: (){
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => const ManageEmployee()));
+                      if(internetCheck.isInternetConnect == true){
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => const ManageEmployee()));
+
+                      }else{
+                        showDialog(
+                            context: context,
+                            builder: (context) {
+                              return CupertinoAlertDialog(
+                                title: const Column(
+                                  children: [
+                                    Icon(
+                                      Icons.warning_amber,
+                                      size: 30,
+                                      color: Colors.redAccent,
+                                    ),
+                                    Text('No internet'),
+                                  ],
+                                ),
+                                content: const Text(
+                                    'Please check your internet connection!'),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                    },
+                                    child: const Text('OK'),
+                                  ),
+                                ],
+                              );
+                            });
+                      }
                     },
                     child: SizedBox(
                       height: 56,
@@ -536,7 +618,37 @@ class _HomePageState extends State<HomePageLeader> {
                   ),
                   InkWell(
                     onTap: (){
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => const ManageCategory()));
+                      if(internetCheck.isInternetConnect == true){
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => const ManageCategory()));
+
+                      }else{
+                        showDialog(
+                            context: context,
+                            builder: (context) {
+                              return CupertinoAlertDialog(
+                                title: const Column(
+                                  children: [
+                                    Icon(
+                                      Icons.warning_amber,
+                                      size: 30,
+                                      color: Colors.redAccent,
+                                    ),
+                                    Text('No internet'),
+                                  ],
+                                ),
+                                content: const Text(
+                                    'Please check your internet connection!'),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                    },
+                                    child: const Text('OK'),
+                                  ),
+                                ],
+                              );
+                            });
+                      }
                     },
                     child: SizedBox(
                       height: 56,
@@ -609,7 +721,37 @@ class _HomePageState extends State<HomePageLeader> {
                   ),
                   InkWell(
                     onTap: (){
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => const StatsLeaderPage()));
+                      if(internetCheck.isInternetConnect == true){
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => const StatsLeaderPage()));
+
+                      }else{
+                        showDialog(
+                            context: context,
+                            builder: (context) {
+                              return CupertinoAlertDialog(
+                                title: const Column(
+                                  children: [
+                                    Icon(
+                                      Icons.warning_amber,
+                                      size: 30,
+                                      color: Colors.redAccent,
+                                    ),
+                                    Text('No internet'),
+                                  ],
+                                ),
+                                content: const Text(
+                                    'Please check your internet connection!'),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                    },
+                                    child: const Text('OK'),
+                                  ),
+                                ],
+                              );
+                            });
+                      }
                     },
                     child: SizedBox(
                       height: 56,
@@ -683,11 +825,41 @@ class _HomePageState extends State<HomePageLeader> {
 
                   InkWell(
                     onTap: () async {
-                      SharedPreferences prefs = await SharedPreferences.getInstance();
-                      await prefs.setString("id", "");
-                      await FirebaseAuth.instance.signOut();
-                      if (!mounted) return;
-                      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const LoginScreen()));
+                      if(internetCheck.isInternetConnect == true){
+                        SharedPreferences prefs = await SharedPreferences.getInstance();
+                        await prefs.setString("id", "");
+                        await FirebaseAuth.instance.signOut();
+                        if (!mounted) return;
+                        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const LoginScreen()));
+
+                      }else{
+                        showDialog(
+                            context: context,
+                            builder: (context) {
+                              return CupertinoAlertDialog(
+                                title: const Column(
+                                  children: [
+                                    Icon(
+                                      Icons.warning_amber,
+                                      size: 30,
+                                      color: Colors.redAccent,
+                                    ),
+                                    Text('No internet'),
+                                  ],
+                                ),
+                                content: const Text(
+                                    'Please check your internet connection!'),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                    },
+                                    child: const Text('OK'),
+                                  ),
+                                ],
+                              );
+                            });
+                      }
 
                     },
                     child: SizedBox(
@@ -761,7 +933,8 @@ class _HomePageState extends State<HomePageLeader> {
             ),
             body: SafeArea(
               child: SingleChildScrollView(
-                child: Column(
+                child: internetCheck.isInternetConnect == true?
+                Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: <Widget>[
                     Container(
@@ -802,11 +975,11 @@ class _HomePageState extends State<HomePageLeader> {
                                 width: 270,
                                 child: Column(
                                   children: [
-                                    SizedBox(
+                                    const SizedBox(
                                       height: 50,
                                       child: Row(
                                         crossAxisAlignment: CrossAxisAlignment.end,
-                                        children: const [
+                                        children: [
                                           Padding(padding: EdgeInsets.only(left: 5),
                                           child: Icon(Icons.newspaper_outlined),),
                                           Padding(padding: EdgeInsets.only(bottom: 3, left: 5),
@@ -829,14 +1002,14 @@ class _HomePageState extends State<HomePageLeader> {
                                         thickness: 1,
                                       ),
                                     ),
-                                    SizedBox(
+                                    const SizedBox(
                                       height: 30,
                                       width: 200,
                                       child: Row(
                                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                                         children: [
                                           Row(
-                                            children: const [
+                                            children: [
                                               Padding(padding: EdgeInsets.fromLTRB(1, 1, 1, 1),
                                                 child: Icon(Icons.image,
                                                 color: Colors.blueAccent,),),
@@ -846,7 +1019,7 @@ class _HomePageState extends State<HomePageLeader> {
                                             ],
                                           ),
                                           Row(
-                                            children: const [
+                                            children: [
                                               Padding(padding: EdgeInsets.fromLTRB(1, 1, 1, 1),
                                                 child: Icon(Icons.picture_as_pdf_rounded,
                                                 color: Colors.redAccent,),),
@@ -879,11 +1052,25 @@ class _HomePageState extends State<HomePageLeader> {
                         replacement: const Center(
                           child: Padding(
                             padding: EdgeInsets.only(top: 200),
-                            child: Text('No post found!', style: TextStyle(
-                              fontSize: 20,
-                              color: Colors.grey
-                            ),),
-                          )
+                            child: Column(
+                              mainAxisAlignment:
+                              MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.receipt_long_sharp,
+                                  color: Colors.grey,
+                                  size: 40,
+                                ),
+                                Text(
+                                  'No post found!',
+                                  style: TextStyle(
+                                    fontSize: 20,
+                                    color: Colors.grey,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
                         ),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -907,6 +1094,24 @@ class _HomePageState extends State<HomePageLeader> {
                     ),
 
                   ],
+                ):const Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.warning_amber,
+                        color: Colors.redAccent,
+                        size: 45,
+                      ),
+                      Text(
+                        'No Internet connection!',
+                        style: TextStyle(
+                          fontSize: 20,
+                          color: Colors.grey,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -1017,8 +1222,8 @@ class _HomePageState extends State<HomePageLeader> {
                                   borderRadius: const BorderRadius.all(Radius.circular(10)),
                                   border: Border.all(color: Colors.grey),
                                 ),
-                                child: Row(
-                                  children: const [
+                                child: const Row(
+                                  children: [
                                     Padding(padding: EdgeInsets.fromLTRB(30, 1, 70, 1),
                                     child: Text('Insert to your post',
                                     style: TextStyle(
@@ -1050,20 +1255,50 @@ class _HomePageState extends State<HomePageLeader> {
                               width: double.infinity,
                               child: ElevatedButton.icon(
                                 onPressed: () {
-                                  try{
-                                    if(_onCreateNewPost()){
-                                      setState(() {
-                                        _infoPostController.text = '';
-                                      });
-                                    }else{
-                                      setState(() {
-                                        _infoPostController.text = '';
-                                      });
-                                      Navigator.pop(context);
-                                      showErrorMessage('Create post failed');
+                                  if(internetCheck.isInternetConnect == true){
+                                    try{
+                                      if(_onCreateNewPost()){
+                                        setState(() {
+                                          _infoPostController.text = '';
+                                        });
+                                      }else{
+                                        setState(() {
+                                          _infoPostController.text = '';
+                                        });
+                                        Navigator.pop(context);
+                                        showErrorMessage('Create post failed');
+                                      }
+                                    }catch(e){
+                                      //
                                     }
-                                  }catch(e){
-                                    //
+
+                                  }else{
+                                    showDialog(
+                                        context: context,
+                                        builder: (context) {
+                                          return CupertinoAlertDialog(
+                                            title: const Column(
+                                              children: [
+                                                Icon(
+                                                  Icons.warning_amber,
+                                                  size: 30,
+                                                  color: Colors.redAccent,
+                                                ),
+                                                Text('No internet'),
+                                              ],
+                                            ),
+                                            content: const Text(
+                                                'Please check your internet connection!'),
+                                            actions: [
+                                              TextButton(
+                                                onPressed: () {
+                                                  Navigator.pop(context);
+                                                },
+                                                child: const Text('OK'),
+                                              ),
+                                            ],
+                                          );
+                                        });
                                   }
 
                                 },
@@ -1075,7 +1310,7 @@ class _HomePageState extends State<HomePageLeader> {
                                 ),
                                 icon: const Icon(Icons.task_alt),
                                 style: ElevatedButton.styleFrom(
-                                    primary: Colors.blueAccent),
+                                    backgroundColor: Colors.blueAccent),
                               ),
                             ),
                           ],
@@ -1094,16 +1329,14 @@ class _HomePageState extends State<HomePageLeader> {
   bool hadFile = false;
   String fileName = "";
   importImage() async {
-    final _imagePicker = ImagePicker();
-    //PickedFile image;
-    //Check Permissions
+    final imagePicker = ImagePicker();
     await Permission.photos.request();
 
     var permissionStatus = await Permission.photos.status;
 
     if (permissionStatus.isGranted) {
       //Select Image
-      var image = await _imagePicker.pickImage(source: ImageSource.gallery);
+      var image = await imagePicker.pickImage(source: ImageSource.gallery);
       if (image == null) return;
 
       setState(() {
@@ -1120,12 +1353,14 @@ class _HomePageState extends State<HomePageLeader> {
     if (hadFile) {
       File fileForFirebase = File(file.path);
       FirebaseStorage storage = FirebaseStorage.instance;
-      Reference ref = storage.ref().child("image_post/" + fileName);
+      Reference ref = storage.ref().child("image_post/$fileName");
       UploadTask uploadTask = ref.putFile(fileForFirebase);
       await uploadTask.whenComplete(() async {
         var url = await ref.getDownloadURL();
         imgUrl = url.toString();
-      }).catchError((onError) {});
+      }).catchError((onError) {
+        return onError;
+      });
     } else {}
   }
 }

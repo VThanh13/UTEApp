@@ -2,8 +2,11 @@ import 'dart:async';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_pdfview/flutter_pdfview.dart';
+// ignore: depend_on_referenced_packages
 import 'package:path/path.dart';
+// ignore: depend_on_referenced_packages
 import 'package:http/http.dart' as http;
+// ignore: depend_on_referenced_packages
 import 'package:path_provider/path_provider.dart';
 
 class PDFViewerPage extends StatefulWidget {

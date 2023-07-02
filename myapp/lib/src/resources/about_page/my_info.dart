@@ -116,13 +116,13 @@ class _MyInfoState extends State<MyInfo> with SingleTickerProviderStateMixin{
   }
 
   FirebaseAuth auth = FirebaseAuth.instance;
-  var user_auth = FirebaseAuth.instance.currentUser!;
+  var userAuth = FirebaseAuth.instance.currentUser!;
   UserModel userModel = UserModel();
 
   Future<String> getUserNameFromUID() async {
     final snapshot = await FirebaseFirestore.instance
         .collection('user')
-        .where('userId', isEqualTo: user_auth.uid)
+        .where('userId', isEqualTo: userAuth.uid)
         .get();
     return snapshot.docs.first['name'];
   }
@@ -131,7 +131,7 @@ class _MyInfoState extends State<MyInfo> with SingleTickerProviderStateMixin{
   getCurrentUser() async {
     final snapshot = await FirebaseFirestore.instance
         .collection('user')
-        .where('userId', isEqualTo: user_auth.uid)
+        .where('userId', isEqualTo: userAuth.uid)
         .get();
     userModel = snapshot.docs.first as UserModel;
   }
@@ -141,7 +141,7 @@ class _MyInfoState extends State<MyInfo> with SingleTickerProviderStateMixin{
     return FutureBuilder<QuerySnapshot>(
         future: FirebaseFirestore.instance
             .collection("user")
-            .where("userId", isEqualTo: user_auth.uid)
+            .where("userId", isEqualTo: userAuth.uid)
             .get(),
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
@@ -394,7 +394,7 @@ class _MyInfoState extends State<MyInfo> with SingleTickerProviderStateMixin{
                                               ),
                                               icon: const Icon(Icons.save_outlined),
                                               style: ElevatedButton.styleFrom(
-                                                  primary: Colors.blueAccent),
+                                                  backgroundColor: Colors.blueAccent),
                                             ),
                                           ),
 
@@ -543,7 +543,7 @@ class _MyInfoState extends State<MyInfo> with SingleTickerProviderStateMixin{
                                               const Icon(Icons.check),
                                               style: ElevatedButton
                                                   .styleFrom(
-                                                  primary: Colors
+                                                  backgroundColor: Colors
                                                       .blueAccent),
                                             ),
                                           ),
@@ -556,7 +556,7 @@ class _MyInfoState extends State<MyInfo> with SingleTickerProviderStateMixin{
                               ),
                             ),
                           ],
-                        )),
+                        ),),
 
                       ],
                     ),
@@ -592,7 +592,7 @@ class _MyInfoState extends State<MyInfo> with SingleTickerProviderStateMixin{
 
     if (isvalid) {
       LoadingDialog.showLoadingDialog(context, "Please Wait...");
-      user_auth.updatePassword(_passNew2Controller.text);
+      userAuth.updatePassword(_passNew2Controller.text);
       changePassword(_passNew2Controller.text, () {
         LoadingDialog.hideLoadingDialog(context);
         Navigator.push(
@@ -604,25 +604,25 @@ class _MyInfoState extends State<MyInfo> with SingleTickerProviderStateMixin{
   void changeInfo(String email, String name, String phone, Function onSuccess) async {
     var ref = FirebaseFirestore.instance.collection('user');
 
-    ref.doc(user_auth.uid)
+    ref.doc(userAuth.uid)
         .update({'email': email, 'name': name, 'phone': phone}).then((value) {
       onSuccess();
     }).catchError((err) {
-      //TODO
+
     });
   }
 
   void changePassword(String pass, Function onSuccess) async {
     var ref = FirebaseFirestore.instance.collection('user');
 
-    ref.doc(user_auth.uid).update({'password': pass}).then((value) {
+    ref.doc(userAuth.uid).update({'password': pass}).then((value) {
       onSuccess();
     }).catchError((err) {});
   }
 
   uploadImage() async {
-    final _imagePicker = ImagePicker();
-    String image_url;
+    final imagePicker = ImagePicker();
+    String imageUrl;
     //PickedFile image;
     //Check Permissions
     await Permission.photos.request();
@@ -631,22 +631,24 @@ class _MyInfoState extends State<MyInfo> with SingleTickerProviderStateMixin{
 
     if (permissionStatus.isGranted) {
       //Select Image
-      var image = await _imagePicker.pickImage(source: ImageSource.gallery);
+      var image = await imagePicker.pickImage(source: ImageSource.gallery);
 
       if (image != null) {
         var file = File(image.path);
         FirebaseStorage storage = FirebaseStorage.instance;
-        Reference ref = storage.ref().child("avatar/" + image.name);
+        Reference ref = storage.ref().child("avatar/${image.name}");
         UploadTask uploadTask = ref.putFile(file);
         await uploadTask.whenComplete(() async {
           var url = await ref.getDownloadURL();
-          image_url = url.toString();
-          updateAvatar(user_auth.uid, image_url, () {
+          imageUrl = url.toString();
+          updateAvatar(userAuth.uid, imageUrl, () {
             LoadingDialog.hideLoadingDialog(context);
             Navigator.push(context,
                 MaterialPageRoute(builder: (context) => const MyInfo()));
           });
-        }).catchError((onError) {});
+        }).catchError((onError) {
+          return onError;
+        });
       } else {}
     } else {}
   }
@@ -656,7 +658,7 @@ class _MyInfoState extends State<MyInfo> with SingleTickerProviderStateMixin{
     ref.doc(id).update({'image': imageUrl}).then((value) {
       onSuccess();
     }).catchError((err) {
-      //TODO
+      return err;
     });
   }
 }

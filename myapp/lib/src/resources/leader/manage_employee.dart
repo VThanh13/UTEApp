@@ -81,7 +81,8 @@ class _ManageEmployeeState extends State<ManageEmployee> {
               currentEmployee.password = value.docs.first['password'],
               currentEmployee.phone = value.docs.first['phone'],
               currentEmployee.department = value.docs.first['department'],
-              currentEmployee.category = value.docs.first['category'].cast<String>(),
+              currentEmployee.category =
+                  value.docs.first['category'].cast<String>(),
               currentEmployee.roles = value.docs.first['roles'],
               currentEmployee.status = value.docs.first['status']
             });
@@ -99,7 +100,7 @@ class _ManageEmployeeState extends State<ManageEmployee> {
         .get()
         .then((value) => {
               setState(() {
-                value.docs.forEach((element) {
+                for (var element in value.docs) {
                   EmployeeModel employeeModel = EmployeeModel();
                   employeeModel.id = element['id'];
                   employeeModel.name = element['name'];
@@ -113,7 +114,7 @@ class _ManageEmployeeState extends State<ManageEmployee> {
                   employeeModel.status = element['status'];
 
                   listEmployee.add(employeeModel);
-                });
+                }
               })
             });
   }
@@ -183,14 +184,14 @@ class _ManageEmployeeState extends State<ManageEmployee> {
 
   getListCategory() async {
     await FirebaseFirestore.instance
-      .collection('departments')
-      .doc(currentEmployee.department)
-      .get()
-      .then((value) => {
-        setState(() {
-          listCategory = value["category"].cast<String>();
-        })
-      });
+        .collection('departments')
+        .doc(currentEmployee.department)
+        .get()
+        .then((value) => {
+              setState(() {
+                listCategory = value["category"].cast<String>();
+              })
+            });
   }
 
   _modalBottomSheetEditEmployee(EmployeeModel employee) {
@@ -289,56 +290,63 @@ class _ManageEmployeeState extends State<ManageEmployee> {
                                       ),
                                     ),
                                     Container(
-                                        margin: const EdgeInsets.fromLTRB(
-                                            10, 10, 10, 15),
-                                        width: 400,
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 12, vertical: 4),
-                                        decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(12),
-                                          border: Border.all(
-                                              color: Colors.blueAccent,
-                                              width: 4),
-                                        ),
-                                        child: Column(
-                                          children: <Widget>[
-                                            MultiSelectBottomSheetField(
-                                              initialValue: selectedCategory,
-                                              initialChildSize: 0.4,
-                                              listType: MultiSelectListType.CHIP,
-                                              searchable: true,
-                                              buttonText: Text("Categories"),
-                                              title: Text("Categories"),
-                                              items: listCategory.map((option) =>
-                                                        MultiSelectItem<String>(
-                                                          option,
-                                                          option,
-                                                        )).toList(),
-                                              onConfirm: (values) {
+                                      margin: const EdgeInsets.fromLTRB(
+                                          10, 10, 10, 15),
+                                      width: 400,
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 12, vertical: 4),
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(12),
+                                        border: Border.all(
+                                            color: Colors.blueAccent, width: 4),
+                                      ),
+                                      child: Column(
+                                        children: <Widget>[
+                                          MultiSelectBottomSheetField(
+                                            initialValue: selectedCategory,
+                                            initialChildSize: 0.4,
+                                            listType: MultiSelectListType.CHIP,
+                                            searchable: true,
+                                            buttonText:
+                                                const Text("Categories"),
+                                            title: const Text("Categories"),
+                                            items: listCategory
+                                                .map((option) =>
+                                                    MultiSelectItem<String>(
+                                                      option,
+                                                      option,
+                                                    ))
+                                                .toList(),
+                                            onConfirm: (values) {
+                                              setState(() {
+                                                selectedCategory = values
+                                                    .map((e) => e.toString())
+                                                    .toList();
+                                              });
+                                            },
+                                            chipDisplay: MultiSelectChipDisplay(
+                                              onTap: (value) {
                                                 setState(() {
-                                                  selectedCategory = values.map((e) => e.toString()).toList();
+                                                  selectedCategory
+                                                      .remove(value);
                                                 });
                                               },
-                                              chipDisplay: MultiSelectChipDisplay(
-                                                onTap: (value) {
-                                                  setState(() {
-                                                    selectedCategory.remove(value);
-                                                  });
-                                                },
-                                              ),
                                             ),
-                                            selectedCategory.isEmpty
-                                                ? Container(
-                                                padding: EdgeInsets.all(10),
-                                                alignment: Alignment.centerLeft,
-                                                child: Text(
-                                                  "None selected",
-                                                  style: TextStyle(color: Colors.black54),
-                                                ))
-                                                : Container(),
-                                          ],
-                                        ),
+                                          ),
+                                          selectedCategory.isEmpty
+                                              ? Container(
+                                                  padding:
+                                                      const EdgeInsets.all(10),
+                                                  alignment:
+                                                      Alignment.centerLeft,
+                                                  child: const Text(
+                                                    "None selected",
+                                                    style: TextStyle(
+                                                        color: Colors.black54),
+                                                  ))
+                                              : Container(),
+                                        ],
+                                      ),
                                     ),
                                     Container(
                                       height: 50,
@@ -363,15 +371,17 @@ class _ManageEmployeeState extends State<ManageEmployee> {
                                                       MaterialStateProperty.all(
                                                           Colors.blueAccent)),
                                               onPressed: () {
-                                                try{
-                                                  if(_onChangeCategoryClicked(
-                                                      employee.id, selectedCategory, oldCategory)){
-
-                                                  }else{
+                                                try {
+                                                  if (_onChangeCategoryClicked(
+                                                      employee.id,
+                                                      selectedCategory,
+                                                      oldCategory)) {
+                                                  } else {
                                                     Navigator.pop(context);
-                                                    showErrorMessage('Update failed');
+                                                    showErrorMessage(
+                                                        'Update failed');
                                                   }
-                                                }catch(e){
+                                                } catch (e) {
                                                   //
                                                 }
                                               },
@@ -406,12 +416,12 @@ class _ManageEmployeeState extends State<ManageEmployee> {
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
                                   children: [
-                                    SizedBox(
+                                    const SizedBox(
                                       width: 250,
                                       child: Column(
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
-                                        children: const [
+                                        children: [
                                           Text(
                                             'Change status account',
                                             style: TextStyle(
@@ -448,15 +458,16 @@ class _ManageEmployeeState extends State<ManageEmployee> {
                                                       ? status = true
                                                       : false,
                                               onToggle: (val) {
-                                                try{
-                                                  if(_onCancelAccountClicked(
+                                                try {
+                                                  if (_onCancelAccountClicked(
                                                       employee.id,
-                                                      employee.status)){
-                                                  }else{
+                                                      employee.status)) {
+                                                  } else {
                                                     Navigator.pop(context);
-                                                    showErrorMessage('Update failed');
+                                                    showErrorMessage(
+                                                        'Update failed');
                                                   }
-                                                }catch(e){
+                                                } catch (e) {
                                                   //
                                                 }
                                               }),
@@ -503,49 +514,66 @@ class _ManageEmployeeState extends State<ManageEmployee> {
                                     const Padding(
                                         padding: EdgeInsets.only(top: 5)),
                                     Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
                                       children: [
-                                        Expanded(child: StreamBuilder(
-                                          stream: newPasswordControl,
-                                          builder: (context, snapshot) =>
-                                              TextField(
-                                                controller: _newPasswordController,
-                                                decoration: InputDecoration(
-                                                  labelText: "Password",
-                                                  hintText: 'Insert password',
-                                                  errorText: snapshot.hasError? snapshot.error.toString() : null,
-                                                  enabledBorder: OutlineInputBorder(
-                                                      borderRadius:
-                                                      BorderRadius.circular(10),
-                                                      borderSide: const BorderSide(
-                                                        color: Colors.blueAccent,
-                                                        width: 1,
-                                                      )),
-                                                ),
+                                        Expanded(
+                                          child: StreamBuilder(
+                                            stream: newPasswordControl,
+                                            builder: (context, snapshot) =>
+                                                TextField(
+                                              controller:
+                                                  _newPasswordController,
+                                              decoration: InputDecoration(
+                                                labelText: "Password",
+                                                hintText: 'Insert password',
+                                                errorText: snapshot.hasError
+                                                    ? snapshot.error.toString()
+                                                    : null,
+                                                enabledBorder:
+                                                    OutlineInputBorder(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(10),
+                                                        borderSide:
+                                                            const BorderSide(
+                                                          color:
+                                                              Colors.blueAccent,
+                                                          width: 1,
+                                                        )),
                                               ),
-                                        ),),
-                                        const Padding(padding: EdgeInsets.only(left: 10)),
+                                            ),
+                                          ),
+                                        ),
+                                        const Padding(
+                                            padding: EdgeInsets.only(left: 10)),
                                         InkWell(
-                                          onTap: (){
-                                            try{
-                                              if(_onChangePasswordClicked(employee)){
+                                          onTap: () {
+                                            try {
+                                              if (_onChangePasswordClicked(
+                                                  employee)) {
                                                 setState(() {
-                                                  _newPasswordController.text = '';
+                                                  _newPasswordController.text =
+                                                      '';
                                                 });
-                                              }else{
+                                              } else {
                                                 setState(() {
-                                                  _newPasswordController.text = '';
+                                                  _newPasswordController.text =
+                                                      '';
                                                 });
                                                 Navigator.pop(context);
-                                                showErrorMessage('Change password failed');
+                                                showErrorMessage(
+                                                    'Change password failed');
                                               }
-                                            }catch(e){
+                                            } catch (e) {
                                               //
                                             }
                                           },
-                                          child: const Icon(Icons.check_circle_outline,
-                                          size: 30,
-                                          color: Colors.blue,),
+                                          child: const Icon(
+                                            Icons.check_circle_outline,
+                                            size: 30,
+                                            color: Colors.blue,
+                                          ),
                                         )
                                       ],
                                     ),
@@ -579,7 +607,8 @@ class _ManageEmployeeState extends State<ManageEmployee> {
     _newPasswordControl.sink.add('');
 
     if (password.length < 6) {
-      _newPasswordControl.sink.addError("Password must be 6 or more characters");
+      _newPasswordControl.sink
+          .addError("Password must be 6 or more characters");
       return false;
     }
     _newPasswordControl.sink.add('');
@@ -641,8 +670,9 @@ class _ManageEmployeeState extends State<ManageEmployee> {
                   child: Text(
                     'Add new partner',
                     style: TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.w600,),
+                      fontSize: 24,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                 ),
                 SingleChildScrollView(
@@ -657,17 +687,15 @@ class _ManageEmployeeState extends State<ManageEmployee> {
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: <Widget>[
                               Container(
-                                margin: const EdgeInsets.fromLTRB(
-                                    10, 10, 10, 15),
+                                margin:
+                                    const EdgeInsets.fromLTRB(10, 10, 10, 15),
                                 width: 400,
                                 padding: const EdgeInsets.symmetric(
                                     horizontal: 12, vertical: 4),
                                 decoration: BoxDecoration(
-                                  borderRadius:
-                                  BorderRadius.circular(12),
+                                  borderRadius: BorderRadius.circular(12),
                                   border: Border.all(
-                                      color: Colors.blueAccent,
-                                      width: 4),
+                                      color: Colors.blueAccent, width: 4),
                                 ),
                                 child: Column(
                                   children: <Widget>[
@@ -676,16 +704,20 @@ class _ManageEmployeeState extends State<ManageEmployee> {
                                       initialChildSize: 0.4,
                                       listType: MultiSelectListType.CHIP,
                                       searchable: true,
-                                      buttonText: Text("Categories"),
-                                      title: Text("Categories"),
-                                      items: listCategory.map((option) =>
-                                          MultiSelectItem<String>(
-                                            option,
-                                            option,
-                                          )).toList(),
+                                      buttonText: const Text("Categories"),
+                                      title: const Text("Categories"),
+                                      items: listCategory
+                                          .map((option) =>
+                                              MultiSelectItem<String>(
+                                                option,
+                                                option,
+                                              ))
+                                          .toList(),
                                       onConfirm: (values) {
                                         setState(() {
-                                          selectedCategory = values.map((e) => e.toString()).toList();
+                                          selectedCategory = values
+                                              .map((e) => e.toString())
+                                              .toList();
                                         });
                                       },
                                       chipDisplay: MultiSelectChipDisplay(
@@ -698,12 +730,13 @@ class _ManageEmployeeState extends State<ManageEmployee> {
                                     ),
                                     selectedCategory.isEmpty
                                         ? Container(
-                                        padding: EdgeInsets.all(10),
-                                        alignment: Alignment.centerLeft,
-                                        child: Text(
-                                          "None selected",
-                                          style: TextStyle(color: Colors.black54),
-                                        ))
+                                            padding: const EdgeInsets.all(10),
+                                            alignment: Alignment.centerLeft,
+                                            child: const Text(
+                                              "None selected",
+                                              style: TextStyle(
+                                                  color: Colors.black54),
+                                            ))
                                         : Container(),
                                   ],
                                 ),
@@ -717,22 +750,26 @@ class _ManageEmployeeState extends State<ManageEmployee> {
                                     builder: (context, snapshot) => TextField(
                                       controller: _emailController,
                                       decoration: InputDecoration(
-                                          labelText: "Email",
-                                          hintText: 'Insert Email',
-                                          errorText: snapshot.hasError? snapshot.error.toString() : null,
-                                          enabledBorder: OutlineInputBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(10),
-                                              borderSide: const BorderSide(
-                                                color: Colors.blueAccent,
-                                                width: 1,
-                                              )),
-                                          focusedBorder: OutlineInputBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(10),
-                                              borderSide: const BorderSide(
-                                                  color: Colors.blue,
-                                                  width: 3))),
+                                        labelText: "Email",
+                                        hintText: 'Insert Email',
+                                        errorText: snapshot.hasError
+                                            ? snapshot.error.toString()
+                                            : null,
+                                        enabledBorder: OutlineInputBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                          borderSide: const BorderSide(
+                                            color: Colors.blueAccent,
+                                            width: 1,
+                                          ),
+                                        ),
+                                        focusedBorder: OutlineInputBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                          borderSide: const BorderSide(
+                                              color: Colors.blue, width: 3),
+                                        ),
+                                      ),
                                     ),
                                   )),
                               Container(
@@ -746,7 +783,9 @@ class _ManageEmployeeState extends State<ManageEmployee> {
                                       decoration: InputDecoration(
                                           labelText: "Name",
                                           hintText: 'Insert name',
-                                          errorText: snapshot.hasError? snapshot.error.toString() : null,
+                                          errorText: snapshot.hasError
+                                              ? snapshot.error.toString()
+                                              : null,
                                           enabledBorder: OutlineInputBorder(
                                               borderRadius:
                                                   BorderRadius.circular(10),
@@ -773,7 +812,9 @@ class _ManageEmployeeState extends State<ManageEmployee> {
                                       decoration: InputDecoration(
                                           labelText: "Phone number",
                                           hintText: 'Insert phone number',
-                                          errorText: snapshot.hasError? snapshot.error.toString() : null,
+                                          errorText: snapshot.hasError
+                                              ? snapshot.error.toString()
+                                              : null,
                                           enabledBorder: OutlineInputBorder(
                                               borderRadius:
                                                   BorderRadius.circular(10),
@@ -800,7 +841,9 @@ class _ManageEmployeeState extends State<ManageEmployee> {
                                       decoration: InputDecoration(
                                           labelText: "Password",
                                           hintText: 'Insert password',
-                                          errorText: snapshot.hasError? snapshot.error.toString() : null,
+                                          errorText: snapshot.hasError
+                                              ? snapshot.error.toString()
+                                              : null,
                                           enabledBorder: OutlineInputBorder(
                                               borderRadius:
                                                   BorderRadius.circular(10),
@@ -839,15 +882,15 @@ class _ManageEmployeeState extends State<ManageEmployee> {
                                                   Colors.blueAccent),
                                         ),
                                         onPressed: () {
-                                          try{
-                                            if(_onAddEmployeeClicked()){
+                                          try {
+                                            if (_onAddEmployeeClicked()) {
                                               setState(() {
                                                 _emailController.text = '';
                                                 _phoneController.text = '';
                                                 _nameController.text = '';
                                                 _passwordController.text = '';
                                               });
-                                            }else{
+                                            } else {
                                               setState(() {
                                                 _emailController.text = '';
                                                 _phoneController.text = '';
@@ -857,7 +900,7 @@ class _ManageEmployeeState extends State<ManageEmployee> {
                                               Navigator.pop(context);
                                               showErrorMessage('Create failed');
                                             }
-                                          }catch(e){
+                                          } catch (e) {
                                             //
                                           }
                                         },
@@ -914,10 +957,10 @@ class _ManageEmployeeState extends State<ManageEmployee> {
   }
 
   _onChangeCategoryClicked(id, newCategory, oldCategory) {
-    if(newCategory.isEmpty){
-      MsgDialog.showMsgDialog(context, "Change category", "Please select at least one category");
-    }
-    else{
+    if (newCategory.isEmpty) {
+      MsgDialog.showMsgDialog(
+          context, "Change category", "Please select at least one category");
+    } else {
       LoadingDialog.showLoadingDialog(context, "Please Wait...");
       changeCategory(id, newCategory, oldCategory, () {
         LoadingDialog.hideLoadingDialog(context);
@@ -928,14 +971,16 @@ class _ManageEmployeeState extends State<ManageEmployee> {
     }
   }
 
-    changeCategory(id, newCategory, oldCategory, Function onSuccess) async {
+  changeCategory(id, newCategory, oldCategory, Function onSuccess) async {
     var ref = FirebaseFirestore.instance.collection('employee');
 
     ref.doc(id).update({'category': FieldValue.arrayRemove(oldCategory)});
-    ref.doc(id).update({'category': FieldValue.arrayUnion(newCategory)}).then((value) {
+    ref
+        .doc(id)
+        .update({'category': FieldValue.arrayUnion(newCategory)}).then((value) {
       onSuccess();
     }).catchError((err) {
-      print(err);
+      return err;
     });
   }
 
@@ -956,13 +1001,13 @@ class _ManageEmployeeState extends State<ManageEmployee> {
         {'status': status == 'enabled' ? 'disabled' : 'enabled'}).then((value) {
       onSuccess();
     }).catchError((err) {
-      //TODO
+      return err;
     });
   }
 
   _onAddEmployeeClicked() {
-    String current_email = currentEmployee.email!;
-    String current_password = currentEmployee.password!;
+    String currentEmail = currentEmployee.email!;
+    String currentPassword = currentEmployee.password!;
 
     String email = _emailController.text;
     String name = _nameController.text;
@@ -974,7 +1019,8 @@ class _ManageEmployeeState extends State<ManageEmployee> {
       LoadingDialog.showLoadingDialog(context, "Please Wait...");
       authBloc.createEmployee(
           email, password, name, phone, department, category, () {
-        auth.signInWithEmailAndPassword(email: current_email, password: current_password);
+        auth.signInWithEmailAndPassword(
+            email: currentEmail, password: currentPassword);
         LoadingDialog.hideLoadingDialog(context);
         Navigator.push(context,
             MaterialPageRoute(builder: (context) => const ManageEmployee()));
@@ -1015,7 +1061,6 @@ class _ManageEmployeeState extends State<ManageEmployee> {
 
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -1079,17 +1124,25 @@ class _ManageEmployeeState extends State<ManageEmployee> {
       ),
     );
   }
+
   void showSuccessMessage(String message) {
-    final snackBar = SnackBar(content: Text(message,
-      style: const TextStyle(color: Colors.white),
-    ), backgroundColor: Colors.blueAccent,);
+    final snackBar = SnackBar(
+      content: Text(
+        message,
+        style: const TextStyle(color: Colors.white),
+      ),
+      backgroundColor: Colors.blueAccent,
+    );
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 
   void showErrorMessage(String message) {
-    final snackBar = SnackBar(content: Text(message,
-      style: const TextStyle(color: Colors.white),
-    ),backgroundColor: Colors.red,
+    final snackBar = SnackBar(
+      content: Text(
+        message,
+        style: const TextStyle(color: Colors.white),
+      ),
+      backgroundColor: Colors.red,
     );
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }

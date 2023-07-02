@@ -1,4 +1,4 @@
-import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
+// ignore: depend_on_referenced_packages
 import 'package:intl/intl.dart';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -22,9 +22,9 @@ class MessengerPageEmployee extends StatefulWidget {
 
 class _MessengerPageState extends State<MessengerPageEmployee> with SingleTickerProviderStateMixin {
   FirebaseAuth auth = FirebaseAuth.instance;
-  var user_auth = FirebaseAuth.instance.currentUser!;
+  var userAuth = FirebaseAuth.instance.currentUser!;
   EmployeeModel employeeModel = EmployeeModel();
-  EmployeeModel current_employee = EmployeeModel();
+  EmployeeModel currentEmployee = EmployeeModel();
   late TabController _tabController;
   List listTabItems = [
     'All questions',
@@ -43,20 +43,20 @@ class _MessengerPageState extends State<MessengerPageEmployee> with SingleTicker
   getCurrentUser() async {
     await FirebaseFirestore.instance
       .collection('employee')
-      .where('id', isEqualTo: user_auth.uid)
+      .where('id', isEqualTo: userAuth.uid)
       .get()
       .then((value) => {
       setState(() {
-        current_employee.id = value.docs.first['id'];
-        current_employee.name = value.docs.first['name'];
-        current_employee.email = value.docs.first['email'];
-        current_employee.image = value.docs.first['image'];
-        current_employee.password = value.docs.first['password'];
-        current_employee.phone = value.docs.first['phone'];
-        current_employee.department = value.docs.first['department'];
-        current_employee.category = value.docs.first['category'].cast<String>();
-        current_employee.roles = value.docs.first['roles'];
-        current_employee.status = value.docs.first['status'];
+        currentEmployee.id = value.docs.first['id'];
+        currentEmployee.name = value.docs.first['name'];
+        currentEmployee.email = value.docs.first['email'];
+        currentEmployee.image = value.docs.first['image'];
+        currentEmployee.password = value.docs.first['password'];
+        currentEmployee.phone = value.docs.first['phone'];
+        currentEmployee.department = value.docs.first['department'];
+        currentEmployee.category = value.docs.first['category'].cast<String>();
+        currentEmployee.roles = value.docs.first['roles'];
+        currentEmployee.status = value.docs.first['status'];
       })
     });
     await getAllPublicChatRoom();
@@ -74,10 +74,10 @@ class _MessengerPageState extends State<MessengerPageEmployee> with SingleTicker
       .get()
       .then((value) => {
       setState(() {
-        value.docs.forEach((element) {
+        for (var element in value.docs) {
           ChatRoomModel chatRoom = ChatRoomModel();
           chatRoom.id = element['room_id'];
-          chatRoom.user_id = element['user_id'];
+          chatRoom.userId = element['user_id'];
           chatRoom.time = element['time'];
           chatRoom.title = element['title'];
           chatRoom.department = element['department'];
@@ -88,7 +88,7 @@ class _MessengerPageState extends State<MessengerPageEmployee> with SingleTicker
           chatRoom.status = element['status'];
 
           listPublicChatRoom.add(chatRoom);
-        });
+        }
       })
     });
   }
@@ -101,10 +101,10 @@ class _MessengerPageState extends State<MessengerPageEmployee> with SingleTicker
       .get()
       .then((value) => {
       setState(() {
-        value.docs.forEach((element) {
+        for (var element in value.docs) {
           ChatRoomModel chatRoom = ChatRoomModel();
           chatRoom.id = element['room_id'];
-          chatRoom.user_id = element['user_id'];
+          chatRoom.userId = element['user_id'];
           chatRoom.time = element['time'];
           chatRoom.title = element['title'];
           chatRoom.department = element['department'];
@@ -115,18 +115,18 @@ class _MessengerPageState extends State<MessengerPageEmployee> with SingleTicker
           chatRoom.status = element['status'];
 
           listPrivateChatRoom.add(chatRoom);
-        });
+        }
       })
     });
   }
 
-  List<ChatRoomModel> listUnanwsered = [];
+  List<ChatRoomModel> listUnAnswered = [];
   getUnanwseredChatRoom() async {
     String key = "category";
-    List<String> values = current_employee.category!;
-    if(current_employee.roles == "Trưởng nhóm"){
+    List<String> values = currentEmployee.category!;
+    if(currentEmployee.roles == "Trưởng nhóm"){
       key = "department";
-      values.add(current_employee.department!);
+      values.add(currentEmployee.department!);
     }
     await FirebaseFirestore.instance
       .collection('chat_room')
@@ -135,10 +135,10 @@ class _MessengerPageState extends State<MessengerPageEmployee> with SingleTicker
       .get()
       .then((value) => {
         setState(() {
-          value.docs.forEach((element) {
+          for (var element in value.docs) {
             ChatRoomModel chatRoom = ChatRoomModel();
             chatRoom.id = element['room_id'];
-            chatRoom.user_id = element['user_id'];
+            chatRoom.userId = element['user_id'];
             chatRoom.time = element['time'];
             chatRoom.title = element['title'];
             chatRoom.department = element['department'];
@@ -148,8 +148,8 @@ class _MessengerPageState extends State<MessengerPageEmployee> with SingleTicker
             chatRoom.mode = element['mode'];
             chatRoom.status = element['status'];
 
-            listUnanwsered.add(chatRoom);
-          });
+            listUnAnswered.add(chatRoom);
+          }
         })
       });
   }
@@ -157,10 +157,10 @@ class _MessengerPageState extends State<MessengerPageEmployee> with SingleTicker
   List<ChatRoomModel> listAnwsered = [];
   getAnwseredChatRoom() async {
     String key = "category";
-    List<String> values = current_employee.category!;
-    if(current_employee.roles == "Trưởng nhóm"){
+    List<String> values = currentEmployee.category!;
+    if(currentEmployee.roles == "Trưởng nhóm"){
       key = "department";
-      values.add(current_employee.department!);
+      values.add(currentEmployee.department!);
     }
     await FirebaseFirestore.instance
       .collection('chat_room')
@@ -169,10 +169,10 @@ class _MessengerPageState extends State<MessengerPageEmployee> with SingleTicker
       .get()
       .then((value) => {
         setState(() {
-          value.docs.forEach((element) {
+          for (var element in value.docs) {
             ChatRoomModel chatRoom = ChatRoomModel();
             chatRoom.id = element['room_id'];
-            chatRoom.user_id = element['user_id'];
+            chatRoom.userId = element['user_id'];
             chatRoom.time = element['time'];
             chatRoom.title = element['title'];
             chatRoom.department = element['department'];
@@ -183,28 +183,28 @@ class _MessengerPageState extends State<MessengerPageEmployee> with SingleTicker
             chatRoom.status = element['status'];
 
             listAnwsered.add(chatRoom);
-          });
+          }
         })
       });
   }
 
   List<ChatRoomModel> listYourChatRoom = [];
   getYourChatRoom() async {
-    listYourChatRoom = listYourMessage + listAnwsered + listUnanwsered;
+    listYourChatRoom = listYourMessage + listAnwsered + listUnAnswered;
   }
 
   List<ChatRoomModel> listYourMessage = [];
   getYourMessage() async {
     await FirebaseFirestore.instance
         .collection('chat_room')
-        .where("category", isEqualTo: current_employee.id!)
+        .where("category", isEqualTo: currentEmployee.id!)
         .get()
         .then((value) => {
       setState(() {
-        value.docs.forEach((element) {
+        for (var element in value.docs) {
           ChatRoomModel chatRoom = ChatRoomModel();
           chatRoom.id = element['room_id'];
-          chatRoom.user_id = element['user_id'];
+          chatRoom.userId = element['user_id'];
           chatRoom.time = element['time'];
           chatRoom.title = element['title'];
           chatRoom.department = element['department'];
@@ -215,7 +215,7 @@ class _MessengerPageState extends State<MessengerPageEmployee> with SingleTicker
           chatRoom.status = element['status'];
 
           listYourMessage.add(chatRoom);
-        });
+        }
       })
     });
   }
@@ -251,21 +251,21 @@ class _MessengerPageState extends State<MessengerPageEmployee> with SingleTicker
               leading: IconButton(
                   icon: const Icon(Icons.arrow_back, color: Colors.white),
                   onPressed: () {
-                    if(current_employee.roles=="Tư vấn viên"){
+                    if(currentEmployee.roles=="Tư vấn viên"){
                       Navigator.push(
                           context,
                           MaterialPageRoute(
                               builder: (BuildContext context) =>
                               const HomePageEmployee()));
                     }
-                    else if(current_employee.roles=="Trưởng nhóm"){
+                    else if(currentEmployee.roles=="Trưởng nhóm"){
                       Navigator.push(
                           context,
                           MaterialPageRoute(
                               builder: (BuildContext context) =>
                               const HomePageLeader()));
                     }
-                    else if(current_employee.roles=="Manager"){
+                    else if(currentEmployee.roles=="Manager"){
                       Navigator.push(
                           context,
                           MaterialPageRoute(
@@ -341,7 +341,7 @@ class _MessengerPageState extends State<MessengerPageEmployee> with SingleTicker
                       child: _buildChatRoom(listAnwsered),
                     ),
                     SingleChildScrollView(
-                      child: _buildChatRoom(listUnanwsered),
+                      child: _buildChatRoom(listUnAnswered),
                     ),
                     SingleChildScrollView(
                       child: _buildChatRoom(listYourMessage),
@@ -362,7 +362,7 @@ class _MessengerPageState extends State<MessengerPageEmployee> with SingleTicker
   }
 
   Widget getQuestion() {
-    if (pageIndex == 0 && current_employee.roles!="Manager") {
+    if (pageIndex == 0 && currentEmployee.roles!="Manager") {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
@@ -391,13 +391,13 @@ class _MessengerPageState extends State<MessengerPageEmployee> with SingleTicker
           else if(selectedMenu == "Answered questions")
             _buildChatRoom(listAnwsered)
           else if(selectedMenu == "Unanswered questions")
-              _buildChatRoom(listUnanwsered)
+              _buildChatRoom(listUnAnswered)
           else
               _buildChatRoom(listYourMessage)
         ],
       );
     }
-    else if (pageIndex == 1 && current_employee.roles!="Manager") {
+    else if (pageIndex == 1 && currentEmployee.roles!="Manager") {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
@@ -554,12 +554,7 @@ class _MessengerPageState extends State<MessengerPageEmployee> with SingleTicker
 
   int pageIndex = 0;
   getFooter() {
-    if(current_employee.roles!="Manager") {
-      List<IconData> iconItems = [
-        Icons.mark_email_unread_sharp,
-        Icons.mark_email_read_sharp,
-        AppIcons.chat,
-      ];
+    if(currentEmployee.roles!="Manager") {
       return BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(

@@ -9,7 +9,7 @@ class MsgDialog {
         content: Text(msg),
         actions: [
           ElevatedButton(
-            child: Text("OK"),
+            child: const Text("OK"),
             onPressed: () {
               Navigator.of(context).pop(MsgDialog);
             },

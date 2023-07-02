@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/cupertino.dart';
 
 import '../../../utils/color_utils.dart';
 import '../../blocs/auth_bloc.dart';
@@ -128,15 +127,16 @@ class _LoginAdminState extends State<LoginAdmin> {
     if (isValid) {
       LoadingDialog.showLoadingDialog(context, "Please Wait...");
       authBloc.signIn(_emailController.text, _passController.text, () async {
-        var user_auth = FirebaseAuth.instance.currentUser!;
+        var userAuth = FirebaseAuth.instance.currentUser!;
         var snapshot = await FirebaseFirestore.instance
             .collection('admin')
-            .where('id', isEqualTo: user_auth.uid)
+            .where('id', isEqualTo: userAuth.uid)
             .get();
         if (snapshot.docs.isNotEmpty) {
+          if (!mounted) return;
           LoadingDialog.hideLoadingDialog(context);
           Navigator.push(context,
-              MaterialPageRoute(builder: (context) => HomePageAdmin()));
+              MaterialPageRoute(builder: (context) => const HomePageAdmin()));
         } else{}
       }, (msg) {
         LoadingDialog.hideLoadingDialog(context);

@@ -21,13 +21,13 @@ class HomePageAdmin extends StatefulWidget {
 
 class _HomePageState extends State<HomePageAdmin> {
   FirebaseAuth auth = FirebaseAuth.instance;
-  var user_auth = FirebaseAuth.instance.currentUser!;
+  var userAuth = FirebaseAuth.instance.currentUser!;
   UserModel userModel = UserModel();
 
   Future<String> getUserNameFromUID() async {
     final snapshot = await FirebaseFirestore.instance
         .collection('user')
-        .where('userId', isEqualTo: user_auth.uid)
+        .where('userId', isEqualTo: userAuth.uid)
         .get();
     return snapshot.docs.first['name'];
   }
@@ -43,7 +43,7 @@ class _HomePageState extends State<HomePageAdmin> {
     return FutureBuilder<QuerySnapshot>(
         future: FirebaseFirestore.instance
             .collection("user")
-            .where("userId", isEqualTo: user_auth.uid)
+            .where("userId", isEqualTo: userAuth.uid)
             .get(),
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
