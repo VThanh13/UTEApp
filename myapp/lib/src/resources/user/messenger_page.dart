@@ -246,7 +246,7 @@ class _MessengerPageState extends State<MessengerPage> {
   List<EmployeeModel> listEmployee = [];
   getEmployeeData() async {
     await FirebaseFirestore.instance
-        .collection('employee')
+        .collection('employee').limit(10)
         .get()
         .then((value) => {
               setState(() {
