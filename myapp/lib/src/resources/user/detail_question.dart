@@ -30,8 +30,9 @@ class Answer {
   String questionId;
   String time;
   EmployeeModel employee;
+  String file;
 
-  Answer(this.id, this.questionId, this.content, this.time, this.employee);
+  Answer(this.id, this.questionId, this.content, this.time, this.employee, this.file);
 }
 
 class Question {
@@ -147,6 +148,7 @@ class _DetailQuestionState extends State<DetailQuestion> {
                   ans.room_id = element['room_id'];
                   ans.content = element['content'];
                   ans.time = element['time'];
+                  ans.file = element['file'];
 
                   listAns.add(ans);
                 });
@@ -156,7 +158,7 @@ class _DetailQuestionState extends State<DetailQuestion> {
     listAns.forEach((element) async {
       EmployeeModel employeeModel = EmployeeModel();
       Answer ans = Answer(element.id!, element.room_id!, element.content!,
-          element.time!, employeeModel);
+          element.time!, employeeModel, element.file!);
       await FirebaseFirestore.instance
           .collection('employee')
           .where('id', isEqualTo: element.employee_id)
@@ -214,7 +216,6 @@ class _DetailQuestionState extends State<DetailQuestion> {
     return Column(
       children: <Widget>[
         SizedBox(
-          height: 560,
           width: double.maxFinite,
           child: NotificationListener<ScrollNotification>(
             onNotification: (ScrollNotification notification) {
@@ -249,8 +250,11 @@ class _DetailQuestionState extends State<DetailQuestion> {
         mainAxisAlignment: MainAxisAlignment.end,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
+          const SizedBox(
+            height: 5,
+          ),
           Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.end,
             children: [
               Text(
                 '   ${question.user.name}',
@@ -271,93 +275,50 @@ class _DetailQuestionState extends State<DetailQuestion> {
                     color: Colors.grey[500],
                     overflow: TextOverflow.visible),
               ),
+              Text('               '),
             ],
           ),
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              if (question.file != 'file.pdf')
-                if (question.file
-                    .substring(question.file.length - 100)
-                    .startsWith('.pdf'))
-                  (Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: [
-                          IconButton(
-                            onPressed: () async {
-                              final url = question.file;
-                              final file = await PDFApi.loadNetwork(url);
-                              openPDF(context, file);
-                            },
-                            icon: const Icon(AppIcons.file_pdf,
-                                color: Color(0xED0565B2)),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Column(
+                      children: [
+                        Container(
+                          constraints: new BoxConstraints(
+                              maxWidth: MediaQuery.of(context).size.width - 100),
+                          padding: const EdgeInsets.all(10),
+                          margin: const EdgeInsets.only(top: 3, bottom: 5, right: 10),
+                          decoration: const BoxDecoration(
+                            borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(12),
+                              bottomLeft: Radius.circular(12),
+                              bottomRight: Radius.circular(12),
+                            ),
+                            color: Colors.lightBlueAccent,
                           ),
-                          const Text(
-                            "File PDF",
-                            overflow: TextOverflow.visible,
-                            style: TextStyle(
-                                fontSize: 15,
-                                fontWeight: FontWeight.w400,
-                                color: Color(0xED0565B2)),
+                          child: Text(
+                            question.content,
+                            maxLines: 20,
+                            style: const TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.w400,
+                            ),
                           ),
-                        ],
-                      ),
-                    ],
-                  )),
-
-                SizedBox(
-                  width: MediaQuery.of(context).size.width - 92,
-                  height: question.file != 'file.pdf' &&
-                      !question.file
-                          .substring(question.file.length - 57)
-                          .startsWith('.pdf')? 310: 60,
-                  child: Column(
-                    children: [
-                      Expanded(
-                        child: SizedBox(
-                          width: double.maxFinite,
-                          height: 150,
-                          child: Wrap(
-                              crossAxisAlignment: WrapCrossAlignment.end,
-                              alignment: WrapAlignment.end,
-                              children: [
-                                Container(
-                                  padding: const EdgeInsets.all(10),
-                                  margin: const EdgeInsets.only(top: 3, bottom: 10),
-                                  decoration: const BoxDecoration(
-                                    borderRadius: BorderRadius.only(
-                                      topLeft: Radius.circular(12),
-                                      bottomLeft: Radius.circular(12),
-                                      bottomRight: Radius.circular(12),
-                                    ),
-                                    color: Colors.lightBlueAccent,
-                                  ),
-                                  child: Text(
-                                    question.content,
-                                    maxLines: 20,
-                                    style: const TextStyle(
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.w400,
-                                    ),
-                                  ),
-                                ),
-                              ]),
                         ),
-                      ),
-                      if (question.file != 'file.pdf' &&
-                          !question.file
-                              .substring(question.file.length - 57)
-                              .startsWith('.pdf'))
+                      ],
+                    ),
+
+                    if (question.file != 'file.pdf' && !question.file.substring(question.file.length - 57).startsWith('.pdf'))
                       Padding(
-                        padding: const EdgeInsets.only(top: 30),
+                        padding: const EdgeInsets.only(top: 0),
                         child: SizedBox(
                           width: MediaQuery.of(context).size.width - 92,
                           child: Card(
-                            margin: const EdgeInsets.all(5),
+                            margin: const EdgeInsets.only(top: 3, bottom: 5, right: 10),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10),
                             ),
@@ -368,13 +329,47 @@ class _DetailQuestionState extends State<DetailQuestion> {
                           ),
                         ),
                       ),
+                    if (question.file != 'file.pdf' && question.file.substring(question.file.length - 57).startsWith('.pdf'))
+                      (Container(
+                        margin: const EdgeInsets.only(top: 3, bottom: 5, right: 10),
+                        decoration: const BoxDecoration(
+                          borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(12),
+                            bottomLeft: Radius.circular(12),
+                            bottomRight: Radius.circular(12),
+                          ),
+                          color: Colors.lightBlueAccent,
+                        ),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            IconButton(
+                              onPressed: () async {
+                                final url = question.file;
+                                final file = await PDFApi.loadNetwork(url);
+                                openPDF(context, file);
+                              },
+                              icon: const Icon(AppIcons.file_pdf,
+                                  color: Color(0xED0565B2)),
+                            ),
+                            Container(
+                              padding: const EdgeInsets.only(top: 10, bottom: 10, right: 10),
+                              margin: const EdgeInsets.only(top: 3, bottom: 5),
+                              child: const Text(
+                                "File PDF",
+                                overflow: TextOverflow.visible,
+                                style: TextStyle(
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.w400,
+                                    color: Color(0xED0565B2)),
+                              ),
+                            ),
+                          ],
+                        ),
+                      )),
+
                     ],
                   ),
-                ),
-
-              const SizedBox(
-                width: 8,
-              ),
               CircleAvatar(
                 radius: 22,
                 backgroundColor: Colors.blueAccent,
@@ -397,11 +392,14 @@ class _DetailQuestionState extends State<DetailQuestion> {
         mainAxisAlignment: MainAxisAlignment.end,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          const SizedBox(
+            height: 5,
+          ),
           Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.start,
             children: [
               Text(
-                '   ${answer.employee.name}',
+                '                      ${answer.employee.name}',
                 style: TextStyle(
                   fontSize: 10,
                   fontStyle: FontStyle.italic,
@@ -434,17 +432,51 @@ class _DetailQuestionState extends State<DetailQuestion> {
                   radius: 20,
                 ),
               ),
-              const SizedBox(
-                width: 10,
-              ),
-              Expanded(
-                child: Wrap(
-                  crossAxisAlignment: WrapCrossAlignment.end,
-                  alignment: WrapAlignment.start,
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.all(10),
-                      margin: const EdgeInsets.only(top: 3, bottom: 10),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    constraints: new BoxConstraints(
+                      maxWidth: MediaQuery.of(context).size.width - 100),
+                    padding: const EdgeInsets.all(10),
+                    margin: const EdgeInsets.only(top: 3, bottom: 5, left: 10),
+                    decoration: const BoxDecoration(
+                      borderRadius: BorderRadius.only(
+                        topRight: Radius.circular(12),
+                        bottomLeft: Radius.circular(12),
+                        bottomRight: Radius.circular(12),
+                      ),
+                      color: Colors.grey,
+                    ),
+                    child: Text(
+                      answer.content,
+                      maxLines: 20,
+                      style: const TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w400,
+                      ),
+                    ),
+                  ),
+                  if (answer.file != 'file.pdf' && !answer.file.substring(answer.file.length - 57).startsWith('.pdf'))
+                    Padding(
+                      padding: const EdgeInsets.only(top: 0),
+                      child: SizedBox(
+                        width: MediaQuery.of(context).size.width - 92,
+                        child: Card(
+                          margin: const EdgeInsets.only(top: 3, bottom: 5, left: 10),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(8.0),
+                            child: Image.network(answer.file),
+                          ),
+                        ),
+                      ),
+                    ),
+                  if (answer.file != 'file.pdf' && answer.file.substring(answer.file.length - 57).startsWith('.pdf'))
+                    (Container(
+                      margin: const EdgeInsets.only(top: 3, bottom: 5, left: 10),
                       decoration: const BoxDecoration(
                         borderRadius: BorderRadius.only(
                           topRight: Radius.circular(12),
@@ -453,20 +485,37 @@ class _DetailQuestionState extends State<DetailQuestion> {
                         ),
                         color: Colors.grey,
                       ),
-                      child: Text(
-                        answer.content,
-                        overflow: TextOverflow.visible,
-                        maxLines: 20,
-                        style: const TextStyle(
-                            fontSize: 15, fontWeight: FontWeight.w400),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          IconButton(
+                            onPressed: () async {
+                              final url = answer.file;
+                              final file = await PDFApi.loadNetwork(url);
+                              openPDF(context, file);
+                            },
+                            icon: const Icon(AppIcons.file_pdf,
+                                color: Colors.black),
+                          ),
+                          Container(
+                            padding: const EdgeInsets.only(top: 10, bottom: 10, right: 10),
+                            margin: const EdgeInsets.only(top: 3, bottom: 5),
+                            child: const Text(
+                              "File PDF",
+                              overflow: TextOverflow.visible,
+                              style: TextStyle(
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w400,
+                                  color: Colors.black),
+                            ),
+                          ),
+                        ],
                       ),
-                    ),
-
-                  ],
-                ),
+                    )),
+                ],
               ),
             ],
-          )
+          ),
         ],
       ),
     );
@@ -628,7 +677,7 @@ class _DetailQuestionState extends State<DetailQuestion> {
             return SingleChildScrollView(
               controller: _scrollController,
               key: _storageKey,
-              padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
+              padding: const EdgeInsets.fromLTRB(10, 0, 10, 10),
               child: Column(
                 children: <Widget>[
                   SizedBox(
@@ -637,7 +686,7 @@ class _DetailQuestionState extends State<DetailQuestion> {
                       child: Column(
                         children: <Widget>[
                           SizedBox(
-                            height: MediaQuery.of(context).size.height * 0.8,
+                            height: current_user.uid == widget.chatRoom.user_id ? MediaQuery.of(context).size.height * 0.83 : MediaQuery.of(context).size.height,
                             width: double.maxFinite,
                             child: SingleChildScrollView(
                               child: _buildMessage(),
@@ -660,7 +709,6 @@ class _DetailQuestionState extends State<DetailQuestion> {
 
   _inputQuestion() {
     return Container(
-      height: 50,
       width: double.maxFinite,
       decoration: BoxDecoration(
         border: Border.all(

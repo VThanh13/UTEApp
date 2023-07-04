@@ -37,7 +37,7 @@ class _PDFViewerPageState extends State<PDFViewerPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text(name),
-        backgroundColor: Colors.tealAccent,
+        backgroundColor: Colors.blue,
         actions: pages >= 2
             ? [
           Center(child: Text(text)),
