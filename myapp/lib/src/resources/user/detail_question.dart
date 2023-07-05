@@ -1,4 +1,4 @@
-// ignore_for_file: avoid_function_literals_in_foreach_calls
+// ignore_for_file: avoid_function_literals_in_foreach_calls, use_build_context_synchronously
 
 import 'dart:async';
 import 'dart:io';
@@ -210,6 +210,7 @@ class _DetailQuestionState extends State<DetailQuestion> {
     return Column(
       children: <Widget>[
         SizedBox(
+          key: UniqueKey(),
           width: double.maxFinite,
           child: NotificationListener<ScrollNotification>(
             onNotification: (ScrollNotification notification) {
@@ -240,6 +241,7 @@ class _DetailQuestionState extends State<DetailQuestion> {
 
   _buildQues(Question question) {
     return SizedBox(
+      key: UniqueKey(),
       width: MediaQuery.of(context).size.width - 40,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.end,
@@ -270,7 +272,7 @@ class _DetailQuestionState extends State<DetailQuestion> {
                     color: Colors.grey[500],
                     overflow: TextOverflow.visible),
               ),
-              Text('               '),
+              const Text('               '),
             ],
           ),
           Row(
@@ -283,7 +285,7 @@ class _DetailQuestionState extends State<DetailQuestion> {
                     Column(
                       children: [
                         Container(
-                          constraints: new BoxConstraints(
+                          constraints: BoxConstraints(
                               maxWidth: MediaQuery.of(context).size.width - 100),
                           padding: const EdgeInsets.all(10),
                           margin: const EdgeInsets.only(top: 3, bottom: 5, right: 10),
@@ -431,7 +433,7 @@ class _DetailQuestionState extends State<DetailQuestion> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Container(
-                    constraints: new BoxConstraints(
+                    constraints: BoxConstraints(
                       maxWidth: MediaQuery.of(context).size.width - 100),
                     padding: const EdgeInsets.all(10),
                     margin: const EdgeInsets.only(top: 3, bottom: 5, left: 10),
@@ -620,10 +622,8 @@ class _DetailQuestionState extends State<DetailQuestion> {
     super.dispose();
   }
 
-  String _id = '';
   @override
   void initState() {
-    _id = widget.chatRoom.id!;
     getDepartmentName();
     super.initState();
     _numItems = 10;

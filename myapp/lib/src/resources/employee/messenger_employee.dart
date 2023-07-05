@@ -492,6 +492,7 @@ class _MessengerPageState extends State<MessengerPageEmployee> with SingleTicker
                       DetailQuestionEmployee(chatRoom: chatRoom)));
         },
         child: Card(
+          key: UniqueKey(),
           color: Colors.grey[200],
           child: Container(
             //margin: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),

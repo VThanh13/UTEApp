@@ -36,6 +36,15 @@ class Post {
   String file;
 
   Post(this.id, this.employee, this.content, this.time, this.file);
+
+  @override
+  int get hashCode => Object.hash(id, employee, content, time, file);
+
+  @override
+  bool operator ==(Object other) {
+
+    return  other.hashCode == hashCode;
+  }
 }
 
 class Employee {
@@ -63,6 +72,15 @@ class Employee {
       this.category,
       this.roles,
       this.status);
+
+  @override
+  int get hashCode => Object.hash(id, name, email, image, password, phone, departmentId, departmentName, category, roles, status);
+
+  @override
+  bool operator ==(Object other) {
+
+    return other.hashCode == hashCode;
+  }
 }
 
 class _HomePageState extends State<HomePage> {
@@ -1480,6 +1498,7 @@ class _HomePageState extends State<HomePage> {
                                           MediaQuery.of(context).size.height *
                                               0.9,
                                       child: ListView.builder(
+                                        key: UniqueKey(),
                                           physics:
                                               const BouncingScrollPhysics(),
                                           itemCount: listPost.length,

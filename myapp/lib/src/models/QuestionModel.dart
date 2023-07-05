@@ -25,13 +25,12 @@ class QuestionModel{
     return data;
   }
 
-  // factory QuestionModel.fromMap(Map<String, dynamic> json){
-  //   return QuestionModel(
-  //     json['id'],
-  //     json['room_id'],
-  //     json['content'],
-  //     json['time'],
-  //     json['file'],
-  //   );
-  // }
+  @override
+  int get hashCode => Object.hash(id, roomId, content, time, file);
+
+  @override
+  bool operator ==(Object other) {
+
+    return other.hashCode == hashCode;
+  }
 }

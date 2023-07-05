@@ -11,12 +11,23 @@ class DepartmentModel{
     category = json['category'];
   }
 
+  @override
+  int get hashCode => Object.hash(id, name, category);
+
+
+
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['id'] = id;
     data['name'] = name;
     data['category'] = category;
     return data;
+  }
+
+  @override
+  bool operator ==(Object other) {
+
+    return other.hashCode == hashCode;
   }
 
   // factory DepartmentModel.fromMap(Map<String, dynamic> json){

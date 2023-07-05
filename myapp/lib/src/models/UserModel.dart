@@ -33,4 +33,12 @@ class UserModel{
     data['status'] = status;
     return data;
   }
+
+  @override
+  int get hashCode => Object.hash(id, name, email, image, password, phone, group, status);
+
+  @override
+  bool operator ==(Object other) {
+    return other.hashCode ==  hashCode;
+  }
 }
