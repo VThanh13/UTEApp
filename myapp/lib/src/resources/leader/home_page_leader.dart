@@ -55,6 +55,15 @@ class Employee {
       this.category,
       this.roles,
       this.status);
+
+  @override
+  int get hashCode => Object.hash(id, name, email, image, password, phone, departmentId, departmentName, category, roles, status);
+
+  @override
+  bool operator ==(Object other) {
+
+    return other.hashCode == hashCode;
+  }
 }
 
 class Post {
@@ -65,6 +74,15 @@ class Post {
   String file;
 
   Post(this.id, this.employee, this.content, this.time, this.file);
+
+  @override
+  int get hashCode => Object.hash(id, employee, content, time, file);
+
+  @override
+  bool operator ==(Object other) {
+
+    return  other.hashCode == hashCode;
+  }
 }
 
 class _HomePageState extends State<HomePageLeader> {
@@ -216,6 +234,7 @@ class _HomePageState extends State<HomePageLeader> {
 
   _buildNewFeed(BuildContext context, Post post) {
     return Container(
+      key: UniqueKey(),
       margin: const EdgeInsets.only(top: 10),
       color: Colors.white,
       child: Column(

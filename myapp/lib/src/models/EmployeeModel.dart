@@ -59,4 +59,13 @@ class EmployeeModel{
   String toString() {
     return 'EmployeeModel{id: $id, name: $name, email: $email, image: $image, password: $password, phone: $phone, department: $department, category: $category, roles: $roles, status: $status}';
   }
+
+  @override
+  int get hashCode => Object.hash(id, name, email, image, password, phone, department, category, roles, status);
+
+  @override
+  bool operator ==(Object other) {
+
+    return other.hashCode ==  hashCode;
+  }
 }

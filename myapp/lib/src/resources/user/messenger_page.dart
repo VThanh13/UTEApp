@@ -174,6 +174,7 @@ class _MessengerPageState extends State<MessengerPage> {
                       DetailQuestion(chatRoom: chatRoom)));
         },
         child: Card(
+          key: UniqueKey(),
           color: Colors.grey[200],
           child: Container(
             //margin: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
@@ -513,6 +514,7 @@ class _MessengerPageState extends State<MessengerPage> {
                                 height: 110,
                                 width: MediaQuery.of(context).size.width - 70,
                                 child: ListView.builder(
+                                  key: UniqueKey(),
                                     physics: const BouncingScrollPhysics(),
                                     padding: const EdgeInsets.only(left: 10.0),
                                     scrollDirection: Axis.horizontal,

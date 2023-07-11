@@ -25,8 +25,13 @@ class NewfeedModel{
     return data;
   }
 
-  // factory NewfeedModel.fromMap(Map<String, dynamic> json){
-  //   return NewfeedModel(json['id'], json['employeeId'], json['content'], json['time'], json['file']);
-  // }
+  @override
+  int get hashCode => Object.hash(id, employeeId, content, time, file);
+
+  @override
+  bool operator ==(Object other) {
+
+    return other.hashCode == hashCode;
+  }
 
 }

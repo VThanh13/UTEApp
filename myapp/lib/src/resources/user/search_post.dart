@@ -62,6 +62,7 @@ class _SearchPostScreenState extends State<SearchPostScreen> {
                       child: CircularProgressIndicator(),
                     )
                         : ListView.builder(
+                      key: UniqueKey(),
                         itemCount: snapshot.data!.docs.length,
                         itemBuilder: (context, index) {
                           var data = snapshot.data!.docs[index].data()

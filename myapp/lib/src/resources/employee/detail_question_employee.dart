@@ -261,7 +261,7 @@ class _DetailQuestionState extends State<DetailQuestionEmployee> {
                   employeeModel.roles = value['roles'];
                   employeeModel.status = value['status'];
                   ans = Answer(element.id!, element.room_id!, element.content!,
-                      element.time!, employeeModel!, element.file!);
+                      element.time!, employeeModel, element.file!);
                   // ans.employee = employeeModel;
                   listAnswer.add(ans);
                   Message message = Message('answer', ans.id, ans.time);
@@ -334,6 +334,7 @@ class _DetailQuestionState extends State<DetailQuestionEmployee> {
   _buildQues(Question question) {
     name = question.user.name!;
     return SizedBox(
+      key: UniqueKey(),
       width: MediaQuery.of(context).size.width - 40,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.end,
@@ -383,7 +384,7 @@ class _DetailQuestionState extends State<DetailQuestionEmployee> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Container(
-                    constraints: new BoxConstraints(
+                    constraints: BoxConstraints(
                         maxWidth: MediaQuery.of(context).size.width - 100),
                     padding: const EdgeInsets.all(10),
                     margin: const EdgeInsets.only(top: 3, bottom: 5, left: 10),

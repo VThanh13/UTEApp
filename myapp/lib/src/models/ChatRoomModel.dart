@@ -12,6 +12,15 @@ class ChatRoomModel{
 
   ChatRoomModel({this.id, this.userId, this.title, this.time, this.department,
       this.category, this.information, this.group, this.status, this.mode});
+  
+  @override
+  int get hashCode => Object.hash(id, userId, title, time, department, category, information, group, status, mode);
+
+  @override
+  bool operator ==(Object other) {
+    return other.hashCode == hashCode;
+  }
+
 
   ChatRoomModel.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -40,6 +49,8 @@ class ChatRoomModel{
     data['mode'] = mode;
     return data;
   }
+
+
 
   // factory ChatRoomModel.fromMap(Map<String, dynamic> json){
   //   return ChatRoomModel(

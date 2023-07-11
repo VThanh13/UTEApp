@@ -658,6 +658,7 @@ class _HomePageState extends State<HomePageEmployee> {
                               SizedBox(
                                 height: MediaQuery.of(context).size.height * 0.9,
                                 child: ListView.builder(
+                                  key: UniqueKey(),
                                     physics: const BouncingScrollPhysics(),
                                     itemCount: listPost.length,
                                     itemBuilder: (BuildContext context, int index) {

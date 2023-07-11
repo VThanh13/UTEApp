@@ -57,6 +57,7 @@ class _SearchCounselorsScreenState extends State<SearchCounselorsScreen> {
                     child: CircularProgressIndicator(),
                   ):
                       ListView.builder(
+                        key: UniqueKey(),
                           itemCount: snapshot.data!.docs.length,
                           itemBuilder: (context, index){
                             var data = snapshot.data!.docs[index].data() as Map<String, dynamic>;

@@ -8,6 +8,14 @@ class AnswerModel{
 
   AnswerModel({this.id, this.room_id, this.content, this.time, this.employee_id, this.file});
 
+  @override
+  int get hashCode => Object.hash(id, room_id, content, time, employee_id, file);
+
+  @override
+  bool operator == (Object other){
+    return other.hashCode == hashCode;
+  }
+
   AnswerModel.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     room_id = json['room_id'];
@@ -18,7 +26,7 @@ class AnswerModel{
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
+    final Map<String, dynamic> data = <String, dynamic>{};
     data['id'] = id;
     data['room_id'] = room_id;
     data['content'] = content;
@@ -27,5 +35,8 @@ class AnswerModel{
     data['file'] = file;
     return data;
   }
+
+
+
 
 }
