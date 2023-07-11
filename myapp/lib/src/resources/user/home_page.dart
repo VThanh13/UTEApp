@@ -1060,48 +1060,6 @@ class _HomePageState extends State<HomePage> {
                           context,
                           MaterialPageRoute(
                               builder: (BuildContext context) =>
-                                  const MessengerPage()));
-                    } else {
-                      showDialog(
-                          context: context,
-                          builder: (context) {
-                            return CupertinoAlertDialog(
-                              title: const Column(
-                                children: [
-                                  Icon(
-                                    Icons.warning_amber,
-                                    size: 30,
-                                    color: Colors.redAccent,
-                                  ),
-                                  Text('No internet'),
-                                ],
-                              ),
-                              content: const Text(
-                                  'Please check your internet connection!'),
-                              actions: [
-                                TextButton(
-                                  onPressed: () {
-                                    Navigator.pop(context);
-                                  },
-                                  child: const Text('OK'),
-                                ),
-                              ],
-                            );
-                          });
-                    }
-                  },
-                  icon: const Icon(
-                    AppIcons.chat,
-                    color: Colors.white,
-                  ),
-                ),
-                IconButton(
-                  onPressed: () {
-                    if (internetCheck.isInternetConnect == true) {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (BuildContext context) =>
                                   const SearchPostScreen()));
                     } else {
                       showDialog(
@@ -1136,6 +1094,48 @@ class _HomePageState extends State<HomePage> {
                     Icons.search_rounded,
                     color: Colors.white,
                     size: 28,
+                  ),
+                ),
+                IconButton(
+                  onPressed: () {
+                    if (internetCheck.isInternetConnect == true) {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (BuildContext context) =>
+                              const MessengerPage()));
+                    } else {
+                      showDialog(
+                          context: context,
+                          builder: (context) {
+                            return CupertinoAlertDialog(
+                              title: const Column(
+                                children: [
+                                  Icon(
+                                    Icons.warning_amber,
+                                    size: 30,
+                                    color: Colors.redAccent,
+                                  ),
+                                  Text('No internet'),
+                                ],
+                              ),
+                              content: const Text(
+                                  'Please check your internet connection!'),
+                              actions: [
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                  },
+                                  child: const Text('OK'),
+                                ),
+                              ],
+                            );
+                          });
+                    }
+                  },
+                  icon: const Icon(
+                    AppIcons.chat,
+                    color: Colors.white,
                   ),
                 ),
               ],
