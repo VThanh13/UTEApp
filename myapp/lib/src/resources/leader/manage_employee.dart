@@ -124,60 +124,62 @@ class _ManageEmployeeState extends State<ManageEmployee> {
       onTap: () {
         _modalBottomSheetEditEmployee(employee);
       },
-      child: Card(
-        margin: const EdgeInsets.fromLTRB(0, 5, 0, 0),
-        child: Row(
-          children: <Widget>[
-            const Padding(padding: EdgeInsets.fromLTRB(10, 15, 5, 15)),
-            CircleAvatar(
-              radius: 28,
-              backgroundColor: Colors.tealAccent,
-              child: CircleAvatar(
-                backgroundImage: NetworkImage(employee.image!),
-                radius: 26,
-              ),
-            ),
-            Expanded(
-                child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Column(
-                  //mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Container(
-                        padding: const EdgeInsets.fromLTRB(10, 15, 0, 5),
-                        child: Text(employee.name!,
-                            textAlign: TextAlign.left,
-                            style: const TextStyle(
-                              fontSize: 17,
-                              fontWeight: FontWeight.w600,
-                            ))),
-                    Container(
-                        padding: const EdgeInsets.fromLTRB(10, 0, 0, 20),
-                        child: Text(
-                          employee.status == "enabled" ? "Active" : "Inactive",
-                          style: TextStyle(
-                              color: employee.status == "enabled"
-                                  ? Colors.green
-                                  : Colors.red,
-                              fontSize: 14,
-                              fontStyle: FontStyle.italic),
-                          textAlign: TextAlign.left,
-                        )),
-                  ],
+      child: Column(
+        children: [
+          Row(
+            children: <Widget>[
+              const Padding(padding: EdgeInsets.fromLTRB(10, 15, 5, 15)),
+              CircleAvatar(
+                radius: 28,
+                backgroundColor: Colors.tealAccent,
+                child: CircleAvatar(
+                  backgroundImage: NetworkImage(employee.image!),
+                  radius: 26,
                 ),
-                Container(
-                  margin: const EdgeInsets.only(right: 10),
-                  child: const Icon(
-                    Icons.edit_note,
-                    size: 30,
+              ),
+              Expanded(
+                  child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Column(
+                    //mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Container(
+                          padding: const EdgeInsets.fromLTRB(10, 15, 0, 5),
+                          child: Text(employee.name!,
+                              textAlign: TextAlign.left,
+                              style: const TextStyle(
+                                fontSize: 17,
+                                fontWeight: FontWeight.w600,
+                              ))),
+                      Container(
+                          padding: const EdgeInsets.fromLTRB(10, 0, 0, 20),
+                          child: Text(
+                            employee.status == "enabled" ? "Active" : "Inactive",
+                            style: TextStyle(
+                                color: employee.status == "enabled"
+                                    ? Colors.green
+                                    : Colors.red,
+                                fontSize: 14,
+                                fontStyle: FontStyle.italic),
+                            textAlign: TextAlign.left,
+                          )),
+                    ],
                   ),
-                )
-              ],
-            ))
-          ],
-        ),
+                  Container(
+                    margin: const EdgeInsets.only(right: 10),
+                    child: const Icon(
+                      Icons.edit_note,
+                      size: 30,
+                    ),
+                  )
+                ],
+              ),),
+            ],
+          ),
+
+        ],
       ),
     );
   }
@@ -1088,20 +1090,11 @@ class _ManageEmployeeState extends State<ManageEmployee> {
           ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       body: SafeArea(
-        minimum: const EdgeInsets.only(left: 20, right: 10, top: 5),
+        minimum: const EdgeInsets.only( top: 5),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
-            const Padding(
-              padding: EdgeInsets.fromLTRB(5, 10, 5, 10),
-              child: Text(
-                'Your team partner',
-                style: TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.w500,
-                    color: Colors.grey),
-              ),
-            ),
+
             SingleChildScrollView(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -1112,7 +1105,12 @@ class _ManageEmployeeState extends State<ManageEmployee> {
                       physics: const BouncingScrollPhysics(),
                       itemCount: listEmployee.length,
                       itemBuilder: (BuildContext context, int index) {
-                        return _buildEmployee(context, listEmployee[index]);
+                        return Container(
+                          color: index % 2 == 0
+                              ? const Color(0xffFAFAFA)
+                              : const Color(0xffE5E5E5),
+                          child: _buildEmployee(context, listEmployee[index]),
+                        );
                       },
                     ),
                   ),

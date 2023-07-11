@@ -58,6 +58,7 @@ dependencies:
   internet_connection_checker: ^0.0.1+4
 
   get: ^4.1.4
+  intl: ^0.18.1
 
 
 

@@ -130,7 +130,7 @@ class _DetailPostScreenState extends State<DetailPostScreen> {
                     WidgetsBinding.instance.focusManager.primaryFocus?.unfocus();
                   },
                   child: SizedBox(
-                    height: 520,
+                    height: 480,
                     child: SingleChildScrollView(
                       child: Padding(
                         padding: EdgeInsets.only(
@@ -139,18 +139,25 @@ class _DetailPostScreenState extends State<DetailPostScreen> {
                           mainAxisAlignment: MainAxisAlignment.start,
                           mainAxisSize: MainAxisSize.min,
                           children: <Widget>[
-                            const Padding(
-                                padding: EdgeInsets.fromLTRB(0, 20, 0, 0)),
+                            Container(
+                              height: 4,
+                              width: 150,
+                              margin: const EdgeInsets.only(top: 5,bottom: 10),
+                              decoration: const BoxDecoration(
+                                borderRadius: BorderRadius.all(Radius.circular(5)),
+                                color: Colors.blue,
+                              ),
+                            ),
                             const Text(
                               "You have question for this post?",
                               textAlign: TextAlign.center,
                               style: TextStyle(
-                                  fontSize: 17, fontWeight: FontWeight.w600),
+                                  fontSize: 17, fontWeight: FontWeight.w500),
                             ),
                             const Padding(
                                 padding: EdgeInsets.fromLTRB(0, 10, 0, 0)),
                             Container(
-                              margin: const EdgeInsets.fromLTRB(20, 20, 20, 15),
+                              margin: const EdgeInsets.fromLTRB(20, 20, 20, 0),
                               width: double.infinity,
                               child: StreamBuilder(
                                 stream: informationControl,
@@ -178,7 +185,7 @@ class _DetailPostScreenState extends State<DetailPostScreen> {
                             ),
                             Container(
                               width: double.infinity,
-                              margin: const EdgeInsets.fromLTRB(20, 20, 20, 15),
+                              margin: const EdgeInsets.fromLTRB(20, 20, 20, 0),
                               child: StreamBuilder(
                                 stream: questionControl,
                                 builder: (context, snapshot) => TextField(
@@ -241,14 +248,13 @@ class _DetailPostScreenState extends State<DetailPostScreen> {
                               },
                             ),
                             Container(
-                              padding: const EdgeInsets.all(10),
+                              padding: const EdgeInsets.fromLTRB(30, 0, 30, 0),
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                                 children: <Widget>[
                                   Expanded(
                                     child: ElevatedButton.icon(
                                       onPressed: () {
-                                        //_onSendQuestionClicked(post);
                                           try {
                                           if (_onSendQuestionClicked()) {
                                             setState(() {
@@ -313,9 +319,7 @@ class _DetailPostScreenState extends State<DetailPostScreen> {
   _modelBottomSheetSendMessage() {
     showModalBottomSheet(
         isScrollControlled: true,
-        // constraints: BoxConstraints.loose(Size(
-        //     MediaQuery.of(context).size.width,
-        //     MediaQuery.of(context).size.height * 0.75)),
+
         shape: const RoundedRectangleBorder(
             borderRadius: BorderRadius.only(
               topLeft: Radius.circular(20),
@@ -325,157 +329,172 @@ class _DetailPostScreenState extends State<DetailPostScreen> {
         builder: (BuildContext context) {
           return StatefulBuilder(
               builder: (BuildContext context, StateSetter setStateKhoa) {
-                return SizedBox(
-                  height: 520,
-                  child: SingleChildScrollView(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: <Widget>[
-                        const Padding(padding: EdgeInsets.fromLTRB(0, 10, 0, 20)),
-                        const Text(
-                          "Send Message",
-                          textAlign: TextAlign.center,
-                          style:
-                          TextStyle(fontSize: 15, fontWeight: FontWeight.w400),
-                        ),
-                        Container(
-                          margin: const EdgeInsets.fromLTRB(0, 10, 0, 15),
-                          width: 340,
-                          child: StreamBuilder(
-                            stream: informationControl,
-                            builder: (context, snapshot) => TextField(
-                              controller: _informationController
-                                ..text = userData.email!,
-                              decoration: InputDecoration(
-                                labelText: "Contact method",
-                                hintText: 'Insert your Email/Phone',
-                                errorText: snapshot.hasError
-                                    ? snapshot.error.toString()
-                                    : null,
-                                enabledBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(10),
-                                    borderSide: const BorderSide(
-                                      color: Colors.blueAccent,
-                                      width: 1,
-                                    )),
-                                focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                  borderSide: const BorderSide(
-                                    color: Colors.blue,
-                                    width: 4,
-                                  ),
-                                ),
+                return GestureDetector(
+                  onTap: (){
+                    WidgetsBinding.instance.focusManager.primaryFocus?.unfocus();
+                  },
+                  child: Padding(
+                    padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+                    child: SizedBox(
+                      height: 480,
+                      child: SingleChildScrollView(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: <Widget>[
+                            Container(
+                              height: 4,
+                              width: 150,
+                              margin: const EdgeInsets.only(top: 5,bottom: 10),
+                              decoration: const BoxDecoration(
+                                borderRadius: BorderRadius.all(Radius.circular(5)),
+                                color: Colors.blue,
                               ),
                             ),
-                          ),
-                        ),
-                        Container(
-                          width: 340,
-                          margin: const EdgeInsets.fromLTRB(0, 10, 0, 15),
-                          child: StreamBuilder(
-                            stream: questionControl,
-                            builder: (context, snapshot) => TextField(
-                              controller: _questionController,
-                              maxLines: 50,
-                              minLines: 7,
-                              maxLength: 3000,
-                              decoration: InputDecoration(
-                                hintMaxLines: 5,
-                                helperMaxLines: 5,
-                                labelText: "Send question",
-                                hintText: 'Insert your question',
-                                errorText: snapshot.hasError
-                                    ? snapshot.error.toString()
-                                    : null,
-                                enabledBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(10),
-                                    borderSide: const BorderSide(
-                                      color: Colors.blueAccent,
-                                      width: 1,
-                                    )),
-                                focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                  borderSide: const BorderSide(
-                                      color: Colors.blue, width: 4),
-                                ),
-                              ),
+                            const Text(
+                              "Send Message",
+                              textAlign: TextAlign.center,
+                              style:
+                              TextStyle(fontSize: 15, fontWeight: FontWeight.w400),
                             ),
-                          ),
-                        ),
-                        InkWell(
-                          child: Container(
-                            height: 70,
-                            margin: const EdgeInsets.fromLTRB(100, 0, 110, 0),
-                            width: double.infinity,
-                            child: const Row(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              children: [
-                                Padding(
-                                  padding: EdgeInsets.fromLTRB(25, 5, 0, 5),
-                                  child: Icon(
-                                    AppIcons.file_pdf,
-                                    color: Colors.red,
-                                  ),
-                                ),
-                                Padding(
-                                  padding: EdgeInsets.fromLTRB(0, 5, 5, 5),
-                                  child: Text(
-                                    'Attached files',
-                                    style: TextStyle(
-                                        fontSize: 14,
-                                        fontStyle: FontStyle.italic,
-                                        color: Colors.grey),
-                                  ),
-                                )
-                              ],
-                            ),
-                          ),
-                          onTap: () {
-                            importPdf();
-                          },
-                        ),
-                        Container(
-                          padding: const EdgeInsets.all(10),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            children: <Widget>[
-                              Expanded(
-                                child: ElevatedButton.icon(
-                                  onPressed: () {
-                                    _onSendMessageClicked();
-                                  },
-                                  label: const Text(
-                                    'Send',
-                                    style: TextStyle(
-                                        fontSize: 16, color: Colors.white),
-                                  ),
-                                  icon: const Icon(Icons.mail_outline_rounded),
-                                  style: ElevatedButton.styleFrom(
-                                      backgroundColor: Colors.blueAccent),
-                                ),
-                              ),
-                              const Padding(
-                                padding: EdgeInsets.all(10),
-                              ),
-                              Expanded(
-                                  child: ElevatedButton.icon(
-                                    onPressed: () => {Navigator.pop(context)},
-                                    label: const Text(
-                                      'Cancel',
-                                      style:
-                                      TextStyle(fontSize: 16, color: Colors.white),
+                            Container(
+                              margin: const EdgeInsets.fromLTRB(0, 10, 0, 15),
+                              width: 340,
+                              child: StreamBuilder(
+                                stream: informationControl,
+                                builder: (context, snapshot) => TextField(
+                                  controller: _informationController
+                                    ..text = userData.email!,
+                                  decoration: InputDecoration(
+                                    labelText: "Contact method",
+                                    hintText: 'Insert your Email/Phone',
+                                    errorText: snapshot.hasError
+                                        ? snapshot.error.toString()
+                                        : null,
+                                    enabledBorder: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(10),
+                                        borderSide: const BorderSide(
+                                          color: Colors.blueAccent,
+                                          width: 1,
+                                        )),
+                                    focusedBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(10),
+                                      borderSide: const BorderSide(
+                                        color: Colors.blue,
+                                        width: 4,
+                                      ),
                                     ),
-                                    icon: const Icon(Icons.cancel_presentation),
-                                    style: ElevatedButton.styleFrom(
-                                        backgroundColor: Colors.blueAccent),
-                                  )),
-                              const Padding(
-                                  padding: EdgeInsets.fromLTRB(0, 10, 0, 30)),
-                            ],
-                          ),
-                        )
-                      ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Container(
+                              width: 340,
+                              margin: const EdgeInsets.fromLTRB(0, 10, 0, 0),
+                              child: StreamBuilder(
+                                stream: questionControl,
+                                builder: (context, snapshot) => TextField(
+                                  controller: _questionController,
+                                  maxLines: 50,
+                                  minLines: 7,
+                                  maxLength: 3000,
+                                  decoration: InputDecoration(
+                                    hintMaxLines: 5,
+                                    helperMaxLines: 5,
+                                    labelText: "Send question",
+                                    hintText: 'Insert your question',
+                                    errorText: snapshot.hasError
+                                        ? snapshot.error.toString()
+                                        : null,
+                                    enabledBorder: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(10),
+                                        borderSide: const BorderSide(
+                                          color: Colors.blueAccent,
+                                          width: 1,
+                                        )),
+                                    focusedBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(10),
+                                      borderSide: const BorderSide(
+                                          color: Colors.blue, width: 4),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            InkWell(
+                              child: Container(
+                                height: 70,
+                                margin: const EdgeInsets.fromLTRB(100, 0, 110, 0),
+                                width: double.infinity,
+                                child: const Row(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                  children: [
+                                    Padding(
+                                      padding: EdgeInsets.fromLTRB(25, 5, 0, 5),
+                                      child: Icon(
+                                        AppIcons.file_pdf,
+                                        color: Colors.red,
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: EdgeInsets.fromLTRB(0, 5, 5, 5),
+                                      child: Text(
+                                        'Attached files',
+                                        style: TextStyle(
+                                            fontSize: 14,
+                                            fontStyle: FontStyle.italic,
+                                            color: Colors.grey),
+                                      ),
+                                    )
+                                  ],
+                                ),
+                              ),
+                              onTap: () {
+                                importPdf();
+                              },
+                            ),
+                            Container(
+                              padding: const EdgeInsets.fromLTRB(30 , 0, 30, 0),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                children: <Widget>[
+                                  Expanded(
+                                    child: ElevatedButton.icon(
+                                      onPressed: () {
+                                        _onSendMessageClicked();
+                                      },
+                                      label: const Text(
+                                        'Send',
+                                        style: TextStyle(
+                                            fontSize: 16, color: Colors.white),
+                                      ),
+                                      icon: const Icon(Icons.mail_outline_rounded),
+                                      style: ElevatedButton.styleFrom(
+                                          backgroundColor: Colors.blueAccent),
+                                    ),
+                                  ),
+                                  const Padding(
+                                    padding: EdgeInsets.all(10),
+                                  ),
+                                  Expanded(
+                                      child: ElevatedButton.icon(
+                                        onPressed: () => {Navigator.pop(context)},
+                                        label: const Text(
+                                          'Cancel',
+                                          style:
+                                          TextStyle(fontSize: 16, color: Colors.white),
+                                        ),
+                                        icon: const Icon(Icons.cancel_presentation),
+                                        style: ElevatedButton.styleFrom(
+                                            backgroundColor: Colors.blueAccent),
+                                      )),
+
+                                ],
+                              ),
+                            )
+                          ],
+                        ),
+                      ),
                     ),
                   ),
                 );

@@ -1151,195 +1151,205 @@ class _HomePageState extends State<HomePageLeader> {
         )),
         context: context,
         builder: (BuildContext context) {
-          return Column(
-            children: <Widget>[
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                   Container(
-                     width: 200,
-                     margin: const EdgeInsets.only(left: 90),
-                     child: const Text(
-                       'Create new post',
-                       style: TextStyle(
-                           fontSize: 17,
-                           fontWeight: FontWeight.w600,
-                           letterSpacing: 1.0),
-                     ),
-                   ),
-
-                  Padding(padding: const EdgeInsets.fromLTRB(1, 1, 1, 1),
-                  child: IconButton(
-                    icon: const Icon(Icons.cancel_outlined),
-                    iconSize: 30,
-                    onPressed: (){
-                      Navigator.pop(context);
-                    },
-                  ),)
-                ],
-              ),
-              const Divider(
-                height: 0,
-                color: Color(0xffAAAAAA),
-                indent: 0,
-                thickness: 1,
-              ),
-              SingleChildScrollView(
-                physics: const BouncingScrollPhysics(),
+          return GestureDetector(
+            onTap: (){
+              WidgetsBinding.instance.focusManager.primaryFocus?.unfocus();
+            },
+            child: Padding(
+              padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+              child: SingleChildScrollView(
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.665,
-                      child: SingleChildScrollView(
-                          child: SizedBox(
-                        height: 600,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: <Widget>[
-                            const Padding(
-                                padding: EdgeInsets.fromLTRB(0, 10, 0, 10)),
-                            Container(
-                              width: double.infinity,
-                              margin: const EdgeInsets.fromLTRB(10, 10, 10, 15),
-                              child: StreamBuilder(
-                                stream: infoPostController,
-                                builder: (context, snapshot) => TextField(
-                                  controller: _infoPostController,
-                                  maxLines: 50,
-                                  maxLength: 3000,
-                                  minLines: 10,
-                                  decoration: InputDecoration(
-                                      hintMaxLines: 5,
-                                      helperMaxLines: 5,
-                                      labelText: "Post content",
-                                      hintText:
-                                          'Insert post content',
-                                      enabledBorder: OutlineInputBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(10),
-                                          borderSide: const BorderSide(
-                                            color: Colors.blueAccent,
-                                            width: 1,
-                                          )),
-                                      focusedBorder: OutlineInputBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(10),
-                                          borderSide: const BorderSide(
-                                              color: Colors.blue,
-                                              width: 4))),
-                                ),
-                              ),
-                            ),
-                            InkWell(
-                              child: Container(
-                                width: double.infinity,
-                                height: 50,
-                                margin: const EdgeInsets.fromLTRB(20, 10, 30, 0),
-                                decoration: BoxDecoration(
-                                  borderRadius: const BorderRadius.all(Radius.circular(10)),
-                                  border: Border.all(color: Colors.grey),
-                                ),
-                                child: const Row(
-                                  children: [
-                                    Padding(padding: EdgeInsets.fromLTRB(30, 1, 70, 1),
-                                    child: Text('Insert to your post',
-                                    style: TextStyle(
-                                      fontSize: 14
-                                    ),
-                                    ),
-                                    ),
-                                    Padding(padding: EdgeInsets.fromLTRB(1, 1, 20, 1),
-                                    child: Icon(
-                                      AppIcons.file_pdf,
-                                      size: 20,
-                                      color: Colors.redAccent,
-                                    ),),
-                                    Padding(padding: EdgeInsets.fromLTRB(1, 1, 1, 1),
-                                    child: Icon(
-                                        Icons.add_photo_alternate_rounded,
-                                      size: 30,
-                                      color: Colors.lightGreenAccent,
-                                    ),)
-                                  ],
-                                ),
-                              ),
-                              onTap: (){
-                                importImage();
-                              },
-                            ),
-                            Container(
-                              margin: const EdgeInsets.fromLTRB(10, 20, 10, 10),
-                              width: double.infinity,
-                              child: ElevatedButton.icon(
-                                onPressed: () {
-                                  if(internetCheck.isInternetConnect == true){
-                                    try{
-                                      if(_onCreateNewPost()){
-                                        setState(() {
-                                          _infoPostController.text = '';
-                                        });
-                                      }else{
-                                        setState(() {
-                                          _infoPostController.text = '';
-                                        });
-                                        Navigator.pop(context);
-                                        showErrorMessage('Create post failed');
-                                      }
-                                    }catch(e){
-                                      //
-                                    }
-
-                                  }else{
-                                    showDialog(
-                                        context: context,
-                                        builder: (context) {
-                                          return CupertinoAlertDialog(
-                                            title: const Column(
-                                              children: [
-                                                Icon(
-                                                  Icons.warning_amber,
-                                                  size: 30,
-                                                  color: Colors.redAccent,
-                                                ),
-                                                Text('No internet'),
-                                              ],
-                                            ),
-                                            content: const Text(
-                                                'Please check your internet connection!'),
-                                            actions: [
-                                              TextButton(
-                                                onPressed: () {
-                                                  Navigator.pop(context);
-                                                },
-                                                child: const Text('OK'),
-                                              ),
-                                            ],
-                                          );
-                                        });
-                                  }
-
-                                },
-                                label: const Text(
-                                  'Post',
-                                  style: TextStyle(
-                                      fontSize: 16,
-                                      color: Colors.white),
-                                ),
-                                icon: const Icon(Icons.task_alt),
-                                style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.blueAccent),
-                              ),
-                            ),
-                          ],
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Container(
+                          width: 200,
+                          margin: const EdgeInsets.only(left: 90),
+                          child: const Text(
+                            'Create new post',
+                            style: TextStyle(
+                                fontSize: 17,
+                                fontWeight: FontWeight.w600,
+                                letterSpacing: 1.0),
+                          ),
                         ),
-                      )),
+
+                        Padding(padding: const EdgeInsets.fromLTRB(1, 1, 1, 1),
+                          child: IconButton(
+                            icon: const Icon(Icons.cancel_outlined),
+                            iconSize: 30,
+                            onPressed: (){
+                              Navigator.pop(context);
+                            },
+                          ),)
+                      ],
+                    ),
+                    const Divider(
+                      height: 0,
+                      color: Color(0xffAAAAAA),
+                      indent: 0,
+                      thickness: 1,
+                    ),
+                    SingleChildScrollView(
+                      physics: const BouncingScrollPhysics(),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          SizedBox(
+                            height: MediaQuery.of(context).size.height * 0.665,
+                            child: SingleChildScrollView(
+                                child: SizedBox(
+                                  height: 600,
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: <Widget>[
+                                      const Padding(
+                                          padding: EdgeInsets.fromLTRB(0, 10, 0, 10)),
+                                      Container(
+                                        width: double.infinity,
+                                        margin: const EdgeInsets.fromLTRB(10, 10, 10, 15),
+                                        child: StreamBuilder(
+                                          stream: infoPostController,
+                                          builder: (context, snapshot) => TextField(
+                                            controller: _infoPostController,
+                                            maxLines: 50,
+                                            maxLength: 3000,
+                                            minLines: 10,
+                                            decoration: InputDecoration(
+                                                hintMaxLines: 5,
+                                                helperMaxLines: 5,
+                                                labelText: "Post content",
+                                                hintText:
+                                                'Insert post content',
+                                                enabledBorder: OutlineInputBorder(
+                                                    borderRadius:
+                                                    BorderRadius.circular(10),
+                                                    borderSide: const BorderSide(
+                                                      color: Colors.blueAccent,
+                                                      width: 1,
+                                                    )),
+                                                focusedBorder: OutlineInputBorder(
+                                                    borderRadius:
+                                                    BorderRadius.circular(10),
+                                                    borderSide: const BorderSide(
+                                                        color: Colors.blue,
+                                                        width: 4))),
+                                          ),
+                                        ),
+                                      ),
+                                      InkWell(
+                                        child: Container(
+                                          width: double.infinity,
+                                          height: 50,
+                                          margin: const EdgeInsets.fromLTRB(20, 10, 30, 0),
+                                          decoration: BoxDecoration(
+                                            borderRadius: const BorderRadius.all(Radius.circular(10)),
+                                            border: Border.all(color: Colors.grey),
+                                          ),
+                                          child: const Row(
+                                            children: [
+                                              Padding(padding: EdgeInsets.fromLTRB(30, 1, 70, 1),
+                                                child: Text('Insert to your post',
+                                                  style: TextStyle(
+                                                      fontSize: 14
+                                                  ),
+                                                ),
+                                              ),
+                                              Padding(padding: EdgeInsets.fromLTRB(1, 1, 20, 1),
+                                                child: Icon(
+                                                  AppIcons.file_pdf,
+                                                  size: 20,
+                                                  color: Colors.redAccent,
+                                                ),),
+                                              Padding(padding: EdgeInsets.fromLTRB(1, 1, 1, 1),
+                                                child: Icon(
+                                                  Icons.add_photo_alternate_rounded,
+                                                  size: 30,
+                                                  color: Colors.green,
+                                                ),)
+                                            ],
+                                          ),
+                                        ),
+                                        onTap: (){
+                                          importImage();
+                                        },
+                                      ),
+                                      Container(
+                                        margin: const EdgeInsets.fromLTRB(30, 20, 30, 10),
+                                        width: double.infinity,
+                                        child: ElevatedButton.icon(
+                                          onPressed: () {
+                                            if(internetCheck.isInternetConnect == true){
+                                              try{
+                                                if(_onCreateNewPost()){
+                                                  setState(() {
+                                                    _infoPostController.text = '';
+                                                  });
+                                                }else{
+                                                  setState(() {
+                                                    _infoPostController.text = '';
+                                                  });
+                                                  Navigator.pop(context);
+                                                  showErrorMessage('Create post failed');
+                                                }
+                                              }catch(e){
+                                                //
+                                              }
+
+                                            }else{
+                                              showDialog(
+                                                  context: context,
+                                                  builder: (context) {
+                                                    return CupertinoAlertDialog(
+                                                      title: const Column(
+                                                        children: [
+                                                          Icon(
+                                                            Icons.warning_amber,
+                                                            size: 30,
+                                                            color: Colors.redAccent,
+                                                          ),
+                                                          Text('No internet'),
+                                                        ],
+                                                      ),
+                                                      content: const Text(
+                                                          'Please check your internet connection!'),
+                                                      actions: [
+                                                        TextButton(
+                                                          onPressed: () {
+                                                            Navigator.pop(context);
+                                                          },
+                                                          child: const Text('OK'),
+                                                        ),
+                                                      ],
+                                                    );
+                                                  });
+                                            }
+
+                                          },
+                                          label: const Text(
+                                            'Post',
+                                            style: TextStyle(
+                                                fontSize: 16,
+                                                color: Colors.white),
+                                          ),
+                                          icon: const Icon(Icons.task_alt),
+                                          style: ElevatedButton.styleFrom(
+                                              backgroundColor: Colors.blueAccent),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                )),
+                          ),
+                        ],
+                      ),
                     ),
                   ],
                 ),
               ),
-            ],
+            ),
           );
         });
   }

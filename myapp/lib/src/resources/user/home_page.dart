@@ -470,28 +470,37 @@ class _HomePageState extends State<HomePage> {
               onTap: () {
                 WidgetsBinding.instance.focusManager.primaryFocus?.unfocus();
               },
-              child: SizedBox(
-                height: 520,
-                child: SingleChildScrollView(
-                  child: Padding(
-                    padding: EdgeInsets.only(
-                        bottom: MediaQuery.of(context).viewInsets.bottom),
+              child: Padding(
+                padding: EdgeInsets.only(
+                    bottom: MediaQuery.of(context).viewInsets.bottom),
+                child: SizedBox(
+                  height: 500,
+                  child: SingleChildScrollView(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.start,
                       mainAxisSize: MainAxisSize.min,
                       children: <Widget>[
+                        Container(
+                          height: 4,
+                          width: 150,
+                          margin: const EdgeInsets.only(top: 5),
+                          decoration: const BoxDecoration(
+                            borderRadius: BorderRadius.all(Radius.circular(5)),
+                            color: Colors.blue,
+                          ),
+                        ),
                         const Padding(
-                            padding: EdgeInsets.fromLTRB(0, 20, 0, 0)),
+                            padding: EdgeInsets.fromLTRB(0, 10, 0, 0)),
                         const Text(
                           "You have question for this post?",
                           textAlign: TextAlign.center,
                           style: TextStyle(
-                              fontSize: 17, fontWeight: FontWeight.w600),
+                              fontSize: 17, fontWeight: FontWeight.w500),
                         ),
                         const Padding(
                             padding: EdgeInsets.fromLTRB(0, 10, 0, 0)),
                         Container(
-                          margin: const EdgeInsets.fromLTRB(20, 20, 20, 15),
+                          margin: const EdgeInsets.fromLTRB(20, 20, 20, 0),
                           width: double.infinity,
                           child: StreamBuilder(
                             stream: informationControl,
@@ -519,7 +528,7 @@ class _HomePageState extends State<HomePage> {
                         ),
                         Container(
                           width: double.infinity,
-                          margin: const EdgeInsets.fromLTRB(20, 20, 20, 15),
+                          margin: const EdgeInsets.fromLTRB(20, 20, 20, 0),
                           child: StreamBuilder(
                             stream: questionControl,
                             builder: (context, snapshot) => TextField(
@@ -582,7 +591,7 @@ class _HomePageState extends State<HomePage> {
                           },
                         ),
                         Container(
-                          padding: const EdgeInsets.all(10),
+                          padding: const EdgeInsets.fromLTRB(30, 0, 30, 0),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceAround,
                             children: <Widget>[
@@ -706,9 +715,6 @@ class _HomePageState extends State<HomePage> {
   _modelBottomSheetSendMessage() {
     showModalBottomSheet(
         isScrollControlled: true,
-        // constraints: BoxConstraints.loose(Size(
-        //     MediaQuery.of(context).size.width,
-        //     MediaQuery.of(context).size.height * 0.75)),
         shape: const RoundedRectangleBorder(
             borderRadius: BorderRadius.only(
           topLeft: Radius.circular(20),
@@ -718,189 +724,205 @@ class _HomePageState extends State<HomePage> {
         builder: (BuildContext context) {
           return StatefulBuilder(
               builder: (BuildContext context, StateSetter setStateKhoa) {
-            return SizedBox(
-              height: 520,
-              child: SingleChildScrollView(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: <Widget>[
-                    const Padding(padding: EdgeInsets.fromLTRB(0, 10, 0, 20)),
-                    const Text(
-                      "Send Message",
-                      textAlign: TextAlign.center,
-                      style:
-                          TextStyle(fontSize: 15, fontWeight: FontWeight.w400),
-                    ),
-                    Container(
-                      margin: const EdgeInsets.fromLTRB(0, 10, 0, 15),
-                      width: 340,
-                      child: StreamBuilder(
-                        stream: informationControl,
-                        builder: (context, snapshot) => TextField(
-                          controller: _informationController
-                            ..text = userModel.email!,
-                          decoration: InputDecoration(
-                            labelText: "Contact method",
-                            hintText: 'Insert your Email/Phone',
-                            errorText: snapshot.hasError
-                                ? snapshot.error.toString()
-                                : null,
-                            enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10),
-                                borderSide: const BorderSide(
-                                  color: Colors.blueAccent,
-                                  width: 1,
-                                )),
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10),
-                              borderSide: const BorderSide(
-                                color: Colors.blue,
-                                width: 4,
-                              ),
-                            ),
+            return GestureDetector(
+              onTap: (){
+                WidgetsBinding.instance.focusManager.primaryFocus?.unfocus();
+              },
+              child: Padding(
+                padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+                child: SizedBox(
+                  height: 480,
+                  child: SingleChildScrollView(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: <Widget>[
+                        Container(
+                          height: 4,
+                          width: 150,
+                          margin: const EdgeInsets.only(top: 5,bottom: 10),
+                          decoration: const BoxDecoration(
+                            borderRadius: BorderRadius.all(Radius.circular(5)),
+                            color: Colors.blue,
                           ),
                         ),
-                      ),
-                    ),
-                    Container(
-                      width: 340,
-                      margin: const EdgeInsets.fromLTRB(0, 10, 0, 15),
-                      child: StreamBuilder(
-                        stream: questionControl,
-                        builder: (context, snapshot) => TextField(
-                          controller: _questionController,
-                          maxLines: 50,
-                          minLines: 7,
-                          maxLength: 3000,
-                          decoration: InputDecoration(
-                            hintMaxLines: 5,
-                            helperMaxLines: 5,
-                            labelText: "Send question",
-                            hintText: 'Insert your question',
-                            errorText: snapshot.hasError
-                                ? snapshot.error.toString()
-                                : null,
-                            enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10),
-                                borderSide: const BorderSide(
-                                  color: Colors.blueAccent,
-                                  width: 1,
-                                )),
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10),
-                              borderSide: const BorderSide(
-                                  color: Colors.blue, width: 4),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    InkWell(
-                      child: Container(
-                        height: 70,
-                        margin: const EdgeInsets.fromLTRB(100, 0, 110, 0),
-                        width: double.infinity,
-                        child: const Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          children: [
-                            Padding(
-                              padding: EdgeInsets.fromLTRB(25, 5, 0, 5),
-                              child: Icon(
-                                AppIcons.file_pdf,
-                                color: Colors.red,
-                              ),
-                            ),
-                            Padding(
-                              padding: EdgeInsets.fromLTRB(0, 5, 5, 5),
-                              child: Text(
-                                'Attached files',
-                                style: TextStyle(
-                                    fontSize: 14,
-                                    fontStyle: FontStyle.italic,
-                                    color: Colors.grey),
-                              ),
-                            )
-                          ],
-                        ),
-                      ),
-                      onTap: () {
-                        importPdf();
-                      },
-                    ),
-                    Container(
-                      padding: const EdgeInsets.all(10),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: <Widget>[
-                          Expanded(
-                            child: ElevatedButton.icon(
-                              onPressed: () {
-                                if(internetCheck.isInternetConnect == true){
-                                  _onSendMessageClicked();
-                                  Navigator.pop(context);
-                                }
-                                else{
-                                  showDialog(
-                                      context: context,
-                                      builder: (context) {
-                                        return CupertinoAlertDialog(
-                                          title: const Column(
-                                            children: [
-                                              Icon(
-                                                Icons.warning_amber,
-                                                size: 30,
-                                                color: Colors.redAccent,
-                                              ),
-                                              Text('No internet'),
-                                            ],
-                                          ),
-                                          content: const Text(
-                                              'Please check your internet connection!'),
-                                          actions: [
-                                            TextButton(
-                                              onPressed: () {
-                                                Navigator.pop(context);
-                                              },
-                                              child: const Text('OK'),
-                                            ),
-                                          ],
-                                        );
-                                      });
-                                }
 
-                              },
-                              label: const Text(
-                                'Send',
-                                style: TextStyle(
-                                    fontSize: 16, color: Colors.white),
+                        const Text(
+                          "Send Message",
+                          textAlign: TextAlign.center,
+                          style:
+                          TextStyle(fontSize: 15, fontWeight: FontWeight.w500),
+                        ),
+                        Container(
+                          margin: const EdgeInsets.fromLTRB(0, 20, 0, 10),
+                          width: 340,
+                          child: StreamBuilder(
+                            stream: informationControl,
+                            builder: (context, snapshot) => TextField(
+                              controller: _informationController
+                                ..text = userModel.email!,
+                              decoration: InputDecoration(
+                                labelText: "Contact method",
+                                hintText: 'Insert your Email/Phone',
+                                errorText: snapshot.hasError
+                                    ? snapshot.error.toString()
+                                    : null,
+                                enabledBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                    borderSide: const BorderSide(
+                                      color: Colors.blueAccent,
+                                      width: 1,
+                                    )),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                  borderSide: const BorderSide(
+                                    color: Colors.blue,
+                                    width: 4,
+                                  ),
+                                ),
                               ),
-                              icon: const Icon(Icons.mail_outline_rounded),
-                              style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.blueAccent),
                             ),
                           ),
-                          const Padding(
-                            padding: EdgeInsets.all(10),
-                          ),
-                          Expanded(
-                              child: ElevatedButton.icon(
-                            onPressed: () => {Navigator.pop(context)},
-                            label: const Text(
-                              'Cancel',
-                              style:
-                                  TextStyle(fontSize: 16, color: Colors.white),
+                        ),
+                        Container(
+                          width: 340,
+                          margin: const EdgeInsets.fromLTRB(0, 10, 0, 0),
+                          child: StreamBuilder(
+                            stream: questionControl,
+                            builder: (context, snapshot) => TextField(
+                              controller: _questionController,
+                              maxLines: 50,
+                              minLines: 7,
+                              maxLength: 3000,
+                              decoration: InputDecoration(
+                                hintMaxLines: 5,
+                                helperMaxLines: 5,
+                                labelText: "Send question",
+                                hintText: 'Insert your question',
+                                errorText: snapshot.hasError
+                                    ? snapshot.error.toString()
+                                    : null,
+                                enabledBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                    borderSide: const BorderSide(
+                                      color: Colors.blueAccent,
+                                      width: 1,
+                                    )),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                  borderSide: const BorderSide(
+                                      color: Colors.blue, width: 4),
+                                ),
+                              ),
                             ),
-                            icon: const Icon(Icons.cancel_presentation),
-                            style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.blueAccent),
-                          )),
-                          const Padding(
-                              padding: EdgeInsets.fromLTRB(0, 10, 0, 30)),
-                        ],
-                      ),
-                    )
-                  ],
+                          ),
+                        ),
+                        InkWell(
+                          child: Container(
+                            height: 70,
+                            margin: const EdgeInsets.fromLTRB(100, 0, 110, 0),
+                            width: double.infinity,
+                            child: const Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              children: [
+                                Padding(
+                                  padding: EdgeInsets.fromLTRB(25, 5, 0, 5),
+                                  child: Icon(
+                                    AppIcons.file_pdf,
+                                    color: Colors.red,
+                                  ),
+                                ),
+                                Padding(
+                                  padding: EdgeInsets.fromLTRB(0, 5, 5, 5),
+                                  child: Text(
+                                    'Attached files',
+                                    style: TextStyle(
+                                        fontSize: 14,
+                                        fontStyle: FontStyle.italic,
+                                        color: Colors.grey),
+                                  ),
+                                )
+                              ],
+                            ),
+                          ),
+                          onTap: () {
+                            importPdf();
+                          },
+                        ),
+                        Container(
+                          padding: const EdgeInsets.fromLTRB(30, 0, 30, 0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: <Widget>[
+                              Expanded(
+                                child: ElevatedButton.icon(
+                                  onPressed: () {
+                                    if(internetCheck.isInternetConnect == true){
+                                      _onSendMessageClicked();
+                                      Navigator.pop(context);
+                                    }
+                                    else{
+                                      showDialog(
+                                          context: context,
+                                          builder: (context) {
+                                            return CupertinoAlertDialog(
+                                              title: const Column(
+                                                children: [
+                                                  Icon(
+                                                    Icons.warning_amber,
+                                                    size: 30,
+                                                    color: Colors.redAccent,
+                                                  ),
+                                                  Text('No internet'),
+                                                ],
+                                              ),
+                                              content: const Text(
+                                                  'Please check your internet connection!'),
+                                              actions: [
+                                                TextButton(
+                                                  onPressed: () {
+                                                    Navigator.pop(context);
+                                                  },
+                                                  child: const Text('OK'),
+                                                ),
+                                              ],
+                                            );
+                                          });
+                                    }
+
+                                  },
+                                  label: const Text(
+                                    'Send',
+                                    style: TextStyle(
+                                        fontSize: 16, color: Colors.white),
+                                  ),
+                                  icon: const Icon(Icons.mail_outline_rounded),
+                                  style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.blueAccent),
+                                ),
+                              ),
+                              const Padding(
+                                padding: EdgeInsets.all(10),
+                              ),
+                              Expanded(
+                                  child: ElevatedButton.icon(
+                                    onPressed: () => {Navigator.pop(context)},
+                                    label: const Text(
+                                      'Cancel',
+                                      style:
+                                      TextStyle(fontSize: 16, color: Colors.white),
+                                    ),
+                                    icon: const Icon(Icons.cancel_presentation),
+                                    style: ElevatedButton.styleFrom(
+                                        backgroundColor: Colors.blueAccent),
+                                  )),
+
+                            ],
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
                 ),
               ),
             );
