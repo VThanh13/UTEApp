@@ -621,6 +621,7 @@ class _MyInfoState extends State<MyInfo> with SingleTickerProviderStateMixin{
   }
 
   uploadImage() async {
+    print("hello oooooo");
     final imagePicker = ImagePicker();
     String imageUrl;
     //PickedFile image;

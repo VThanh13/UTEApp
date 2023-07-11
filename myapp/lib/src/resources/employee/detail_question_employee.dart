@@ -4,11 +4,14 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 // ignore: depend_on_referenced_packages
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/intl.dart';
+import 'package:http/http.dart' as http;
 
 import '../../../icons/app_icons_icons.dart';
 import '../../models/AnswerModel.dart';
@@ -68,6 +71,8 @@ class _DetailQuestionState extends State<DetailQuestionEmployee> {
   @override
   void dispose() {
     _scrollController.dispose();
+    _focusNode.removeListener(_onFocusChanged);
+    _focusNode.dispose();
     super.dispose();
   }
 
@@ -89,6 +94,8 @@ class _DetailQuestionState extends State<DetailQuestionEmployee> {
         });
       }
     });
+    _focusNode = FocusNode();
+    _focusNode.addListener(_onFocusChanged);
   }
 
   String? value;
@@ -615,50 +622,12 @@ class _DetailQuestionState extends State<DetailQuestionEmployee> {
     return true;
   }
 
-  Widget _getFAB() {
-    return SpeedDial(
-      animatedIcon: AnimatedIcons.menu_close,
-      animatedIconTheme: const IconThemeData(size: 22),
-      backgroundColor: Colors.blue,
-      visible: true,
-      curve: Curves.bounceIn,
-      children: [
-        // FAB 1
-        SpeedDialChild(
-            child: const Icon(Icons.send),
-            backgroundColor: Colors.blue,
-            onTap: () {
-              _modalBottomSheetAddAnswer();
-            },
-            label: 'Send answer',
-            labelStyle: const TextStyle(
-                fontWeight: FontWeight.w500,
-                color: Colors.white,
-                fontSize: 16.0),
-            labelBackgroundColor: Colors.blueAccent),
-
-        SpeedDialChild(
-            child: const Icon(Icons.published_with_changes),
-            backgroundColor: Colors.blue,
-            onTap: () {
-              _modalBottomSheetChange();
-            },
-            label: 'Move question',
-            labelStyle: const TextStyle(
-                fontWeight: FontWeight.w500,
-                color: Colors.white,
-                fontSize: 16.0),
-            labelBackgroundColor: Colors.blueAccent),
-      ],
-    );
-  }
-
   _modalBottomSheetChange() {
     return showModalBottomSheet(
         isScrollControlled: true,
         constraints: BoxConstraints.loose(Size(
             MediaQuery.of(context).size.width,
-            MediaQuery.of(context).size.height * 0.55)),
+            MediaQuery.of(context).size.height * 0.45)),
         shape: const RoundedRectangleBorder(
             borderRadius: BorderRadius.only(
           topLeft: Radius.circular(20),
@@ -686,10 +655,10 @@ class _DetailQuestionState extends State<DetailQuestionEmployee> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       SizedBox(
-                        height: MediaQuery.of(context).size.height * 0.45,
-                        child: SingleChildScrollView(
+                        height: MediaQuery.of(context).size.height * 0.37,
+                        child: Container(
                             child: SizedBox(
-                          height: 300,
+                          height: MediaQuery.of(context).size.height * 0.3,
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: <Widget>[
@@ -756,7 +725,7 @@ class _DetailQuestionState extends State<DetailQuestionEmployee> {
                                     ),
                                   )),
                               Container(
-                                padding: const EdgeInsets.all(10),
+                                padding: const EdgeInsets.fromLTRB(25, 10, 25, 10),
                                 margin: const EdgeInsets.only(top: 40),
                                 child: Row(
                                   mainAxisAlignment:
@@ -792,144 +761,6 @@ class _DetailQuestionState extends State<DetailQuestionEmployee> {
                                           const Icon(Icons.cancel_presentation),
                                       style: ElevatedButton.styleFrom(
                                           backgroundColor: Colors.blueAccent),
-                                    )),
-                                    const Padding(
-                                        padding:
-                                            EdgeInsets.fromLTRB(0, 10, 0, 30)),
-                                  ],
-                                ),
-                              )
-                            ],
-                          ),
-                        )),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            );
-          });
-        });
-  }
-
-  _modalBottomSheetAddAnswer() {
-    return showModalBottomSheet(
-        isScrollControlled: true,
-        constraints: BoxConstraints.loose(Size(
-            MediaQuery.of(context).size.width,
-            MediaQuery.of(context).size.height * 0.65)),
-        shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(20),
-          topRight: Radius.circular(20),
-        )),
-        context: context,
-        builder: (BuildContext context) {
-          return StatefulBuilder(
-              builder: (BuildContext context, StateSetter setStateKhoa) {
-            return Column(
-              children: <Widget>[
-                const Padding(
-                  padding: EdgeInsets.fromLTRB(5, 20, 5, 10),
-                  child: Text(
-                    'Answer question',
-                    style: TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.w600,
-                        letterSpacing: 1.0),
-                  ),
-                ),
-                SingleChildScrollView(
-                  physics: const BouncingScrollPhysics(),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      SizedBox(
-                        height: MediaQuery.of(context).size.height * 0.55,
-                        child: SingleChildScrollView(
-                            child: SizedBox(
-                          height: 600,
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: <Widget>[
-                              const Padding(
-                                padding: EdgeInsets.fromLTRB(0, 10, 0, 10),
-                              ),
-                              Container(
-                                margin:
-                                    const EdgeInsets.fromLTRB(10, 10, 10, 15),
-                                child: StreamBuilder(
-                                  stream: answerControl,
-                                  builder: (context, snapshot) => TextField(
-                                    controller: _answerController,
-                                    maxLines: 7,
-                                    maxLength: 500,
-                                    decoration: InputDecoration(
-                                        hintMaxLines: 5,
-                                        helperMaxLines: 5,
-                                        labelText: "Answer question",
-                                        hintText: 'Insert answer',
-                                        enabledBorder: OutlineInputBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(10),
-                                            borderSide: const BorderSide(
-                                              color: Colors.blueAccent,
-                                              width: 1,
-                                            )),
-                                        focusedBorder: OutlineInputBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(10),
-                                            borderSide: const BorderSide(
-                                                color: Colors.blue, width: 4))),
-                                  ),
-                                ),
-                              ),
-                              Container(
-                                padding: const EdgeInsets.all(10),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceAround,
-                                  children: <Widget>[
-                                    Expanded(
-                                      child: ElevatedButton.icon(
-                                        onPressed: () {
-                                          try {
-                                            if (_onSendAnswerClicked()) {
-                                              setState(() {
-                                                _answerController.text = '';
-                                              });
-                                            } else {
-                                              showErrorMessage(
-                                                  'Send message fail, check your internet connection');
-                                            }
-                                          } catch (e) {
-                                            //
-                                          }
-                                        },
-                                        label: const Text(
-                                          'Send',
-                                          style: TextStyle(
-                                              fontSize: 16,
-                                              color: Colors.white),
-                                        ),
-                                        icon: const Icon(Icons.send),
-                                        style: ElevatedButton.styleFrom(
-                                            primary: Colors.blueAccent),
-                                      ),
-                                    ),
-                                    const Padding(padding: EdgeInsets.all(10)),
-                                    Expanded(
-                                        child: ElevatedButton.icon(
-                                      onPressed: () => {Navigator.pop(context)},
-                                      label: const Text(
-                                        'Cancel',
-                                        style: TextStyle(
-                                            fontSize: 16, color: Colors.white),
-                                      ),
-                                      icon:
-                                          const Icon(Icons.cancel_presentation),
-                                      style: ElevatedButton.styleFrom(
-                                          primary: Colors.blueAccent),
                                     )),
                                     const Padding(
                                         padding:
@@ -1079,67 +910,97 @@ class _DetailQuestionState extends State<DetailQuestionEmployee> {
     return false;
   }
 
+  double previousBottomInset = 0.0;
+  late FocusNode _focusNode;
+
+  void _onFocusChanged() {
+    if (!_focusNode.hasFocus) {
+      // Bàn phím biến mất
+      print('Keyboard disappeared');
+      setState(() {
+        contentHeight = 0.83;
+      });
+    }
+  }
+
   _inputAnswer() {
-    return Container(
-      width: double.maxFinite,
-      decoration: BoxDecoration(
-        border: Border.all(
-          color: Colors.blueAccent,
-          width: 1,
-        ),
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          IconButton(
-            onPressed: () {
-              importPdf();
-            },
-            icon: const Icon(
-              AppIcons.file_pdf,
-              size: 20,
-              color: Colors.redAccent,
-            ),
+    return Listener(
+      onPointerMove: (event) {
+        final keyboardVisible = event.position.dy > MediaQuery.of(context).viewInsets.bottom;
+        if (keyboardVisible) {
+          // Bàn phím xuất hiện
+          setState(() {
+            contentHeight = 0.435;
+          });
+        } else {
+          // Bàn phím biến mất
+          setState(() {
+            contentHeight = 0.83;
+          });
+        }
+      },
+      child: Container(
+        width: double.maxFinite,
+        decoration: BoxDecoration(
+          border: Border.all(
+            color: Colors.blueAccent,
+            width: 1,
           ),
-          SizedBox(
-            width: 230,
-            child: StreamBuilder(
-              stream: answerControl,
-              builder: (context, snapshot) => TextField(
-                controller: _answerController,
-                decoration: InputDecoration(
-                  errorText:
-                      snapshot.hasError ? snapshot.error.toString() : null,
-                  border: InputBorder.none,
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            IconButton(
+              onPressed: () {
+                importPdf();
+              },
+              icon: const Icon(
+                AppIcons.file_pdf,
+                size: 20,
+                color: Colors.redAccent,
+              ),
+            ),
+            SizedBox(
+              width: 230,
+              child: StreamBuilder(
+                stream: answerControl,
+                builder: (context, snapshot) => TextField(
+                  focusNode: _focusNode,
+                  controller: _answerController,
+                  decoration: InputDecoration(
+                    errorText:
+                    snapshot.hasError ? snapshot.error.toString() : null,
+                    border: InputBorder.none,
+                  ),
                 ),
               ),
             ),
-          ),
-          IconButton(
-            onPressed: () {
-              try {
-                if (_onSendAnswerClicked()) {
-                  setState(() {
-                    _answerController.text = '';
-                  });
-                } else {
-                  showErrorMessage(
-                      'Send message fail, check your internet connection');
+            IconButton(
+              onPressed: () {
+                try {
+                  if (_onSendAnswerClicked()) {
+                    setState(() {
+                      _answerController.text = '';
+                    });
+                  } else {
+                    showErrorMessage(
+                        'Send message fail, check your internet connection');
+                  }
+                } catch (e) {
+                  //
                 }
-              } catch (e) {
-                //
-              }
-            },
-            icon: const Icon(
-              Icons.send_sharp,
-              size: 25,
-              color: Colors.blueAccent,
-            ),
-          )
-        ],
-      ),
+              },
+              icon: const Icon(
+                Icons.send_sharp,
+                size: 25,
+                color: Colors.blueAccent,
+              ),
+            )
+          ],
+        ),
+      )
     );
   }
 
@@ -1153,6 +1014,120 @@ class _DetailQuestionState extends State<DetailQuestionEmployee> {
     }
   }
 
+  publicizeTheQuestion(id, Function onSuccess){
+    var ref = FirebaseFirestore.instance.collection('chat_room');
+    ref.doc(id).update({
+      'mode': 'public',
+    }).then((value) {
+      onSuccess();
+    }).catchError((err) {});
+  }
+
+  _onPublicizeTheQuestionClicked(){
+    LoadingDialog.showLoadingDialog(context, "Please Wait...");
+    publicizeTheQuestion(widget.chatRoom.id, () {
+      LoadingDialog.hideLoadingDialog(context);
+      Navigator.push(context,
+          MaterialPageRoute(builder: (context) => const MessengerPageEmployee()));
+    });
+  }
+
+  Future<void> fetchData() async {
+    var url = Uri.parse('http://192.168.56.1:9200');
+    var response = await http.get(url);
+
+    if (response.statusCode == 200) {
+      // Xử lý dữ liệu trong phản hồi tại đây
+      print(response.body);
+    } else {
+      // Xử lý lỗi tại đây
+      print('Lỗi: ${response.statusCode}');
+    }
+  }
+
+  _onSeeRelatedQuestions() async {
+    print('====================');
+    fetchData();
+    print('===========()=========');
+  }
+
+  actionModalPopup(){
+    showCupertinoModalPopup(
+        context: context,
+        builder: (context) {
+          return CupertinoActionSheet(
+            title: const Text(
+              'Choose options',
+              style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.black),
+            ),
+            actions: [
+              CupertinoActionSheetAction(
+                onPressed: () {
+                  Navigator.pop(context);
+                  _modalBottomSheetChange();
+                },
+                child: const Text(
+                  'Move question',
+                  style: TextStyle(
+                    fontWeight: FontWeight.w500,
+                    fontSize: 14,
+                    color: Colors.blue,
+                  ),
+                ),
+              ),
+              if(widget.chatRoom.mode == "private")
+                CupertinoActionSheetAction(
+                  onPressed: () {
+                    Navigator.pop(context);
+                    _onPublicizeTheQuestionClicked();
+                  },
+                  child: const Text(
+                    'Public this question',
+                    style: TextStyle(
+                      fontWeight: FontWeight.w500,
+                      fontSize: 14,
+                      color: Colors.blue,
+                    ),
+                  ),
+                ),
+              CupertinoActionSheetAction(
+                onPressed: () {
+                  Navigator.pop(context);
+                  _onSeeRelatedQuestions();
+                },
+                child: const Text(
+                  'See related question',
+                  style: TextStyle(
+                    fontWeight: FontWeight.w500,
+                    fontSize: 14,
+                    color: Colors.blue,
+                  ),
+                ),
+              ),
+            ],
+            cancelButton: CupertinoActionSheetAction(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: const Text(
+                'Cancel',
+                style: TextStyle(
+                  fontWeight: FontWeight.w500,
+                  fontSize: 14,
+                  color: Colors.black,
+                ),
+              ),
+            ),
+          );
+        }
+    );
+  }
+
+  var contentHeight = 0.83;
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -1160,50 +1135,69 @@ class _DetailQuestionState extends State<DetailQuestionEmployee> {
         WidgetsBinding.instance.focusManager.primaryFocus?.unfocus();
       },
       child: Scaffold(
-        appBar: AppBar(
-          title: const Text('Message'),
-          backgroundColor: Colors.blueAccent,
-        ),
-        // bottomNavigationBar: (current_user.uid == widget.chatRoom.user_id)? _inputQuestion():null,
-        body: FutureBuilder(
-          future: Future.delayed(Duration.zero),
-          builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
-            if (_savedPosition != null) {
-              _scrollController.animateTo(
-                _savedPosition!,
-                duration: const Duration(milliseconds: 500),
-                curve: Curves.easeInOut,
-              );
-            }
-            return SingleChildScrollView(
-              controller: _scrollController,
-              key: _storageKey,
-              padding: const EdgeInsets.fromLTRB(10, 0, 10, 10),
-              child: Column(
-                children: <Widget>[
-                  SizedBox(
-                    width: double.maxFinite,
-                    child: SingleChildScrollView(
-                      child: Column(
-                        children: <Widget>[
-                          SizedBox(
-                            height: ableToAnswer() ? MediaQuery.of(context).size.height * 0.83 : MediaQuery.of(context).size.height,
-                            width: double.maxFinite,
-                            child: SingleChildScrollView(
-                              child: _buildMessage(),
-                            ),
-                          ),
-                        ],
-                      ),
+            resizeToAvoidBottomInset: false,
+            appBar: AppBar(
+                title: const Text('Message'),
+                backgroundColor: Colors.blueAccent,
+                actions: <Widget>[
+                  IconButton(
+                    onPressed: () {
+                      actionModalPopup();
+                    },
+                    icon: const Icon(
+                      Icons.more_vert,
+                      color: Colors.white,
+                      size: 28,
                     ),
                   ),
-                  if (ableToAnswer()) _inputAnswer(),
-                ],
+                ]
+            ),
+            // bottomNavigationBar: (ableToAnswer())? _inputAnswer():null,
+            body: Stack(children: <Widget>[
+              FutureBuilder(
+                future: Future.delayed(Duration.zero),
+                builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
+                  if (_savedPosition != null) {
+                    _scrollController.animateTo(
+                      _savedPosition!,
+                      duration: const Duration(milliseconds: 500),
+                      curve: Curves.easeInOut,
+                    );
+                  }
+                  return Column(
+                    children: <Widget>[
+                      SizedBox(
+                        width: double.maxFinite,
+                        child: SingleChildScrollView(
+                          child: Column(
+                            children: <Widget>[
+                              SizedBox(
+                                height: ableToAnswer() ? MediaQuery.of(context).size.height * contentHeight : MediaQuery.of(context).size.height * 0.89,
+                                width: double.maxFinite,
+                                child: SingleChildScrollView(
+                                  controller: _scrollController,
+                                  key: _storageKey,
+                                  padding: const EdgeInsets.fromLTRB(10, 0, 10, 10),
+
+                                  child: _buildMessage(),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  );
+                },
               ),
-            );
-          },
+              Positioned(
+                  bottom: MediaQuery.of(context).viewInsets.bottom,
+                  left: 0,
+                  right: 0,
+                  child: (ableToAnswer())? _inputAnswer():Text("")
+              ),
+            ])
         ),
-      ),
     );
   }
 

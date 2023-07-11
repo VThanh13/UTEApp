@@ -787,7 +787,7 @@ class _MessengerPageState extends State<MessengerPage> {
                                           fontSize: 16, color: Colors.black),
                                     ),
                               Container(
-                                padding: const EdgeInsets.all(10),
+                                padding: const EdgeInsets.fromLTRB(30, 10, 30, 10),
                                 child: Row(
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceAround,

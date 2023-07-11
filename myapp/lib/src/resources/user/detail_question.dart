@@ -617,6 +617,8 @@ class _DetailQuestionState extends State<DetailQuestion> {
   @override
   void dispose() {
     _scrollController.dispose();
+    _focusNode.removeListener(_onFocusChanged);
+    _focusNode.dispose();
     super.dispose();
   }
 
@@ -632,13 +634,14 @@ class _DetailQuestionState extends State<DetailQuestion> {
     _scrollController.addListener(_scrollListener);
     SharedPreferences.getInstance().then((prefs) {
       double? savedPosition = prefs.getDouble('scrollPosition');
-      // If a saved position was found, assign it to _savedPosition
       if (savedPosition != null) {
         setState(() {
           _savedPosition = savedPosition;
         });
       }
     });
+    _focusNode = FocusNode();
+    _focusNode.addListener(_onFocusChanged);
   }
 
   void _scrollListener() {
@@ -651,6 +654,8 @@ class _DetailQuestionState extends State<DetailQuestion> {
     }
   }
 
+  var contentHeight = 0.83;
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -658,12 +663,14 @@ class _DetailQuestionState extends State<DetailQuestion> {
         WidgetsBinding.instance.focusManager.primaryFocus?.unfocus();
       },
       child: Scaffold(
+        resizeToAvoidBottomInset: false,
         appBar: AppBar(
           title: const Text('Message'),
           backgroundColor: Colors.blueAccent,
         ),
         // bottomNavigationBar: (current_user.uid == widget.chatRoom.user_id)? _inputQuestion():null,
-        body: FutureBuilder(
+        body: Stack(children: <Widget>[
+        FutureBuilder(
           future: Future.delayed(Duration.zero),
           builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
             if (_savedPosition != null) {
@@ -673,11 +680,7 @@ class _DetailQuestionState extends State<DetailQuestion> {
                 curve: Curves.easeInOut,
               );
             }
-            return SingleChildScrollView(
-              controller: _scrollController,
-              key: _storageKey,
-              padding: const EdgeInsets.fromLTRB(10, 0, 10, 10),
-              child: Column(
+            return Column(
                 children: <Widget>[
                   SizedBox(
                     width: double.maxFinite,
@@ -685,9 +688,13 @@ class _DetailQuestionState extends State<DetailQuestion> {
                       child: Column(
                         children: <Widget>[
                           SizedBox(
-                            height: currentUser.uid == widget.chatRoom.userId ? MediaQuery.of(context).size.height * 0.83 : MediaQuery.of(context).size.height,
+                            height: currentUser.uid == widget.chatRoom.userId ? MediaQuery.of(context).size.height * contentHeight : MediaQuery.of(context).size.height * 0.89,
                             width: double.maxFinite,
                             child: SingleChildScrollView(
+                              controller: _scrollController,
+                              key: _storageKey,
+                              padding: const EdgeInsets.fromLTRB(10, 0, 10, 10),
+
                               child: _buildMessage(),
                             ),
                           ),
@@ -695,77 +702,111 @@ class _DetailQuestionState extends State<DetailQuestion> {
                       ),
                     ),
                   ),
-                  if (currentUser.uid == widget.chatRoom.userId)
-                    _inputQuestion(),
                 ],
-              ),
-            );
+              );
           },
         ),
+          Positioned(
+              bottom: MediaQuery.of(context).viewInsets.bottom,
+              left: 0,
+              right: 0,
+              child: (currentUser.uid == widget.chatRoom.userId)? _inputQuestion():Text("")
+          ),
+        ])
       ),
     );
   }
 
+  double previousBottomInset = 0.0;
+  late FocusNode _focusNode;
+
+  void _onFocusChanged() {
+    if (!_focusNode.hasFocus) {
+      // Bàn phím biến mất
+      print('Keyboard disappeared');
+      setState(() {
+        contentHeight = 0.83;
+      });
+    }
+  }
+
   _inputQuestion() {
-    return Container(
-      width: double.maxFinite,
-      decoration: BoxDecoration(
-        border: Border.all(
-          color: Colors.blueAccent,
-          width: 1,
-        ),
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          IconButton(
-            onPressed: () {
-              importPdf();
-            },
-            icon: const Icon(
-              AppIcons.file_pdf,
-              size: 20,
-              color: Colors.redAccent,
-            ),
+    return Listener(
+      onPointerMove: (event) {
+        final keyboardVisible = event.position.dy > MediaQuery.of(context).viewInsets.bottom;
+        if (keyboardVisible) {
+          // Bàn phím xuất hiện
+          setState(() {
+            contentHeight = 0.435;
+          });
+        } else {
+          // Bàn phím biến mất
+          setState(() {
+            contentHeight = 0.83;
+          });
+        }
+      },
+      child: Container(
+        width: double.maxFinite,
+        decoration: BoxDecoration(
+          border: Border.all(
+            color: Colors.blueAccent,
+            width: 1,
           ),
-          SizedBox(
-            width: 230,
-            child: StreamBuilder(
-              stream: questionControl,
-              builder: (context, snapshot) => TextField(
-                controller: _questionController,
-                decoration: InputDecoration(
-                  errorText:
-                      snapshot.hasError ? snapshot.error.toString() : null,
-                  border: InputBorder.none,
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            IconButton(
+              onPressed: () {
+                importPdf();
+              },
+              icon: const Icon(
+                AppIcons.file_pdf,
+                size: 20,
+                color: Colors.redAccent,
+              ),
+            ),
+            SizedBox(
+              width: 230,
+              child: StreamBuilder(
+                stream: questionControl,
+                builder: (context, snapshot) => TextField(
+                  focusNode: _focusNode,
+                  controller: _questionController,
+                  decoration: InputDecoration(
+                    errorText:
+                        snapshot.hasError ? snapshot.error.toString() : null,
+                    border: InputBorder.none,
+                  ),
                 ),
               ),
             ),
-          ),
-          IconButton(
-            onPressed: () {
-              try {
-                if (_onSendQuestionClicked()) {
-                  setState(() {
-                    _questionController.text = '';
-                  });
-                } else {
-                  showErrorMessage(
-                      'Send message fail, check your internet connection');
+            IconButton(
+              onPressed: () {
+                try {
+                  if (_onSendQuestionClicked()) {
+                    setState(() {
+                      _questionController.text = '';
+                    });
+                  } else {
+                    showErrorMessage(
+                        'Send message fail, check your internet connection');
+                  }
+                } catch (e) {
+                  //
                 }
-              } catch (e) {
-                //
-              }
-            },
-            icon: const Icon(
-              Icons.send_sharp,
-              size: 25,
-              color: Colors.blueAccent,
+              },
+              icon: const Icon(
+                Icons.send_sharp,
+                size: 25,
+                color: Colors.blueAccent,
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
