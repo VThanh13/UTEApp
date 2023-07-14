@@ -173,14 +173,12 @@ class _MessengerPageState extends State<MessengerPage> {
                   builder: (BuildContext context) =>
                       DetailQuestion(chatRoom: chatRoom)));
         },
-        child: Card(
+        child: SizedBox(
           key: UniqueKey(),
-          color: Colors.grey[200],
           child: Container(
             //margin: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
             margin: const EdgeInsets.fromLTRB(0, 5, 0, 0),
-            height: 90,
-
+            height: 75,
             child: Row(
               children: <Widget>[
                 Expanded(
@@ -193,8 +191,8 @@ class _MessengerPageState extends State<MessengerPage> {
                       Text(
                         chatRoom.title!,
                         style: const TextStyle(
-                          fontSize: 20.0,
-                          fontWeight: FontWeight.bold,
+                          fontSize: 17.0,
+                          fontWeight: FontWeight.w500,
                         ),
                         overflow: TextOverflow.ellipsis,
                       ),
@@ -209,18 +207,8 @@ class _MessengerPageState extends State<MessengerPage> {
                               ? 'To: ${employeeName[chatRoom.category]}'
                               : 'To: ${chatRoom.category}',
                           style: const TextStyle(
-                            color: Colors.black,
-                          ),
+                              color: Colors.black, fontSize: 13),
                         ),
-                      Text(
-                        chatRoom.time!,
-                        style: const TextStyle(
-                          fontSize: 14.0,
-                          fontWeight: FontWeight.w400,
-                          color: Colors.grey,
-                        ),
-                        overflow: TextOverflow.ellipsis,
-                      ),
                       Text(
                         chatRoom.status!,
                         style: TextStyle(
@@ -231,6 +219,15 @@ class _MessengerPageState extends State<MessengerPage> {
                               : Colors.green,
                           overflow: TextOverflow.ellipsis,
                         ),
+                      ),
+                      Text(
+                        chatRoom.time!,
+                        style: const TextStyle(
+                          fontSize: 10.0,
+                          fontWeight: FontWeight.w400,
+                          color: Colors.grey,
+                        ),
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ],
                   ),
@@ -247,7 +244,8 @@ class _MessengerPageState extends State<MessengerPage> {
   List<EmployeeModel> listEmployee = [];
   getEmployeeData() async {
     await FirebaseFirestore.instance
-        .collection('employee').limit(10)
+        .collection('employee')
+        .limit(10)
         .get()
         .then((value) => {
               setState(() {
@@ -278,29 +276,25 @@ class _MessengerPageState extends State<MessengerPage> {
                 builder: (context) =>
                     ViewEmployeeByUser(employee: employeeModel, users: user)));
       },
-      child: Container(
-        margin: const EdgeInsets.fromLTRB(0, 0, 0, 5),
+      child: SizedBox(
         width: 90,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(15.0),
-        ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
             Container(
               padding: const EdgeInsets.fromLTRB(10, 0, 0, 0),
               child: CircleAvatar(
-                radius: 26,
+                radius: 28,
                 backgroundColor: Colors.blueAccent,
                 child: CircleAvatar(
                   backgroundImage: NetworkImage(employeeModel.image!),
-                  radius: 24,
+                  radius: 26,
                 ),
               ),
             ),
             Expanded(
               child: Container(
-                margin: const EdgeInsets.fromLTRB(5, 0, 5, 5),
+                margin: const EdgeInsets.fromLTRB(0, 0, 5, 5),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -308,23 +302,26 @@ class _MessengerPageState extends State<MessengerPage> {
                     Text(
                       employeeModel.name!,
                       style: const TextStyle(
-                          fontSize: 10,
+                          fontSize: 12,
                           fontStyle: FontStyle.italic,
                           fontWeight: FontWeight.w500),
                       overflow: TextOverflow.ellipsis,
                     ),
-                    Text(
-                      employeeModel.roles!,
-                      style: const TextStyle(
-                          fontSize: 10, fontWeight: FontWeight.w400),
-                      overflow: TextOverflow.ellipsis,
+                    Padding(
+                      padding: const EdgeInsets.only(top: 3),
+                      child: Text(
+                        employeeModel.roles!,
+                        style: const TextStyle(
+                            fontSize: 8, fontWeight: FontWeight.w400),
+                        overflow: TextOverflow.ellipsis,
+                      ),
                     ),
                     Text(
                       employeeModel.department == ''
                           ? 'Manager'
                           : departmentName[employeeModel.department],
                       style: const TextStyle(
-                          fontSize: 10, fontWeight: FontWeight.w400),
+                          fontSize: 9, fontWeight: FontWeight.w400),
                       overflow: TextOverflow.ellipsis,
                     ),
                   ],
@@ -466,12 +463,11 @@ class _MessengerPageState extends State<MessengerPage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
                         SizedBox(
-                          height: 110.0,
-                          child: Row(
+                          height: 160.0,
+                          child: Column(
                             children: [
                               SizedBox(
-                                width: 60,
-                                height: 90,
+                                width: MediaQuery.of(context).size.width - 40,
                                 child: Column(
                                   children: [
                                     InkWell(
@@ -483,27 +479,28 @@ class _MessengerPageState extends State<MessengerPage> {
                                                     const SearchCounselorsScreen()));
                                       },
                                       child: Container(
-                                        width: 50,
-                                        height: 50,
-                                        margin: const EdgeInsets.only(left: 10),
+                                        width: MediaQuery.of(context).size.width- 20,
+                                        height: 40,
+
+                                        margin: const EdgeInsets.only(bottom: 10),
                                         decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(20),
-                                            color: Colors.grey[300]),
-                                        child: const Center(
-                                          child: Icon(
-                                            Icons.search_outlined,
-                                            size: 30,
+                                          color: Colors.grey[200],
+                                          borderRadius: const BorderRadius.all(Radius.circular(20),),
+                                          border: Border.all(
+                                            color: Colors.blue,
                                           ),
                                         ),
-                                      ),
-                                    ),
-                                    const Padding(
-                                      padding: EdgeInsets.fromLTRB(10, 5, 0, 0),
-                                      child: Text(
-                                        'Search',
-                                        style: TextStyle(
-                                          fontSize: 12,
+                                        child: const Row(
+                                          children: [
+                                            SizedBox(width: 10,),
+                                            Icon(Icons.search_rounded, color: Colors.grey,),
+                                            SizedBox(width: 5,),
+                                            Text('Search',
+                                            style: TextStyle(
+                                              fontStyle: FontStyle.italic,
+                                              color: Colors.grey,
+                                            ),),
+                                          ],
                                         ),
                                       ),
                                     ),
@@ -511,10 +508,10 @@ class _MessengerPageState extends State<MessengerPage> {
                                 ),
                               ),
                               SizedBox(
-                                height: 110,
-                                width: MediaQuery.of(context).size.width - 70,
+                                height: 100,
+                                width: MediaQuery.of(context).size.width - 10,
                                 child: ListView.builder(
-                                  key: UniqueKey(),
+                                    key: UniqueKey(),
                                     physics: const BouncingScrollPhysics(),
                                     padding: const EdgeInsets.only(left: 10.0),
                                     scrollDirection: Axis.horizontal,
@@ -789,7 +786,8 @@ class _MessengerPageState extends State<MessengerPage> {
                                           fontSize: 16, color: Colors.black),
                                     ),
                               Container(
-                                padding: const EdgeInsets.fromLTRB(30, 10, 30, 10),
+                                padding:
+                                    const EdgeInsets.fromLTRB(30, 10, 30, 10),
                                 child: Row(
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceAround,

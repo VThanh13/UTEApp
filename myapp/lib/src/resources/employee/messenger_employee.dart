@@ -491,13 +491,13 @@ class _MessengerPageState extends State<MessengerPageEmployee> with SingleTicker
                   builder: (BuildContext context) =>
                       DetailQuestionEmployee(chatRoom: chatRoom)));
         },
-        child: Card(
+        child: SizedBox(
           key: UniqueKey(),
-          color: Colors.grey[200],
+
           child: Container(
             //margin: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
             margin: const EdgeInsets.fromLTRB(0, 5, 0, 0),
-            height: 90,
+            height: 75,
 
             child: Row(
               children: <Widget>[
@@ -511,8 +511,8 @@ class _MessengerPageState extends State<MessengerPageEmployee> with SingleTicker
                           Text(
                             chatRoom.title!,
                             style: const TextStyle(
-                              fontSize: 20.0,
-                              fontWeight: FontWeight.bold,
+                              fontSize: 17.0,
+                              fontWeight: FontWeight.w500,
                             ),
                             overflow: TextOverflow.ellipsis,
                           ),
@@ -526,7 +526,7 @@ class _MessengerPageState extends State<MessengerPageEmployee> with SingleTicker
                           Text(
                             chatRoom.time!,
                             style: const TextStyle(
-                              fontSize: 14.0,
+                              fontSize: 10.0,
                               fontWeight: FontWeight.w400,
                               color: Colors.grey,
                             ),
