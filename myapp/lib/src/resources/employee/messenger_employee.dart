@@ -190,7 +190,29 @@ class _MessengerPageState extends State<MessengerPageEmployee> with SingleTicker
 
   List<ChatRoomModel> listYourChatRoom = [];
   getYourChatRoom() async {
-    listYourChatRoom = listYourMessage + listAnwsered + listUnAnswered;
+    await FirebaseFirestore.instance
+        .collection('chat_room')
+        .where("department", isEqualTo: currentEmployee.department!)
+        .get()
+        .then((value) => {
+      setState(() {
+        for (var element in value.docs) {
+          ChatRoomModel chatRoom = ChatRoomModel();
+          chatRoom.id = element['room_id'];
+          chatRoom.userId = element['user_id'];
+          chatRoom.time = element['time'];
+          chatRoom.title = element['title'];
+          chatRoom.department = element['department'];
+          chatRoom.category = element['category'];
+          chatRoom.information = element['information'];
+          chatRoom.group = element['group'];
+          chatRoom.mode = element['mode'];
+          chatRoom.status = element['status'];
+
+          listYourChatRoom.add(chatRoom);
+        }
+      })
+    });
   }
 
   List<ChatRoomModel> listYourMessage = [];

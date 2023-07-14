@@ -747,6 +747,7 @@ class _DetailQuestionState extends State<DetailQuestion> {
         }
       },
       child: Container(
+        margin: const EdgeInsets.fromLTRB(10, 0, 10, 0),
         width: double.maxFinite,
         decoration: BoxDecoration(
           border: Border.all(

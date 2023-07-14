@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:file_picker/file_picker.dart';
@@ -941,6 +942,7 @@ class _DetailQuestionState extends State<DetailQuestionEmployee> {
         }
       },
       child: Container(
+        margin: const EdgeInsets.fromLTRB(10, 0, 10, 0),
         width: double.maxFinite,
         decoration: BoxDecoration(
           border: Border.all(
@@ -1034,12 +1036,13 @@ class _DetailQuestionState extends State<DetailQuestionEmployee> {
   }
 
   Future<void> fetchData() async {
-    var url = Uri.parse('http://192.168.56.1:9200');
+    var url = Uri.parse('https://dummyjson.com/products/1');
     var response = await http.get(url);
 
     if (response.statusCode == 200) {
       // Xử lý dữ liệu trong phản hồi tại đây
-      print(response.body);
+      final body = json.decode(response.body);
+      print(body["title"]);
     } else {
       // Xử lý lỗi tại đây
       print('Lỗi: ${response.statusCode}');
@@ -1047,9 +1050,7 @@ class _DetailQuestionState extends State<DetailQuestionEmployee> {
   }
 
   _onSeeRelatedQuestions() async {
-    print('====================');
     fetchData();
-    print('===========()=========');
   }
 
   actionModalPopup(){
