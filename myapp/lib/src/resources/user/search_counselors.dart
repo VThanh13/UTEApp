@@ -21,7 +21,7 @@ class _SearchCounselorsScreenState extends State<SearchCounselorsScreen> {
   void searchFromFirebase(String query) async{
     final result = await FirebaseFirestore.instance.collection('employee').where(
       'name', isEqualTo: query
-    ).get();
+    ).limit(10).get();
 
     setState(() {
       searchResult = result.docs.map((e) => e.data()).toList();
@@ -39,8 +39,15 @@ class _SearchCounselorsScreenState extends State<SearchCounselorsScreen> {
           Padding(padding: const EdgeInsets.all(15),
           child: TextField(
             decoration: const InputDecoration(
-              border: OutlineInputBorder(),
-              hintText: 'Search Here',
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.all(Radius.circular(25)),
+              ),
+              hintText: 'Search Here...',
+                hintStyle: TextStyle(
+                  color: Colors.grey,
+                  fontStyle: FontStyle.italic,
+                ),
+                suffixIcon: Icon(Icons.search_rounded, color: Colors.grey,)
             ),
             onChanged: (val){
               setState(() {
@@ -50,7 +57,7 @@ class _SearchCounselorsScreenState extends State<SearchCounselorsScreen> {
           ),),
           Expanded(
               child: StreamBuilder<QuerySnapshot>(
-                stream: FirebaseFirestore.instance.collection('employee').snapshots(),
+                stream: FirebaseFirestore.instance.collection('employee').limit(10).snapshots(),
                 builder: (context, snapshot){
                   return (snapshot.connectionState == ConnectionState.waiting)
                       ?const Center(

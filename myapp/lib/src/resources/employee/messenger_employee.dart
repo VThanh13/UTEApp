@@ -270,6 +270,7 @@ class _MessengerPageState extends State<MessengerPageEmployee> with SingleTicker
           }
           return Scaffold(
             appBar: AppBar(
+              elevation: 0,
               leading: IconButton(
                   icon: const Icon(Icons.arrow_back, color: Colors.white),
                   onPressed: () {
