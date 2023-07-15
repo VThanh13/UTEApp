@@ -10,7 +10,6 @@ class AboutUniversity extends StatefulWidget{
 class _AboutUniversityState extends State<AboutUniversity>{
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
     return Scaffold(
       appBar: AppBar(
         title: const Text('Giới thiệu về trường'),
@@ -26,7 +25,7 @@ class _AboutUniversityState extends State<AboutUniversity>{
             const SizedBox(
             height: 140,
           ),
-          Image.asset('logo_page.png'),
+          Image.asset('assets/images/logo_page.png'),
           const Padding(padding: EdgeInsets.fromLTRB(0, 20, 20, 6),
           ),
               const Text("Trường đại học Sư phạm Kỹ thuật Thành phố Hồ Chí Minh"
