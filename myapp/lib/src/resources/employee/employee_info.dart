@@ -771,10 +771,9 @@ class _MyInfoState extends State<EmployeeInfo>
   uploadImage() async {
     final imagePicker = ImagePicker();
     String imageUrl;
-    //PickedFile image;
+
     //Check Permissions
     await Permission.photos.request();
-
     var permissionStatus = await Permission.photos.status;
 
     if (permissionStatus.isGranted) {
@@ -783,6 +782,28 @@ class _MyInfoState extends State<EmployeeInfo>
 
       if (image != null) {
         var file = File(image.path);
+
+        // Check File Size
+        final fileSize = await file.length();
+        final maxFileSize = 1 * 1024 * 1024; // Giới hạn kích thước 1MB
+
+        if (fileSize > maxFileSize) {
+          showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+              title: const Text('Kích thước ảnh vượt quá giới hạn'),
+              content: const Text('Kích thước ảnh quá lớn, vui lòng chọn ảnh nhỏ hơn.'),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: Text('OK'),
+                ),
+              ],
+            ),
+          );
+          return;
+        }
+
         FirebaseStorage storage = FirebaseStorage.instance;
         Reference ref = storage.ref().child("avatar/${image.name}");
         UploadTask uploadTask = ref.putFile(file);

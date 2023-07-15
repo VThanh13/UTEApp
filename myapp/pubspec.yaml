@@ -58,6 +58,8 @@ dependencies:
   internet_connection_checker: ^0.0.1+4
   flutter_keyboard_visibility: ^5.4.1
   crypto: ^3.0.1
+  flutter_image_compress: ^2.0.3
+  local_auth: ^2.0.1
 
   get: ^4.1.4
   intl: ^0.18.1

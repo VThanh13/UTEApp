@@ -543,6 +543,52 @@ class _DetailQuestionState extends State<DetailQuestion> {
         allowMultiple: false,
         allowedExtensions: ['jpg', 'jpeg', 'png', 'pdf']);
     if (result == null) return;
+
+    if(result.files.first.path!.endsWith(".pdf")){
+      // Check File Size
+      final fileSize = result.files.first.size; // Kích thước tệp (byte)
+      final maxFileSize = 5 * 1024 * 1024; // Giới hạn kích thước 5MB
+
+      if (fileSize > maxFileSize) {
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: Text('Kích thước tệp PDF vượt quá giới hạn'),
+            content: Text('Kích thước tệp PDF quá lớn, vui lòng chọn tệp nhỏ hơn.'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: Text('OK'),
+              ),
+            ],
+          ),
+        );
+        return;
+      }
+    }
+    else{
+      // Check File Size
+      final fileSize = result.files.first.size; // Kích thước tệp (byte)
+      final maxFileSize = 1024 * 1024; // Giới hạn kích thước 1MB
+
+      if (fileSize > maxFileSize) {
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: Text('Kích thước ảnh vượt quá giới hạn'),
+            content: Text('Kích thước ảnh quá lớn, vui lòng chọn ảnh nhỏ hơn.'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: Text('OK'),
+              ),
+            ],
+          ),
+        );
+        return;
+      }
+    }
+
     setState(() {
       file = result.files.first;
       hadFile = true;

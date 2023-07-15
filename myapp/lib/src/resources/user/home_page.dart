@@ -14,6 +14,7 @@ import 'package:myapp/src/resources/about_page/my_info.dart';
 import 'package:myapp/src/resources/about_page/about_university.dart';
 import 'package:myapp/src/resources/login_screen.dart';
 import 'package:myapp/src/resources/user/search_post.dart';
+import '../setting_screen.dart';
 import 'messenger_page.dart';
 import 'package:myapp/src/models/UserModel.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -938,6 +939,52 @@ class _HomePageState extends State<HomePage> {
         allowMultiple: false,
         allowedExtensions: ['jpg', 'jpeg', 'png', 'pdf']);
     if (result == null) return;
+
+    if(result.files.first.path!.endsWith(".pdf")){
+      // Check File Size
+      final fileSize = result.files.first.size; // Kích thước tệp (byte)
+      final maxFileSize = 5 * 1024 * 1024; // Giới hạn kích thước 5MB
+
+      if (fileSize > maxFileSize) {
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: Text('Kích thước tệp PDF vượt quá giới hạn'),
+            content: Text('Kích thước tệp PDF quá lớn, vui lòng chọn tệp nhỏ hơn.'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: Text('OK'),
+              ),
+            ],
+          ),
+        );
+        return;
+      }
+    }
+    else{
+      // Check File Size
+      final fileSize = result.files.first.size; // Kích thước tệp (byte)
+      final maxFileSize = 1024 * 1024; // Giới hạn kích thước 1MB
+
+      if (fileSize > maxFileSize) {
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: Text('Kích thước ảnh vượt quá giới hạn'),
+            content: Text('Kích thước ảnh quá lớn, vui lòng chọn ảnh nhỏ hơn.'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: Text('OK'),
+              ),
+            ],
+          ),
+        );
+        return;
+      }
+    }
+
     setState(() {
       file = result.files.first;
       hadFile = true;
@@ -1327,6 +1374,117 @@ class _HomePageState extends State<HomePage> {
                                         margin: const EdgeInsets.only(left: 20),
                                         child: const Text(
                                           'About UTE',
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w400,
+                                            fontStyle: FontStyle.normal,
+                                            fontFamily: 'Plus_Jakarta_Sans',
+                                            color: Color(0xff000000),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                const SizedBox(
+                                  width: 6,
+                                  height: 10,
+                                  child: FittedBox(
+                                    fit: BoxFit.fitHeight,
+                                    child: Icon(
+                                      Icons.arrow_forward_ios,
+                                      color: Color(0xffB4B4B4),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const Divider(
+                              height: 0,
+                              color: Color(0xffAAAAAA),
+                              indent: 0,
+                              thickness: 1,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                  InkWell(
+                    onTap: () async {
+                      if(internetCheck.isInternetConnect == true){
+                        SharedPreferences prefs =
+                        await SharedPreferences.getInstance();
+                        await prefs.setString("id", "");
+                        await FirebaseAuth.instance.signOut();
+                        if (!mounted) return;
+                        Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => SettingScreen(isFingerprintEnabled: false,)));
+                      }else{
+                        showDialog(
+                            context: context,
+                            builder: (context) {
+                              return CupertinoAlertDialog(
+                                title: const Column(
+                                  children: [
+                                    Icon(
+                                      Icons.warning_amber,
+                                      size: 30,
+                                      color: Colors.redAccent,
+                                    ),
+                                    Text('No internet'),
+                                  ],
+                                ),
+                                content: const Text(
+                                    'Please check your internet connection!'),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                    },
+                                    child: const Text('OK'),
+                                  ),
+                                ],
+                              );
+                            });
+                      }
+
+                    },
+                    child: SizedBox(
+                      height: 56,
+                      width: double.infinity,
+                      child: Container(
+                        margin: const EdgeInsets.only(top: 16),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: <Widget>[
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: <Widget>[
+                                Container(
+                                  margin: const EdgeInsets.only(
+                                    left: 13,
+                                  ),
+                                  child: Row(
+                                    children: <Widget>[
+                                      const SizedBox(
+                                        height: 17.14,
+                                        width: 20,
+                                        child: FittedBox(
+                                          fit: BoxFit.fitWidth,
+                                          child: Icon(
+                                            Icons.logout,
+                                            color: Color(0xff757575),
+                                          ),
+                                        ),
+                                      ),
+                                      Container(
+                                        height: 22,
+                                        margin: const EdgeInsets.only(left: 20),
+                                        child: const Text(
+                                          'Setting',
                                           style: TextStyle(
                                             fontSize: 14,
                                             fontWeight: FontWeight.w400,

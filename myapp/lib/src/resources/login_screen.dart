@@ -14,6 +14,7 @@ import 'manager/home_page_manager.dart';
 import 'signup_screen.dart';
 import 'package:myapp/src/widgets/inputTextWidget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:local_auth/local_auth.dart';
 
 
 class LoginScreen extends StatefulWidget {
@@ -217,6 +218,7 @@ class _SearchScreenState extends State<LoginScreen> {
                 borderRadius: BorderRadius.circular(12.0),
                 child: InkWell(
                   onTap: () {
+                    _authenticateWithBiometrics(context);
                   },
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
@@ -403,6 +405,33 @@ class _SearchScreenState extends State<LoginScreen> {
         LoadingDialog.hideLoadingDialog(context);
         MsgDialog.showMsgDialog(context, "Sign In failed", msg);
       });
+    }
+  }
+
+  void _authenticateWithBiometrics(BuildContext context) async {
+    final LocalAuthentication localAuth = LocalAuthentication();
+    bool authenticated = false;
+
+    try {
+      // Check if biometrics are available on the device
+      bool isBiometricAvailable = await localAuth.canCheckBiometrics;
+      if (!isBiometricAvailable) {
+        return;
+      }
+
+      // Authenticate using biometrics
+      authenticated = await localAuth.authenticate(
+        localizedReason: 'Xác thực bằng vân tay',
+      );
+    } catch (e) {
+    }
+
+    if (authenticated) {
+      // Perform successful fingerprint authentication
+      print("Đăng nhập bằng vân tay thành công!");
+    } else {
+      // Fingerprint authentication failed or was canceled
+      print("Đăng nhập bằng vân tay không thành công!");
     }
   }
 }

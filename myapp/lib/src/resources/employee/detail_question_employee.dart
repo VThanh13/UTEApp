@@ -20,6 +20,7 @@ import '../../models/ChatRoomModel.dart';
 import '../../models/EmployeeModel.dart';
 import '../../models/UserModel.dart';
 import '../dialog/loading_dialog.dart';
+import '../dialog/search_question_dialog.dart';
 import '../pdf_viewer.dart';
 import 'messenger_employee.dart';
 
@@ -812,6 +813,52 @@ class _DetailQuestionState extends State<DetailQuestionEmployee> {
         allowMultiple: false,
         allowedExtensions: ['jpg', 'jpeg', 'png', 'pdf']);
     if (result == null) return;
+
+    if(result.files.first.path!.endsWith(".pdf")){
+      // Check File Size
+      final fileSize = result.files.first.size; // Kích thước tệp (byte)
+      final maxFileSize = 5 * 1024 * 1024; // Giới hạn kích thước 5MB
+
+      if (fileSize > maxFileSize) {
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: Text('Kích thước tệp PDF vượt quá giới hạn'),
+            content: Text('Kích thước tệp PDF quá lớn, vui lòng chọn tệp nhỏ hơn.'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: Text('OK'),
+              ),
+            ],
+          ),
+        );
+        return;
+      }
+    }
+    else{
+      // Check File Size
+      final fileSize = result.files.first.size; // Kích thước tệp (byte)
+      final maxFileSize = 1024 * 1024; // Giới hạn kích thước 1MB
+
+      if (fileSize > maxFileSize) {
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: Text('Kích thước ảnh vượt quá giới hạn'),
+            content: Text('Kích thước ảnh quá lớn, vui lòng chọn ảnh nhỏ hơn.'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: Text('OK'),
+              ),
+            ],
+          ),
+        );
+        return;
+      }
+    }
+
     setState(() {
       file = result.files.first;
       hadFile = true;
@@ -1036,16 +1083,33 @@ class _DetailQuestionState extends State<DetailQuestionEmployee> {
   }
 
   Future<void> fetchData() async {
-    var url = Uri.parse('https://dummyjson.com/products/1');
-    var response = await http.get(url);
+    var url = Uri.parse('https://dummyjson.com/products/search?q=Laptop');
+    final response = await http.get(url);
+    List<ChatRoomModel> chatRooms = [];
 
     if (response.statusCode == 200) {
-      // Xử lý dữ liệu trong phản hồi tại đây
-      final body = json.decode(response.body);
-      print(body["title"]);
+      dynamic chatRoomsData = json.decode(response.body);
+
+      setState(() {
+        chatRoomsData["products"].forEach((element) {
+          ChatRoomModel chatRoom = ChatRoomModel();
+          chatRoom.id = element["id"].toString();
+          chatRoom.userId = element["title"];
+          chatRoom.title = element["title"];
+          chatRoom.time = element["title"];
+          chatRoom.department = element["title"];
+          chatRoom.category = element["category"];
+          chatRoom.information = element["title"];
+          chatRoom.group = element["title"];
+          chatRoom.status = element["title"];
+          chatRoom.mode = element["title"];
+
+          chatRooms.add(chatRoom);
+        });
+      });
+      SearchQuestionDialog.showChatRoomDialog(context, chatRooms);
     } else {
-      // Xử lý lỗi tại đây
-      print('Lỗi: ${response.statusCode}');
+      throw Exception('Failed to load data');
     }
   }
 

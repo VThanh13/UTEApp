@@ -12,6 +12,7 @@ import '../dialog/loading_dialog.dart';
 import '../user/home_page.dart';
 import 'package:crypto/crypto.dart';
 import 'dart:convert';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 
 class MyInfo extends StatefulWidget {
   const MyInfo({super.key});
@@ -671,10 +672,9 @@ class _MyInfoState extends State<MyInfo> with SingleTickerProviderStateMixin{
   uploadImage() async {
     final imagePicker = ImagePicker();
     String imageUrl;
-    //PickedFile image;
+
     //Check Permissions
     await Permission.photos.request();
-
     var permissionStatus = await Permission.photos.status;
 
     if (permissionStatus.isGranted) {
@@ -683,9 +683,32 @@ class _MyInfoState extends State<MyInfo> with SingleTickerProviderStateMixin{
 
       if (image != null) {
         var file = File(image.path);
+
+        // Check File Size
+        final fileSize = await file.length();
+        final maxFileSize = 1 * 1024 * 1024; // Giới hạn kích thước 1MB
+
+        if (fileSize > maxFileSize) {
+          showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+              title: const Text('Kích thước ảnh vượt quá giới hạn'),
+              content: const Text('Kích thước ảnh quá lớn, vui lòng chọn ảnh nhỏ hơn.'),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: Text('OK'),
+                ),
+              ],
+            ),
+          );
+          return;
+        }
+
         FirebaseStorage storage = FirebaseStorage.instance;
         Reference ref = storage.ref().child("avatar/${image.name}");
         UploadTask uploadTask = ref.putFile(file);
+
         await uploadTask.whenComplete(() async {
           var url = await ref.getDownloadURL();
           imageUrl = url.toString();
@@ -697,6 +720,7 @@ class _MyInfoState extends State<MyInfo> with SingleTickerProviderStateMixin{
         }).catchError((onError) {
           return onError;
         });
+
       } else {}
     } else {}
   }
