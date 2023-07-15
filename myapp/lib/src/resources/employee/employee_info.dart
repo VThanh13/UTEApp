@@ -13,6 +13,8 @@ import '../../models/EmployeeModel.dart';
 import '../dialog/loading_dialog.dart';
 import '../manager/home_page_manager.dart';
 import 'home_page_employee.dart';
+import 'package:crypto/crypto.dart';
+import 'dart:convert';
 
 class EmployeeInfo extends StatefulWidget {
   const EmployeeInfo({super.key});
@@ -35,7 +37,6 @@ class _MyInfoState extends State<EmployeeInfo>
   final StreamController _nameControll = StreamController.broadcast();
   final StreamController _phoneControll = StreamController.broadcast();
   final StreamController _emailControll = StreamController.broadcast();
-  final StreamController _passwordControll = StreamController.broadcast();
   final StreamController _passControll = StreamController.broadcast();
   final StreamController _passnew1Controll = StreamController.broadcast();
   final StreamController _passnew2Controll = StreamController.broadcast();
@@ -43,7 +44,6 @@ class _MyInfoState extends State<EmployeeInfo>
   Stream get emailStream => _emailControll.stream;
   Stream get nameStream => _nameControll.stream;
   Stream get phoneStream => _phoneControll.stream;
-  Stream get passwordStream => _passwordControll.stream;
   Stream get passStream => _passControll.stream;
   Stream get passnew1Stream => _passnew1Controll.stream;
   Stream get passnew2Stream => _passnew2Controll.stream;
@@ -72,28 +72,46 @@ class _MyInfoState extends State<EmployeeInfo>
 
   bool isValidChangePass(String pass, String passNew1, String passNew2) {
     if (pass.isEmpty) {
-      _passControll.sink.addError("Please insert your password");
+      _passControll.sink.addError("Please type your current password");
       return false;
     }
     _passControll.sink.add('');
 
     if (passNew1.isEmpty) {
-      _passnew1Controll.sink.addError("Please insert your new password");
+      _passnew1Controll.sink.addError("Please type your new password");
       return false;
     }
     _passnew1Controll.sink.add('');
 
     if (passNew2.isEmpty) {
-      _passnew2Controll.sink.addError("Confirm new password");
+      _passnew2Controll.sink.addError("Please confirm your new password");
       return false;
     }
     _passnew2Controll.sink.add('');
 
     if (passNew1 != passNew2) {
-      _passnew2Controll.sink.addError("New password not match");
+      _passnew2Controll.sink.addError("Confirm password does not match");
       return false;
     }
     _passnew2Controll.sink.add('');
+
+    if (passNew1.length < 6){
+      _passnew1Controll.sink.addError("Password must be at least 6 characters");
+      return false;
+    }
+    _passnew1Controll.sink.add('');
+
+    if (hashPassword(pass) != currentEmployee.password) {
+      _passControll.sink.addError("Incorrect password");
+      return false;
+    }
+    _passControll.sink.add('');
+
+    if (passNew1 == pass) {
+      _passnew1Controll.sink.addError("Your new password must be different than current password");
+      return false;
+    }
+    _passnew1Controll.sink.add('');
 
     return true;
   }
@@ -103,7 +121,6 @@ class _MyInfoState extends State<EmployeeInfo>
     _nameControll.close();
     _emailControll.close();
     _phoneControll.close();
-    _passwordControll.close();
     _passControll.close();
     _passnew1Controll.close();
     _passnew2Controll.close();
@@ -513,7 +530,7 @@ class _MyInfoState extends State<EmployeeInfo>
                                       stream: passStream,
                                       builder: (context, snapshot) => TextField(
                                         decoration: InputDecoration(
-                                          labelText: "Password",
+                                          labelText: "Current Password",
                                           errorText: snapshot.hasError
                                               ? snapshot.error.toString()
                                               : null,
@@ -721,16 +738,19 @@ class _MyInfoState extends State<EmployeeInfo>
   }
 
   void changePassword(String pass, Function onSuccess) async {
-    QuerySnapshot snapshot = await FirebaseFirestore.instance
-        .collection('employee')
-        .where('id', isEqualTo: userAu.uid)
-        .get();
-    String id = snapshot.docs.first.id;
+    String password = hashPassword(pass);
+
     var ref = FirebaseFirestore.instance.collection('employee');
 
-    ref.doc(id).update({'password': pass}).then((value) {
+    ref.doc(userAu.uid).update({'password': password}).then((value) {
       onSuccess();
     }).catchError((err) {});
+  }
+
+  String hashPassword(String password) {
+    var bytes = utf8.encode(password);
+    var digest = sha256.convert(bytes);
+    return digest.toString();
   }
 
   void changeInfo(

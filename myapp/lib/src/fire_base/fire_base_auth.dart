@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:crypto/crypto.dart';
+import 'dart:convert';
 class FireAuth {
 
   final FirebaseAuth _fireBaseAuth = FirebaseAuth.instance;
@@ -44,7 +46,7 @@ class FireAuth {
     var ref = FirebaseFirestore.instance.collection('user');
     ref.doc(userId).set({'userId': userId,
     'email':email,
-    'password':password,
+    'password':hashPassword(password),
     'name':name,
     'phone': phone,
     'group': group,
@@ -56,6 +58,13 @@ class FireAuth {
       onRegisterError("Check your information or internet connect!");
     });
   }
+
+  String hashPassword(String password) {
+    var bytes = utf8.encode(password);
+    var digest = sha256.convert(bytes);
+    return digest.toString();
+  }
+
   _createEmployee(String userId, String email, String password, String name, String phone,
       String department, List<String> category, Function onSuccess, Function(String) onRegisterError) {
     var ref = FirebaseFirestore.instance.collection('employee');

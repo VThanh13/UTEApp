@@ -10,6 +10,8 @@ import '../../blocs/auth_bloc.dart';
 import '../../models/UserModel.dart';
 import '../dialog/loading_dialog.dart';
 import '../user/home_page.dart';
+import 'package:crypto/crypto.dart';
+import 'dart:convert';
 
 class MyInfo extends StatefulWidget {
   const MyInfo({super.key});
@@ -26,13 +28,13 @@ class _MyInfoState extends State<MyInfo> with SingleTickerProviderStateMixin{
   @override
   void initState(){
     super.initState();
+    getCurrentUser();
     _tabController = TabController(length: 2, vsync: this);
   }
 
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _passController = TextEditingController();
   final TextEditingController _passNew1Controller = TextEditingController();
   final TextEditingController _passNew2Controller = TextEditingController();
@@ -40,7 +42,6 @@ class _MyInfoState extends State<MyInfo> with SingleTickerProviderStateMixin{
   final StreamController _nameControll = StreamController.broadcast();
   final StreamController _phoneControll = StreamController.broadcast();
   final StreamController _emailControll = StreamController.broadcast();
-  final StreamController _passwordControll = StreamController.broadcast();
   final StreamController _passControll = StreamController.broadcast();
   final StreamController _passnew1Controll = StreamController.broadcast();
   final StreamController _passnew2Controll = StreamController.broadcast();
@@ -48,7 +49,6 @@ class _MyInfoState extends State<MyInfo> with SingleTickerProviderStateMixin{
   Stream get emailStream => _emailControll.stream;
   Stream get nameStream => _nameControll.stream;
   Stream get phoneStream => _phoneControll.stream;
-  Stream get passwordStream => _passwordControll.stream;
   Stream get passStream => _passControll.stream;
   Stream get passNew1Stream => _passnew1Controll.stream;
   Stream get passNew2Stream => _passnew2Controll.stream;
@@ -75,30 +75,48 @@ class _MyInfoState extends State<MyInfo> with SingleTickerProviderStateMixin{
     return true;
   }
 
-  bool isValidChangePass(
-      String pass, String passNew1, String passNew2, String password) {
+  bool isValidChangePass(String pass, String passNew1, String passNew2) {
     if (pass.isEmpty) {
-      _passControll.sink.addError("Please insert your password");
+      _passControll.sink.addError("Please type your current password");
       return false;
     }
+    _passControll.sink.add('');
+
     if (passNew1.isEmpty) {
-      _passnew1Controll.sink.addError("Please insert your new password");
+      _passnew1Controll.sink.addError("Please type your new password");
       return false;
     }
+    _passnew1Controll.sink.add('');
 
     if (passNew2.isEmpty) {
-      _passnew2Controll.sink.addError("Confirm new password");
+      _passnew2Controll.sink.addError("Please confirm your new password");
       return false;
     }
+    _passnew2Controll.sink.add('');
 
     if (passNew1 != passNew2) {
-      _passnew2Controll.sink.addError("New password not match");
+      _passnew2Controll.sink.addError("Confirm password does not match");
       return false;
     }
-    if (pass != password) {
-      _passControll.sink.addError("Password not true");
+    _passnew2Controll.sink.add('');
+
+    if (passNew1.length < 6){
+      _passnew1Controll.sink.addError("Password must be at least 6 characters");
       return false;
     }
+    _passnew1Controll.sink.add('');
+
+    if (hashPassword(pass) != userModel.password) {
+      _passControll.sink.addError("Incorrect password");
+      return false;
+    }
+    _passControll.sink.add('');
+
+    if (passNew1 == pass) {
+      _passnew1Controll.sink.addError("Your new password must be different than current password");
+      return false;
+    }
+    _passnew1Controll.sink.add('');
 
     return true;
   }
@@ -108,7 +126,6 @@ class _MyInfoState extends State<MyInfo> with SingleTickerProviderStateMixin{
     _nameControll.close();
     _emailControll.close();
     _phoneControll.close();
-    _passwordControll.close();
     _passControll.close();
     _passnew1Controll.close();
     _passnew2Controll.close();
@@ -119,21 +136,24 @@ class _MyInfoState extends State<MyInfo> with SingleTickerProviderStateMixin{
   var userAuth = FirebaseAuth.instance.currentUser!;
   UserModel userModel = UserModel();
 
-  Future<String> getUserNameFromUID() async {
-    final snapshot = await FirebaseFirestore.instance
-        .collection('user')
-        .where('userId', isEqualTo: userAuth.uid)
-        .get();
-    return snapshot.docs.first['name'];
-  }
-
   // Check if the user is signed in
   getCurrentUser() async {
-    final snapshot = await FirebaseFirestore.instance
+    await FirebaseFirestore.instance
         .collection('user')
-        .where('userId', isEqualTo: userAuth.uid)
-        .get();
-    userModel = snapshot.docs.first as UserModel;
+        .doc(userAuth.uid)
+        .get()
+        .then((value) => {
+      setState(() {
+        userModel.id = value['userId'];
+        userModel.name = value['name'];
+        userModel.email = value['email'];
+        userModel.image = value['image'];
+        userModel.password = value['password'];
+        userModel.phone = value['phone'];
+        userModel.group = value['group'];
+        userModel.status = value['status'];
+      }),
+    });
   }
 
   @override
@@ -150,17 +170,6 @@ class _MyInfoState extends State<MyInfo> with SingleTickerProviderStateMixin{
                   width: 20, height: 20, child: CircularProgressIndicator()),
             );
           }
-          snapshot.data!.docs.map((e) {
-            userModel.id = (e.data() as Map)['userId'];
-            userModel.name = (e.data() as Map)['name'];
-            userModel.email = (e.data() as Map)['email'];
-            userModel.image = (e.data() as Map)['image'];
-            userModel.password = (e.data() as Map)['password'];
-            userModel.phone = (e.data() as Map)['phone'];
-            userModel.status = (e.data() as Map)['status'];
-            return userModel;
-          }).toString();
-
 
           // TODO: implement build
           return GestureDetector(
@@ -419,7 +428,10 @@ class _MyInfoState extends State<MyInfo> with SingleTickerProviderStateMixin{
                                         builder: (context, snapshot) =>
                                             TextField(
                                               decoration: InputDecoration(
-                                                  labelText: "Password",
+                                                  labelText: "Current Password",
+                                                  errorText: snapshot.hasError
+                                                      ? snapshot.error.toString()
+                                                      : null,
                                                   hintText:
                                                   'Please insert your password',
                                                   enabledBorder:
@@ -457,6 +469,9 @@ class _MyInfoState extends State<MyInfo> with SingleTickerProviderStateMixin{
                                             TextField(
                                               decoration: InputDecoration(
                                                   labelText: "New password",
+                                                  errorText: snapshot.hasError
+                                                      ? snapshot.error.toString()
+                                                      : null,
                                                   hintText:
                                                   'Please insert new password',
                                                   enabledBorder:
@@ -495,6 +510,9 @@ class _MyInfoState extends State<MyInfo> with SingleTickerProviderStateMixin{
                                               decoration: InputDecoration(
                                                   labelText:
                                                   "Confirm password",
+                                                  errorText: snapshot.hasError
+                                                      ? snapshot.error.toString()
+                                                      : null,
                                                   hintText:
                                                   'Confirm your password',
                                                   enabledBorder:
@@ -531,7 +549,29 @@ class _MyInfoState extends State<MyInfo> with SingleTickerProviderStateMixin{
                                           Expanded(
                                             child: ElevatedButton.icon(
                                               onPressed: () {
-                                                _onChangePassword();
+                                                try {
+                                                  if (_onChangePassword()) {
+                                                    setState(() {
+                                                      _passController.text = '';
+                                                      _passNew1Controller.text =
+                                                      '';
+                                                      _passNew2Controller.text =
+                                                      '';
+                                                    });
+                                                  } else {
+                                                    setState(() {
+                                                      _passController.text = '';
+                                                      _passNew1Controller.text =
+                                                      '';
+                                                      _passNew2Controller.text =
+                                                      '';
+                                                    });
+                                                    showErrorMessage(
+                                                        'Change password failed');
+                                                  }
+                                                } catch (e) {
+                                                  //
+                                                }
                                               },
                                               label: const Text(
                                                 'Save',
@@ -579,6 +619,7 @@ class _MyInfoState extends State<MyInfo> with SingleTickerProviderStateMixin{
         LoadingDialog.hideLoadingDialog(context);
         Navigator.push(
             context, MaterialPageRoute(builder: (context) => const MyInfo()));
+        showSuccessMessage('Update info success');
       });
     }
   }
@@ -587,8 +628,7 @@ class _MyInfoState extends State<MyInfo> with SingleTickerProviderStateMixin{
     var isvalid = isValidChangePass(
         _passController.text,
         _passNew1Controller.text,
-        _passNew2Controller.text,
-        _passwordController.text);
+        _passNew2Controller.text);
 
     if (isvalid) {
       LoadingDialog.showLoadingDialog(context, "Please Wait...");
@@ -597,6 +637,7 @@ class _MyInfoState extends State<MyInfo> with SingleTickerProviderStateMixin{
         LoadingDialog.hideLoadingDialog(context);
         Navigator.push(
             context, MaterialPageRoute(builder: (context) => const MyInfo()));
+        showSuccessMessage('Change password success');
       });
     }
   }
@@ -613,15 +654,21 @@ class _MyInfoState extends State<MyInfo> with SingleTickerProviderStateMixin{
   }
 
   void changePassword(String pass, Function onSuccess) async {
-    var ref = FirebaseFirestore.instance.collection('user');
+    String password = hashPassword(pass);
 
-    ref.doc(userAuth.uid).update({'password': pass}).then((value) {
+    var ref = FirebaseFirestore.instance.collection('user');
+    ref.doc(userAuth.uid).update({'password': password}).then((value) {
       onSuccess();
     }).catchError((err) {});
   }
 
+  String hashPassword(String password) {
+    var bytes = utf8.encode(password);
+    var digest = sha256.convert(bytes);
+    return digest.toString();
+  }
+
   uploadImage() async {
-    print("hello oooooo");
     final imagePicker = ImagePicker();
     String imageUrl;
     //PickedFile image;
@@ -661,5 +708,27 @@ class _MyInfoState extends State<MyInfo> with SingleTickerProviderStateMixin{
     }).catchError((err) {
       return err;
     });
+  }
+
+  void showSuccessMessage(String message) {
+    final snackBar = SnackBar(
+      content: Text(
+        message,
+        style: const TextStyle(color: Colors.white),
+      ),
+      backgroundColor: Colors.blueAccent,
+    );
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+  }
+
+  void showErrorMessage(String message) {
+    final snackBar = SnackBar(
+      content: Text(
+        message,
+        style: const TextStyle(color: Colors.white),
+      ),
+      backgroundColor: Colors.red,
+    );
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 }

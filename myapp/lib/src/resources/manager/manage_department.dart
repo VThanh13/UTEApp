@@ -271,14 +271,14 @@ class _ManageDepartmentState extends State<ManageDepartment> {
                                             borderRadius:
                                                 BorderRadius.circular(10),
                                             borderSide: const BorderSide(
-                                              color: Colors.pinkAccent,
+                                              color: Colors.blueAccent,
                                               width: 1,
                                             )),
                                         focusedBorder: OutlineInputBorder(
                                             borderRadius:
                                                 BorderRadius.circular(10),
                                             borderSide: const BorderSide(
-                                                color: Colors.pink,
+                                                color: Colors.blue,
                                                 width: 4))),
                                   ),
                                 ),
@@ -327,7 +327,7 @@ class _ManageDepartmentState extends State<ManageDepartment> {
                                             ),
                                             backgroundColor:
                                                 MaterialStateProperty.all(
-                                                    Colors.pinkAccent)),
+                                                    Colors.blueAccent)),
                                         onPressed: () {
                                           //_onChangeCategoryClicked(employee.id, value_category);
                                         },
@@ -353,7 +353,7 @@ class _ManageDepartmentState extends State<ManageDepartment> {
                                             ),
                                             backgroundColor:
                                                 MaterialStateProperty.all(
-                                                    Colors.pinkAccent)),
+                                                    Colors.blueAccent)),
                                         onPressed: () =>
                                             {Navigator.pop(context)},
                                         label: const Text(
@@ -369,7 +369,7 @@ class _ManageDepartmentState extends State<ManageDepartment> {
                                 ),
                               ),
                               const Padding(
-                                  padding: EdgeInsets.fromLTRB(0, 10, 0, 10)),
+                                  padding: EdgeInsets.fromLTRB(0, 50, 0, 10)),
                               const Divider(
                                 color: Colors.black,
                                 height: 5.0,
@@ -525,14 +525,14 @@ class _ManageDepartmentState extends State<ManageDepartment> {
                                               borderRadius:
                                                   BorderRadius.circular(10),
                                               borderSide: const BorderSide(
-                                                color: Colors.pinkAccent,
+                                                color: Colors.blueAccent,
                                                 width: 1,
                                               )),
                                           focusedBorder: OutlineInputBorder(
                                               borderRadius:
                                                   BorderRadius.circular(10),
                                               borderSide: const BorderSide(
-                                                  color: Colors.pink,
+                                                  color: Colors.blue,
                                                   width: 4))),
                                     ),
                                   )),
@@ -556,7 +556,7 @@ class _ManageDepartmentState extends State<ManageDepartment> {
                                             ),
                                             backgroundColor:
                                                 MaterialStateProperty.all(
-                                                    Colors.pinkAccent)),
+                                                    Colors.blueAccent)),
                                         onPressed: () {
                                           //_onAddEmployeeClicked();
                                         },
@@ -582,7 +582,7 @@ class _ManageDepartmentState extends State<ManageDepartment> {
                                             ),
                                             backgroundColor:
                                                 MaterialStateProperty.all(
-                                                    Colors.pinkAccent)),
+                                                    Colors.blueAccent)),
                                         onPressed: () =>
                                             {Navigator.pop(context)},
                                         label: const Text(
@@ -626,7 +626,7 @@ class _ManageDepartmentState extends State<ManageDepartment> {
                             const HomePageManager()));
               }),
           title: const Text("Quản lý các khoa"),
-          backgroundColor: Colors.pinkAccent,
+          backgroundColor: Colors.blueAccent,
         ),
         body: SafeArea(
           minimum: const EdgeInsets.only(left: 20, right: 10),
@@ -666,7 +666,7 @@ class _ManageDepartmentState extends State<ManageDepartment> {
               // ignore: void_checks
               return _modalBottomSheetAddDepartment();
             },
-            backgroundColor: Colors.pink,
+            backgroundColor: Colors.blue,
             child: const Icon(
               Icons.add,
               size: 25,
