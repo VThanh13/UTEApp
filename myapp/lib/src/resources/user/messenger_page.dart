@@ -173,68 +173,81 @@ class _MessengerPageState extends State<MessengerPage> {
                   builder: (BuildContext context) =>
                       DetailQuestion(chatRoom: chatRoom)));
         },
-        child: SizedBox(
-          key: UniqueKey(),
-          child: Container(
-            //margin: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
-            margin: const EdgeInsets.fromLTRB(0, 5, 0, 0),
-            height: 75,
-            child: Row(
-              children: <Widget>[
-                Expanded(
-                    child: Container(
-                  margin: const EdgeInsets.fromLTRB(10, 0, 0, 0),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Text(
-                        chatRoom.title!,
-                        style: const TextStyle(
-                          fontSize: 17.0,
-                          fontWeight: FontWeight.w500,
-                        ),
-                        overflow: TextOverflow.ellipsis,
+        child: Column(
+          children: [
+            SizedBox(
+              key: UniqueKey(),
+              child: Container(
+                //margin: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
+                margin: const EdgeInsets.fromLTRB(0, 5, 0, 0),
+                height: 75,
+                child: Row(
+                  children: <Widget>[
+                    Expanded(
+                        child: Container(
+                      margin: const EdgeInsets.fromLTRB(10, 0, 0, 0),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Text(
+                            chatRoom.title!,
+                            style: const TextStyle(
+                              fontSize: 17.0,
+                              fontWeight: FontWeight.w500,
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          const SizedBox(
+                            height: 4.0,
+                          ),
+                          if (chatRoom.category == "")
+                            const Text('To: Leader')
+                          else
+                            Text(
+                              employeeName.containsKey(chatRoom.category)
+                                  ? 'To: ${employeeName[chatRoom.category]}'
+                                  : 'To: ${chatRoom.category}',
+                              style: const TextStyle(
+                                  color: Colors.black, fontSize: 13),
+                            ),
+                          Text(
+                            chatRoom.status!,
+                            style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w400,
+                              color: chatRoom.status == "Chưa trả lời"
+                                  ? Colors.redAccent
+                                  : Colors.green,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          Text(
+                            chatRoom.time!,
+                            style: const TextStyle(
+                              fontSize: 10.0,
+                              fontWeight: FontWeight.w400,
+                              color: Colors.grey,
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ],
                       ),
-                      const SizedBox(
-                        height: 4.0,
-                      ),
-                      if (chatRoom.category == "")
-                        const Text('To: Leader')
-                      else
-                        Text(
-                          employeeName.containsKey(chatRoom.category)
-                              ? 'To: ${employeeName[chatRoom.category]}'
-                              : 'To: ${chatRoom.category}',
-                          style: const TextStyle(
-                              color: Colors.black, fontSize: 13),
-                        ),
-                      Text(
-                        chatRoom.status!,
-                        style: TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w400,
-                          color: chatRoom.status == "Chưa trả lời"
-                              ? Colors.redAccent
-                              : Colors.green,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                      Text(
-                        chatRoom.time!,
-                        style: const TextStyle(
-                          fontSize: 10.0,
-                          fontWeight: FontWeight.w400,
-                          color: Colors.grey,
-                        ),
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ],
-                  ),
-                ))
-              ],
+                    ))
+                  ],
+                ),
+              ),
             ),
-          ),
+            const Padding(
+              padding: EdgeInsets.only(left: 70, right: 70, top: 5),
+              child: Divider(
+                height: 0,
+                color: Colors.blue,
+                indent: 0,
+                thickness: 1,
+              ),
+            ),
+          ],
         ),
       ));
     });
@@ -391,6 +404,7 @@ class _MessengerPageState extends State<MessengerPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        elevation: 0,
         leading: IconButton(
             icon: const Icon(Icons.arrow_back, color: Colors.white),
             onPressed: () {
@@ -495,7 +509,7 @@ class _MessengerPageState extends State<MessengerPage> {
                                             SizedBox(width: 10,),
                                             Icon(Icons.search_rounded, color: Colors.grey,),
                                             SizedBox(width: 5,),
-                                            Text('Search',
+                                            Text('Search...',
                                             style: TextStyle(
                                               fontStyle: FontStyle.italic,
                                               color: Colors.grey,

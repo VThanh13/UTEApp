@@ -1097,92 +1097,114 @@ class _HomePageState extends State<HomePage> {
           }
           return Scaffold(
             appBar: AppBar(
-              backgroundColor: Colors.blueAccent,
-              title: const Text("UTE APP"),
+              backgroundColor: Colors.white,
+              iconTheme: const IconThemeData(
+                color: Colors.black87
+              ),
+              elevation: 0,
+              title: Image.network('https://onlineoffice.vn/wp-content/uploads/2021/01/logo-news-2.png',
+                height: 35,
+              ),
               actions: <Widget>[
-                IconButton(
-                  onPressed: () {
-                    if (internetCheck.isInternetConnect == true) {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (BuildContext context) =>
-                                  const SearchPostScreen()));
-                    } else {
-                      showDialog(
-                          context: context,
-                          builder: (context) {
-                            return CupertinoAlertDialog(
-                              title: const Column(
-                                children: [
-                                  Icon(
-                                    Icons.warning_amber,
-                                    size: 30,
-                                    color: Colors.redAccent,
+                CircleAvatar(
+                  backgroundColor: Colors.grey[200],
+                  radius: 18,
+                  child: Center(
+                    child: IconButton(
+                      onPressed: () {
+                        if (internetCheck.isInternetConnect == true) {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (BuildContext context) =>
+                                      const SearchPostScreen()));
+                        } else {
+                          showDialog(
+                              context: context,
+                              builder: (context) {
+                                return CupertinoAlertDialog(
+                                  title: const Column(
+                                    children: [
+                                      Icon(
+                                        Icons.warning_amber,
+                                        size: 30,
+                                        color: Colors.redAccent,
+                                      ),
+                                      Text('No internet'),
+                                    ],
                                   ),
-                                  Text('No internet'),
-                                ],
-                              ),
-                              content: const Text(
-                                  'Please check your internet connection!'),
-                              actions: [
-                                TextButton(
-                                  onPressed: () {
-                                    Navigator.pop(context);
-                                  },
-                                  child: const Text('OK'),
-                                ),
-                              ],
-                            );
-                          });
-                    }
-                  },
-                  icon: const Icon(
-                    Icons.search_rounded,
-                    color: Colors.white,
-                    size: 28,
+                                  content: const Text(
+                                      'Please check your internet connection!'),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                      },
+                                      child: const Text('OK'),
+                                    ),
+                                  ],
+                                );
+                              });
+                        }
+                      },
+                      icon: const Icon(
+                        Icons.search_rounded,
+                        color: Colors.black87,
+                        size: 26,
+                      ),
+                    ),
                   ),
                 ),
-                IconButton(
-                  onPressed: () {
-                    if (internetCheck.isInternetConnect == true) {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (BuildContext context) =>
-                              const MessengerPage()));
-                    } else {
-                      showDialog(
-                          context: context,
-                          builder: (context) {
-                            return CupertinoAlertDialog(
-                              title: const Column(
-                                children: [
-                                  Icon(
-                                    Icons.warning_amber,
-                                    size: 30,
-                                    color: Colors.redAccent,
-                                  ),
-                                  Text('No internet'),
-                                ],
-                              ),
-                              content: const Text(
-                                  'Please check your internet connection!'),
-                              actions: [
-                                TextButton(
-                                  onPressed: () {
-                                    Navigator.pop(context);
-                                  },
-                                  child: const Text('OK'),
-                                ),
-                              ],
-                            );
-                          });
-                    }
-                  },
-                  icon: const Icon(
-                    AppIcons.chat,
-                    color: Colors.white,
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
+                  child: CircleAvatar(
+                    backgroundColor: Colors.grey[200],
+                    radius: 18,
+                    child: Center(
+                      child: IconButton(
+                        onPressed: () {
+                          if (internetCheck.isInternetConnect == true) {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (BuildContext context) =>
+                                    const MessengerPage()));
+                          } else {
+                            showDialog(
+                                context: context,
+                                builder: (context) {
+                                  return CupertinoAlertDialog(
+                                    title: const Column(
+                                      children: [
+                                        Icon(
+                                          Icons.warning_amber,
+                                          size: 30,
+                                          color: Colors.redAccent,
+                                        ),
+                                        Text('No internet'),
+                                      ],
+                                    ),
+                                    content: const Text(
+                                        'Please check your internet connection!'),
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () {
+                                          Navigator.pop(context);
+                                        },
+                                        child: const Text('OK'),
+                                      ),
+                                    ],
+                                  );
+                                });
+                          }
+                        },
+                        icon: const Icon(
+                          AppIcons.chat,
+                          color: Colors.black87,
+                          size: 26,
+                        ),
+                      ),
+                    ),
                   ),
                 ),
               ],

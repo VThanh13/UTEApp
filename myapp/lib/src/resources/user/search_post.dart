@@ -42,8 +42,16 @@ class _SearchPostScreenState extends State<SearchPostScreen> {
               padding: const EdgeInsets.all(15),
               child: TextField(
                 decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  hintText: 'Search here',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(25)),
+                  ),
+                  
+                  hintText: 'Search here...',
+                  hintStyle: TextStyle(
+                    color: Colors.grey,
+                    fontStyle: FontStyle.italic,
+                  ),
+                  suffixIcon: Icon(Icons.search_rounded, color: Colors.grey,)
                 ),
                 onChanged: (val) {
                   setState(() {
