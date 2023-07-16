@@ -239,7 +239,7 @@ class _MessengerPageState extends State<MessengerPage> {
               ),
             ),
             const Padding(
-              padding: EdgeInsets.only(left: 70, right: 70, top: 5),
+              padding: EdgeInsets.only(left: 10, right: 10, top: 5),
               child: Divider(
                 height: 0,
                 color: Colors.blue,
@@ -887,7 +887,7 @@ class _MessengerPageState extends State<MessengerPage> {
     if(result.files.first.path!.endsWith(".pdf")){
       // Check File Size
       final fileSize = result.files.first.size; // Kích thước tệp (byte)
-      final maxFileSize = 5 * 1024 * 1024; // Giới hạn kích thước 5MB
+      const maxFileSize = 5 * 1024 * 1024; // Giới hạn kích thước 5MB
 
       if (fileSize > maxFileSize) {
         showDialog(
@@ -909,7 +909,7 @@ class _MessengerPageState extends State<MessengerPage> {
     else{
       // Check File Size
       final fileSize = result.files.first.size; // Kích thước tệp (byte)
-      final maxFileSize = 1024 * 1024; // Giới hạn kích thước 1MB
+      const maxFileSize = 1024 * 1024; // Giới hạn kích thước 1MB
 
       if (fileSize > maxFileSize) {
         showDialog(

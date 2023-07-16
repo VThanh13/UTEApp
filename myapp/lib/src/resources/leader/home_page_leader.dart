@@ -20,6 +20,7 @@ import '../employee/employee_info.dart';
 import '../dialog/loading_dialog.dart';
 import '../employee/messenger_employee.dart';
 import '../login_screen.dart';
+import 'leader_search_post.dart';
 import 'manage_category.dart';
 import 'manage_employee.dart';
 
@@ -380,18 +381,64 @@ class _HomePageState extends State<HomePageLeader> {
                 height: 35,
               ),
               actions: <Widget>[
-                CircleAvatar(
-                  backgroundColor: Colors.grey[200],
-                  radius: 18,
-                  child: IconButton(
-                    onPressed: () {
-                      if(internetCheck.isInternetConnect == true){
+                InkWell(
+                  onTap: (){
+                    if(internetCheck.isInternetConnect == true){
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (BuildContext context) =>
+                              const MessengerPageEmployee()));
+                    }else{
+                      showDialog(
+                          context: context,
+                          builder: (context) {
+                            return CupertinoAlertDialog(
+                              title: const Column(
+                                children: [
+                                  Icon(
+                                    Icons.warning_amber,
+                                    size: 30,
+                                    color: Colors.redAccent,
+                                  ),
+                                  Text('No internet'),
+                                ],
+                              ),
+                              content: const Text(
+                                  'Please check your internet connection!'),
+                              actions: [
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                  },
+                                  child: const Text('OK'),
+                                ),
+                              ],
+                            );
+                          });
+                    }
+                  },
+                  child: CircleAvatar(
+                    backgroundColor: Colors.grey[200],
+                    radius: 20,
+                    child: const Center(
+                      child: Icon(AppIcons.chat,
+                        color: Colors.black87,
+                        size: 26,),
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
+                  child: InkWell(
+                    onTap: (){
+                      if (internetCheck.isInternetConnect == true) {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
                                 builder: (BuildContext context) =>
-                                const MessengerPageEmployee()));
-                      }else{
+                                const LeaderSearchPost()));
+                      } else {
                         showDialog(
                             context: context,
                             builder: (context) {
@@ -419,15 +466,19 @@ class _HomePageState extends State<HomePageLeader> {
                               );
                             });
                       }
-
                     },
-                    icon: const Icon(
-                      AppIcons.chat,
-                      color: Colors.black87,
-                      size: 26,
+                    child: CircleAvatar(
+                      backgroundColor: Colors.grey[200],
+                      radius: 20,
+                      child: const Center(
+                        child: Icon(Icons.search,
+                          color: Colors.black87,
+                          size: 26,),
+                      ),
                     ),
                   ),
                 ),
+                
               ],
             ),
             drawer: Drawer(
