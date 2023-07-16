@@ -21,12 +21,13 @@ class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
   @override
-  State<LoginScreen> createState() => _SearchScreenState();
+  State<LoginScreen> createState() => LoginScreenState();
 }
 
-class _SearchScreenState extends State<LoginScreen> {
+class LoginScreenState extends State<LoginScreen> {
   final TextEditingController _pwdController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
+  final LocalAuthentication localAuth = LocalAuthentication();
 
   AuthBloc authBloc = AuthBloc();
 
@@ -218,7 +219,6 @@ class _SearchScreenState extends State<LoginScreen> {
                 borderRadius: BorderRadius.circular(12.0),
                 child: InkWell(
                   onTap: () {
-                    _authenticateWithBiometrics(context);
                   },
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
@@ -405,33 +405,6 @@ class _SearchScreenState extends State<LoginScreen> {
         LoadingDialog.hideLoadingDialog(context);
         MsgDialog.showMsgDialog(context, "Sign In failed", msg);
       });
-    }
-  }
-
-  void _authenticateWithBiometrics(BuildContext context) async {
-    final LocalAuthentication localAuth = LocalAuthentication();
-    bool authenticated = false;
-
-    try {
-      // Check if biometrics are available on the device
-      bool isBiometricAvailable = await localAuth.canCheckBiometrics;
-      if (!isBiometricAvailable) {
-        return;
-      }
-
-      // Authenticate using biometrics
-      authenticated = await localAuth.authenticate(
-        localizedReason: 'Xác thực bằng vân tay',
-      );
-    } catch (e) {
-    }
-
-    if (authenticated) {
-      // Perform successful fingerprint authentication
-      print("Đăng nhập bằng vân tay thành công!");
-    } else {
-      // Fingerprint authentication failed or was canceled
-      print("Đăng nhập bằng vân tay không thành công!");
     }
   }
 }

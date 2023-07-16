@@ -1083,7 +1083,15 @@ class _DetailQuestionState extends State<DetailQuestionEmployee> {
   }
 
   Future<void> fetchData() async {
-    var url = Uri.parse('https://dummyjson.com/products/search?q=Laptop');
+    // var url = Uri.parse('https://dummyjson.com/products/search?q=Laptop');
+    String keyword = "";
+    for (Question question in listQuestion) {
+      keyword += question.content + " ";
+    }
+
+    String uri = "http://localhost:3000/api/v1/questions/search/?key_word=";
+    uri = uri + keyword;
+    var url = Uri.parse(uri);
     final response = await http.get(url);
     List<ChatRoomModel> chatRooms = [];
 
@@ -1091,18 +1099,18 @@ class _DetailQuestionState extends State<DetailQuestionEmployee> {
       dynamic chatRoomsData = json.decode(response.body);
 
       setState(() {
-        chatRoomsData["products"].forEach((element) {
+        chatRoomsData["data"].forEach((element) {
           ChatRoomModel chatRoom = ChatRoomModel();
-          chatRoom.id = element["id"].toString();
-          chatRoom.userId = element["title"];
+          chatRoom.id = element["room_id"];
+          chatRoom.userId = element["user_id"];
           chatRoom.title = element["title"];
-          chatRoom.time = element["title"];
-          chatRoom.department = element["title"];
+          chatRoom.time = element["time"];
+          chatRoom.department = element["department"];
           chatRoom.category = element["category"];
-          chatRoom.information = element["title"];
-          chatRoom.group = element["title"];
-          chatRoom.status = element["title"];
-          chatRoom.mode = element["title"];
+          chatRoom.information = element["information"];
+          chatRoom.group = element["group"];
+          chatRoom.status = element["status"];
+          chatRoom.mode = element["mode"];
 
           chatRooms.add(chatRoom);
         });

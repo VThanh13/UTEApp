@@ -14,6 +14,9 @@ class EditEmployeeDialog {
       context: context,
       barrierDismissible: false,
       builder: (context) => Dialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
         backgroundColor: Colors.transparent,
         child: Container(
           color: const Color(0xffffffff),
