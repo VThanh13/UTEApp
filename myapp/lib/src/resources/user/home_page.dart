@@ -1106,107 +1106,104 @@ class _HomePageState extends State<HomePage> {
                 height: 35,
               ),
               actions: <Widget>[
-                CircleAvatar(
-                  backgroundColor: Colors.grey[200],
-                  radius: 18,
-                  child: Center(
-                    child: IconButton(
-                      onPressed: () {
-                        if (internetCheck.isInternetConnect == true) {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (BuildContext context) =>
-                                      const SearchPostScreen()));
-                        } else {
-                          showDialog(
-                              context: context,
-                              builder: (context) {
-                                return CupertinoAlertDialog(
-                                  title: const Column(
-                                    children: [
-                                      Icon(
-                                        Icons.warning_amber,
-                                        size: 30,
-                                        color: Colors.redAccent,
-                                      ),
-                                      Text('No internet'),
-                                    ],
+                InkWell(
+                  onTap: (){
+                    if (internetCheck.isInternetConnect == true) {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (BuildContext context) =>
+                              const SearchPostScreen()));
+                    } else {
+                      showDialog(
+                          context: context,
+                          builder: (context) {
+                            return CupertinoAlertDialog(
+                              title: const Column(
+                                children: [
+                                  Icon(
+                                    Icons.warning_amber,
+                                    size: 30,
+                                    color: Colors.redAccent,
                                   ),
-                                  content: const Text(
-                                      'Please check your internet connection!'),
-                                  actions: [
-                                    TextButton(
-                                      onPressed: () {
-                                        Navigator.pop(context);
-                                      },
-                                      child: const Text('OK'),
-                                    ),
-                                  ],
-                                );
-                              });
-                        }
-                      },
-                      icon: const Icon(
-                        Icons.search_rounded,
+                                  Text('No internet'),
+                                ],
+                              ),
+                              content: const Text(
+                                  'Please check your internet connection!'),
+                              actions: [
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                  },
+                                  child: const Text('OK'),
+                                ),
+                              ],
+                            );
+                          });
+                    }
+                  },
+                  child: CircleAvatar(
+                    backgroundColor: Colors.grey[200],
+                    radius: 20,
+                    child: const Center(
+                      child: Icon(Icons.search,
                         color: Colors.black87,
-                        size: 26,
-                      ),
+                        size: 26,),
                     ),
                   ),
                 ),
                 Padding(
                   padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
-                  child: CircleAvatar(
-                    backgroundColor: Colors.grey[200],
-                    radius: 18,
-                    child: Center(
-                      child: IconButton(
-                        onPressed: () {
-                          if (internetCheck.isInternetConnect == true) {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (BuildContext context) =>
-                                    const MessengerPage()));
-                          } else {
-                            showDialog(
-                                context: context,
-                                builder: (context) {
-                                  return CupertinoAlertDialog(
-                                    title: const Column(
-                                      children: [
-                                        Icon(
-                                          Icons.warning_amber,
-                                          size: 30,
-                                          color: Colors.redAccent,
-                                        ),
-                                        Text('No internet'),
-                                      ],
+                  child: InkWell(
+                    onTap: (){
+                      if (internetCheck.isInternetConnect == true) {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (BuildContext context) =>
+                                const MessengerPage()));
+                      } else {
+                        showDialog(
+                            context: context,
+                            builder: (context) {
+                              return CupertinoAlertDialog(
+                                title: const Column(
+                                  children: [
+                                    Icon(
+                                      Icons.warning_amber,
+                                      size: 30,
+                                      color: Colors.redAccent,
                                     ),
-                                    content: const Text(
-                                        'Please check your internet connection!'),
-                                    actions: [
-                                      TextButton(
-                                        onPressed: () {
-                                          Navigator.pop(context);
-                                        },
-                                        child: const Text('OK'),
-                                      ),
-                                    ],
-                                  );
-                                });
-                          }
-                        },
-                        icon: const Icon(
-                          AppIcons.chat,
+                                    Text('No internet'),
+                                  ],
+                                ),
+                                content: const Text(
+                                    'Please check your internet connection!'),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                    },
+                                    child: const Text('OK'),
+                                  ),
+                                ],
+                              );
+                            });
+                      }
+                    },
+                    child: CircleAvatar(
+                      backgroundColor: Colors.grey[200],
+                      radius: 20,
+                      child: const Center(
+                        child: Icon(AppIcons.chat,
                           color: Colors.black87,
-                          size: 26,
-                        ),
+                          size: 26,),
                       ),
                     ),
                   ),
                 ),
+                
               ],
             ),
             drawer: Drawer(

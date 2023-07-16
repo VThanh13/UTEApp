@@ -334,10 +334,10 @@ class _MessengerPageState extends State<MessengerPageEmployee> with SingleTicker
                     isScrollable: true,
                     controller: _tabController,
                     unselectedLabelColor: Colors.black,
-                    labelColor: const Color(0xffDD4A30),
+                    labelColor: Colors.blue,
                     indicator: const UnderlineTabIndicator(
                       borderSide: BorderSide(
-                        color: Color(0xffDD4A30),
+                        color: Colors.blue,
                         width: 3,
                       ),
                     ),
@@ -514,62 +514,75 @@ class _MessengerPageState extends State<MessengerPageEmployee> with SingleTicker
                   builder: (BuildContext context) =>
                       DetailQuestionEmployee(chatRoom: chatRoom)));
         },
-        child: SizedBox(
-          key: UniqueKey(),
+        child: Column(
+          children: [
+            SizedBox(
+              key: UniqueKey(),
 
-          child: Container(
-            //margin: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
-            margin: const EdgeInsets.fromLTRB(0, 5, 0, 0),
-            height: 75,
+              child: Container(
+                //margin: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
+                margin: const EdgeInsets.fromLTRB(0, 5, 0, 0),
+                height: 75,
 
-            child: Row(
-              children: <Widget>[
-                Expanded(
-                    child: Container(
-                      margin: const  EdgeInsets.fromLTRB(10, 0, 0, 0),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Text(
-                            chatRoom.title!,
-                            style: const TextStyle(
-                              fontSize: 17.0,
-                              fontWeight: FontWeight.w500,
-                            ),
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                          const SizedBox(
-                            height: 4.0,
-                          ),
-                          Text('From: ${chatRoom.group}',
-                            style: const TextStyle(
-                              color: Colors.black,
-                            ),),
-                          Text(
-                            chatRoom.time!,
-                            style: const TextStyle(
-                              fontSize: 10.0,
-                              fontWeight: FontWeight.w400,
-                              color: Colors.grey,
-                            ),
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                          Text(chatRoom.status!,
-                              style: TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w400,
-                                color: chatRoom.status == "Chưa trả lời"
-                                    ? Colors.redAccent
-                                    : Colors.green,
+                child: Row(
+                  children: <Widget>[
+                    Expanded(
+                        child: Container(
+                          margin: const  EdgeInsets.fromLTRB(10, 0, 0, 0),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              Text(
+                                chatRoom.title!,
+                                style: const TextStyle(
+                                  fontSize: 17.0,
+                                  fontWeight: FontWeight.w500,
+                                ),
                                 overflow: TextOverflow.ellipsis,
-                              ))
-                        ],
-                      ),
-                    ))
-              ],
+                              ),
+                              const SizedBox(
+                                height: 4.0,
+                              ),
+                              Text('From: ${chatRoom.group}',
+                                style: const TextStyle(
+                                  color: Colors.black,
+                                ),),
+                              Text(
+                                chatRoom.time!,
+                                style: const TextStyle(
+                                  fontSize: 10.0,
+                                  fontWeight: FontWeight.w400,
+                                  color: Colors.grey,
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                              Text(chatRoom.status!,
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w400,
+                                    color: chatRoom.status == "Chưa trả lời"
+                                        ? Colors.redAccent
+                                        : Colors.green,
+                                    overflow: TextOverflow.ellipsis,
+                                  ))
+                            ],
+                          ),
+                        ))
+                  ],
+                ),
+              ),
             ),
-          ),
+            const Padding(
+              padding: EdgeInsets.only(left: 10, right: 10, top: 5),
+              child: Divider(
+                height: 0,
+                color: Colors.blue,
+                indent: 0,
+                thickness: 1,
+              ),
+            ),
+          ],
         ),
       ));
     });
